@@ -17,7 +17,7 @@
 ;;  (require 'el-get)
 ;;  then define your el-get-sources
 
-(require 'dired-x) ; dired-make-relative-symlink
+(require 'package) ; that's ELPA
 
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
@@ -38,7 +38,7 @@
 		       :remove el-get-apt-get-remove)
     :elpa    (:install el-get-elpa-install 
 		       :install-hook el-get-elpa-install-hook
-		       :update el-get-elpa-install
+		       :update el-get-elpa-update
 		       :remove el-get-rmdir)
     :http    (:install el-get-http-install
 		       :install-hook el-get-http-install-hook
@@ -97,11 +97,14 @@ given package directory."
 
 (defun el-get-package-exists-p (package)
   "true only when the given package name is either a directory or a symlink in el-get-dir"
-  (let ((pdir (el-get-package-dir package)))
+  (let ((pdir (el-get-package-directory package)))
     ;; seems overkill as file-directory-p will always be true
     (or (file-directory-p pdir)
 	(file-symlink-p   pdir))))
 
+;;
+;; git support
+;;
 (defun el-get-git-dirname (url)
   "Get dirname from url"
   (car (split-string (substring url (string-match "[^/]+$" url)) "[.]")))
@@ -135,6 +138,9 @@ given package directory."
        (concat "cd " pdir
 	       " && " magit-git-executable " --no-pager pull " url)))))
 
+;;
+;; apt-get support
+;;
 (defun el-get-sudo-shell-command-to-string (command) 
   "Ask a password then use sudo, when required"
   (let* ((sudo-test (shell-command-to-string "sudo echo el-get"))
@@ -159,10 +165,42 @@ given package directory."
   (message "%S" (el-get-sudo-shell-command-to-string 
 		 (concat el-get-apt-get " remove -y " package))))
 
-(defun el-get-elpa-install (package url)
-  "ask elpa to install given package"
-  (error "Not Implemented. Yet?"))
+;;
+;; ELPA support
+;;
+(defun el-get-elpa-symlink-package (package)
+  "ln -s ~/.emacs.d/elpa/<package> ~/.emacs.d/el-get/<package>"
+  (let* ((l
+	  ;; we use try-completion to find the realname of the directory
+	  ;; ELPA used, and this wants an alist, we trick ls -i -1 into
+	  ;; that.
+	  (mapcar 'split-string
+		  (split-string
+		   (shell-command-to-string
+		    (concat "ls -i1 "
+			    (file-name-as-directory package-user-dir))))))
 
+	 (realname (concat (file-name-as-directory package-user-dir) 
+			   (try-completion package l))))
+
+    (unless (el-get-package-exists-p package)
+      (shell-command
+       (concat "cd " el-get-dir 
+	       " && ln -s \"" realname "\" \"" package "\"")))))
+
+(defun el-get-elpa-install (package &optional url)
+  "ask elpa to install given package"
+  (package-install (intern-soft package))
+  (el-get-elpa-symlink-package package))
+
+(defun el-get-elpa-update (package &optional url)
+  "ask elpa to update given package"
+  (el-get-rmdir (concat (file-name-as-directory package-user-dir) package))
+  (package-install (intern-soft package)))
+
+;;
+;; http support
+;;
 (defun el-get-http-retrieve (package url)
   "Get an elisp file using `url-retrieve-synchronously'. 
 
@@ -184,8 +222,11 @@ Returns the feature provided if any"
       (make-directory pdir))
     (el-get-http-retrieve package url)))
 
+;;
+;; Common support bits
+;;
 (defun el-get-rmdir (package url)
-  "Just rm -fr the package directory"
+  "Just rm -rf the package directory. Follow symlinks."
   (error "Not Yet Implemented."))
 
 (defun el-get-build (package commands)
@@ -202,6 +243,9 @@ Returns the feature provided if any"
     (when (string= package (format "%s" (plist-get s :name)))
       (setq source s))))
 
+;;
+;; User Interface, Interactive part
+;;
 (defun el-get-read-package-name (action &optional package)
   "Ask user for a package name in minibuffer, with completion.
 
@@ -295,6 +339,9 @@ When given a package name, check for its existence"
     (message "el-get remove %s" package)
     (funcall remove package url)))
 
+;;
+;; User Interface, Non Interactive part
+;;
 (defun el-get ()
   "Check that all sources have been downloaded once, and init them as needed.
 
