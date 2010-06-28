@@ -218,26 +218,29 @@ When given a package name, check for its existence"
   (interactive)
   (let* ((package  (or package (el-get-read-package-name "Init" package)))
 	 (source   (el-get-package-def package))
+	 (method   (plist-get source :type))
 	 (feats    (plist-get source :features))
 	 (el-path  (or (plist-get source :load-path) '(".")))
 	 (infodir  (plist-get source :info)))
 
-    ;; append entries to load-path and Info-directory-list
-    (mapc (lambda (path) 
-	    (el-get-add-path-to-list package 'load-path path))
-	  (if (stringp el-path) (list el-path) el-path))
+    ;; ELPA will take care of load-path, Info-directory-list and features
+    (unless (eq method 'elpa)
+      ;; append entries to load-path and Info-directory-list
+      (mapc (lambda (path) 
+	      (el-get-add-path-to-list package 'load-path path))
+	    (if (stringp el-path) (list el-path) el-path))
 
-    (mapc (lambda (path) 
-	    (el-get-add-path-to-list package 'Info-directory-list path))
-	  (if (stringp infodir) (list infodir) infodir))
+      (mapc (lambda (path) 
+	      (el-get-add-path-to-list package 'Info-directory-list path))
+	    (if (stringp infodir) (list infodir) infodir))
 
-    ;; if a feature is provided, require it now
-    (when feats 
-      (mapc (lambda (feature) (message "require '%s" (require feature)))
-	    (if (symbolp feats) (list feats) feats)))
+      ;; if a feature is provided, require it now
+      (when feats 
+	(mapc (lambda (feature) (message "require '%s" (require feature)))
+	      (if (symbolp feats) (list feats) feats)))
 
-    ;; return the package
-    package))
+      ;; return the package
+      package)))
 
 (defun el-get-install (&optional package)
   "Install given package. Read the package name with completion when not given."
@@ -261,10 +264,8 @@ When given a package name, check for its existence"
     ;; consider building when sources are thus setup
     (el-get-build package commands)
 
-    ;; and finally init the package, unless it's an ELPA one
-    ;; ELPA will take care of load-path, Info-directory-list and features.
-    (unless (eq method 'elpa)
-      (el-get-init package))))
+    ;; and init
+    (el-get-init package)))
 
 (defun el-get-update (&optional package)
   "Update given package. Read the package name with completion when not given."
