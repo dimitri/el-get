@@ -89,8 +89,8 @@ An example of each package entry is following.
 (defun el-get-add-path-to-list (package list path)
   "(add-to-list list path) checking for path existence within
 given package directory."
-  (let ((pdir     (el-get-package-directory package))
-	(fullpath (concat (file-name-as-directory pdir) path)))
+  (let* ((pdir     (el-get-package-directory package))
+	 (fullpath (concat (file-name-as-directory pdir) path)))
     (unless (file-directory-p fullpath)
       (error "el-get could not find directory `%s' for package %s" path package))
     (add-to-list list fullpath)))
@@ -119,10 +119,6 @@ given package directory."
   (unless (file-executable-p magit-git-executable)
     (error "el-get-git-clone requires `magit-git-executable` to be set"))
 
-  (el-get-check-init)
-
-  (message "el-get %S" package)
-
   (let ((ret (shell-command-to-string 
 	      (concat "cd " el-get-dir
 		      " && " magit-git-executable " --no-pager clone " url))))
@@ -139,17 +135,29 @@ given package directory."
        (concat "cd " pdir
 	       " && " magit-git-executable " --no-pager pull " url)))))
 
+(defun el-get-sudo-shell-command-to-string (command) 
+  "Ask a password then use sudo, when required"
+  (let* ((sudo-test (shell-command-to-string "sudo echo el-get"))
+	 (sudo-pass (if (string= sudo-test "el-get\n")
+			nil
+		      (read-passwd "sudo password: "))))
+    (shell-command-to-string 
+     (concat (when sudo-pass (concat "echo " sudo-pass " | "))
+	     "sudo -S " command))))
+
 (defun el-get-apt-get-install (package &optional url)
   "apt-get install package, url is there for API compliance"
-  (shell-command-to-string 
-   (concat "sudo " el-get-apt-get " install " package))
+  ;; this can be somewhat chatty but I guess you want to know about it
+  (message "%S" (el-get-sudo-shell-command-to-string 
+		 (concat el-get-apt-get " install " package)))
   (run-hooks 'el-get-apt-get-install-hook)
   nil)
 
 (defun el-get-apt-get-remove (package &optional url)
   "apt-get remove package, url is there for API compliance"
-  (shell-command-to-string 
-   (concat "sudo " el-get-apt-get " remove " package)))
+  ;; this can be somewhat chatty but I guess you want to know about it
+  (message "%S" (el-get-sudo-shell-command-to-string 
+		 (concat el-get-apt-get " remove -y " package))))
 
 (defun el-get-elpa-install (package url)
   "ask elpa to install given package"
@@ -172,7 +180,8 @@ Returns the feature provided if any"
 (defun el-get-http-install (package url)
   "Dowload a single-file package over HTTP "
   (let ((pdir   (el-get-package-directory package)))
-    (make-directory pdir)
+    (unless (file-directory-p pdir)
+      (make-directory pdir))
     (el-get-http-retrieve package url)))
 
 (defun el-get-rmdir (package url)
@@ -187,51 +196,123 @@ Returns the feature provided if any"
       (message "%S" (shell-command-to-string 
 		     (concat "cd " pdir " && " c))))))
 
+(defun el-get-package-def (package)
+  "Return a single `el-get-sources' entry for given package"
+  (dolist (s el-get-sources source)
+    (when (string= package (format "%s" (plist-get s :name)))
+      (setq source s))))
+
+(defun el-get-read-package-name (action &optional package)
+  "Ask user for a package name in minibuffer, with completion.
+
+When given a package name, check for its existence"
+  (let ((plist 
+	  (mapcar (lambda (x) (format "%s" (plist-get x :name))) el-get-sources)))
+    (if package
+	(unless (member package plist)
+	  (error "el-get: can not find package name `%s' in `el-get-sources'" package))
+      (completing-read (format "%s package: " action) plist))))
+
+(defun el-get-init (&optional package)
+  "Care about load-path, Info-directory-list, and (require 'features)"
+  (interactive)
+  (let* ((package  (or package (el-get-read-package-name "Init" package)))
+	 (source   (el-get-package-def package))
+	 (feats    (plist-get source :features))
+	 (el-path  (or (plist-get source :load-path) '(".")))
+	 (infodir  (plist-get source :info)))
+
+    ;; append entries to load-path and Info-directory-list
+    (mapc (lambda (path) 
+	    (el-get-add-path-to-list package 'load-path path))
+	  (if (stringp el-path) (list el-path) el-path))
+
+    (mapc (lambda (path) 
+	    (el-get-add-path-to-list package 'Info-directory-list path))
+	  (if (stringp infodir) (list infodir) infodir))
+
+    ;; if a feature is provided, require it now
+    (when feats 
+      (mapc (lambda (feature) (message "require '%s" (require feature)))
+	    (if (symbolp feats) (list feats) feats)))
+
+    ;; return the package
+    package))
+
+(defun el-get-install (&optional package)
+  "Install given package. Read the package name with completion when not given."
+  (interactive)
+  (let* ((package (or package (el-get-read-package-name "Install" package)))
+	 (source   (el-get-package-def package))
+	 (method   (plist-get source :type))
+	 (install  (el-get-method method :install))
+	 (hooks    (el-get-method method :install-hook))
+	 (url      (plist-get source :url))
+	 (commands (plist-get source :build)))
+
+    ;; check we can install the package
+    (el-get-check-init)
+
+    ;; and install the package now
+    (message "el-get install %s" package)
+    (funcall install package url)
+    (run-hooks hooks)
+
+    ;; consider building when sources are thus setup
+    (el-get-build package commands)
+
+    ;; and finally init the package, unless it's an ELPA one
+    ;; ELPA will take care of load-path, Info-directory-list and features.
+    (unless (eq method 'elpa)
+      (el-get-init package))))
+
+(defun el-get-update (&optional package)
+  "Update given package. Read the package name with completion when not given."
+  (interactive)
+  (let* ((package (or package (el-get-read-package-name "Install" package)))
+	 (source   (el-get-package-def package))
+	 (method   (plist-get source :type))
+	 (update   (el-get-method method :update))
+	 (url      (plist-get source :url))
+	 (commands (plist-get source :build)))
+    ;; update the package now
+    (message "el-get update %s" package)
+    (funcall update package url)
+
+    ;; consider building when sources are thus setup
+    (el-get-build package commands)))
+
+(defun el-get-remove (&optional package)
+  "Remove given package. Read the package name with completion when not given."
+  (interactive)
+  (let* ((package (or package (el-get-read-package-name "Install" package)))
+	 (source   (el-get-package-def package))
+	 (method   (plist-get source :type))
+	 (remove   (el-get-method method :remove))
+	 (url      (plist-get source :url)))
+    ;; remove the package now
+    (message "el-get remove %s" package)
+    (funcall remove package url)))
+
 (defun el-get ()
   "Check that all sources have been downloaded once, and init them as needed.
 
 This will not update the sources by using `apt-get install' or
 `git pull', but it will ensure the sources have been installed
 and will set the load-path and Info-directory-list depending on
-the el-get-sources setup."
+the el-get-sources setup.
 
+el-get is also responsible for doing (require 'feature) for each
+and every feature declared in `el-get-sources', so that it's
+suitable for use in your emacs init script.
+"
   (mapcar 
    (lambda (source)
-     (let* ((package  (format "%s" (plist-get source :name)))
-	    (method   (plist-get source :type))
-	    (install  (el-get-method method :install))
-	    (hooks    (el-get-method method :install-hook))
-	    (url      (plist-get source :url))
-	    (feats    (plist-get source :features))
-	    (commands (plist-get source :build))
-	    (el-path  (or (plist-get source :load-path) '(".")))
-	    (infodir  (plist-get source :info))
-	    (pdir     (el-get-package-directory package)))
-       (message "%s: %s %s %s" package method url install)
-
-       (unless (el-get-package-exists-p package)
-	 (message "Initializing package %s with function %s" package install)
-	 (funcall install package url)
-	 (run-hooks hooks)
-
-	 ;; consider building when sources are thus setup
-	 (el-get-build package commands))
-
-       ;; append entries to load-path and Info-directory-list
-       (mapc (lambda (path) 
-	       (el-get-add-path-to-list package 'load-path path))
-	     (if (stringp el-path) (list el-path) el-path))
-       (mapc (lambda (path) 
-	       (el-get-add-path-to-list package 'Info-directory-list path))
-	     (if (stringp infodir) (list infodir) infodir))
-
-       ;; if a feature is provided, require it now
-       (when feats 
-	 (mapc (lambda (feature) (message "require '%s" (require feature)))
-	       (if (symbolp feats) (list feats) feats)))
-       
-       ;; return the list of checked packages
-       package))
+     (let* ((package  (format "%s" (plist-get source :name))))
+       ;; check if the package needs to be fetched (and built)
+       (if (el-get-package-exists-p package)
+	   (el-get-install package)
+	 (el-get-init package))))
    el-get-sources))
 
 (provide 'el-get)
