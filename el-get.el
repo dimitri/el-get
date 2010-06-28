@@ -168,9 +168,12 @@ given package directory."
 ;;
 ;; ELPA support
 ;;
-(defun el-get-elpa-symlink-package (package)
-  "ln -s ~/.emacs.d/elpa/<package> ~/.emacs.d/el-get/<package>"
-  (let* ((l
+(defun el-get-elpa-package-directory (package)
+  "return the directory where ELPA stores a package, or nil if
+package isn't currently installed by ELPA."
+  (let* ((pname (format "%s" package))  ; easy way to cope with symbols etc.
+
+	 (l
 	  ;; we use try-completion to find the realname of the directory
 	  ;; ELPA used, and this wants an alist, we trick ls -i -1 into
 	  ;; that.
@@ -180,19 +183,29 @@ given package directory."
 		    (concat "ls -i1 "
 			    (file-name-as-directory package-user-dir))))))
 
-	 (realname (concat (file-name-as-directory package-user-dir) 
-			   (try-completion package l))))
+	 (realname (try-completion pname l)))
 
+    (if realname (concat (file-name-as-directory package-user-dir) realname) 
+      realname)))
+
+(defun el-get-elpa-symlink-package (package)
+  "ln -s ~/.emacs.d/elpa/<package> ~/.emacs.d/el-get/<package>"
+  (let ((elpa-dir (el-get-elpa-package-directory package)))
     (unless (el-get-package-exists-p package)
       (shell-command
        (concat "cd " el-get-dir 
-	       " && ln -s \"" realname "\" \"" package "\"")))))
+	       " && ln -s \"" elpa-dir "\" \"" package "\"")))))
 
 (defun el-get-elpa-install (package &optional url)
   "ask elpa to install given package"
-  (package-install (intern-soft package))
-  (el-get-elpa-symlink-package package))
-
+  (let ((elpa-dir (el-get-elpa-package-directory package)))
+    (unless (and elpa-dir (file-directory-p elpa-dir))
+      (package-install (intern-soft package)))
+    ;; we symlink even when the package already is installed because it's
+    ;; not an error to have installed ELPA packages before using el-get, and
+    ;; that will register them
+    (el-get-elpa-symlink-package package)))
+  
 (defun el-get-elpa-update (package &optional url)
   "ask elpa to update given package"
   (el-get-rmdir (concat (file-name-as-directory package-user-dir) package))
