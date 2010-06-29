@@ -24,6 +24,7 @@
 
 (defvar el-get-git-clone-hook       nil "Hook run after git clone.")
 (defvar el-get-apt-get-install-hook nil "Hook run after apt-get install.")
+(defvar el-get-fink-install-hook    nil "Hook run after fink install.")
 (defvar el-get-elpa-install-hook    nil "Hook run after ELPA package install.")
 (defvar el-get-http-install-hook    nil "Hook run after http retrieve.")
 
@@ -36,6 +37,10 @@
 		       :install-hook el-get-apt-get-install-hook
 		       :update el-get-apt-get-install
 		       :remove el-get-apt-get-remove)
+    :fink    (:install el-get-fink-install 
+		       :install-hook el-get-fink-install-hook
+		       :update el-get-fink-install
+		       :remove el-get-fink-remove)
     :elpa    (:install el-get-elpa-install 
 		       :install-hook el-get-elpa-install-hook
 		       :update el-get-elpa-update
@@ -57,9 +62,11 @@ the named package action in the given method."
 (defvar el-get-dir "~/.emacs.d/el-get/"
   "Define where to fetch the packages.")
 
-(defvar el-get-apt-get (or (executable-find "apt-get")
-			   (executable-find "fink"))
+(defvar el-get-apt-get (executable-find "apt-get")
   "The apt-get executable.")
+
+(defvar el-get-fink (executable-find "fink")
+  "The fink executable.")
 
 (defvar el-get-sources nil
   "List of sources for packages.
@@ -201,6 +208,23 @@ given package directory."
   ;; this can be somewhat chatty but I guess you want to know about it
   (message "%S" (el-get-sudo-shell-command-to-string 
 		 (concat el-get-apt-get " remove -y " package))))
+
+;;
+;; fink support
+;;
+(defun el-get-fink-install (package &optional url)
+  "fink install package, url is there for API compliance"
+  ;; this can be somewhat chatty but I guess you want to know about it
+  (message "%S" (el-get-sudo-shell-command-to-string 
+		 (concat "echo Y | " el-get-fink " install " package)))
+  (run-hooks 'el-get-fink-install-hook)
+  nil)
+
+(defun el-get-fink-remove (package &optional url)
+  "fink remove package, url is there for API compliance"
+  ;; this can be somewhat chatty but I guess you want to know about it
+  (message "%S" (el-get-sudo-shell-command-to-string 
+		 (concat el-get-fink " remove -r " package))))
 
 ;;
 ;; ELPA support
