@@ -119,16 +119,19 @@ given package directory."
 
 (defun el-get-git-clone (package url)
   "clone the given package following the url"
-  (unless (file-executable-p magit-git-executable)
-    (error "el-get-git-clone requires `magit-git-executable` to be set"))
+  (let ((git-executable (if (file-executable-p magit-git-executable)
+			    magit-git-executable
+			  (executable-find "git"))))
+    (unless (file-executable-p git-executable)
+      (error "el-get-git-clone requires `magit-git-executable` to be set, or the binary `git' to be found in your PATH"))
 
-  (let ((ret (shell-command-to-string 
-	      (concat "cd " el-get-dir
-		      " && " magit-git-executable " --no-pager clone " url))))
+    (let ((ret 
+	   (shell-command-to-string 
+	    (concat "cd " el-get-dir " && " git-executable " --no-pager clone " url))))
 
-    (el-get-git-symlink-package package url)
-    (run-hooks 'el-get-git-clone-hook)
-    ret))
+      (el-get-git-symlink-package package url)
+      (run-hooks 'el-get-git-clone-hook)
+      ret)))
 
 (defun el-get-git-pull (package url)
   "git pull the package"
@@ -280,17 +283,21 @@ When given a package name, check for its existence"
 	 (el-path  (or (plist-get source :load-path) '(".")))
 	 (infodir  (plist-get source :info)))
 
-    ;; ELPA will take care of load-path, Info-directory-list and features
-    (unless (eq method 'elpa)
+    ;; apt-get and ELPA will take care of load-path, Info-directory-list
+    (unless (member method '(elpa apt-get))
       ;; append entries to load-path and Info-directory-list
       (mapc (lambda (path) 
 	      (el-get-add-path-to-list package 'load-path path))
 	    (if (stringp el-path) (list el-path) el-path))
 
+      (require 'info)
+      (info-initialize)
       (mapc (lambda (path) 
 	      (el-get-add-path-to-list package 'Info-directory-list path))
-	    (if (stringp infodir) (list infodir) infodir))
+	    (if (stringp infodir) (list infodir) infodir)))
 
+    ;; features, only ELPA will handle them on its own
+    (unless (eq method 'elpa)
       ;; if a feature is provided, require it now
       (when feats 
 	(mapc (lambda (feature) (message "require '%s" (require feature)))
