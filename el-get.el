@@ -194,7 +194,7 @@ given package directory."
 	 (sudo-pass (if (string= sudo-test "el-get\n")
 			nil
 		      (read-passwd "sudo password: "))))
-    (shell-command-to-string 
+    (shell-command-to-string
      (concat (when sudo-pass (concat "echo " sudo-pass " | "))
 	     "sudo -S " command))))
 
@@ -204,11 +204,19 @@ given package directory."
     (shell-command 
      (concat "cd " el-get-dir " && ln -s " debdir  " " package))))
 
+(defun el-get-apt-get-package-status (package)
+  "returns the package status from dpkg --get-selections"
+  (substring 
+   (shell-command-to-string 
+    (format "dpkg --get-selections %s | awk '{print $2}'" package)) 0 -1))
+
 (defun el-get-apt-get-install (package &optional url)
   "apt-get install package, url is there for API compliance"
   ;; this can be somewhat chatty but I guess you want to know about it
   (message "%S" (el-get-sudo-shell-command-to-string 
 		 (concat el-get-apt-get " install " package)))
+  (unless (string= (el-get-apt-get-package-status package) "install")
+    (error "Error: apt-get reports package %s status is not \"install\"" package))
   (el-get-apt-get-symlink package)
   (run-hooks 'el-get-apt-get-install-hook)
   nil)
