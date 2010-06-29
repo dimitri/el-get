@@ -208,7 +208,8 @@ given package directory."
   "returns the package status from dpkg --get-selections"
   (substring 
    (shell-command-to-string 
-    (format "dpkg --get-selections %s | awk '{print $2}'" package)) 0 -1))
+    (format
+     "dpkg -l %s| awk '/^ii/ && $2 = \"%s\" {print \"ok\"}'" package package)) 0 -1))
 
 (defun el-get-apt-get-install (package &optional url)
   "apt-get install package, url is there for API compliance"
