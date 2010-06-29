@@ -71,6 +71,11 @@ the named package action in the given method."
 (defvar el-get-fink (executable-find "fink")
   "The fink executable.")
 
+;; debian uses ginstall-info and it's compatible to fink's install-info on
+;; MacOSX, so:
+(defvar el-get-install-info (or (executable-find "ginstall-info")
+				(executable-find "install-info")))
+
 (defvar el-get-sources nil
   "List of sources for packages.
 
@@ -375,8 +380,9 @@ When given a package name, check for its existence"
 	;; add to Info-directory-list
 	(el-get-add-path-to-list package 'Info-directory-list infodir)
 	;; build the infodir entry, too
-	(el-get-build package
-		      `(,(format"ginstall-info %s.info dir" package)) infodir)))
+	(el-get-build
+	 package
+	 `(,(format "%s %s.info dir" el-get-install-info package)) infodir)))
 
     ;; features, only ELPA will handle them on its own
     (unless (eq method 'elpa)
