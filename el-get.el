@@ -6,16 +6,19 @@
 ;;
 ;; Author: Dimitri Fontaine <dim@tapoueh.org>
 ;; URL: http://www.emacswiki.org/emacs/el-get.el
-;; Version: 0.2
+;; Version: 0.3
 ;; Created: 2010-06-17
-;; Keywords: emacs elisp install elpa git apt-get debian
+;; Keywords: emacs package elisp install elpa git apt-get fink debian macosx
 ;; Licence: WTFPL, grab your copy here: http://sam.zoy.org/wtfpl/
 ;;
 ;; This file is NOT part of GNU Emacs.
 ;;
 ;; Install:
-;;  (require 'el-get)
-;;  then define your el-get-sources
+;;  1. Install ELPA, see http://tromey.com/elpa/install.html
+;;  2. (require 'el-get)
+;;  3. then define your el-get-sources
+;;  4. Use (el-get) from your .emacs or M-x el-get-install etc.
+;;
 
 (require 'package) ; that's ELPA
 
@@ -364,10 +367,10 @@ When given a package name, check for its existence"
       ;; if a feature is provided, require it now
       (when feats 
 	(mapc (lambda (feature) (message "require '%s" (require feature)))
-	      (if (symbolp feats) (list feats) feats)))
+	      (if (symbolp feats) (list feats) feats))))
 
       ;; return the package
-      package)))
+      package))
 
 (defun el-get-install (&optional package)
   "Install given package. Read the package name with completion when not given."
@@ -442,8 +445,8 @@ suitable for use in your emacs init script.
      (let* ((package  (format "%s" (plist-get source :name))))
        ;; check if the package needs to be fetched (and built)
        (if (el-get-package-exists-p package)
-	   (el-get-install package)
-	 (el-get-init package))))
+	   (el-get-init package)
+	 (el-get-install package))))
    el-get-sources))
 
 (provide 'el-get)
