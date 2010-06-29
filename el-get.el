@@ -198,11 +198,18 @@ given package directory."
      (concat (when sudo-pass (concat "echo " sudo-pass " | "))
 	     "sudo -S " command))))
 
+(defun el-get-apt-get-symlink (package)
+  "ln -s /usr/share/emacs/site-lisp/package ~/.emacs.d/el-get/package"
+  (let ((debdir (concat "/usr/share/emacs/site-lisp/" package)))
+    (shell-command 
+     (concat "cd " el-get-dir " && ln -s " debdir  " " package))))
+
 (defun el-get-apt-get-install (package &optional url)
   "apt-get install package, url is there for API compliance"
   ;; this can be somewhat chatty but I guess you want to know about it
   (message "%S" (el-get-sudo-shell-command-to-string 
 		 (concat el-get-apt-get " install " package)))
+  (el-get-apt-get-symlink package)
   (run-hooks 'el-get-apt-get-install-hook)
   nil)
 
