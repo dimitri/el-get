@@ -115,6 +115,11 @@ info
     need to C-x k your info buffer then C-h i again to be able to
     see the new menu entry.
 
+load
+
+    List of files to load, or a single file to load after having
+    installed the source but before `require'ing its features.
+
 features
 
     List of features el-get will `require' for you.
@@ -362,6 +367,7 @@ When given a package name, check for its existence"
   (let* ((package  (or package (el-get-read-package-name "Init" package)))
 	 (source   (el-get-package-def package))
 	 (method   (plist-get source :type))
+	 (loads    (plist-get source :load))
 	 (feats    (plist-get source :features))
 	 (el-path  (or (plist-get source :load-path) '(".")))
 	 (infodir  (plist-get source :info))
@@ -374,7 +380,8 @@ When given a package name, check for its existence"
 	      (el-get-add-path-to-list package 'load-path path))
 	    (if (stringp el-path) (list el-path) el-path))
 
-      (when (file-directory-p (concat (file-name-as-directory pdir) infodir))
+      (when (and infodir
+		 (file-directory-p (concat (file-name-as-directory pdir) infodir)))
 	(require 'info)
 	(info-initialize)
 	;; add to Info-directory-list
@@ -383,6 +390,16 @@ When given a package name, check for its existence"
 	(el-get-build
 	 package
 	 `(,(format "%s %s.info dir" el-get-install-info package)) infodir)))
+
+    ;; loads
+    (when loads
+      (mapc (lambda (file) 
+	      (let ((pfile (concat (file-name-as-directory pdir) file)))
+		(unless (file-exists-p pfile)
+		  (error "el-get could not find file '%s'" pfile))
+		(message "load '%s'" pfile)
+		(load pfile)))
+	    (if (stringp loads) (list loads) loads)))
 
     ;; features, only ELPA will handle them on its own
     (unless (eq method 'elpa)
