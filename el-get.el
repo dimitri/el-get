@@ -44,11 +44,13 @@
 		       :install-hook el-get-http-install-hook
 		       :update el-get-http-install
 		       :remove el-get-rmdir))
-  "Register methods that el-get can use to fetch and update a given package
+  "Register methods that el-get can use to fetch and update a given package.
 
-That should be a plist of method names whose properties is a list
-of 3 functions. The first one is the method to init the package,
-the second to update the package and the third to remove it."
+The methods list is a PLIST, each entry has a method name
+property which value is another PLIST, which must contain values
+for :install, :install-hook, :update and :remove
+properties. Those should be the elisp functions to call for doing
+the named package action in the given method."
   :type '(repeat (cons symbol function))
   :group 'el-get)
 
@@ -62,14 +64,46 @@ the second to update the package and the third to remove it."
 (defvar el-get-sources nil
   "List of sources for packages.
 
-An example of each package entry is following.
+Each source entry is a PLIST where the following properties are supported:
 
-	(:name 'bbdb
-	       :type git
-	       :url \"git://github.com/barak/BBDB.git\"
-	       :load-path '(\"./lisp\" \"./bits\")
-	       :info \"texinfo\"
-	       :build '(\"./configure\" \"make\"))")
+name
+
+    The name of the package. It can be different from the name of
+    the directory where the package is stored (after a `git
+    clone' for example, in which case a symlink will be created.
+
+type
+
+    The type of the package, currently el-get offers support for
+    `apt-get', `elpa', `git' and `http'. You can easily support
+    your own types here, see the variable `el-get-methods'.
+
+url
+
+    Where to fetch the package, only meaningful for `git' and `http' types.
+
+build
+
+    Your build recipe gets there, often it looks like (\"./configure\" \"make\")
+
+load-path
+
+    This should be a list of directories you want `el-get' to add
+    to your `load-path'.
+
+info
+
+    This string allows you to setup a directory where to find a
+    'package.info' file, and it will even run `ginstall-info' for
+    you to create the `dir' entry so that C-h i will be able to
+    list the newly installed documentation. Note that you might
+    need to C-x k your info buffer then C-h i again to be able to
+    see the new menu entry.
+
+features
+
+    List of features el-get will `require' for you.
+")
 
 (defun el-get-method (method-name action)
   "return the function to call for doing action (e.g. install) in given method"
@@ -245,13 +279,14 @@ Returns the feature provided if any"
   "Just rm -rf the package directory. Follow symlinks."
   (error "Not Yet Implemented."))
 
-(defun el-get-build (package commands)
+(defun el-get-build (package commands &optional subdir)
   "run each command from the package directory"
-  (let ((pdir   (el-get-package-directory package)))
+  (let* ((pdir   (el-get-package-directory package))
+	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir)))
     (dolist (c commands)
-      (message "el-get %s: cd %s && %s" package pdir c)
+      (message "el-get %s: cd %s && %s" package wdir c)
       (message "%S" (shell-command-to-string 
-		     (concat "cd " pdir " && " c))))))
+		     (concat "cd " wdir " && " c))))))
 
 (defun el-get-package-def (package)
   "Return a single `el-get-sources' entry for given package"
@@ -281,7 +316,8 @@ When given a package name, check for its existence"
 	 (method   (plist-get source :type))
 	 (feats    (plist-get source :features))
 	 (el-path  (or (plist-get source :load-path) '(".")))
-	 (infodir  (plist-get source :info)))
+	 (infodir  (plist-get source :info))
+	 (pdir     (el-get-package-directory package)))
 
     ;; apt-get and ELPA will take care of load-path, Info-directory-list
     (unless (member method '(elpa apt-get))
@@ -290,11 +326,14 @@ When given a package name, check for its existence"
 	      (el-get-add-path-to-list package 'load-path path))
 	    (if (stringp el-path) (list el-path) el-path))
 
-      (require 'info)
-      (info-initialize)
-      (mapc (lambda (path) 
-	      (el-get-add-path-to-list package 'Info-directory-list path))
-	    (if (stringp infodir) (list infodir) infodir)))
+      (when (file-directory-p (concat (file-name-as-directory pdir) infodir))
+	(require 'info)
+	(info-initialize)
+	;; add to Info-directory-list
+	(el-get-add-path-to-list package 'Info-directory-list infodir)
+	;; build the infodir entry, too
+	(el-get-build package
+		      `(,(format"ginstall-info %s.info dir" package)) infodir)))
 
     ;; features, only ELPA will handle them on its own
     (unless (eq method 'elpa)
