@@ -167,7 +167,10 @@ given package directory."
 ;;
 (defun el-get-git-dirname (url)
   "Get dirname from url"
-  (car (split-string (substring url (string-match "[^/]+$" url)) "[.]")))
+  (mapconcat 
+   'identity
+   (butlast (split-string (substring url (string-match "[^/]+$" url)) "[.]") 1)
+   "."))
 
 (defun el-get-git-symlink-package (package url)
   "The name we give to the package can be different from its main directory, ln -s"
