@@ -68,8 +68,14 @@ the named package action in the given method."
 (defvar el-get-apt-get (executable-find "apt-get")
   "The apt-get executable.")
 
+(defvar el-get-apt-get-base "/usr/share/emacs/site-lisp"
+  "Where to link the el-get symlink to, /<package> will get appended.")
+
 (defvar el-get-fink (executable-find "fink")
   "The fink executable.")
+
+(defvar el-get-fink-base "/sw/share/doc"
+  "Where to link the el-get symlink to, /<package> will get appended.")
 
 ;; debian uses ginstall-info and it's compatible to fink's install-info on
 ;; MacOSX, so:
@@ -208,9 +214,9 @@ given package directory."
      (concat (when sudo-pass (concat "echo " sudo-pass " | "))
 	     "sudo -S " command))))
 
-(defun el-get-apt-get-symlink (package)
+(defun el-get-apt-get-symlink (basedir package)
   "ln -s /usr/share/emacs/site-lisp/package ~/.emacs.d/el-get/package"
-  (let ((debdir (concat "/usr/share/emacs/site-lisp/" package)))
+  (let ((debdir (concat (file-name-as-directory basedir) package)))
     (shell-command 
      (concat "cd " el-get-dir " && ln -s " debdir  " " package))))
 
@@ -228,7 +234,7 @@ given package directory."
 		 (concat el-get-apt-get " install " package)))
   (unless (string= (el-get-apt-get-package-status package) "install")
     (error "Error: apt-get reports package %s status is not \"install\"" package))
-  (el-get-apt-get-symlink package)
+  (el-get-apt-get-symlink el-get-apt-get-base package)
   (run-hooks 'el-get-apt-get-install-hook)
   nil)
 
@@ -245,7 +251,10 @@ given package directory."
   "fink install package, url is there for API compliance"
   ;; this can be somewhat chatty but I guess you want to know about it
   (message "%S" (el-get-sudo-shell-command-to-string 
-		 (concat "echo Y | " el-get-fink " install " package)))
+		 (concat el-get-fink " install " package)))
+  (unless (string= (el-get-apt-get-package-status package) "ok")
+    (error "Error: fink reports package %s status is not \"ok\"" package))
+  (el-get-apt-get-symlink el-get-fink-base package)
   (run-hooks 'el-get-fink-install-hook)
   nil)
 
