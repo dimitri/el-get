@@ -392,16 +392,27 @@ When given a package name, check for its existence"
 	      (el-get-add-path-to-list package 'load-path path))
 	    (if (stringp el-path) (list el-path) el-path))
 
-      (when (and infodir
-		 (file-directory-p (concat (file-name-as-directory pdir) infodir)))
-	(require 'info)
-	(info-initialize)
-	;; add to Info-directory-list
-	(el-get-add-path-to-list package 'Info-directory-list infodir)
-	;; build the infodir entry, too
-	(el-get-build
-	 package
-	 `(,(format "%s %s.info dir" el-get-install-info package)) infodir)))
+      (let* ((infodir-abs-conf (concat (file-name-as-directory pdir) infodir))
+	     (infodir-abs (if (file-directory-p infodir-abs-conf)
+			      infodir-abs-conf
+			    (file-name-directory infodir-abs-conf)))
+	     (infodir-rel (if (file-directory-p infodir-abs-conf)
+			      infodir
+			    (file-name-directory infodir)))
+	     (infofile (if (and (file-exists-p infodir-abs-conf)
+				(not (file-directory-p infodir-abs-conf)))
+			   infodir-abs-conf
+			 (concat (file-name-as-directory infodir-abs) package))))
+
+	(when (and infodir (file-directory-p infodir-abs))
+	  (require 'info)
+	  (info-initialize)
+	  ;; add to Info-directory-list
+	  (el-get-add-path-to-list package 'Info-directory-list infodir-rel)
+	  ;; build the infodir entry, too
+	  (el-get-build
+	   package
+	   `(,(format "%s %s.info dir" el-get-install-info infofile)) infodir-rel))))
 
     ;; loads
     (when loads
