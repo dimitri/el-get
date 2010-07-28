@@ -115,11 +115,12 @@ load-path
 info
 
     This string allows you to setup a directory where to find a
-    'package.info' file, and it will even run `ginstall-info' for
-    you to create the `dir' entry so that C-h i will be able to
-    list the newly installed documentation. Note that you might
-    need to C-x k your info buffer then C-h i again to be able to
-    see the new menu entry.
+    'package.info' file, or a path/to/whatever.info file. It will
+    even run `ginstall-info' for you to create the `dir' entry so
+    that C-h i will be able to list the newly installed
+    documentation. Note that you might need to kill (C-x k) your
+    info buffer then C-h i again to be able to see the new menu
+    entry.
 
 load
 
