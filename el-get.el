@@ -20,7 +20,7 @@
 ;;  4. Use (el-get) from your .emacs or M-x el-get-install etc.
 ;;
 
-(require 'package) ; that's ELPA
+(require 'package nil t) ; that's ELPA, but you can use el-get to install it
 
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
@@ -131,6 +131,7 @@ features
     List of features el-get will `require' for you.
 ")
 
+
 (defun el-get-method (method-name action)
   "return the function to call for doing action (e.g. install) in given method"
   (let* ((method  (intern-soft (concat ":" (format "%s" method-name))))
@@ -162,24 +163,10 @@ given package directory."
     (or (file-directory-p pdir)
 	(file-symlink-p   pdir))))
 
+
 ;;
 ;; git support
 ;;
-(defun el-get-git-dirname (url)
-  "Get dirname from url"
-  (mapconcat 
-   'identity
-   (butlast (split-string (substring url (string-match "[^/]+$" url)) "[.]") 1)
-   "."))
-
-(defun el-get-git-symlink-package (package url)
-  "The name we give to the package can be different from its main directory, ln -s"
-  (let ((gitdir (el-get-git-dirname url)))
-    (unless (el-get-package-exists-p package)
-      (shell-command 
-       (concat "cd " el-get-dir 
-	       " && ln -s \"" gitdir "\" \"" package "\"")))))
-
 (defun el-get-git-clone (package url)
   "clone the given package following the url"
   (let ((git-executable (if (file-executable-p magit-git-executable)
@@ -190,9 +177,8 @@ given package directory."
 
     (let ((ret 
 	   (shell-command-to-string 
-	    (concat "cd " el-get-dir " && " git-executable " --no-pager clone " url))))
-
-      (el-get-git-symlink-package package url)
+	    (format "cd %s && %s --no-pager clone %s %s" 
+		    el-get-dir git-executable url package))))
       (run-hooks 'el-get-git-clone-hook)
       ret)))
 
@@ -204,6 +190,7 @@ given package directory."
        (concat "cd " pdir
 	       " && " magit-git-executable " --no-pager pull " url)))))
 
+
 ;;
 ;; apt-get support
 ;;
@@ -247,6 +234,7 @@ given package directory."
   (message "%S" (el-get-sudo-shell-command-to-string 
 		 (concat el-get-apt-get " remove -y " package))))
 
+
 ;;
 ;; fink support
 ;;
@@ -267,6 +255,7 @@ given package directory."
   (message "%S" (el-get-sudo-shell-command-to-string 
 		 (concat el-get-fink " remove -r " package))))
 
+
 ;;
 ;; ELPA support
 ;;
@@ -313,6 +302,7 @@ package isn't currently installed by ELPA."
   (el-get-rmdir (concat (file-name-as-directory package-user-dir) package))
   (package-install (intern-soft package)))
 
+
 ;;
 ;; http support
 ;;
@@ -359,6 +349,7 @@ Returns the feature provided if any"
     (when (string= package (format "%s" (plist-get s :name)))
       (setq source s))))
 
+
 ;;
 ;; User Interface, Interactive part
 ;;
@@ -476,6 +467,7 @@ When given a package name, check for its existence"
     (message "el-get remove %s" package)
     (funcall remove package url)))
 
+
 ;;
 ;; User Interface, Non Interactive part
 ;;
