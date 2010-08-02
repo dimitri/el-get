@@ -26,6 +26,7 @@
   :group 'convenience)
 
 (defvar el-get-git-clone-hook       nil "Hook run after git clone.")
+(defvar el-get-git-svn-clone-hook   nil "Hook run after git svn clone.")
 (defvar el-get-apt-get-install-hook nil "Hook run after apt-get install.")
 (defvar el-get-fink-install-hook    nil "Hook run after fink install.")
 (defvar el-get-elpa-install-hook    nil "Hook run after ELPA package install.")
@@ -35,6 +36,10 @@
   '(:git     (:install el-get-git-clone 
 		       :install-hook el-get-git-clone-hook
 		       :update el-get-git-pull 
+		       :remove el-get-rmdir)
+    :git-svn (:install el-get-git-svn-clone
+		       :install-hook el-get-git-svn-clone-hook
+		       :update el-get-git-svn-update
 		       :remove el-get-rmdir)
     :apt-get (:install el-get-apt-get-install 
 		       :install-hook el-get-apt-get-install-hook
@@ -190,6 +195,73 @@ given package directory."
       (shell-command-to-string 
        (concat "cd " pdir
 	       " && " magit-git-executable " --no-pager pull " url)))))
+
+
+;;
+;; git-svn support
+;;
+(defun el-get-git-svn-clone-sentinel (proc change)
+  "Sentinel supervising \"git svn clone\" command."
+  (when (eq (process-status proc) 'exit)
+    (message (format "Package %s installed." (process-get proc :package)))
+    (run-hooks 'el-get-git-svn-clone-hook)
+    (kill-buffer (process-buffer proc))))
+
+(defun el-get-git-svn-clone (package url)
+  "Clone the given svn PACKAGE following the URL using git."
+  (let ((git-executable (if (file-executable-p magit-git-executable)
+			    magit-git-executable
+			  (executable-find "git")))
+	(default-directory el-get-dir)
+	git-svn-clone-process)
+    (unless (file-executable-p git-executable)
+      (error "el-get-git-svn-clone requires `magit-git-executable` to be set, or the binary `git' to be found in your PATH"))
+    (setq git-svn-clone-process
+	  (start-process (format "* git svn clone %s *" url)
+			 (format "* git svn clone %s *" url)
+			 git-executable "--no-pager" "svn" "clone" url package))
+    (process-put git-svn-clone-process :package package)
+    (set-process-sentinel git-svn-clone-process 'el-get-git-svn-clone-sentinel)))
+
+(defun el-get-git-svn-rebase-sentinel (proc change)
+  "Sentinel supervising \"git svn rebase\" command."
+  (when (eq (process-status proc) 'exit)
+    (message (format "Package %s rebased" (process-get proc :package)))
+    (kill-buffer (process-buffer proc))))
+
+(defun el-get-git-svn-fetch-sentinel (proc change)
+  "Sentinel supervising \"git svn fetch\" command."
+  (when (eq (process-status proc) 'exit)
+    (message (format "Package %s fetched" (process-get proc :package)))
+    (let* ((default-directory (process-get proc :pdir))
+	  (url (process-get proc :url))
+	  (git-svn-rebase-process
+	   (start-process (format "* git svn rebase %s *" url)
+			  (format "* git svn rebase %s *" url)
+			  (process-get proc :git-executable)
+			  "--no-pager" "svn" "rebase")))
+      (process-put git-svn-rebase-process :package (process-get proc :package))
+      (kill-buffer (process-buffer proc))
+      (set-process-sentinel git-svn-rebase-process 'el-get-git-svn-rebase-sentinel))))
+
+(defun el-get-git-svn-update (package url)
+  "Update PACKAGE using git-svn. URL is given for compatibility reasons."
+  (let ((default-directory (el-get-package-directory package))
+	(git-executable (if (file-executable-p magit-git-executable)
+			    magit-git-executable
+			  (executable-find "git")))
+	git-svn-fetch-process)
+    (unless (file-executable-p git-executable)
+      (error "el-get-git-svn-pull requires `magit-git-executable` to be set, or the binary `git' to be found in your PATH"))
+    (setq git-svn-fetch-process
+	  (start-process (format "* git svn fetch %s *" url)
+			 (format "* git svn fetch %s *" url)
+			 git-executable "--no-pager" "svn" "fetch"))
+    (process-put git-svn-fetch-process :package package)
+    (process-put git-svn-fetch-process :git-executable git-executable)
+    (process-put git-svn-fetch-process :pdir default-directory)
+    (process-put git-svn-fetch-process :url url)
+    (set-process-sentinel git-svn-fetch-process 'el-get-git-svn-fetch-sentinel)))
 
 
 ;;
