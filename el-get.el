@@ -171,22 +171,97 @@ given package directory."
 
 
 ;;
+;; call-process-list utility, to do same as bash && feature
+;;
+(defun el-get-call-process-list-sentinel (proc change)
+  "When proc has exited and was successful, chain next command"
+  (when (eq (process-status proc) 'exit)
+    (let ((status  (process-exit-status proc))
+	  (cname   (process-get proc :command-name))
+	  (message (process-get proc :message))
+	  (errorm  (process-get proc :error))
+	  (next    (process-get proc :el-get-call-process-list)))
+      (if (not (eq 0 status))
+	  (error "el-get: error running %s: %s" cname errorm)
+	(message "el-get: %s: %s" cname message))
+      
+      (kill-buffer (process-buffer proc))
+      (when next (el-get-call-process-list next)))))
+
+(defun el-get-call-process-list (commands)
+  "run each command one after the other, in order, stopping at
+first error.
+
+commands should be a list of plists with at least the following
+properties:
+
+:default-directory
+
+   default-directory from where to start the command
+
+:command-name
+
+   Name of the command to start, gives the name of the Emacs subprocess.
+
+:buffer-name
+
+   Name of the buffer associated with the command.
+
+:program
+
+   The program to start
+
+:args
+
+   The list of arguments for the program to start
+
+:message
+
+   The message to send upon success
+
+:error
+
+   The error to send upon failure
+
+Any other property will get put into the process object.
+"
+  (let* ((c       (car commands))
+	 (git     (el-get-git-executable))
+	 (cdir    (plist-get c :default-directory))
+	 (default-directory (if cdir cdir default-directory))
+	 (cname   (plist-get c :command-name))
+	 (cbuf    (plist-get c :buffer-name))
+	 (program (plist-get c :program))
+	 (args    (plist-get c :args))
+	 (proc    (apply 'start-process cname cbuf program args)))
+
+    ;; add the properties to the process, then set the sentinel
+    (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
+    (process-put proc :el-get-call-process-list (cdr commands))
+    (set-process-sentinel proc 'el-get-call-process-list-sentinel)))
+
+
+;;
 ;; git support
 ;;
-(defun el-get-git-clone (package url)
-  "clone the given package following the url"
+(defun el-get-git-executable ()
+  "return git executable to use, or signal an error when not found"
   (let ((git-executable (if (file-executable-p magit-git-executable)
 			    magit-git-executable
 			  (executable-find "git"))))
     (unless (file-executable-p git-executable)
       (error "el-get-git-clone requires `magit-git-executable` to be set, or the binary `git' to be found in your PATH"))
+    git-executable))
 
-    (let ((ret 
-	   (shell-command-to-string 
-	    (format "cd %s && %s --no-pager clone %s %s" 
-		    el-get-dir git-executable url package))))
-      (run-hooks 'el-get-git-clone-hook)
-      ret)))
+(defun el-get-git-clone (package url)
+  "clone the given package following the url"
+  (let* ((git-executable (el-get-git-executable))
+	 (ret 
+	  (shell-command-to-string 
+	   (format "cd %s && %s --no-pager clone %s %s" 
+		   el-get-dir git-executable url package))))
+    (run-hooks 'el-get-git-clone-hook)
+    ret))
 
 (defun el-get-git-pull (package url)
   "git pull the package"
@@ -200,69 +275,50 @@ given package directory."
 ;;
 ;; git-svn support
 ;;
-(defun el-get-git-svn-clone-sentinel (proc change)
-  "Sentinel supervising \"git svn clone\" command."
-  (when (eq (process-status proc) 'exit)
-    (message (format "Package %s installed." (process-get proc :package)))
-    (run-hooks 'el-get-git-svn-clone-hook)
-    (kill-buffer (process-buffer proc))))
-
 (defun el-get-git-svn-clone (package url)
   "Clone the given svn PACKAGE following the URL using git."
-  (let ((git-executable (if (file-executable-p magit-git-executable)
-			    magit-git-executable
-			  (executable-find "git")))
+  (let ((git-executable (el-get-git-executable))
 	(default-directory el-get-dir)
-	git-svn-clone-process)
-    (unless (file-executable-p git-executable)
-      (error "el-get-git-svn-clone requires `magit-git-executable` to be set, or the binary `git' to be found in your PATH"))
-    (setq git-svn-clone-process
-	  (start-process (format "* git svn clone %s *" url)
-			 (format "* git svn clone %s *" url)
-			 git-executable "--no-pager" "svn" "clone" url package))
-    (process-put git-svn-clone-process :package package)
-    (set-process-sentinel git-svn-clone-process 'el-get-git-svn-clone-sentinel)))
+	(name (format "*git svn clone %s*" package))
+	(ok   (format "Package %s installed." package))
+	(ko   (format "Could not install package %s." package)))
 
-(defun el-get-git-svn-rebase-sentinel (proc change)
-  "Sentinel supervising \"git svn rebase\" command."
-  (when (eq (process-status proc) 'exit)
-    (message (format "Package %s rebased" (process-get proc :package)))
-    (kill-buffer (process-buffer proc))))
-
-(defun el-get-git-svn-fetch-sentinel (proc change)
-  "Sentinel supervising \"git svn fetch\" command."
-  (when (eq (process-status proc) 'exit)
-    (message (format "Package %s fetched" (process-get proc :package)))
-    (let* ((default-directory (process-get proc :pdir))
-	  (url (process-get proc :url))
-	  (git-svn-rebase-process
-	   (start-process (format "* git svn rebase %s *" url)
-			  (format "* git svn rebase %s *" url)
-			  (process-get proc :git-executable)
-			  "--no-pager" "svn" "rebase")))
-      (process-put git-svn-rebase-process :package (process-get proc :package))
-      (kill-buffer (process-buffer proc))
-      (set-process-sentinel git-svn-rebase-process 'el-get-git-svn-rebase-sentinel))))
+    (message "el-get: %s: git svn clone %s" package url)
+    (el-get-call-process-list `((:command-name ,name
+					       :buffer-name ,name
+					       :default-directory ,el-get-dir
+					       :program ,git-executable
+					       :args ("svn" "clone" ,url)
+					       :message ,ok
+					       :error ,ko)))))
 
 (defun el-get-git-svn-update (package url)
   "Update PACKAGE using git-svn. URL is given for compatibility reasons."
   (let ((default-directory (el-get-package-directory package))
-	(git-executable (if (file-executable-p magit-git-executable)
-			    magit-git-executable
-			  (executable-find "git")))
-	git-svn-fetch-process)
-    (unless (file-executable-p git-executable)
-      (error "el-get-git-svn-pull requires `magit-git-executable` to be set, or the binary `git' to be found in your PATH"))
-    (setq git-svn-fetch-process
-	  (start-process (format "* git svn fetch %s *" url)
-			 (format "* git svn fetch %s *" url)
-			 git-executable "--no-pager" "svn" "fetch"))
-    (process-put git-svn-fetch-process :package package)
-    (process-put git-svn-fetch-process :git-executable git-executable)
-    (process-put git-svn-fetch-process :pdir default-directory)
-    (process-put git-svn-fetch-process :url url)
-    (set-process-sentinel git-svn-fetch-process 'el-get-git-svn-fetch-sentinel)))
+	(git-executable (el-get-git-executable))
+	(f-name (format "*git svn fetch %s*" package))
+	(f-ok   (format "Fetched package %s." package))
+	(f-ko   (format "Could not fetch package %s." package))
+	(r-name (format "*git svn rebase %s*" package))
+	(r-ok   (format "Rebased package %s." package))
+	(r-ko   (format "Could not rebase package %s." package)))
 
+    (el-get-call-process-list 
+     `((:command-name ,f-name
+		      :buffer-name ,f-name
+		      :default-directory ,el-get-dir
+		      :program ,git-executable
+		      :args ("--no-pager" "svn" "fetch")
+		      :message ,f-ok
+		      :error ,f-ko)
+       
+       (:command-name ,r-name
+		      :buffer-name ,r-name
+		      :default-directory ,el-get-dir
+		      :program ,git-executable
+		      :args ("--no-pager" "svn" "rebase")
+		      :message ,r-ok
+		      :error ,r-ko)))))
 
 ;;
 ;; apt-get support
