@@ -157,7 +157,7 @@ features
   "(add-to-list list path) checking for path existence within
 given package directory."
   (let* ((pdir     (el-get-package-directory package))
-	 (fullpath (concat (file-name-as-directory pdir) path)))
+	 (fullpath (expand-file-name (concat (file-name-as-directory pdir) path))))
     (unless (file-directory-p fullpath)
       (error "el-get could not find directory `%s' for package %s" path package))
     (add-to-list list fullpath)))
