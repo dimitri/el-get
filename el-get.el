@@ -20,6 +20,7 @@
 ;;  4. Use (el-get) from your .emacs or M-x el-get-install etc.
 ;;
 
+(require 'dired)
 (require 'package nil t) ; that's ELPA, but you can use el-get to install it
 
 (defgroup el-get nil "el-get customization group"
@@ -461,7 +462,7 @@ Returns the feature provided if any"
 ;;
 (defun el-get-rmdir (package url)
   "Just rm -rf the package directory. Follow symlinks."
-  (error "Not Yet Implemented."))
+  (dired-delete-file (el-get-package-directory package) 'always))
 
 (defun el-get-build (package commands &optional subdir)
   "run each command from the package directory"
