@@ -182,17 +182,21 @@ given package directory."
 	  (cbuf    (process-get proc :buffer-name))
 	  (message (process-get proc :message))
 	  (errorm  (process-get proc :error))
+	  (package (process-get proc :el-get-package))
+	  (final-f (process-get proc :el-get-final-func))
 	  (next    (process-get proc :el-get-call-process-list)))
       (if (not (eq 0 status))
 	  (progn
 	    (set-window-buffer (selected-window) cbuf)
-	    (error "el-get: error running %s: %s" cname errorm))
-	(message "el-get: %s: %s" cname message))
+	    (error "el-get: %s" cname errorm))
+	(message "el-get: %s" message))
       
       (when cbuf (kill-buffer cbuf))
-      (when next (el-get-call-process-list next)))))
+      (if next
+	  (el-get-call-process-list package next final-f)
+	(funcall final-f package)))))
 
-(defun el-get-call-process-list (commands)
+(defun el-get-call-process-list (package commands final-func)
   "run each command one after the other, in order, stopping at
 first error.
 
@@ -242,6 +246,8 @@ Any other property will get put into the process object.
 
     ;; add the properties to the process, then set the sentinel
     (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
+    (process-put proc :el-get-package package)
+    (process-put proc :el-get-final-func final-func)
     (process-put proc :el-get-call-process-list (cdr commands))
     (set-process-sentinel proc 'el-get-call-process-list-sentinel)))
 
@@ -282,24 +288,25 @@ Any other property will get put into the process object.
 ;;
 ;; git-svn support
 ;;
-(defun el-get-git-svn-clone (package url)
+(defun el-get-git-svn-clone (package url post-install-fun)
   "Clone the given svn PACKAGE following the URL using git."
   (let ((git-executable (el-get-git-executable))
-	(pdir (el-get-package-directory package))
 	(name (format "*git svn clone %s*" package))
 	(ok   (format "Package %s installed." package))
 	(ko   (format "Could not install package %s." package)))
 
     (el-get-call-process-list 
+     package
      `((:command-name ,name
 		      :buffer-name ,name
-		      :default-directory ,pdir
+		      :default-directory ,el-get-dir
 		      :program ,git-executable
 		      :args ( "--no-pager" "svn" "clone" ,url ,package)
 		      :message ,ok
-		      :error ,ko)))))
+		      :error ,ko))
+     post-install-fun)))
 
-(defun el-get-git-svn-update (package url)
+(defun el-get-git-svn-update (package url post-update-fun)
   "Update PACKAGE using git-svn. URL is given for compatibility reasons."
   (let ((git-executable (el-get-git-executable))
 	(pdir   (el-get-package-directory package))
@@ -310,7 +317,8 @@ Any other property will get put into the process object.
 	(r-ok   (format "Rebased package %s." package))
 	(r-ko   (format "Could not rebase package %s." package)))
 
-    (el-get-call-process-list 
+    (el-get-call-process-list
+     package
      `((:command-name ,f-name
 		      :buffer-name ,f-name
 		      :default-directory ,pdir
@@ -325,7 +333,9 @@ Any other property will get put into the process object.
 		      :program ,git-executable
 		      :args ("--no-pager" "svn" "rebase")
 		      :message ,r-ok
-		      :error ,r-ko)))))
+		      :error ,r-ko))
+     post-update-fun)))
+
 
 ;;
 ;; apt-get support
@@ -561,6 +571,18 @@ When given a package name, check for its existence"
       ;; return the package
       package))
 
+(defun el-get-post-install (package)
+  "Post install a package. This will get run by a sentinel."
+  (let* ((source   (el-get-package-def package))
+	 (hooks    (el-get-method (plist-get source :type) :install-hook))
+	 (commands (plist-get source :build)))
+    ;; post-install is the right place to run install-hook
+    (run-hooks hooks)
+    ;; consider building when sources are thus setup
+    (el-get-build package commands)
+    ;; and init
+    (el-get-init package)))
+
 (defun el-get-install (&optional package)
   "Install given package. Read the package name with completion when not given."
   (interactive)
@@ -568,23 +590,20 @@ When given a package name, check for its existence"
 	 (source   (el-get-package-def package))
 	 (method   (plist-get source :type))
 	 (install  (el-get-method method :install))
-	 (hooks    (el-get-method method :install-hook))
-	 (url      (plist-get source :url))
-	 (commands (plist-get source :build)))
+	 (url      (plist-get source :url)))
 
     ;; check we can install the package
     (el-get-check-init)
 
     ;; and install the package now
     (message "el-get install %s" package)
-    (funcall install package url)
-    (run-hooks hooks)
+    (funcall install package url 'el-get-post-install)))
 
-    ;; consider building when sources are thus setup
-    (el-get-build package commands)
-
-    ;; and init
-    (el-get-init package)))
+(defun el-get-post-update (package)
+  "Post update a package. This will get run by a sentinel."
+  (let* ((source   (el-get-package-def package))
+	 (commands (plist-get (plist-get source :type) :build)))
+    (el-get-build package commands)))
 
 (defun el-get-update (&optional package)
   "Update given package. Read the package name with completion when not given."
@@ -597,10 +616,7 @@ When given a package name, check for its existence"
 	 (commands (plist-get source :build)))
     ;; update the package now
     (message "el-get update %s" package)
-    (funcall update package url)
-
-    ;; consider building when sources are thus setup
-    (el-get-build package commands)))
+    (funcall update package url 'el-get-post-update)))
 
 (defun el-get-remove (&optional package)
   "Remove given package. Read the package name with completion when not given."
