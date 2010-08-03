@@ -630,6 +630,13 @@ When given a package name, check for its existence"
     (message "el-get remove %s" package)
     (funcall remove package url)))
 
+(defun el-get-cd (&optional package)
+  "Open dired in the package directory."
+  (interactive)
+  (let* ((package (or package (el-get-read-package-name "Install" package)))
+	 (pdir    (el-get-package-directory package)))
+    (dired pdir)))
+
 
 ;;
 ;; User Interface, Non Interactive part
