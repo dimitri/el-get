@@ -179,6 +179,7 @@ given package directory."
   (when (eq (process-status proc) 'exit)
     (let ((status  (process-exit-status proc))
 	  (cname   (process-get proc :command-name))
+	  (cbuf    (process-get proc :buffer-name))
 	  (message (process-get proc :message))
 	  (errorm  (process-get proc :error))
 	  (next    (process-get proc :el-get-call-process-list)))
@@ -186,7 +187,7 @@ given package directory."
 	  (error "el-get: error running %s: %s" cname errorm)
 	(message "el-get: %s: %s" cname message))
       
-      (kill-buffer (process-buffer proc))
+      (when cbuf (kill-buffer cbuf))
       (when next (el-get-call-process-list next)))))
 
 (defun el-get-call-process-list (commands)
@@ -227,13 +228,12 @@ properties:
 Any other property will get put into the process object.
 "
   (let* ((c       (car commands))
-	 (git     (el-get-git-executable))
 	 (cdir    (plist-get c :default-directory))
-	 (default-directory (if cdir cdir default-directory))
 	 (cname   (plist-get c :command-name))
 	 (cbuf    (plist-get c :buffer-name))
 	 (program (plist-get c :program))
 	 (args    (plist-get c :args))
+	 (default-directory (if cdir cdir default-directory))
 	 (proc    (apply 'start-process cname cbuf program args)))
 
     ;; add the properties to the process, then set the sentinel
@@ -279,24 +279,24 @@ Any other property will get put into the process object.
 (defun el-get-git-svn-clone (package url)
   "Clone the given svn PACKAGE following the URL using git."
   (let ((git-executable (el-get-git-executable))
-	(default-directory el-get-dir)
+	(pdir (el-get-package-directory package))
 	(name (format "*git svn clone %s*" package))
 	(ok   (format "Package %s installed." package))
 	(ko   (format "Could not install package %s." package)))
 
-    (message "el-get: %s: git svn clone %s" package url)
-    (el-get-call-process-list `((:command-name ,name
-					       :buffer-name ,name
-					       :default-directory ,el-get-dir
-					       :program ,git-executable
-					       :args ("svn" "clone" ,url)
-					       :message ,ok
-					       :error ,ko)))))
+    (el-get-call-process-list 
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :default-directory ,pdir
+		      :program ,git-executable
+		      :args ( "--no-pager" "svn" "clone" ,url ,package)
+		      :message ,ok
+		      :error ,ko)))))
 
 (defun el-get-git-svn-update (package url)
   "Update PACKAGE using git-svn. URL is given for compatibility reasons."
-  (let ((default-directory (el-get-package-directory package))
-	(git-executable (el-get-git-executable))
+  (let ((git-executable (el-get-git-executable))
+	(pdir   (el-get-package-directory package))
 	(f-name (format "*git svn fetch %s*" package))
 	(f-ok   (format "Fetched package %s." package))
 	(f-ko   (format "Could not fetch package %s." package))
@@ -307,7 +307,7 @@ Any other property will get put into the process object.
     (el-get-call-process-list 
      `((:command-name ,f-name
 		      :buffer-name ,f-name
-		      :default-directory ,el-get-dir
+		      :default-directory ,pdir
 		      :program ,git-executable
 		      :args ("--no-pager" "svn" "fetch")
 		      :message ,f-ok
@@ -315,7 +315,7 @@ Any other property will get put into the process object.
        
        (:command-name ,r-name
 		      :buffer-name ,r-name
-		      :default-directory ,el-get-dir
+		      :default-directory ,pdir
 		      :program ,git-executable
 		      :args ("--no-pager" "svn" "rebase")
 		      :message ,r-ok
