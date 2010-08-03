@@ -236,7 +236,8 @@ Any other property will get put into the process object.
 	 (killed  (when (get-buffer cbuf) (kill-buffer cbuf)))
 	 (program (plist-get c :program))
 	 (args    (plist-get c :args))
-	 (default-directory (if cdir cdir default-directory))
+	 (default-directory (if cdir (file-name-as-directory cdir) 
+			      default-directory))
 	 (proc    (apply 'start-process cname cbuf program args)))
 
     ;; add the properties to the process, then set the sentinel
