@@ -184,7 +184,9 @@ given package directory."
 	  (errorm  (process-get proc :error))
 	  (next    (process-get proc :el-get-call-process-list)))
       (if (not (eq 0 status))
-	  (error "el-get: error running %s: %s" cname errorm)
+	  (progn
+	    (set-window-buffer (selected-window) cbuf)
+	    (error "el-get: error running %s: %s" cname errorm))
 	(message "el-get: %s: %s" cname message))
       
       (when cbuf (kill-buffer cbuf))
@@ -231,6 +233,7 @@ Any other property will get put into the process object.
 	 (cdir    (plist-get c :default-directory))
 	 (cname   (plist-get c :command-name))
 	 (cbuf    (plist-get c :buffer-name))
+	 (killed  (when (get-buffer cbuf) (kill-buffer cbuf)))
 	 (program (plist-get c :program))
 	 (args    (plist-get c :args))
 	 (default-directory (if cdir cdir default-directory))
