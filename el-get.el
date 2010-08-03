@@ -255,7 +255,9 @@ Any other property will get put into the process object.
 			    magit-git-executable
 			  (executable-find "git"))))
     (unless (file-executable-p git-executable)
-      (error "el-get-git-clone requires `magit-git-executable` to be set, or the binary `git' to be found in your PATH"))
+      (error 
+       (concat "el-get-git-clone requires `magit-git-executable' to be set, "
+	       "or the binary `git' to be found in your PATH")))
     git-executable))
 
 (defun el-get-git-clone (package url)
