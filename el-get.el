@@ -266,23 +266,42 @@ Any other property will get put into the process object.
 	       "or the binary `git' to be found in your PATH")))
     git-executable))
 
-(defun el-get-git-clone (package url)
+(defun el-get-git-clone (package url post-install-fun)
   "clone the given package following the url"
   (let* ((git-executable (el-get-git-executable))
-	 (ret 
-	  (shell-command-to-string 
-	   (format "cd %s && %s --no-pager clone %s %s" 
-		   el-get-dir git-executable url package))))
-    (run-hooks 'el-get-git-clone-hook)
-    ret))
+	 (name (format "*git clone %s*" package))
+	 (ok   (format "Package %s installed." package))
+	 (ko   (format "Could not install package %s." package)))
 
-(defun el-get-git-pull (package url)
+    (el-get-call-process-list 
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :default-directory ,el-get-dir
+		      :program ,git-executable
+		      :args ( "--no-pager" "clone" ,url ,package)
+		      :message ,ok
+		      :error ,ko))
+     post-install-fun)))
+
+(defun el-get-git-pull (package url post-update-fun)
   "git pull the package"
-  (let ((pdir (el-get-package-directory package)))
-    (when (file-directory-p pdir)
-      (shell-command-to-string 
-       (concat "cd " pdir
-	       " && " magit-git-executable " --no-pager pull " url)))))
+  (let* ((git-executable (el-get-git-executable))
+	 (pdir (el-get-package-directory package))
+	 (name (format "*git pull %s*" package))
+	 (ok   (format "Pulled package %s." package))
+	 (ko   (format "Could not update package %s." package)))
+
+    (el-get-call-process-list 
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :default-directory ,pdir
+		      :program ,git-executable
+		      :args ( "--no-pager" "pull")
+		      :message ,ok
+		      :error ,ko))
+     post-update-fun)))
 
 
 ;;
