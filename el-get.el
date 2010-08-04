@@ -422,7 +422,7 @@ Any other property will get put into the process object.
 		      :error ,ko))
      post-install-fun)))
 
-(defun el-get-apt-get-remove (package &optional url)
+(defun el-get-apt-get-remove (package url post-remove-fun)
   "apt-get remove package, url is there for API compliance"
   (let* ((name (format "*apt-get remove %s*" package))
 	 (ok   (format "Package %s removed." package))
