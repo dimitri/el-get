@@ -216,6 +216,10 @@ properties:
 
    Name of the buffer associated with the command.
 
+:process-filter
+
+   Function to use as a process filter.
+
 :program
 
    The program to start
@@ -239,6 +243,7 @@ Any other property will get put into the process object.
 	 (cname   (plist-get c :command-name))
 	 (cbuf    (plist-get c :buffer-name))
 	 (killed  (when (get-buffer cbuf) (kill-buffer cbuf)))
+	 (filter  (plist-get c :process-filter))
 	 (program (plist-get c :program))
 	 (args    (plist-get c :args))
 	 (default-directory (if cdir (file-name-as-directory cdir) 
@@ -250,7 +255,8 @@ Any other property will get put into the process object.
     (process-put proc :el-get-package package)
     (process-put proc :el-get-final-func final-func)
     (process-put proc :el-get-start-process-list (cdr commands))
-    (set-process-sentinel proc 'el-get-start-process-list-sentinel)))
+    (set-process-sentinel proc 'el-get-start-process-list-sentinel)
+    (when filter (set-process-filter proc filter))))
 
 
 ;;
@@ -384,22 +390,59 @@ Any other property will get put into the process object.
     (format
      "dpkg -l %s| awk '/^ii/ && $2 = \"%s\" {print \"ok\"}'" package package)) 0 -1))
 
-(defun el-get-apt-get-install (package &optional url)
-  "apt-get install package, url is there for API compliance"
-  ;; this can be somewhat chatty but I guess you want to know about it
-  (message "%S" (el-get-sudo-shell-command-to-string 
-		 (concat el-get-apt-get " install " package)))
-  (unless (string= (el-get-apt-get-package-status package) "install")
-    (error "Error: apt-get reports package %s status is not \"install\"" package))
-  (el-get-apt-get-symlink el-get-apt-get-base package)
-  (run-hooks 'el-get-apt-get-install-hook)
-  nil)
+(defun el-get-sudo-password-process-filter (proc string)
+  "Filter function that fills the process buffer's and matches a password prompt"
+  (unless (eq (process-status proc) 'exit)
+    (with-current-buffer (process-buffer proc)
+      ;; arrange to remember already seen content
+      (unless (boundp 'el-get-sudo-password-process-filter-pos)
+	(make-local-variable 'el-get-sudo-password-process-filter-pos)
+	(setq el-get-sudo-password-process-filter-pos (point-min)))
+
+      (save-excursion
+	(goto-char (point-max))
+	(insert string)
+	;; redirect the subprocess sudo prompt to the user face, and answer it
+	(goto-char el-get-sudo-password-process-filter-pos)
+	(when (re-search-forward "password" nil t)
+	  (let* ((prompt (thing-at-point 'line))
+		 (pass   (read-passwd prompt)))
+	    (process-send-string proc (concat pass "\n"))))
+	(setq el-get-sudo-password-process-filter-pos (point-max))))))
+
+(defun el-get-apt-get-install (package url post-install-fun)
+  "echo $pass | sudo -S apt-get install package"
+  (let* ((name (format "*apt-get install %s*" package))
+	 (ok   (format "Package %s installed." package))
+	 (ko   (format "Could not install package %s." package)))
+	 
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :process-filter ,(function el-get-sudo-password-process-filter)
+		      :program ,(executable-find "sudo")
+		      :args ("-S" ,(executable-find "apt-get") "install" ,package)
+		      :message ,ok
+		      :error ,ko))
+     post-install-fun)))
 
 (defun el-get-apt-get-remove (package &optional url)
   "apt-get remove package, url is there for API compliance"
-  ;; this can be somewhat chatty but I guess you want to know about it
-  (message "%S" (el-get-sudo-shell-command-to-string 
-		 (concat el-get-apt-get " remove -y " package))))
+  (let* ((name (format "*apt-get remove %s*" package))
+	 (ok   (format "Package %s removed." package))
+	 (ko   (format "Could not remove package %s." package)))
+	 
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :process-filter ,(function el-get-sudo-password-process-filter)
+		      :program ,(executable-find "sudo")
+		      :args ("-S" ,(executable-find "apt-get") "remove" "-y" ,package)
+		      :message ,ok
+		      :error ,ko))
+     nil)))
 
 
 ;;
