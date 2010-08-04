@@ -257,7 +257,8 @@ Any other property will get put into the process object.
 ;;
 (defun el-get-git-executable ()
   "return git executable to use, or signal an error when not found"
-  (let ((git-executable (if (file-executable-p magit-git-executable)
+  (let ((git-executable (if (and (boundp 'magit-git-executable)
+				 (file-executable-p magit-git-executable))
 			    magit-git-executable
 			  (executable-find "git"))))
     (unless (file-executable-p git-executable)
