@@ -367,21 +367,16 @@ Any other property will get put into the process object.
 ;;
 ;; apt-get support
 ;;
-(defun el-get-sudo-shell-command-to-string (command) 
-  "Ask a password then use sudo, when required"
-  (let* ((sudo-test (shell-command-to-string "sudo echo el-get"))
-	 (sudo-pass (if (string= sudo-test "el-get\n")
-			nil
-		      (read-passwd "sudo password: "))))
-    (shell-command-to-string
-     (concat (when sudo-pass (concat "echo " sudo-pass " | "))
-	     "sudo -S " command))))
-
-(defun el-get-apt-get-symlink (basedir package)
+(defun el-get-apt-get-symlink ()
   "ln -s /usr/share/emacs/site-lisp/package ~/.emacs.d/el-get/package"
-  (let ((debdir (concat (file-name-as-directory basedir) package)))
-    (shell-command 
-     (concat "cd " el-get-dir " && ln -s " debdir  " " package))))
+  (let* ((pdir    (el-get-package-directory package))
+	 (basedir "/usr/share/emacs/site-lisp/")
+	 (debdir  (concat basedir package)))
+    (unless (file-directory-p pdir)
+      (shell-command 
+       (concat "cd " el-get-dir " && ln -s " debdir  " " package)))))
+
+(add-hook 'el-get-apt-get-install-hook 'el-get-apt-get-symlink)
 
 (defun el-get-apt-get-package-status (package)
   "returns the package status from dpkg --get-selections"
