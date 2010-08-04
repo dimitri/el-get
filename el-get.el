@@ -628,7 +628,7 @@ When given a package name, check for its existence"
 (defun el-get-update (&optional package)
   "Update given package. Read the package name with completion when not given."
   (interactive)
-  (let* ((package (or package (el-get-read-package-name "Install" package)))
+  (let* ((package (or package (el-get-read-package-name "Update" package)))
 	 (source   (el-get-package-def package))
 	 (method   (plist-get source :type))
 	 (update   (el-get-method method :update))
@@ -641,7 +641,7 @@ When given a package name, check for its existence"
 (defun el-get-remove (&optional package)
   "Remove given package. Read the package name with completion when not given."
   (interactive)
-  (let* ((package (or package (el-get-read-package-name "Install" package)))
+  (let* ((package (or package (el-get-read-package-name "Remove" package)))
 	 (source   (el-get-package-def package))
 	 (method   (plist-get source :type))
 	 (remove   (el-get-method method :remove))
