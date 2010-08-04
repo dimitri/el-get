@@ -174,7 +174,7 @@ given package directory."
 ;;
 ;; call-process-list utility, to do same as bash && feature
 ;;
-(defun el-get-call-process-list-sentinel (proc change)
+(defun el-get-start-process-list-sentinel (proc change)
   "When proc has exited and was successful, chain next command"
   (when (eq (process-status proc) 'exit)
     (let ((status  (process-exit-status proc))
@@ -184,7 +184,7 @@ given package directory."
 	  (errorm  (process-get proc :error))
 	  (package (process-get proc :el-get-package))
 	  (final-f (process-get proc :el-get-final-func))
-	  (next    (process-get proc :el-get-call-process-list)))
+	  (next    (process-get proc :el-get-start-process-list)))
       (if (not (eq 0 status))
 	  (progn
 	    (set-window-buffer (selected-window) cbuf)
@@ -193,10 +193,10 @@ given package directory."
       
       (when cbuf (kill-buffer cbuf))
       (if next
-	  (el-get-call-process-list package next final-f)
+	  (el-get-start-process-list package next final-f)
 	(funcall final-f package)))))
 
-(defun el-get-call-process-list (package commands final-func)
+(defun el-get-start-process-list (package commands final-func)
   "run each command one after the other, in order, stopping at
 first error.
 
@@ -248,8 +248,8 @@ Any other property will get put into the process object.
     (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
     (process-put proc :el-get-package package)
     (process-put proc :el-get-final-func final-func)
-    (process-put proc :el-get-call-process-list (cdr commands))
-    (set-process-sentinel proc 'el-get-call-process-list-sentinel)))
+    (process-put proc :el-get-start-process-list (cdr commands))
+    (set-process-sentinel proc 'el-get-start-process-list-sentinel)))
 
 
 ;;
@@ -273,7 +273,7 @@ Any other property will get put into the process object.
 	 (ok   (format "Package %s installed." package))
 	 (ko   (format "Could not install package %s." package)))
 
-    (el-get-call-process-list 
+    (el-get-start-process-list 
      package
      `((:command-name ,name
 		      :buffer-name ,name
@@ -292,7 +292,7 @@ Any other property will get put into the process object.
 	 (ok   (format "Pulled package %s." package))
 	 (ko   (format "Could not update package %s." package)))
 
-    (el-get-call-process-list 
+    (el-get-start-process-list 
      package
      `((:command-name ,name
 		      :buffer-name ,name
@@ -314,7 +314,7 @@ Any other property will get put into the process object.
 	(ok   (format "Package %s installed." package))
 	(ko   (format "Could not install package %s." package)))
 
-    (el-get-call-process-list 
+    (el-get-start-process-list 
      package
      `((:command-name ,name
 		      :buffer-name ,name
@@ -336,7 +336,7 @@ Any other property will get put into the process object.
 	(r-ok   (format "Rebased package %s." package))
 	(r-ko   (format "Could not rebase package %s." package)))
 
-    (el-get-call-process-list
+    (el-get-start-process-list
      package
      `((:command-name ,f-name
 		      :buffer-name ,f-name
