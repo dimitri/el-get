@@ -187,7 +187,8 @@ given package directory."
 	  (next    (process-get proc :el-get-start-process-list)))
       (if (not (eq 0 status))
 	  (progn
-	    (set-window-buffer (selected-window) cbuf)
+	    (when (process-buffer proc)
+	      (set-window-buffer (selected-window) cbuf))
 	    (error "el-get: %s" cname errorm))
 	(message "el-get: %s" message))
       
