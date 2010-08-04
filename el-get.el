@@ -29,7 +29,9 @@
 (defvar el-get-git-clone-hook       nil "Hook run after git clone.")
 (defvar el-get-git-svn-clone-hook   nil "Hook run after git svn clone.")
 (defvar el-get-apt-get-install-hook nil "Hook run after apt-get install.")
+(defvar el-get-apt-get-remove-hook  nil "Hook run after apt-get remove.")
 (defvar el-get-fink-install-hook    nil "Hook run after fink install.")
+(defvar el-get-fink-remove-hook     nil "Hook run after fink remove.")
 (defvar el-get-elpa-install-hook    nil "Hook run after ELPA package install.")
 (defvar el-get-http-install-hook    nil "Hook run after http retrieve.")
 
@@ -45,11 +47,13 @@
     :apt-get (:install el-get-apt-get-install 
 		       :install-hook el-get-apt-get-install-hook
 		       :update el-get-apt-get-install
-		       :remove el-get-apt-get-remove)
+		       :remove el-get-apt-get-remove
+		       :remove-hook el-get-apt-get-remove-hook)
     :fink    (:install el-get-fink-install 
 		       :install-hook el-get-fink-install-hook
 		       :update el-get-fink-install
-		       :remove el-get-fink-remove)
+		       :remove el-get-fink-remove
+		       :remove-hook el-get-fink-remove-hook)
     :elpa    (:install el-get-elpa-install 
 		       :install-hook el-get-elpa-install-hook
 		       :update el-get-elpa-update
@@ -365,25 +369,45 @@ Any other property will get put into the process object.
 
 
 ;;
-;; apt-get support
+;; utilities for both apt-get and fink support (dpkg based)
 ;;
-(defun el-get-apt-get-symlink ()
-  "ln -s /usr/share/emacs/site-lisp/package ~/.emacs.d/el-get/package"
-  (let* ((pdir    (el-get-package-directory package))
-	 (basedir "/usr/share/emacs/site-lisp/")
-	 (debdir  (concat basedir package)))
-    (unless (file-directory-p pdir)
-      (shell-command 
-       (concat "cd " el-get-dir " && ln -s " debdir  " " package)))))
-
-(add-hook 'el-get-apt-get-install-hook 'el-get-apt-get-symlink)
-
-(defun el-get-apt-get-package-status (package)
+(defun el-get-dpkg-package-status (package)
   "returns the package status from dpkg --get-selections"
   (substring 
    (shell-command-to-string 
     (format
      "dpkg -l %s| awk '/^ii/ && $2 = \"%s\" {print \"ok\"}'" package package)) 0 -1))
+
+;;
+;; those functions are meant as hooks at install and remove, and they will
+;; get the global value of package, which has been set before calling
+;; run-hooks.
+;;
+(defun el-get-dpkg-symlink ()
+  "ln -s /usr/share/emacs/site-lisp/package ~/.emacs.d/el-get/package"
+  (let* ((pdir    (el-get-package-directory package))
+	 (method  (plist-get source :type))
+	 (basedir (cond ((eq method 'apt-get) el-get-apt-get-base)
+			((eq method 'fink)    el-get-fink-base)))
+	 (debdir  (concat (file-name-as-directory basedir) package)))
+    (unless (file-directory-p pdir)
+      (shell-command 
+       (concat "cd " el-get-dir " && ln -s " debdir  " " package)))))
+
+(defun el-get-dpkg-remove-symlink ()
+  "rm -f ~/.emacs.d/el-get/package"
+  (let* ((pdir    (el-get-package-directory package)))
+    (message "PHOQUE %S" pdir)
+    (when (file-symlink-p pdir)
+      (message (concat "cd " el-get-dir " && rm -f " package))
+      (shell-command 
+       (concat "cd " el-get-dir " && rm -f " package)))))
+
+
+;;
+;; apt-get support
+;;
+(add-hook 'el-get-apt-get-install-hook 'el-get-apt-get-symlink)
 
 (defun el-get-sudo-password-process-filter (proc string)
   "Filter function that fills the process buffer's and matches a password prompt"
@@ -437,28 +461,51 @@ Any other property will get put into the process object.
 		      :args ("-S" ,(executable-find "apt-get") "remove" "-y" ,package)
 		      :message ,ok
 		      :error ,ko))
-     nil)))
+     post-remove-fun)))
+
+(add-hook 'el-get-apt-get-remove-hook 'el-get-dpkg-remove-symlink)
 
 
 ;;
 ;; fink support
 ;;
-(defun el-get-fink-install (package &optional url)
-  "fink install package, url is there for API compliance"
-  ;; this can be somewhat chatty but I guess you want to know about it
-  (message "%S" (el-get-sudo-shell-command-to-string 
-		 (concat el-get-fink " install " package)))
-  (unless (string= (el-get-apt-get-package-status package) "ok")
-    (error "Error: fink reports package %s status is not \"ok\"" package))
-  (el-get-apt-get-symlink el-get-fink-base package)
-  (run-hooks 'el-get-fink-install-hook)
-  nil)
+(defun el-get-fink-install (package url post-install-fun)
+  "sudo -S fink install package"
+  (let* ((name (format "*fink install %s*" package))
+	 (ok   (format "Package %s installed." package))
+	 (ko   (format "Could not install package %s." package)))
+	 
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :process-filter ,(function el-get-sudo-password-process-filter)
+		      :program ,(executable-find "sudo")
+		      :args ("-S" ,(executable-find "fink") "install" ,package)
+		      :message ,ok
+		      :error ,ko))
+     post-install-fun)))
 
-(defun el-get-fink-remove (package &optional url)
-  "fink remove package, url is there for API compliance"
-  ;; this can be somewhat chatty but I guess you want to know about it
-  (message "%S" (el-get-sudo-shell-command-to-string 
-		 (concat el-get-fink " remove -r " package))))
+(add-hook 'el-get-fink-install-hook 'el-get-apt-get-symlink)
+
+(defun el-get-fink-remove (package url post-remove-fun)
+  "apt-get remove package, url is there for API compliance"
+  (let* ((name (format "*fink remove %s*" package))
+	 (ok   (format "Package %s removed." package))
+	 (ko   (format "Could not remove package %s." package)))
+	 
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :process-filter ,(function el-get-sudo-password-process-filter)
+		      :program ,(executable-find "sudo")
+		      :args ("-S" ,(executable-find "fink") "-y" "remove" ,package)
+		      :message ,ok
+		      :error ,ko))
+     post-remove-fun)))
+
+(add-hook 'el-get-fink-remove-hook 'el-get-dpkg-remove-symlink)
 
 
 ;;
@@ -582,7 +629,7 @@ When given a package name, check for its existence"
 	 (pdir     (el-get-package-directory package)))
 
     ;; apt-get and ELPA will take care of load-path, Info-directory-list
-    (unless (member method '(elpa apt-get))
+    (unless (member method '(elpa apt-get fink))
       ;; append entries to load-path and Info-directory-list
       (mapc (lambda (path) 
 	      (el-get-add-path-to-list package 'load-path path))
@@ -677,6 +724,13 @@ When given a package name, check for its existence"
     (message "el-get update %s" package)
     (funcall update package url 'el-get-post-update)))
 
+(defun el-get-post-remove (package)
+  "run the post-remove hooks"
+  (let* ((source  (el-get-package-def package))
+	 (hooks   (el-get-method (plist-get source :type) :remove-hook)))
+    (when hooks
+      (run-hooks hooks))))
+
 (defun el-get-remove (&optional package)
   "Remove given package. Read the package name with completion when not given."
   (interactive)
@@ -687,7 +741,7 @@ When given a package name, check for its existence"
 	 (url      (plist-get source :url)))
     ;; remove the package now
     (message "el-get remove %s" package)
-    (funcall remove package url)))
+    (funcall remove package url 'el-get-post-remove)))
 
 (defun el-get-cd (&optional package)
   "Open dired in the package directory."
