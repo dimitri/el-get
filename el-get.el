@@ -6,18 +6,66 @@
 ;;
 ;; Author: Dimitri Fontaine <dim@tapoueh.org>
 ;; URL: http://www.emacswiki.org/emacs/el-get.el
-;; Version: 0.3
+;; Version: 0.4
 ;; Created: 2010-06-17
 ;; Keywords: emacs package elisp install elpa git apt-get fink debian macosx
 ;; Licence: WTFPL, grab your copy here: http://sam.zoy.org/wtfpl/
 ;;
 ;; This file is NOT part of GNU Emacs.
 ;;
-;; Install:
+;; Easy Install:
 ;;  1. Install ELPA, see http://tromey.com/elpa/install.html
-;;  2. (require 'el-get)
+;;  2. Install el-get from there, soon to be available
+;;
+;; Manual Install:
+;;  1. Put el-get.el somewhere in your load-path
+;;  2. Install ELPA, see http://tromey.com/elpa/install.html
+;;  3. (require 'el-get) somewhere in your init
+;;
+;; Usage:
 ;;  3. then define your el-get-sources
 ;;  4. Use (el-get) from your .emacs or M-x el-get-install etc.
+;;
+;; Sources example:
+;; 
+;; (setq el-get-sources
+;;       '((:name bbdb
+;; 	       :type git
+;; 	       :url "git://github.com/barak/BBDB.git"
+;; 	       :load-path ("./lisp" "./bits")
+;; 	       :info "texinfo"
+;; 	       :build ("./configure" "make"))
+;;	
+;; 	(:name magit
+;; 	       :type git
+;; 	       :url "http://github.com/philjackson/magit.git"
+;; 	       :info "."
+;; 	       :build ("./autogen.sh" "./configure" "make"))
+;;	
+;; 	(:name vkill
+;; 	       :type http
+;; 	       :url "http://www.splode.com/~friedman/software/emacs-lisp/src/vkill.el"
+;; 	       :features vkill)
+;;	
+;; 	(:name yasnippet
+;; 	       :type git-svn
+;; 	       :url "http://yasnippet.googlecode.com/svn/trunk/")
+;;	
+;; 	(:name asciidoc         :type elpa)
+;; 	(:name dictionary-el    :type apt-get)
+;; 	(:name emacs-goodies-el :type apt-get)))
+;; 
+;;
+;; Changelog
+;;
+;;  0.4 - 2010-08-04 - foxy release
+;;
+;;   - support asynchronous processes for system commands
+;;       apt-get, fink, git and git-svn are run in background
+;;   - support `sudo' password prompts (classic and ubuntu variants)
+;;   - fix fink support
+;;   - ELPA support is an option so that you can install ELPA from el-get
+;;   - implement el-get-rmdir
 ;;
 
 (require 'dired)
