@@ -653,7 +653,7 @@ When given a package name, check for its existence"
 (defun el-get-cd (&optional package)
   "Open dired in the package directory."
   (interactive)
-  (let* ((package (or package (el-get-read-package-name "Install" package)))
+  (let* ((package (or package (el-get-read-package-name "cd to" package)))
 	 (pdir    (el-get-package-directory package)))
     (dired pdir)))
 
