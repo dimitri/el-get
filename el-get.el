@@ -455,7 +455,7 @@ Any other property will get put into the process object.
 ;;
 ;; apt-get support
 ;;
-(add-hook 'el-get-apt-get-install-hook 'el-get-apt-get-symlink)
+(add-hook 'el-get-apt-get-install-hook 'el-get-dpkg-symlink)
 
 (defun el-get-sudo-password-process-filter (proc string)
   "Filter function that fills the process buffer's and matches a password prompt"
@@ -534,7 +534,7 @@ Any other property will get put into the process object.
 		      :error ,ko))
      post-install-fun)))
 
-(add-hook 'el-get-fink-install-hook 'el-get-apt-get-symlink)
+(add-hook 'el-get-fink-install-hook 'el-get-dpkg-symlink)
 
 (defun el-get-fink-remove (package url post-remove-fun)
   "apt-get remove package, url is there for API compliance"
