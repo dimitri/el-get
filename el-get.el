@@ -6,7 +6,7 @@
 ;;
 ;; Author: Dimitri Fontaine <dim@tapoueh.org>
 ;; URL: http://www.emacswiki.org/emacs/el-get.el
-;; Version: 0.4
+;; Version: 0.5
 ;; Created: 2010-06-17
 ;; Keywords: emacs package elisp install elpa git apt-get fink debian macosx
 ;; Licence: WTFPL, grab your copy here: http://sam.zoy.org/wtfpl/
@@ -57,6 +57,12 @@
 ;; 
 ;;
 ;; Changelog
+;;
+;;  0.5 - 2010-08-06 - release early, fix often
+;;
+;;   - fix apt-get and fink install hooks to call el-get-dpkg-symlink
+;;   - fix elpa and http support to follow the new call convention
+;;   - use asynchronous url-retrieve facility so that http is async too
 ;;
 ;;  0.4 - 2010-08-04 - foxy release
 ;;
@@ -587,7 +593,7 @@ package isn't currently installed by ELPA."
        (concat "cd " el-get-dir 
 	       " && ln -s \"" elpa-dir "\" \"" package "\"")))))
 
-(defun el-get-elpa-install (package &optional url)
+(defun el-get-elpa-install (package url post-install-fun)
   "ask elpa to install given package"
   (let ((elpa-dir (el-get-elpa-package-directory package)))
     (unless (and elpa-dir (file-directory-p elpa-dir))
@@ -595,37 +601,40 @@ package isn't currently installed by ELPA."
     ;; we symlink even when the package already is installed because it's
     ;; not an error to have installed ELPA packages before using el-get, and
     ;; that will register them
-    (el-get-elpa-symlink-package package)))
-  
-(defun el-get-elpa-update (package &optional url)
+    (el-get-elpa-symlink-package package))
+  (funcall post-install-fun package))
+
+(defun el-get-elpa-update (package url post-update-fun)
   "ask elpa to update given package"
   (el-get-rmdir (concat (file-name-as-directory package-user-dir) package))
-  (package-install (intern-soft package)))
+  (package-install (intern-soft package))
+  (funcall post-install-fun package))
 
 
 ;;
 ;; http support
 ;;
-(defun el-get-http-retrieve (package url)
-  "Get an elisp file using `url-retrieve-synchronously'. 
+(defun el-get-http-retrieve-callback (url-arg package)
+  "callback function for `url-retrieve', store the emacs lisp file for the package.
 
-Returns the feature provided if any"
+url-arg is nil in my tests but url-retrieve seems to insist on
+passing it the the callback function nonetheless."
   (let* ((pdir   (el-get-package-directory package))
 	 (dest   (concat (file-name-as-directory pdir) package ".el")))
-    (with-current-buffer (url-retrieve-synchronously url)
-      ;; prune HTTP headers before save
-      (beginning-of-buffer)
-      (re-search-forward "^$" nil 'move)
-      (forward-char)
-      (delete-region (point-min) (point))
-      (write-file dest))))
+    ;; prune HTTP headers before save
+    (beginning-of-buffer)
+    (re-search-forward "^$" nil 'move)
+    (forward-char)
+    (delete-region (point-min) (point))
+    (write-file dest)))
 
-(defun el-get-http-install (package url)
+(defun el-get-http-install (package url post-install-fun)
   "Dowload a single-file package over HTTP "
   (let ((pdir   (el-get-package-directory package)))
     (unless (file-directory-p pdir)
       (make-directory pdir))
-    (el-get-http-retrieve package url)))
+    (url-retrieve url 'el-get-http-retrieve-callback `(,package)))
+  (funcall post-install-fun package))
 
 ;;
 ;; Common support bits
