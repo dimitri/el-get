@@ -29,7 +29,7 @@
 ;; Sources example:
 ;; 
 ;; (setq el-get-sources
-;;       '((:name bbdb
+;;    '((:name bbdb
 ;; 	       :type git
 ;; 	       :url "git://github.com/barak/BBDB.git"
 ;; 	       :load-path ("./lisp" "./bits")
@@ -50,6 +50,10 @@
 ;; 	(:name yasnippet
 ;; 	       :type git-svn
 ;; 	       :url "http://yasnippet.googlecode.com/svn/trunk/")
+;;
+;;      (:name xml-rpc-el
+;;             :type bzr
+;;             :url "lp:xml-rpc-el")
 ;;	
 ;; 	(:name asciidoc         :type elpa)
 ;; 	(:name dictionary-el    :type apt-get)
