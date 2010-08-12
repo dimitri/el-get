@@ -6,7 +6,7 @@
 ;;
 ;; Author: Dimitri Fontaine <dim@tapoueh.org>
 ;; URL: http://www.emacswiki.org/emacs/el-get.el
-;; Version: 0.5
+;; Version: 0.6
 ;; Created: 2010-06-17
 ;; Keywords: emacs package elisp install elpa git apt-get fink debian macosx
 ;; Licence: WTFPL, grab your copy here: http://sam.zoy.org/wtfpl/
@@ -58,6 +58,12 @@
 ;;
 ;; Changelog
 ;;
+;;  0.6 - 2010-08-12 - towards a stable version
+;;
+;;   - fix when asynchronous http support call post-install-fun
+;;   - fix el-get-remove calling convention
+;;   - add support for bzr, thanks to Kevin Fletcher
+;;
 ;;  0.5 - 2010-08-06 - release early, fix often
 ;;
 ;;   - fix apt-get and fink install hooks to call el-get-dpkg-symlink
@@ -82,6 +88,7 @@
 
 (defvar el-get-git-clone-hook       nil "Hook run after git clone.")
 (defvar el-get-git-svn-clone-hook   nil "Hook run after git svn clone.")
+(defvar el-get-bzr-branch-hook      nil "Hook run after git branch.")
 (defvar el-get-apt-get-install-hook nil "Hook run after apt-get install.")
 (defvar el-get-apt-get-remove-hook  nil "Hook run after apt-get remove.")
 (defvar el-get-fink-install-hook    nil "Hook run after fink install.")
@@ -97,6 +104,10 @@
     :git-svn (:install el-get-git-svn-clone
 		       :install-hook el-get-git-svn-clone-hook
 		       :update el-get-git-svn-update
+		       :remove el-get-rmdir)
+    :bzr     (:install el-get-bzr-branch
+		       :install-hook el-get-bzr-branch-hook
+		       :update el-get-bzr-pull
 		       :remove el-get-rmdir)
     :apt-get (:install el-get-apt-get-install 
 		       :install-hook el-get-apt-get-install-hook
@@ -420,6 +431,47 @@ Any other property will get put into the process object.
 		      :message ,r-ok
 		      :error ,r-ko))
      post-update-fun)))
+
+
+;;
+;; bzr support
+;;
+(defun el-get-bzr-branch (package url post-install-fun)
+  "Branch a given bzr PACKAGE following the URL using bzr."
+  (let* ((bzr-executable "bzr")
+	 (name (format "*bzr branch %s*" package))
+	 (ok   (format "Package %s installed" package))
+	 (ko   (format "Could not install package %s." package)))
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :default-directory ,el-get-dir
+		      :program ,bzr-executable
+		      :args ("branch" ,url ,package)
+		      :message ,ok
+		      :error ,ko))
+     post-install-fun)))
+
+(defun el-get-bzr-pull (package url post-update-fun)
+  "bzr pull the package"
+  (let* ((bzr-executable "bzr")
+	 (pdir (el-get-package-directory package))
+	 (name (format "*bzr pull %s*" package))
+	 (ok   (format "Pulled package %s." package))
+	 (ko   (format "Could not update package %s." package)))
+
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :default-directory ,pdir
+		      :program ,bzr-executable
+		      :args ( "pull" )
+		      :message ,ok
+		      :error ,ko))
+     post-update-fun)))
+
 
 
 ;;
