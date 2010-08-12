@@ -626,22 +626,24 @@ passing it the the callback function nonetheless."
     (re-search-forward "^$" nil 'move)
     (forward-char)
     (delete-region (point-min) (point))
-    (write-file dest)))
+    (write-file dest))
+  (funcall post-install-fun package))
 
 (defun el-get-http-install (package url post-install-fun)
   "Dowload a single-file package over HTTP "
   (let ((pdir   (el-get-package-directory package)))
     (unless (file-directory-p pdir)
       (make-directory pdir))
-    (url-retrieve url 'el-get-http-retrieve-callback `(,package)))
-  (funcall post-install-fun package))
+    (url-retrieve 
+     url 'el-get-http-retrieve-callback `(,package ,post-install-fun))))
 
 ;;
 ;; Common support bits
 ;;
-(defun el-get-rmdir (package url)
+(defun el-get-rmdir (package url post-remove-fun)
   "Just rm -rf the package directory. Follow symlinks."
-  (dired-delete-file (el-get-package-directory package) 'always))
+  (dired-delete-file (el-get-package-directory package) 'always)
+  (funcall post-remove-fun package))
 
 (defun el-get-build (package commands &optional subdir)
   "run each command from the package directory"
