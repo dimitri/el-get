@@ -606,7 +606,7 @@ package isn't currently installed by ELPA."
 
 (defun el-get-elpa-update (package url post-update-fun)
   "ask elpa to update given package"
-  (el-get-rmdir (concat (file-name-as-directory package-user-dir) package))
+  (el-get-rmdir (concat (file-name-as-directory package-user-dir) package nil))
   (package-install (intern-soft package))
   (funcall post-install-fun package))
 
@@ -614,7 +614,7 @@ package isn't currently installed by ELPA."
 ;;
 ;; http support
 ;;
-(defun el-get-http-retrieve-callback (url-arg package)
+(defun el-get-http-retrieve-callback (url-arg package post-install-fun)
   "callback function for `url-retrieve', store the emacs lisp file for the package.
 
 url-arg is nil in my tests but url-retrieve seems to insist on
