@@ -88,7 +88,7 @@
 
 (defvar el-get-git-clone-hook       nil "Hook run after git clone.")
 (defvar el-get-git-svn-clone-hook   nil "Hook run after git svn clone.")
-(defvar el-get-bzr-branch-hook      nil "Hook run after git branch.")
+(defvar el-get-bzr-branch-hook      nil "Hook run after bzr branch.")
 (defvar el-get-apt-get-install-hook nil "Hook run after apt-get install.")
 (defvar el-get-apt-get-remove-hook  nil "Hook run after apt-get remove.")
 (defvar el-get-fink-install-hook    nil "Hook run after fink install.")
