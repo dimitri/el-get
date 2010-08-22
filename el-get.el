@@ -54,6 +54,12 @@
 ;;      (:name xml-rpc-el
 ;;             :type bzr
 ;;             :url "lp:xml-rpc-el")
+;;
+;;      (:name haskell-mode
+;;             :type http-tar
+;;             :options ("xzf")
+;;             :url "http://projects.haskell.org/haskellmode-emacs/haskell-mode-2.8.0.tar.gz"
+;;             :load "haskell-site-file.el")
 ;;	
 ;; 	(:name asciidoc         :type elpa)
 ;; 	(:name dictionary-el    :type apt-get)
@@ -61,6 +67,10 @@
 ;; 
 ;;
 ;; Changelog
+;;
+;;  0.7 - 2010-08-23 - archive
+;;
+;;   - http support is extended to `tar' archives, via the http-tar type
 ;;
 ;;  0.6 - 2010-08-12 - towards a stable version
 ;;
@@ -90,15 +100,16 @@
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
 
-(defvar el-get-git-clone-hook       nil "Hook run after git clone.")
-(defvar el-get-git-svn-clone-hook   nil "Hook run after git svn clone.")
-(defvar el-get-bzr-branch-hook      nil "Hook run after bzr branch.")
-(defvar el-get-apt-get-install-hook nil "Hook run after apt-get install.")
-(defvar el-get-apt-get-remove-hook  nil "Hook run after apt-get remove.")
-(defvar el-get-fink-install-hook    nil "Hook run after fink install.")
-(defvar el-get-fink-remove-hook     nil "Hook run after fink remove.")
-(defvar el-get-elpa-install-hook    nil "Hook run after ELPA package install.")
-(defvar el-get-http-install-hook    nil "Hook run after http retrieve.")
+(defvar el-get-git-clone-hook        nil "Hook run after git clone.")
+(defvar el-get-git-svn-clone-hook    nil "Hook run after git svn clone.")
+(defvar el-get-bzr-branch-hook       nil "Hook run after bzr branch.")
+(defvar el-get-apt-get-install-hook  nil "Hook run after apt-get install.")
+(defvar el-get-apt-get-remove-hook   nil "Hook run after apt-get remove.")
+(defvar el-get-fink-install-hook     nil "Hook run after fink install.")
+(defvar el-get-fink-remove-hook      nil "Hook run after fink remove.")
+(defvar el-get-elpa-install-hook     nil "Hook run after ELPA package install.")
+(defvar el-get-http-install-hook     nil "Hook run after http retrieve.")
+(defvar el-get-http-tar-install-hook nil "Hook run after http-tar package install.")
 
 (defcustom el-get-methods
   '(:git     (:install el-get-git-clone 
@@ -130,6 +141,10 @@
     :http    (:install el-get-http-install
 		       :install-hook el-get-http-install-hook
 		       :update el-get-http-install
+		       :remove el-get-rmdir)
+    :http-tar (:install el-get-http-tar-install
+		       :install-hook el-get-http-tar-install-hook
+		       :update el-get-http-tar-install
 		       :remove el-get-rmdir))
   "Register methods that el-get can use to fetch and update a given package.
 
@@ -693,6 +708,59 @@ passing it the the callback function nonetheless."
     (url-retrieve 
      url 'el-get-http-retrieve-callback `(,package ,post-install-fun))))
 
+
+;;
+;; http-tar support (archive)
+;;
+(defun el-get-http-tar-cleanup-extract-hook ()
+  "Cleanup after tar xzf: if there's only one subdir, move all the files up"
+  (let* ((pdir    (el-get-package-directory package))
+	 (url     (plist-get source :url))
+	 (tarfile (file-name-nondirectory url))
+	 (files   (directory-files pdir nil "[^.]$")))
+    ;; if there's only one directory, move its content up and get rid of it
+    (message "%S" (remove tarfile files))
+    (when (null (cdr (remove tarfile files)))
+      (let ((move  (format "cd %s && mv \"%s\"/* ." pdir (car files)))
+	    (rmdir (format "cd %s && rmdir \"%s\""   pdir (car files))))
+	(message "%s: %s" package move)
+	(message "%s: %s" package rmdir)
+	(shell-command move)
+	(shell-command rmdir)))))
+
+(defun el-get-http-tar-install (package url post-install-fun)
+  "Dowload a tar archive package over HTTP "
+  (let* ((source  (el-get-package-def package))
+	 (options (plist-get source :options))
+	 (pdir    (el-get-package-directory package))
+	 (tarfile (file-name-nondirectory url))
+	 (name    (format "*tar %s %s*" options url))
+	 (ok      (format "Package %s installed." package))
+	 (ko      (format "Could not install package %s." package))
+	 (post `(lambda (package)
+		  ;; rename pdir/package.el to the expected name
+		  (message "%S" (directory-files ,pdir))
+		  (rename-file 
+		   (concat (file-name-as-directory ,pdir) package ".el")
+		   (concat (file-name-as-directory ,pdir) ,tarfile))
+		  (message "Renamed to %s" (concat (file-name-as-directory ,pdir) ,tarfile))
+		  ;; tar xzf `basename url`
+		  (el-get-start-process-list
+		   package
+		   '((:command-name ,name
+				    :buffer-name ,name
+				    :default-directory ,pdir
+				    :program ,(executable-find "tar")
+				    :args (,@options ,tarfile)
+				    :message ,ok
+				    :error ,ko))
+		   ,(symbol-function post-install-fun)))))
+    (message "%S" post)
+    (el-get-http-install package url post)))
+
+(add-hook 'el-get-http-tar-install-hook 'el-get-http-tar-cleanup-extract-hook)
+
+
 ;;
 ;; Common support bits
 ;;
