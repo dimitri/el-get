@@ -321,7 +321,8 @@ given package directory."
       (when cbuf (kill-buffer cbuf))
       (if next
 	  (el-get-start-process-list package next final-f)
-	(funcall final-f package)))))
+	(when (functionp final-f)
+	  (funcall final-f package))))))
 
 (defun el-get-start-process-list (package commands final-func)
   "run each command one after the other, in order, stopping at
