@@ -364,25 +364,26 @@ properties:
 
 Any other property will get put into the process object.
 "
-  (let* ((c       (car commands))
-	 (cdir    (plist-get c :default-directory))
-	 (cname   (plist-get c :command-name))
-	 (cbuf    (plist-get c :buffer-name))
-	 (killed  (when (get-buffer cbuf) (kill-buffer cbuf)))
-	 (filter  (plist-get c :process-filter))
-	 (program (plist-get c :program))
-	 (args    (plist-get c :args))
-	 (default-directory (if cdir (file-name-as-directory cdir) 
-			      default-directory))
-	 (proc    (apply 'start-process cname cbuf program args)))
+  (when commands
+    (let* ((c       (car commands))
+	   (cdir    (plist-get c :default-directory))
+	   (cname   (plist-get c :command-name))
+	   (cbuf    (plist-get c :buffer-name))
+	   (killed  (when (get-buffer cbuf) (kill-buffer cbuf)))
+	   (filter  (plist-get c :process-filter))
+	   (program (plist-get c :program))
+	   (args    (plist-get c :args))
+	   (default-directory (if cdir (file-name-as-directory cdir) 
+				default-directory))
+	   (proc    (apply 'start-process cname cbuf program args)))
 
-    ;; add the properties to the process, then set the sentinel
-    (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
-    (process-put proc :el-get-package package)
-    (process-put proc :el-get-final-func final-func)
-    (process-put proc :el-get-start-process-list (cdr commands))
-    (set-process-sentinel proc 'el-get-start-process-list-sentinel)
-    (when filter (set-process-filter proc filter))))
+      ;; add the properties to the process, then set the sentinel
+      (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
+      (process-put proc :el-get-package package)
+      (process-put proc :el-get-final-func final-func)
+      (process-put proc :el-get-start-process-list (cdr commands))
+      (set-process-sentinel proc 'el-get-start-process-list-sentinel)
+      (when filter (set-process-filter proc filter)))))
 
 
 ;;
