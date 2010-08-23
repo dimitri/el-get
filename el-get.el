@@ -64,6 +64,14 @@
 ;;                      (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 ;;                      (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)))
 ;;	
+;;      (:name auctex
+;;             :type cvs
+;;             :module "auctex"
+;;             :url ":pserver:anonymous@cvs.sv.gnu.org:/sources/auctex"
+;;             :build ("./autogen.sh" "./configure" "make")
+;;             :load  ("auctex.el" "preview/preview-latex.el")
+;;             :info "doc")
+;;
 ;; 	(:name asciidoc         :type elpa)
 ;; 	(:name dictionary-el    :type apt-get)
 ;; 	(:name emacs-goodies-el :type apt-get)))
@@ -74,6 +82,7 @@
 ;;  0.8 - 2010-08-23 - listen to the users
 ;;
 ;;   - implement :after user defined function to run at the end of init
+;;   - add CSV support (no login support)
 ;;
 ;;  0.7 - 2010-08-23 - archive
 ;;
@@ -110,6 +119,7 @@
 (defvar el-get-git-clone-hook        nil "Hook run after git clone.")
 (defvar el-get-git-svn-clone-hook    nil "Hook run after git svn clone.")
 (defvar el-get-bzr-branch-hook       nil "Hook run after bzr branch.")
+(defvar el-get-cvs-checkout-hook     nil "Hook run after cvs checkout.")
 (defvar el-get-apt-get-install-hook  nil "Hook run after apt-get install.")
 (defvar el-get-apt-get-remove-hook   nil "Hook run after apt-get remove.")
 (defvar el-get-fink-install-hook     nil "Hook run after fink install.")
@@ -130,6 +140,10 @@
     :bzr     (:install el-get-bzr-branch
 		       :install-hook el-get-bzr-branch-hook
 		       :update el-get-bzr-pull
+		       :remove el-get-rmdir)
+    :cvs     (:install el-get-cvs-checkout
+		       :install-hook el-get-cvs-checkout-hook
+		       :update el-get-cvs-update
 		       :remove el-get-rmdir)
     :apt-get (:install el-get-apt-get-install 
 		       :install-hook el-get-apt-get-install-hook
@@ -238,6 +252,11 @@ options
     the tar options you want to use. Typically would be \"xzf\",
     but you might want to choose \"xjf\" for handling .tar.bz
     files e.g.
+
+module
+
+    Currently only used by the `csv' support, allow you to
+    configure the module you want to checkout in the given URL.
 
 after
 
@@ -510,6 +529,47 @@ Any other property will get put into the process object.
 		      :error ,ko))
      post-update-fun)))
 
+
+(defun el-get-cvs-checkout (package url post-install-fun)
+  "cvs checkout the package"
+  (let* ((cvs-executable (executable-find "cvs"))
+	 (source  (el-get-package-def package))
+	 (module  (plist-get source :module))
+	 (name    (format "*cvs checkout %s*" package))
+	 (ok      (format "Checked out package %s." package))
+	 (ko      (format "Could not checkout package %s." package)))
+
+    (message "%S" `(:args ("-d" ,url "checkout" "-d" ,package ,module)))
+
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :default-directory ,el-get-dir
+		      :program ,cvs-executable
+		      :args ("-d" ,url "checkout" "-d" ,package ,module)
+		      :message ,ok
+		      :error ,ko))
+     post-install-fun)))
+
+(defun el-get-cvs-update (package url post-update-fun)
+  "cvs checkout the package"
+  (let* ((cvs-executable (executable-find "cvs"))
+	 (pdir (el-get-package-directory package))
+	 (name (format "*cvs update %s*" package))
+	 (ok   (format "Updated package %s." package))
+	 (ko   (format "Could not update package %s." package)))
+
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :default-directory ,pdir
+		      :program ,cvs-executable
+		      :args ("update" "-dP")
+		      :message ,ok
+		      :error ,ko))
+     post-update-fun)))
 
 
 ;;
