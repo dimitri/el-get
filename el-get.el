@@ -59,7 +59,10 @@
 ;;             :type http-tar
 ;;             :options ("xzf")
 ;;             :url "http://projects.haskell.org/haskellmode-emacs/haskell-mode-2.8.0.tar.gz"
-;;             :load "haskell-site-file.el")
+;;             :load "haskell-site-file.el"
+;;             :after (lambda ()
+;;                      (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+;;                      (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)))
 ;;	
 ;; 	(:name asciidoc         :type elpa)
 ;; 	(:name dictionary-el    :type apt-get)
@@ -67,6 +70,10 @@
 ;; 
 ;;
 ;; Changelog
+;;
+;;  0.8 - 2010-08-23 - listen to the users
+;;
+;;   - implement :after user defined function to run at the end of init
 ;;
 ;;  0.7 - 2010-08-23 - archive
 ;;
@@ -224,6 +231,18 @@ load
 features
 
     List of features el-get will `require' for you.
+
+options
+
+    Currently only used by the http-tar support for you to give
+    the tar options you want to use. Typically would be \"xzf\",
+    but you might want to choose \"xjf\" for handling .tar.bz
+    files e.g.
+
+after
+
+    A function to run once `el-get' is done with `el-get-init',
+    can be a lambda.
 ")
 
 
@@ -807,6 +826,7 @@ When given a package name, check for its existence"
 	 (feats    (plist-get source :features))
 	 (el-path  (or (plist-get source :load-path) '(".")))
 	 (infodir  (plist-get source :info))
+	 (after    (plist-get source :after))
 	 (pdir     (el-get-package-directory package)))
 
     ;; apt-get and ELPA will take care of load-path, Info-directory-list
@@ -855,8 +875,13 @@ When given a package name, check for its existence"
 	(mapc (lambda (feature) (message "require '%s" (require feature)))
 	      (if (symbolp feats) (list feats) feats))))
 
-      ;; return the package
-      package))
+    ;; call the "after" user function
+    (when (and after (functionp after))
+      (message "el-get: Calling init user function for package %s" package)
+      (funcall after))
+
+    ;; return the package
+    package))
 
 (defun el-get-post-install (package)
   "Post install a package. This will get run by a sentinel."
