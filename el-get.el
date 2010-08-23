@@ -83,6 +83,8 @@
 ;;
 ;;   - implement :after user defined function to run at the end of init
 ;;   - add CSV support (no login support)
+;;   - improve el-get-build to use async building
+;;   - fix el-get-update doing so
 ;;
 ;;  0.7 - 2010-08-23 - archive
 ;;
@@ -848,14 +850,41 @@ passing it the the callback function nonetheless."
   (dired-delete-file (el-get-package-directory package) 'always)
   (funcall post-remove-fun package))
 
-(defun el-get-build (package commands &optional subdir)
+(defun el-get-build (package commands &optional subdir sync post-build-fun)
   "run each command from the package directory"
   (let* ((pdir   (el-get-package-directory package))
-	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir)))
-    (dolist (c commands)
-      (message "el-get %s: cd %s && %s" package wdir c)
-      (message "%S" (shell-command-to-string 
-		     (concat "cd " wdir " && " c))))))
+	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir))
+	 (buf    (format "*el-get-build: %s*" package)) 
+	 (default-directory wdir))
+    (if sync
+	(progn
+	  (dolist (c commands)
+	    (message "el-get %s: cd %s && %s" package wdir c)
+	    (message "%S" (shell-command-to-string 
+			   (concat "cd " wdir " && " c))))
+	  (when (and post-build-fun (functionp post-build-fun))
+	    (funcall post-build-fun)))
+
+      ;; async
+      (let ((process-list
+	     (mapcar (lambda (c)
+		       (let* ((split    (split-string c))
+			      (name     (car split))
+			      (program  (if (file-executable-p (expand-file-name name))
+					    (expand-file-name name)
+					  (executable-find name)))
+			      (args     (cdr split)))
+			 
+			 `(:command-name ,name
+					 :buffer-name ,buf
+					 :default-directory ,wdir
+					 :program ,program
+					 :args (,@args)
+					 :message ,(format "el-get-build %s: %s ok." package c)
+					 :error ,(format 
+						  "el-get could not build %s [%s]" package c))))
+		     commands)))
+	(el-get-start-process-list package process-list post-build-fun)))))
 
 (defun el-get-package-def (package)
   "Return a single `el-get-sources' entry for given package"
@@ -918,7 +947,7 @@ When given a package name, check for its existence"
 	  ;; build the infodir entry, too
 	  (el-get-build
 	   package
-	   `(,(format "%s %s.info dir" el-get-install-info infofile)) infodir-rel))))
+	   `(,(format "%s %s.info dir" el-get-install-info infofile)) infodir-rel t))))
 
     ;; loads
     (when loads
@@ -952,10 +981,8 @@ When given a package name, check for its existence"
 	 (commands (plist-get source :build)))
     ;; post-install is the right place to run install-hook
     (run-hooks hooks)
-    ;; consider building when sources are thus setup
-    (el-get-build package commands)
-    ;; and init
-    (el-get-init package)))
+    ;; build then init
+    (el-get-build package commands nil nil (lambda (package) (el-get-init package)))))
 
 (defun el-get-install (&optional package)
   "Install given package. Read the package name with completion when not given."
@@ -976,8 +1003,9 @@ When given a package name, check for its existence"
 (defun el-get-post-update (package)
   "Post update a package. This will get run by a sentinel."
   (let* ((source   (el-get-package-def package))
-	 (commands (plist-get (plist-get source :type) :build)))
-    (el-get-build package commands)))
+	 (commands (plist-get source :build)))
+    (el-get-build package commands nil nil 
+		  (lambda (package) (message "el-get-post-update %s: done" package)))))
 
 (defun el-get-update (&optional package)
   "Update given package. Read the package name with completion when not given."
