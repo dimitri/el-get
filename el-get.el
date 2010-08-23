@@ -723,8 +723,8 @@ passing it the the callback function nonetheless."
     (when (null (cdr (remove tarfile files)))
       (let ((move  (format "cd %s && mv \"%s\"/* ." pdir (car files)))
 	    (rmdir (format "cd %s && rmdir \"%s\""   pdir (car files))))
-	(message "%s: %s" package move)
-	(message "%s: %s" package rmdir)
+	;; (message "%s: %s" package move)
+	;; (message "%s: %s" package rmdir)
 	(shell-command move)
 	(shell-command rmdir)))))
 
@@ -739,7 +739,6 @@ passing it the the callback function nonetheless."
 	 (ko      (format "Could not install package %s." package))
 	 (post `(lambda (package)
 		  ;; rename pdir/package.el to the expected name
-		  (message "%S" (directory-files ,pdir))
 		  (rename-file 
 		   (concat (file-name-as-directory ,pdir) package ".el")
 		   (concat (file-name-as-directory ,pdir) ,tarfile))
@@ -755,7 +754,6 @@ passing it the the callback function nonetheless."
 				    :message ,ok
 				    :error ,ko))
 		   ,(symbol-function post-install-fun)))))
-    (message "%S" post)
     (el-get-http-install package url post)))
 
 (add-hook 'el-get-http-tar-install-hook 'el-get-http-tar-cleanup-extract-hook)
@@ -846,7 +844,7 @@ When given a package name, check for its existence"
 	      (let ((pfile (concat (file-name-as-directory pdir) file)))
 		(unless (file-exists-p pfile)
 		  (error "el-get could not find file '%s'" pfile))
-		(message "load '%s'" pfile)
+		(message "el-get: load '%s'" pfile)
 		(load pfile)))
 	    (if (stringp loads) (list loads) loads)))
 
