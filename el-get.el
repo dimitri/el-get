@@ -1,14 +1,12 @@
-;;; el-get.el
-;;
-;; Manage the external elisp bits and pieces you depend upon
+;;; el-get.el --- Manage the external elisp bits and pieces you depend upon
 ;;
 ;; Copyright (C) 2010 Dimitri Fontaine
 ;;
 ;; Author: Dimitri Fontaine <dim@tapoueh.org>
 ;; URL: http://www.emacswiki.org/emacs/el-get.el
-;; Version: 0.6
+;; Version: 0.8
 ;; Created: 2010-06-17
-;; Keywords: emacs package elisp install elpa git apt-get fink debian macosx
+;; Keywords: emacs package elisp install elpa git git-svn bzr cvs apt-get fink http http-tar
 ;; Licence: WTFPL, grab your copy here: http://sam.zoy.org/wtfpl/
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -82,7 +80,7 @@
 ;;  0.8 - 2010-08-23 - listen to the users
 ;;
 ;;   - implement :after user defined function to run at the end of init
-;;   - add CSV support (no login support)
+;;   - add CVS support (no login support)
 ;;   - improve el-get-build to use async building
 ;;   - fix el-get-update doing so
 ;;
