@@ -77,6 +77,12 @@
 ;;
 ;; Changelog
 ;;
+;;  0.9 - 2010-08-24 - build me a shell
+;;
+;;   - have `el-get-build' use start-process-shell-command so that you can
+;;     pass-in shell commands. Beware of poor command argument "parsing"
+;;     though, done with a simple `split-string'.
+;;
 ;;  0.8 - 2010-08-23 - listen to the users
 ;;
 ;;   - implement :after user defined function to run at the end of init
@@ -347,6 +353,11 @@ properties:
 
    Function to use as a process filter.
 
+:shell
+
+   When set to a non-nil value, use start-process-shell-command
+   rather than the default start-process.
+
 :program
 
    The program to start
@@ -374,9 +385,11 @@ Any other property will get put into the process object.
 	   (filter  (plist-get c :process-filter))
 	   (program (plist-get c :program))
 	   (args    (plist-get c :args))
+	   (shell   (plist-get c :shell))
+	   (startf  (if shell #'start-process-shell-command #'start-process))
 	   (default-directory (if cdir (file-name-as-directory cdir) 
 				default-directory))
-	   (proc    (apply 'start-process cname cbuf program args)))
+	   (proc    (apply startf cname cbuf program args)))
 
       ;; add the properties to the process, then set the sentinel
       (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
@@ -876,6 +889,7 @@ passing it the the callback function nonetheless."
 			 `(:command-name ,name
 					 :buffer-name ,buf
 					 :default-directory ,wdir
+					 :shell t
 					 :program ,program
 					 :args (,@args)
 					 :message ,(format "el-get-build %s: %s ok." package c)
