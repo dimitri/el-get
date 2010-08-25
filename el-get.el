@@ -642,7 +642,7 @@ Any other property will get put into the process object.
 	(insert string)
 	;; redirect the subprocess sudo prompt to the user face, and answer it
 	(goto-char el-get-sudo-password-process-filter-pos)
-	(when (re-search-forward "password" nil t)
+	(while (re-search-forward "password" nil t)
 	  (let* ((prompt (thing-at-point 'line))
 		 (pass   (read-passwd prompt)))
 	    (process-send-string proc (concat pass "\n"))))
