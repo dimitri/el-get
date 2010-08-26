@@ -900,9 +900,10 @@ passing it the the callback function nonetheless."
 
 (defun el-get-package-def (package)
   "Return a single `el-get-sources' entry for given package"
-  (dolist (s el-get-sources source)
-    (when (string= package (format "%s" (plist-get s :name)))
-      (setq source s))))
+  (let (source)
+    (dolist (s el-get-sources source)
+      (when (string= package (format "%s" (plist-get s :name)))
+	(setq source s)))))
 
 
 ;;
