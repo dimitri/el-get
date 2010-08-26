@@ -1,5 +1,59 @@
 = el-get
 
+Short Story: el-get allows you to install and manage +elisp+ code for
+Emacs. It supports lots of differents types of sources and is able to
+'install' them, 'update' them and 'remove' them, but more importantly it
+will 'init' them for you.
+
+That means it will care about +require+ing the 'features' you need,
++load+ing the files, setting the 'Info' paths so that +C-h i+ shows the new
+documentation you now depend on, and finally call your own +:after+
+function for you to setup the extension. Or call it a package.
+
+== How to Install it?
+
+Here's the 'lazy installer' for everyone to use, except for the early
+adopters, who will have to adapt their +el-get-sources+ to use +github+
+instead.
+
+--------------------------------------
+;; So the idea is that you copy/paste this code into your *scratch* buffer,
+;; hit C-j, and you have a working el-get.
+
+(let* ((el-get-dir        (expand-file-name "~/.emacs.d/el-get/"))
+       (dummy             (unless (file-directory-p el-get-dir)
+			    (make-directory el-get-dir t)))
+       (package           "el-get")
+       (bname             "*el-get bootstrap*") ; both process and buffer name
+       (pdir              (concat (file-name-as-directory el-get-dir) package))
+       (git               (executable-find "git"))
+       (url               "git://github.com/dimitri/el-get.git")
+       (el-get-sources    `((:name ,package :type "git" :url ,url :features "el-get")))
+       (default-directory el-get-dir)
+       (process-connection-type nil) ; pipe, no pty (--no-progress)
+       (clone             (start-process bname bname git "--no-pager" "clone" "-v" url package)))
+  (set-window-buffer (selected-window) (process-buffer clone))
+  (set-process-sentinel 
+   clone
+   `(lambda (proc change)
+      (when (eq (process-status proc) 'exit)
+	(setq default-directory (file-name-as-directory ,pdir))
+	(load (concat (file-name-as-directory ,pdir) ,package ".el"))
+	(el-get-init "el-get")
+	(with-current-buffer (process-buffer proc)
+	  (goto-char (point-max))
+	  (insert "\nCongrats, el-get is installed and ready to serve!"))))))
+--------------------------------------
+
+You have to type +C-j+ with the cursor at the end of the last line, but
+still on the line. 'C-j runs the command eval-print-last-sexp', so it will
+evaluate the code you're looking at, and that will +git clone el-get+ at the
+'right place'.
+
+If you disagree with what the right place is, please feel free to edit the
++el-get-dir+ line above, but remember that you will have to +setq+ the
+variable before to use +el-get+.
+
 == What is this?
 
 Of course, my emacs setup is managed in a private git repository. Some
@@ -10,7 +64,12 @@ run emacs, and I want this documentation to be usable as-is. Enters el-get!
 
 --------------------------------------
 (setq el-get-sources
-      '((:name bbdb
+      '((:name el-get 
+               :type git
+               :url "git://github.com/dimitri/el-get.git"
+               :features "el-get")
+
+        (:name bbdb
                :type git
                :url "git://github.com/barak/BBDB.git"
                :load-path ("./lisp" "./bits")
@@ -55,11 +114,6 @@ actually install it. Then, it will init the packages: that means caring
 about the load-path, the Info-directory-list (and dir texinfo menu building)
 the loading of the emacs-lisp files, and finally it will require the
 features.
-
-== How to Install it?
-
-Manually, but I'm working on some easy installer for you to be lazy, copy
-paste some code, then enjoy the full power of +el-get+.
 
 == How to use it?
 
