@@ -5,10 +5,10 @@ Emacs. It supports lots of differents types of sources and is able to
 'install' them, 'update' them and 'remove' them, but more importantly it
 will 'init' them for you.
 
-That means it will care about +require+ing the 'features' you need,
-+load+ing the files, setting the 'Info' paths so that +C-h i+ shows the new
-documentation you now depend on, and finally call your own +:after+
-function for you to setup the extension. Or call it a package.
+That means it will care about +require+ ing the 'features' you need, +load+
+ing the files, setting the 'Info' paths so that +C-h i+ shows the new
+documentation you now depend on, and finally call your own +:after+ function
+for you to setup the extension. Or call it a package.
 
 == How to Install it?
 
