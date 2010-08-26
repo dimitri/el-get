@@ -292,7 +292,7 @@ given package directory."
   (let* ((pdir     (el-get-package-directory package))
 	 (fullpath (expand-file-name (concat (file-name-as-directory pdir) path))))
     (unless (file-directory-p fullpath)
-      (error "el-get could not find directory `%s' for package %s" path package))
+      (error "el-get could not find directory `%s' for package %s, at %s" path package fullpath))
     (add-to-list list fullpath)))
 
 (defun el-get-package-exists-p (package)
