@@ -1,0 +1,125 @@
+= el-get
+
+== What is this?
+
+Of course, my emacs setup is managed in a private git repository. Some
+people on +#emacs+ are using +git submodules+ (or was it straight import)
+for managing external repositories in there, but all I can say is that I
+frown on this idea. I want an easy canonical list of packages I depend on to
+run emacs, and I want this documentation to be usable as-is. Enters el-get!
+
+--------------------------------------
+(setq el-get-sources
+      '((:name bbdb
+               :type git
+               :url "git://github.com/barak/BBDB.git"
+               :load-path ("./lisp" "./bits")
+               :info "texinfo"
+               :build ("./configure" "make"))
+
+        (:name magit
+               :type git
+               :url "http://github.com/philjackson/magit.git"
+               :info "."
+               :build ("./autogen.sh" "./configure" "make"))
+
+        (:name vkill
+               :type http
+               :url "http://www.splode.com/~friedman/software/emacs-lisp/src/vkill.el"
+               :features vkill)
+
+        (:name yasnippet
+               :type git-svn
+               :url "http://yasnippet.googlecode.com/svn/trunk/")
+
+        (:name asciidoc         :type elpa)
+        (:name dictionary-el    :type apt-get)
+        (:name emacs-goodies-el :type apt-get)))
+
+(el-get)
+--------------------------------------
+
+So now you have a pretty good documentation of the packages you want
+installed, where to get them, and how to install them. For the advanced
+methods (such as elpa or apt-get), you basically just need the package
+name. When relying on a bare git repository, you need to give some more
+information, such as the URL to clone and the build steps if any. Then also
+what features to require and maybe where to find the texinfo documentation
+of the package, for automatic inclusion into your local Info menu.
+
+The good news is that not only you now have a solid readable description of
+all that in a central place, but this very description is all (el-get) needs
+to do its magic. This command will check that each and every package is
+installed on your system (in el-get-dir) and if that's not the case, it will
+actually install it. Then, it will init the packages: that means caring
+about the load-path, the Info-directory-list (and dir texinfo menu building)
+the loading of the emacs-lisp files, and finally it will require the
+features.
+
+== How to Install it?
+
+Manually, but I'm working on some easy installer for you to be lazy, copy
+paste some code, then enjoy the full power of +el-get+.
+
+== How to use it?
+
+You see that +el-get-sources+ exemple up there? It finishes with a single
++(el-get)+ call. That's it. It will 'install' new +sources+ on the list and
+only 'init' already installed ones.
+
+Tracking if a +source+ is not by checking for the existance of a directory
+or symlink in +el-get-dir+, defaulting to +~/.emacs.d/el-get+.
+
+=== Sources
+
+See the documentation of the +el-get-sources+ variable for details.
+
+=== Build Commands
+
+Avoid +make install+ that will move files into a proper destination place,
+that's for distributors to care, like +debian+ for example. In our case, you
+probably just want your package +foo+ to be all installed into
++~/.emacs.d/el-get/foo+, right? So, no +make install+.
+
+=== Some more commands?
+
+Yes, ok.
+
+M-x el-get-cd::
+
+    Will prompt for a package name, with completion, then open its directory
+    with dired.
+
+M-x el-get-install::
+
+    Will prompt for a package name, with completion, then install it
+    following the +source+ you've already setup. Depending on the +type+ of
+    the +package+, this will fail for an already installed package.
+
+M-x el-get-update::
+
+    Will prompt for a package name, with completion, then update it. This
+    will run the +build+ commands and +init+ the package again.
+
+M-x el-get-remove::
+
+    Will prompt for a package name, with completion, then remove
+    it. Depending on the +type+ of the package, this often means simply
+    deleting the directory where the source package lies. Sometime we have
+    to use external tools instead (+apt-get+, e.g.). No effort is made to
+    unload the features.
+
+== Internals
+
+TODO: explain the symlinks in +~/.emacs.d/el-get+. For now, read the source
+and try it out.
+
+== Extending it
+
+Please see the documentation for the +el-get-methods+ and provide a patch!
+
+Adding +bzr+ support for example was only about writing 2 fonctions, mostly
+using copy paste. Here's the patch:
+
+  http://github.com/dimitri/el-get/commit/494551a9e75ebeb9ad043da175e6b2140d0d87d3
+
