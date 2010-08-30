@@ -128,6 +128,25 @@ or symlink in +el-get-dir+, defaulting to +~/.emacs.d/el-get+.
 
 See the documentation of the +el-get-sources+ variable for details.
 
+=== Recipes
+
+Some sources are contributed to +el-get+ directly, so that you only have to
+put in the +el-get-sources+ the name of the package you want to
+install. 
+
+Should you need some local specific setup, you can do that by providing a
+partial sources missing the +:type+ property: your local properties will get
+merged into the recipes one.
+
+Also, the variable +el-get-recipe-path+ allows you to maintain local recipes
+in case you either dislike the default one or are crafting some new one not
+commited to the main repository yet. But please do consider sending them
+over!
+
+We do not intend to provide recipes for advanced types such as +apt-get+ and
++elpa+ because there's so little to win here, and maintaining a package list
+would take too much time.
+
 === Build Commands
 
 Avoid +make install+ that will move files into a proper destination place,
@@ -175,3 +194,10 @@ Please see the documentation for the +el-get-methods+ and provide a patch!
 Adding +bzr+ support for example was only about writing 2 fonctions, mostly
 using copy paste. Here's the patch: http://github.com/dimitri/el-get/commit/494551a9e75ebeb9ad043da175e6b2140d0d87d3
 
+== Gotchas
+
+=== C-h v require-final-newline
+
+Some user experienced problems downloading +tar+ archives because of using
+this variable via +vimpulse+. Adding a newline to an archive ain't good for
+its consistency.
