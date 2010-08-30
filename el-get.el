@@ -77,6 +77,12 @@
 ;;
 ;; Changelog
 ;;
+;;  0.10 - <WIP> - Can I haz your recipes?
+;;
+;;   - Implement el-get recipes so that el-get-sources can be a simple list
+;;     of symbols. Now that there's an authoritative git repository, where
+;;     to share the recipes is an easy question.
+;;
 ;;  0.9 - 2010-08-24 - build me a shell
 ;;
 ;;   - have `el-get-build' use start-process-shell-command so that you can
@@ -118,6 +124,10 @@
 
 (require 'dired)
 (require 'package nil t) ; that's ELPA, but you can use el-get to install it
+
+(eval-when-compile 
+  ;; yes we do need the loop facility, for merging 2 property lists
+  (require 'cl))
 
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
@@ -186,6 +196,9 @@ the named package action in the given method."
 (defvar el-get-dir "~/.emacs.d/el-get/"
   "Define where to fetch the packages.")
 
+(defvar el-get-recipe-dir "~/.emacs.d/el-get/recipes"
+  "Define where to look for the recipes")
+
 (defvar el-get-apt-get (executable-find "apt-get")
   "The apt-get executable.")
 
@@ -206,7 +219,13 @@ the named package action in the given method."
 (defvar el-get-sources nil
   "List of sources for packages.
 
-Each source entry is a PLIST where the following properties are supported:
+Each source entry is either a symbol, in which case the recipe in
+`el-get-recipe-dir' named after the symbol with a \".el\"
+extension will get used, or a PLIST where the following
+properties are supported. If your property list is missing
+the :type property, then it's merged with the recipe one, so that
+you can override any definition provided by `el-get' recipes
+locally.
 
 name
 
@@ -898,12 +917,35 @@ passing it the the callback function nonetheless."
 		     commands)))
 	(el-get-start-process-list package process-list post-build-fun)))))
 
+(defun el-get-read-recipe (package)
+  "Return the package source definition for package, from the recipes"
+  (let ((recipe 
+	 (concat (file-name-as-directory el-get-recipe-dir) package ".el")))
+    (car (with-temp-buffer 
+	   (insert-file-contents-literally recipe)
+	   (read-from-string (buffer-string))))))
+
 (defun el-get-package-def (package)
   "Return a single `el-get-sources' entry for given package"
   (let (source)
     (dolist (s el-get-sources source)
       (when (string= package (format "%s" (plist-get s :name)))
-	(setq source s)))))
+	(setq source s)))
+
+    (cond ((symbolp source)
+	   ;; we did find only its name, load its definition in the recipes
+	   (el-get-read-recipe package))
+	  
+	  ((null (plist-get source :type))
+	   ;; we got a list with no :type, that's an override plist
+	   (loop with def = (el-get-read-recipe package)
+		 for (prop override) on source by 'cddr 
+		 do (plist-put def prop override)
+		 finally return def))
+	  
+	  ;; none of the previous, must be a full definition
+	  ;; definition
+	  (t source))))
 
 
 ;;
