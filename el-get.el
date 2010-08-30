@@ -196,7 +196,7 @@ the named package action in the given method."
 (defvar el-get-dir "~/.emacs.d/el-get/"
   "Define where to fetch the packages.")
 
-(defvar el-get-recipe-dir "~/.emacs.d/el-get/recipes"
+(defvar el-get-recipe-path '("~/.emacs.d/el-get/recipes")
   "Define where to look for the recipes")
 
 (defvar el-get-apt-get (executable-find "apt-get")
@@ -919,11 +919,12 @@ passing it the the callback function nonetheless."
 
 (defun el-get-read-recipe (package)
   "Return the package source definition for package, from the recipes"
-  (let ((recipe 
-	 (concat (file-name-as-directory el-get-recipe-dir) package ".el")))
-    (car (with-temp-buffer 
-	   (insert-file-contents-literally recipe)
-	   (read-from-string (buffer-string))))))
+  (loop for dir in el-get-recipe-path
+	for recipe = (concat (file-name-as-directory dir) package ".el")
+	if (file-exists-p recipe)
+	return (car (with-temp-buffer 
+		      (insert-file-contents-literally recipe)
+		      (read-from-string (buffer-string))))))
 
 (defun el-get-package-def (package)
   "Return a single `el-get-sources' entry for given package"
