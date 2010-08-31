@@ -406,7 +406,9 @@ Any other property will get put into the process object.
 	   (args    (plist-get c :args))
 	   (shell   (plist-get c :shell))
 	   (startf  (if shell #'start-process-shell-command #'start-process))
-	   (default-directory (if cdir (file-name-as-directory cdir) 
+	   (default-directory (if cdir 
+				  (file-name-as-directory 
+				   (expand-file-name cdir))
 				default-directory))
 	   (proc    (apply startf cname cbuf program args)))
 
