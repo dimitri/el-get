@@ -925,12 +925,16 @@ passing it the the callback function nonetheless."
 		      (insert-file-contents-literally recipe)
 		      (read-from-string (buffer-string))))))
 
+(defun el-get-source-name (source)
+  "Return the package name (stringp) given an `el-get-sources' entry"
+  (if (symbolp source) (symbol-name source)
+    (format "%s" (plist-get source :name))))
+
 (defun el-get-package-def (package)
   "Return a single `el-get-sources' entry for given package"
-  (let (source)
-    (dolist (s el-get-sources source)
-      (when (string= package (format "%s" (plist-get s :name)))
-	(setq source s)))
+  (let ((source (loop for src in el-get-sources
+		      when (string= package (el-get-source-name src))
+		      return src)))
 
     (cond ((symbolp source)
 	   ;; we did find only its name, load its definition in the recipes
@@ -1122,7 +1126,7 @@ suitable for use in your emacs init script.
 "
   (mapcar 
    (lambda (source)
-     (let* ((package  (format "%s" (plist-get source :name))))
+     (let* ((package (el-get-source-name source)))
        ;; check if the package needs to be fetched (and built)
        (if (el-get-package-exists-p package)
 	   (el-get-init package)
