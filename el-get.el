@@ -798,28 +798,31 @@ package isn't currently installed by ELPA."
 ;;
 ;; http support
 ;;
-(defun el-get-http-retrieve-callback (url-arg package post-install-fun)
+(defun el-get-http-retrieve-callback (url-arg package post-install-fun &optional dest)
   "callback function for `url-retrieve', store the emacs lisp file for the package.
 
 url-arg is nil in my tests but url-retrieve seems to insist on
 passing it the the callback function nonetheless."
   (let* ((pdir   (el-get-package-directory package))
-	 (dest   (concat (file-name-as-directory pdir) package ".el")))
+	 (dest   (or dest (concat (file-name-as-directory pdir) package ".el")))
+	 (part   (concat dest ".part")))
     ;; prune HTTP headers before save
     (beginning-of-buffer)
     (re-search-forward "^$" nil 'move)
     (forward-char)
     (delete-region (point-min) (point))
-    (write-file dest))
+    (write-file part)
+    (rename-file part dest)
+    (message "Renamed to %s" dest))
   (funcall post-install-fun package))
 
-(defun el-get-http-install (package url post-install-fun)
-  "Dowload a single-file package over HTTP "
+(defun el-get-http-install (package url post-install-fun &optional dest)
+  "Dowload a single-file package over HTTP and store it in dest, or in package.el"
   (let ((pdir   (el-get-package-directory package)))
     (unless (file-directory-p pdir)
       (make-directory pdir))
     (url-retrieve 
-     url 'el-get-http-retrieve-callback `(,package ,post-install-fun))))
+     url 'el-get-http-retrieve-callback `(,package ,post-install-fun ,dest))))
 
 
 ;;
@@ -847,15 +850,11 @@ passing it the the callback function nonetheless."
 	 (options (plist-get source :options))
 	 (pdir    (el-get-package-directory package))
 	 (tarfile (file-name-nondirectory url))
+	 (dest    (concat (file-name-as-directory pdir) tarfile))
 	 (name    (format "*tar %s %s*" options url))
 	 (ok      (format "Package %s installed." package))
 	 (ko      (format "Could not install package %s." package))
 	 (post `(lambda (package)
-		  ;; rename pdir/package.el to the expected name
-		  (rename-file 
-		   (concat (file-name-as-directory ,pdir) package ".el")
-		   (concat (file-name-as-directory ,pdir) ,tarfile))
-		  (message "Renamed to %s" (concat (file-name-as-directory ,pdir) ,tarfile))
 		  ;; tar xzf `basename url`
 		  (el-get-start-process-list
 		   package
@@ -867,7 +866,7 @@ passing it the the callback function nonetheless."
 				    :message ,ok
 				    :error ,ko))
 		   ,(symbol-function post-install-fun)))))
-    (el-get-http-install package url post)))
+    (el-get-http-install package url post dest)))
 
 (add-hook 'el-get-http-tar-install-hook 'el-get-http-tar-cleanup-extract-hook)
 
