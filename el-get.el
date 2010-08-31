@@ -957,7 +957,10 @@ passing it the the callback function nonetheless."
 
 When given a package name, check for its existence"
   (let ((plist 
-	  (mapcar (lambda (x) (format "%s" (plist-get x :name))) el-get-sources)))
+	  (mapcar (lambda (x) 
+		    (if (symbolp x) (format "%S" x)
+		      (format "%s" (plist-get x :name))))
+		  el-get-sources)))
     (if package
 	(unless (member package plist)
 	  (error "el-get: can not find package name `%s' in `el-get-sources'" package))
