@@ -938,12 +938,15 @@ When given a package name, check for its existence"
 	     (infodir-rel (if (file-directory-p infodir-abs-conf)
 			      infodir
 			    (file-name-directory infodir)))
+	     (info-dir    (concat (file-name-as-directory infodir-abs) "dir"))
 	     (infofile (if (and (file-exists-p infodir-abs-conf)
 				(not (file-directory-p infodir-abs-conf)))
 			   infodir-abs-conf
 			 (concat (file-name-as-directory infodir-abs) package))))
 
-	(when (and infodir (file-directory-p infodir-abs))
+	(when (and infodir
+		   (file-directory-p infodir-abs)
+		   (not (file-exists-p info-dir)))
 	  (require 'info)
 	  (info-initialize)
 	  ;; add to Info-directory-list
