@@ -25,7 +25,7 @@
        (pdir              (concat (file-name-as-directory el-get-dir) package))
        (git               (executable-find "git"))
        (url               "git://github.com/dimitri/el-get.git")
-       (el-get-sources    `((:name ,package :type "git" :url ,url :features "el-get")))
+       (el-get-sources    `((:name ,package :type "git" :url ,url :features el-get)))
        (default-directory el-get-dir)
        (process-connection-type nil) ; pipe, no pty (--no-progress)
        (clone             (start-process bname bname git "--no-pager" "clone" "-v" url package)))
