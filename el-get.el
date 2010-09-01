@@ -1015,7 +1015,7 @@ entry."
 (defun el-get-install (package)
   "Install PACKAGE."
   (interactive (list (el-get-read-package-name "Install")))
-  (el-get-is-package package)
+  (el-get-error-unless-package-p package)
   (let* ((source   (el-get-package-def package))
 	 (method   (plist-get source :type))
 	 (install  (el-get-method method :install))
