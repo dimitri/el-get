@@ -219,13 +219,14 @@ the named package action in the given method."
 (defvar el-get-sources nil
   "List of sources for packages.
 
-Each source entry is either a symbol, in which case the recipe in
-`el-get-recipe-dir' named after the symbol with a \".el\"
-extension will get used, or a PLIST where the following
-properties are supported. If your property list is missing
-the :type property, then it's merged with the recipe one, so that
-you can override any definition provided by `el-get' recipes
-locally.
+Each source entry is either a symbol, in which case the first
+recipe found in `el-get-recipe-path' directories named after the
+symbol with a \".el\" extension will get used, or a PLIST where
+the following properties are supported.
+
+If your property list is missing the :type property, then it's
+merged with the recipe one, so that you can override any
+definition provided by `el-get' recipes locally.
 
 name
 
