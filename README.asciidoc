@@ -64,34 +64,21 @@ run emacs, and I want this documentation to be usable as-is. Enters el-get!
 
 --------------------------------------
 (setq el-get-sources
-      '((:name el-get 
-               :type git
-               :url "git://github.com/dimitri/el-get.git"
-               :features "el-get")
+      '(cssh el-get switch-window vkill google-maps nxhtml xcscope yasnippet
 
-        (:name bbdb
-               :type git
-               :url "git://github.com/barak/BBDB.git"
-               :load-path ("./lisp" "./bits")
-               :info "texinfo"
-               :build ("./configure" "make"))
+	(:name magit 
+	       :after (lambda () (global-set-key (kbd "C-x C-z") 'magit-status)))
 
-        (:name magit
-               :type git
-               :url "http://github.com/philjackson/magit.git"
-               :info "."
-               :build ("./autogen.sh" "./configure" "make"))
+	(:name asciidoc        
+	       :type elpa
+	       :after (lambda ()
+			(autoload 'doc-mode "doc-mode" nil t)
+			(add-to-list 'auto-mode-alist '("\\.adoc$" . doc-mode))
+			(add-hook 'doc-mode-hook '(lambda ()
+						    (turn-on-auto-fill)
+						    (require 'asciidoc)))))
 
-        (:name vkill
-               :type http
-               :url "http://www.splode.com/~friedman/software/emacs-lisp/src/vkill.el"
-               :features vkill)
-
-        (:name yasnippet
-               :type git-svn
-               :url "http://yasnippet.googlecode.com/svn/trunk/")
-
-        (:name asciidoc         :type elpa)
+	(:name lisppaste        :type elpa)
         (:name dictionary-el    :type apt-get)
         (:name emacs-goodies-el :type apt-get)))
 
@@ -146,15 +133,6 @@ over!
 We do not intend to provide recipes for advanced types such as +apt-get+ and
 +elpa+ because there's so little to win here, and maintaining a package list
 would take too much time.
-
-When using recipes, your el-get-sources might look like the following:
-(setq el-get-sources
-      '((:name bbdb)
-	(:name magit)
-	(:name twitter)
-	(:name scratch)
-	(:name vkill)
-	(:name el-get)))
 
 === Build Commands
 
