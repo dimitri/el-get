@@ -6,7 +6,7 @@
 ;; URL: http://www.emacswiki.org/emacs/el-get.el
 ;; Version: 0.9
 ;; Created: 2010-06-17
-;; Keywords: emacs package elisp install elpa git git-svn bzr cvs apt-get fink http http-tar
+;; Keywords: emacs package elisp install elpa git git-svn bzr cvs apt-get fink http http-tar emacswiki
 ;; Licence: WTFPL, grab your copy here: http://sam.zoy.org/wtfpl/
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -21,6 +21,10 @@
 ;;   - Implement el-get recipes so that el-get-sources can be a simple list
 ;;     of symbols. Now that there's an authoritative git repository, where
 ;;     to share the recipes is easy.
+;;   - Add support for emacswiki directly, save from having to enter the URL
+;;   - Implement package status on-disk saving so that installing over a
+;;     previously failed install is in theory possible. Currently `el-get'
+;;     will refrain from removing your package automatically, though.
 ;;
 ;;  0.9 - 2010-08-24 - build me a shell
 ;;
@@ -118,6 +122,10 @@
 		       :install-hook el-get-http-install-hook
 		       :update el-get-http-install
 		       :remove el-get-rmdir)
+    :emacswiki (:install el-get-emacswiki-install
+		       :install-hook el-get-http-install-hook
+		       :update el-get-emacswiki-install
+		       :remove el-get-rmdir)
     :http-tar (:install el-get-http-tar-install
 		       :install-hook el-get-http-tar-install-hook
 		       :update el-get-http-tar-install
@@ -138,6 +146,10 @@ the named package action in the given method."
 (defvar el-get-recipe-path '("~/.emacs.d/el-get/el-get/recipes")
   "Define where to look for the recipes")
 
+(defvar el-get-status-file
+  (concat (file-name-as-directory el-get-dir) ".status.el")
+  "Define where to store and read the package statuses")
+
 (defvar el-get-apt-get (executable-find "apt-get")
   "The apt-get executable.")
 
@@ -149,6 +161,10 @@ the named package action in the given method."
 
 (defvar el-get-fink-base "/sw/share/doc"
   "Where to link the el-get symlink to, /<package> will get appended.")
+
+(defvar el-get-emacswiki-base-url
+  "http://www.emacswiki.org/emacs/download/%s.el"
+  "The base URL where to fetch :emacswiki packages")
 
 ;; debian uses ginstall-info and it's compatible to fink's install-info on
 ;; MacOSX, so:
@@ -574,7 +590,7 @@ found."
 			((eq method 'fink)    el-get-fink-base)))
 	 (debdir  (concat (file-name-as-directory basedir) package)))
     (unless (file-directory-p pdir)
-      (shell-command 
+      (shell-command
        (concat "cd " el-get-dir " && ln -s " debdir  " " package)))))
 
 (defun el-get-dpkg-remove-symlink ()
@@ -583,7 +599,7 @@ found."
     (message "PHOQUE %S" pdir)
     (when (file-symlink-p pdir)
       (message (concat "cd " el-get-dir " && rm -f " package))
-      (shell-command 
+      (shell-command
        (concat "cd " el-get-dir " && rm -f " package)))))
 
 
@@ -772,6 +788,15 @@ passing it the the callback function nonetheless."
 
 
 ;;
+;; EmacsWiki support, which is http but with a known URL
+;;
+(defun el-get-emacswiki-install (package url post-install-fun)
+  "Download a single-file PACKAGE over HTTP from emacswiki."
+  (let ((url (or url (format el-get-emacswiki-base-url package))))
+    (el-get-http-install package url post-install-fun)))
+
+
+;;
 ;; http-tar support (archive)
 ;;
 (defun el-get-http-tar-cleanup-extract-hook ()
@@ -863,6 +888,10 @@ the files up."
 		     commands)))
 	(el-get-start-process-list package process-list post-build-fun)))))
 
+
+;;
+;; recipes
+;;
 (defun el-get-read-recipe (package)
   "Return the source definition for PACKAGE, from the recipes."
   (loop for dir in el-get-recipe-path
@@ -898,6 +927,39 @@ entry."
 	  ;; none of the previous, must be a full definition
 	  ;; definition
 	  (t source))))
+
+
+;;
+;; package status --- a plist saved on a file, using symbols
+;;
+;; it should be possible to use strings instead, but in my tests it failed
+;; miserably.
+;;
+(defun el-get-package-symbol (package-name)
+  "Returns a symbol :package."
+  (if (symbolp package-name) package-name
+    (intern (format ":%s" package-name))))
+
+(defun el-get-read-all-packages-status ()
+  "Return the current plist of packages status"
+  (when (file-exists-p el-get-status-file)
+    (car (with-temp-buffer
+	   (insert-file-contents-literally el-get-status-file)
+	   (read-from-string (buffer-string))))))
+
+(defun el-get-read-package-status (package)
+  "Return the current known status for given package."
+  (plist-get (el-get-read-all-packages-status)
+	     (el-get-package-symbol package)))
+
+(defun el-get-save-package-status (package status)
+  "Save given package status"
+  (let ((p (el-get-package-symbol package))
+	(s (el-get-read-all-packages-status)))
+    (with-temp-file el-get-status-file
+      (insert
+       (format "%S" (if s (plist-put s p status)
+		      `(,p ,status)))))))
 
 
 ;;
@@ -986,7 +1048,7 @@ entry."
     ;; features, only ELPA will handle them on its own
     (unless (eq method 'elpa)
       ;; if a feature is provided, require it now
-      (when feats 
+      (when feats
 	(mapc (lambda (feat)
 		(let ((feature (if (stringp feat) (intern-soft feat) feat)))
 		  (message "require '%s" (require feature))))
@@ -1009,20 +1071,34 @@ entry."
 	 (commands (plist-get source :build)))
     ;; post-install is the right place to run install-hook
     (run-hooks hooks)
-    ;; build then init
-    (el-get-build package commands nil nil (lambda (package) (el-get-init package)))))
+    (if commands
+	;; build then init
+	(el-get-build package commands nil nil
+		      (lambda (package)
+			(el-get-save-package-status package "installed")
+			(el-get-init package)))
+      ;; if there's no commands, just mark as installed
+      (el-get-save-package-status package "installed"))))
 
 (defun el-get-install (package)
   "Install PACKAGE."
   (interactive (list (el-get-read-package-name "Install")))
   (el-get-error-unless-package-p package)
+
+  (let ((status (el-get-read-package-status package)))
+    (when (string= "installed" status)
+      (error "Package %s is already installed." package))
+    (when (string= "required" status)
+      (error "Package %s failed to install, remove it first." package)))
+
   (let* ((source   (el-get-package-def package))
 	 (method   (plist-get source :type))
 	 (install  (el-get-method method :install))
 	 (url      (plist-get source :url)))
 
-    ;; check we can install the package
+    ;; check we can install the package and save to "required" status
     (el-get-check-init)
+    (el-get-save-package-status package "required")
 
     ;; and install the package now
     (message "el-get install %s" package)
