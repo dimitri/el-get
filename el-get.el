@@ -64,7 +64,7 @@
 (require 'dired)
 (require 'package nil t) ; that's ELPA, but you can use el-get to install it
 
-(eval-when-compile 
+(eval-when-compile
   ;; yes we do need the loop facility, for merging 2 property lists
   (require 'cl))
 
@@ -84,9 +84,9 @@
 (defvar el-get-http-tar-install-hook nil "Hook run after http-tar package install.")
 
 (defcustom el-get-methods
-  '(:git     (:install el-get-git-clone 
+  '(:git     (:install el-get-git-clone
 		       :install-hook el-get-git-clone-hook
-		       :update el-get-git-pull 
+		       :update el-get-git-pull
 		       :remove el-get-rmdir)
     :git-svn (:install el-get-git-svn-clone
 		       :install-hook el-get-git-svn-clone-hook
@@ -100,17 +100,17 @@
 		       :install-hook el-get-cvs-checkout-hook
 		       :update el-get-cvs-update
 		       :remove el-get-rmdir)
-    :apt-get (:install el-get-apt-get-install 
+    :apt-get (:install el-get-apt-get-install
 		       :install-hook el-get-apt-get-install-hook
 		       :update el-get-apt-get-install
 		       :remove el-get-apt-get-remove
 		       :remove-hook el-get-apt-get-remove-hook)
-    :fink    (:install el-get-fink-install 
+    :fink    (:install el-get-fink-install
 		       :install-hook el-get-fink-install-hook
 		       :update el-get-fink-install
 		       :remove el-get-fink-remove
 		       :remove-hook el-get-fink-remove-hook)
-    :elpa    (:install el-get-elpa-install 
+    :elpa    (:install el-get-elpa-install
 		       :install-hook el-get-elpa-install-hook
 		       :update el-get-elpa-update
 		       :remove el-get-rmdir)
@@ -284,7 +284,7 @@ directory or a symlink in el-get-dir."
 	      (set-window-buffer (selected-window) cbuf))
 	    (error "el-get: %s" cname errorm))
 	(message "el-get: %s" message))
-      
+
       (when cbuf (kill-buffer cbuf))
       (if next
 	  (el-get-start-process-list package next final-f)
@@ -348,8 +348,8 @@ Any other property will get put into the process object.
 	   (args    (plist-get c :args))
 	   (shell   (plist-get c :shell))
 	   (startf  (if shell #'start-process-shell-command #'start-process))
-	   (default-directory (if cdir 
-				  (file-name-as-directory 
+	   (default-directory (if cdir
+				  (file-name-as-directory
 				   (expand-file-name cdir))
 				default-directory))
 	   (proc    (apply startf cname cbuf program args)))
@@ -374,7 +374,7 @@ found."
 			    magit-git-executable
 			  (executable-find "git"))))
     (unless (file-executable-p git-executable)
-      (error 
+      (error
        (concat "el-get-git-clone requires `magit-git-executable' to be set, "
 	       "or the binary `git' to be found in your PATH")))
     git-executable))
@@ -386,7 +386,7 @@ found."
 	 (ok   (format "Package %s installed." package))
 	 (ko   (format "Could not install package %s." package)))
 
-    (el-get-start-process-list 
+    (el-get-start-process-list
      package
      `((:command-name ,name
 		      :buffer-name ,name
@@ -405,7 +405,7 @@ found."
 	 (ok   (format "Pulled package %s." package))
 	 (ko   (format "Could not update package %s." package)))
 
-    (el-get-start-process-list 
+    (el-get-start-process-list
      package
      `((:command-name ,name
 		      :buffer-name ,name
@@ -427,7 +427,7 @@ found."
 	(ok   (format "Package %s installed." package))
 	(ko   (format "Could not install package %s." package)))
 
-    (el-get-start-process-list 
+    (el-get-start-process-list
      package
      `((:command-name ,name
 		      :buffer-name ,name
@@ -458,7 +458,7 @@ found."
 		      :args ("--no-pager" "svn" "fetch")
 		      :message ,f-ok
 		      :error ,f-ko)
-       
+
        (:command-name ,r-name
 		      :buffer-name ,r-name
 		      :default-directory ,pdir
@@ -556,8 +556,8 @@ found."
 ;;
 (defun el-get-dpkg-package-status (package)
   "Return the package status from dpkg --get-selections."
-  (substring 
-   (shell-command-to-string 
+  (substring
+   (shell-command-to-string
     (format
      "dpkg -l %s| awk '/^ii/ && $2 = \"%s\" {print \"ok\"}'" package package)) 0 -1))
 
@@ -618,7 +618,7 @@ password prompt."
   (let* ((name (format "*apt-get install %s*" package))
 	 (ok   (format "Package %s installed." package))
 	 (ko   (format "Could not install package %s." package)))
-	 
+
     (el-get-start-process-list
      package
      `((:command-name ,name
@@ -635,7 +635,7 @@ password prompt."
   (let* ((name (format "*apt-get remove %s*" package))
 	 (ok   (format "Package %s removed." package))
 	 (ko   (format "Could not remove package %s." package)))
-	 
+
     (el-get-start-process-list
      package
      `((:command-name ,name
@@ -658,7 +658,7 @@ password prompt."
   (let* ((name (format "*fink install %s*" package))
 	 (ok   (format "Package %s installed." package))
 	 (ko   (format "Could not install package %s." package)))
-	 
+
     (el-get-start-process-list
      package
      `((:command-name ,name
@@ -677,7 +677,7 @@ password prompt."
   (let* ((name (format "*fink remove %s*" package))
 	 (ok   (format "Package %s removed." package))
 	 (ko   (format "Could not remove package %s." package)))
-	 
+
     (el-get-start-process-list
      package
      `((:command-name ,name
@@ -712,7 +712,7 @@ PACKAGE isn't currently installed by ELPA."
 
 	 (realname (try-completion pname l)))
 
-    (if realname (concat (file-name-as-directory package-user-dir) realname) 
+    (if realname (concat (file-name-as-directory package-user-dir) realname)
       realname)))
 
 (defun el-get-elpa-symlink-package (package)
@@ -720,7 +720,7 @@ PACKAGE isn't currently installed by ELPA."
   (let ((elpa-dir (el-get-elpa-package-directory package)))
     (unless (el-get-package-exists-p package)
       (shell-command
-       (concat "cd " el-get-dir 
+       (concat "cd " el-get-dir
 	       " && ln -s \"" elpa-dir "\" \"" package "\"")))))
 
 (defun el-get-elpa-install (package url post-install-fun)
@@ -767,7 +767,7 @@ passing it the the callback function nonetheless."
   (let ((pdir   (el-get-package-directory package)))
     (unless (file-directory-p pdir)
       (make-directory pdir))
-    (url-retrieve 
+    (url-retrieve
      url 'el-get-http-retrieve-callback `(,package ,post-install-fun ,dest))))
 
 
@@ -830,13 +830,13 @@ the files up."
   "Run each command from the package directory."
   (let* ((pdir   (el-get-package-directory package))
 	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir))
-	 (buf    (format "*el-get-build: %s*" package)) 
+	 (buf    (format "*el-get-build: %s*" package))
 	 (default-directory wdir))
     (if sync
 	(progn
 	  (dolist (c commands)
 	    (message "el-get %s: cd %s && %s" package wdir c)
-	    (message "%S" (shell-command-to-string 
+	    (message "%S" (shell-command-to-string
 			   (concat "cd " wdir " && " c))))
 	  (when (and post-build-fun (functionp post-build-fun))
 	    (funcall post-build-fun)))
@@ -850,7 +850,7 @@ the files up."
 					    (expand-file-name name)
 					  (executable-find name)))
 			      (args     (cdr split)))
-			 
+
 			 `(:command-name ,name
 					 :buffer-name ,buf
 					 :default-directory ,wdir
@@ -858,7 +858,7 @@ the files up."
 					 :program ,program
 					 :args (,@args)
 					 :message ,(format "el-get-build %s: %s ok." package c)
-					 :error ,(format 
+					 :error ,(format
 						  "el-get could not build %s [%s]" package c))))
 		     commands)))
 	(el-get-start-process-list package process-list post-build-fun)))))
@@ -868,7 +868,7 @@ the files up."
   (loop for dir in el-get-recipe-path
 	for recipe = (concat (file-name-as-directory dir) package ".el")
 	if (file-exists-p recipe)
-	return (car (with-temp-buffer 
+	return (car (with-temp-buffer
 		      (insert-file-contents-literally recipe)
 		      (read-from-string (buffer-string))))))
 
@@ -887,14 +887,14 @@ entry."
     (cond ((symbolp source)
 	   ;; we did find only its name, load its definition in the recipes
 	   (el-get-read-recipe package))
-	  
+
 	  ((null (plist-get source :type))
 	   ;; we got a list with no :type, that's an override plist
 	   (loop with def = (el-get-read-recipe package)
-		 for (prop override) on source by 'cddr 
+		 for (prop override) on source by 'cddr
 		 do (plist-put def prop override)
 		 finally return def))
-	  
+
 	  ;; none of the previous, must be a full definition
 	  ;; definition
 	  (t source))))
@@ -944,7 +944,7 @@ entry."
     ;; apt-get and ELPA will take care of load-path, Info-directory-list
     (unless (member method '(elpa apt-get fink))
       ;; append entries to load-path and Info-directory-list
-      (mapc (lambda (path) 
+      (mapc (lambda (path)
 	      (el-get-add-path-to-list package 'load-path path))
 	    (if (stringp el-path) (list el-path) el-path))
 
@@ -975,7 +975,7 @@ entry."
 
     ;; loads
     (when loads
-      (mapc (lambda (file) 
+      (mapc (lambda (file)
 	      (let ((pfile (concat (file-name-as-directory pdir) file)))
 		(unless (file-exists-p pfile)
 		  (error "el-get could not find file '%s'" pfile))
@@ -1015,7 +1015,7 @@ entry."
 (defun el-get-install (package)
   "Install PACKAGE."
   (interactive (list (el-get-read-package-name "Install")))
-  (el-get-is-package package)
+  (el-get-error-unless-package-p package)
   (let* ((source   (el-get-package-def package))
 	 (method   (plist-get source :type))
 	 (install  (el-get-method method :install))
@@ -1032,7 +1032,7 @@ entry."
   "Post update PACKAGE. This will get run by a sentinel."
   (let* ((source   (el-get-package-def package))
 	 (commands (plist-get source :build)))
-    (el-get-build package commands nil nil 
+    (el-get-build package commands nil nil
 		  (lambda (package) (message "el-get-post-update %s: done" package)))))
 
 (defun el-get-update (package)
@@ -1089,7 +1089,7 @@ el-get is also responsible for doing (require 'feature) for each
 and every feature declared in `el-get-sources', so that it's
 suitable for use in your emacs init script.
 "
-  (mapcar 
+  (mapcar
    (lambda (source)
      (let* ((package (el-get-source-name source)))
        ;; check if the package needs to be fetched (and built)
