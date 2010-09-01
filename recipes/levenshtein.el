@@ -1,4 +1,3 @@
 (:name levenshtein
-       :type http
-       :url "http://www.emacswiki.org/emacs/download/levenshtein.el"
+       :type emacswiki
        :features levenshtein)

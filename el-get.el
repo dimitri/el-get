@@ -6,7 +6,7 @@
 ;; URL: http://www.emacswiki.org/emacs/el-get.el
 ;; Version: 0.9
 ;; Created: 2010-06-17
-;; Keywords: emacs package elisp install elpa git git-svn bzr cvs apt-get fink http http-tar
+;; Keywords: emacs package elisp install elpa git git-svn bzr cvs apt-get fink http http-tar emacswiki
 ;; Licence: WTFPL, grab your copy here: http://sam.zoy.org/wtfpl/
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -21,6 +21,7 @@
 ;;   - Implement el-get recipes so that el-get-sources can be a simple list
 ;;     of symbols. Now that there's an authoritative git repository, where
 ;;     to share the recipes is easy.
+;;   - Add support for emacswiki directly, save from having to enter the URL
 ;;
 ;;  0.9 - 2010-08-24 - build me a shell
 ;;
@@ -118,6 +119,10 @@
 		       :install-hook el-get-http-install-hook
 		       :update el-get-http-install
 		       :remove el-get-rmdir)
+    :emacswiki (:install el-get-emacswiki-install
+		       :install-hook el-get-http-install-hook
+		       :update el-get-emacswiki-install
+		       :remove el-get-rmdir)
     :http-tar (:install el-get-http-tar-install
 		       :install-hook el-get-http-tar-install-hook
 		       :update el-get-http-tar-install
@@ -149,6 +154,10 @@ the named package action in the given method."
 
 (defvar el-get-fink-base "/sw/share/doc"
   "Where to link the el-get symlink to, /<package> will get appended.")
+
+(defvar el-get-emacswiki-base-url
+  "http://www.emacswiki.org/emacs/download/%s.el"
+  "The base URL where to fetch :emacswiki packages")
 
 ;; debian uses ginstall-info and it's compatible to fink's install-info on
 ;; MacOSX, so:
@@ -769,6 +778,15 @@ passing it the the callback function nonetheless."
       (make-directory pdir))
     (url-retrieve
      url 'el-get-http-retrieve-callback `(,package ,post-install-fun ,dest))))
+
+
+;;
+;; EmacsWiki support, which is http but with a known URL
+;;
+(defun el-get-emacswiki-install (package url post-install-fun)
+  "Download a single-file PACKAGE over HTTP from emacswiki."
+  (let ((url (or url (format el-get-emacswiki-base-url package))))
+    (el-get-http-install package url post-install-fun)))
 
 
 ;;
