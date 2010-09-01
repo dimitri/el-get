@@ -64,34 +64,21 @@ run emacs, and I want this documentation to be usable as-is. Enters el-get!
 
 --------------------------------------
 (setq el-get-sources
-      '((:name el-get 
-               :type git
-               :url "git://github.com/dimitri/el-get.git"
-               :features "el-get")
+      '(cssh el-get switch-window vkill google-maps nxhtml xcscope yasnippet
 
-        (:name bbdb
-               :type git
-               :url "git://github.com/barak/BBDB.git"
-               :load-path ("./lisp" "./bits")
-               :info "texinfo"
-               :build ("./configure" "make"))
+	(:name magit 
+	       :after (lambda () (global-set-key (kbd "C-x C-z") 'magit-status)))
 
-        (:name magit
-               :type git
-               :url "http://github.com/philjackson/magit.git"
-               :info "."
-               :build ("./autogen.sh" "./configure" "make"))
+	(:name asciidoc        
+	       :type elpa
+	       :after (lambda ()
+			(autoload 'doc-mode "doc-mode" nil t)
+			(add-to-list 'auto-mode-alist '("\\.adoc$" . doc-mode))
+			(add-hook 'doc-mode-hook '(lambda ()
+						    (turn-on-auto-fill)
+						    (require 'asciidoc)))))
 
-        (:name vkill
-               :type http
-               :url "http://www.splode.com/~friedman/software/emacs-lisp/src/vkill.el"
-               :features vkill)
-
-        (:name yasnippet
-               :type git-svn
-               :url "http://yasnippet.googlecode.com/svn/trunk/")
-
-        (:name asciidoc         :type elpa)
+	(:name lisppaste        :type elpa)
         (:name dictionary-el    :type apt-get)
         (:name emacs-goodies-el :type apt-get)))
 
@@ -210,3 +197,21 @@ using copy paste. Here's the patch: http://github.com/dimitri/el-get/commit/4945
 Some user experienced problems downloading +tar+ archives because of using
 this variable via +vimpulse+. Adding a newline to an archive ain't good for
 its consistency.
+
+=== Package Status
+
++el-get+ will now save some package status information into the file
++el-get-status-file+, it's a property list of the package symbol and its
+status. The status is set to "required" when you enter +el-get-install+ and
+is changed to +installed+ upon successful completion of the installation,
+including the build.
+
+Now, if you +el-get-install+ an already installed package, this is an
+error. If the status is "required", a previous install failed, you have to
++el-get-remove+ the package before continuing. If the status is "installed",
+well, the package is known installed.
+
+To reinit the status file you might need to execute the following code:
+
+  (mapc (lambda (p) (el-get-save-package-status p "installed")) 
+	(el-get-package-name-list))
