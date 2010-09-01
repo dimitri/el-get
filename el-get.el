@@ -4,76 +4,15 @@
 ;;
 ;; Author: Dimitri Fontaine <dim@tapoueh.org>
 ;; URL: http://www.emacswiki.org/emacs/el-get.el
-;; Version: 0.8
+;; Version: 0.9
 ;; Created: 2010-06-17
 ;; Keywords: emacs package elisp install elpa git git-svn bzr cvs apt-get fink http http-tar
 ;; Licence: WTFPL, grab your copy here: http://sam.zoy.org/wtfpl/
 ;;
 ;; This file is NOT part of GNU Emacs.
 ;;
-;; Easy Install:
-;;  1. Install ELPA, see http://tromey.com/elpa/install.html
-;;  2. Install el-get from there, soon to be available
-;;
-;; Manual Install:
-;;  1. Put el-get.el somewhere in your load-path
-;;  2. Install ELPA, see http://tromey.com/elpa/install.html
-;;  3. (require 'el-get) somewhere in your init
-;;
-;; Usage:
-;;  3. then define your el-get-sources
-;;  4. Use (el-get) from your .emacs or M-x el-get-install etc.
-;;
-;; Sources example:
-;; 
-;; (setq el-get-sources
-;;    '((:name bbdb
-;; 	       :type git
-;; 	       :url "git://github.com/barak/BBDB.git"
-;; 	       :load-path ("./lisp" "./bits")
-;; 	       :info "texinfo"
-;; 	       :build ("./configure" "make"))
-;;	
-;; 	(:name magit
-;; 	       :type git
-;; 	       :url "http://github.com/philjackson/magit.git"
-;; 	       :info "."
-;; 	       :build ("./autogen.sh" "./configure" "make"))
-;;	
-;; 	(:name vkill
-;; 	       :type http
-;; 	       :url "http://www.splode.com/~friedman/software/emacs-lisp/src/vkill.el"
-;; 	       :features vkill)
-;;	
-;; 	(:name yasnippet
-;; 	       :type git-svn
-;; 	       :url "http://yasnippet.googlecode.com/svn/trunk/")
-;;
-;;      (:name xml-rpc-el
-;;             :type bzr
-;;             :url "lp:xml-rpc-el")
-;;
-;;      (:name haskell-mode
-;;             :type http-tar
-;;             :options ("xzf")
-;;             :url "http://projects.haskell.org/haskellmode-emacs/haskell-mode-2.8.0.tar.gz"
-;;             :load "haskell-site-file.el"
-;;             :after (lambda ()
-;;                      (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-;;                      (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)))
-;;	
-;;      (:name auctex
-;;             :type cvs
-;;             :module "auctex"
-;;             :url ":pserver:anonymous@cvs.sv.gnu.org:/sources/auctex"
-;;             :build ("./autogen.sh" "./configure" "make")
-;;             :load  ("auctex.el" "preview/preview-latex.el")
-;;             :info "doc")
-;;
-;; 	(:name asciidoc         :type elpa)
-;; 	(:name dictionary-el    :type apt-get)
-;; 	(:name emacs-goodies-el :type apt-get)))
-;; 
+;; Install
+;;     Please see the README.asciidoc file from the same distribution
 ;;
 ;; Changelog
 ;;
@@ -81,7 +20,7 @@
 ;;
 ;;   - Implement el-get recipes so that el-get-sources can be a simple list
 ;;     of symbols. Now that there's an authoritative git repository, where
-;;     to share the recipes is an easy question.
+;;     to share the recipes is easy.
 ;;
 ;;  0.9 - 2010-08-24 - build me a shell
 ;;
