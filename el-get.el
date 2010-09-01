@@ -167,32 +167,32 @@ If your property list is missing the :type property, then it's
 merged with the recipe one, so that you can override any
 definition provided by `el-get' recipes locally.
 
-name
+:name
 
     The name of the package. It can be different from the name of
     the directory where the package is stored (after a `git
     clone' for example, in which case a symlink will be created.
 
-type
+:type
 
     The type of the package, currently el-get offers support for
     `apt-get', `elpa', `git' and `http'. You can easily support
     your own types here, see the variable `el-get-methods'.
 
-url
+:url
 
     Where to fetch the package, only meaningful for `git' and `http' types.
 
-build
+:build
 
     Your build recipe gets there, often it looks like (\"./configure\" \"make\")
 
-load-path
+:load-path
 
     This should be a list of directories you want `el-get' to add
     to your `load-path'.
 
-info
+:info
 
     This string allows you to setup a directory where to find a
     'package.info' file, or a path/to/whatever.info file. It will
@@ -202,28 +202,28 @@ info
     info buffer then C-h i again to be able to see the new menu
     entry.
 
-load
+:load
 
     List of files to load, or a single file to load after having
     installed the source but before `require'ing its features.
 
-features
+:features
 
     List of features el-get will `require' for you.
 
-options
+:options
 
     Currently only used by the http-tar support for you to give
     the tar options you want to use. Typically would be \"xzf\",
     but you might want to choose \"xjf\" for handling .tar.bz
     files e.g.
 
-module
+:module
 
     Currently only used by the `csv' support, allow you to
     configure the module you want to checkout in the given URL.
 
-after
+:after
 
     A function to run once `el-get' is done with `el-get-init',
     can be a lambda.
