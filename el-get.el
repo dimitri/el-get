@@ -196,7 +196,7 @@ the named package action in the given method."
 (defvar el-get-dir "~/.emacs.d/el-get/"
   "Define where to fetch the packages.")
 
-(defvar el-get-recipe-path '("~/.emacs.d/el-get/recipes")
+(defvar el-get-recipe-path '("~/.emacs.d/el-get/el-get/recipes")
   "Define where to look for the recipes")
 
 (defvar el-get-apt-get (executable-find "apt-get")
