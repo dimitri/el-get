@@ -22,6 +22,9 @@
 ;;     of symbols. Now that there's an authoritative git repository, where
 ;;     to share the recipes is easy.
 ;;   - Add support for emacswiki directly, save from having to enter the URL
+;;   - Implement package status on-disk saving so that installing over a
+;;     previously failed install is in theory possible. Currently `el-get'
+;;     will refrain from removing your package automatically, though.
 ;;
 ;;  0.9 - 2010-08-24 - build me a shell
 ;;
@@ -142,6 +145,10 @@ the named package action in the given method."
 
 (defvar el-get-recipe-path '("~/.emacs.d/el-get/el-get/recipes")
   "Define where to look for the recipes")
+
+(defvar el-get-status-file
+  (concat (file-name-as-directory el-get-dir) ".status.el")
+  "Define where to store and read the package statuses")
 
 (defvar el-get-apt-get (executable-find "apt-get")
   "The apt-get executable.")
@@ -881,6 +888,10 @@ the files up."
 		     commands)))
 	(el-get-start-process-list package process-list post-build-fun)))))
 
+
+;;
+;; recipes
+;;
 (defun el-get-read-recipe (package)
   "Return the source definition for PACKAGE, from the recipes."
   (loop for dir in el-get-recipe-path
@@ -916,6 +927,39 @@ entry."
 	  ;; none of the previous, must be a full definition
 	  ;; definition
 	  (t source))))
+
+
+;;
+;; package status --- a plist saved on a file, using symbols
+;;
+;; it should be possible to use strings instead, but in my tests it failed
+;; miserably.
+;;
+(defun el-get-package-symbol (package-name)
+  "Returns a symbol :package."
+  (if (symbolp package-name) package-name
+    (intern (format ":%s" package-name))))
+
+(defun el-get-read-all-packages-status ()
+  "Return the current plist of packages status"
+  (when (file-exists-p el-get-status-file)
+    (car (with-temp-buffer
+	   (insert-file-contents-literally el-get-status-file)
+	   (read-from-string (buffer-string))))))
+
+(defun el-get-read-package-status (package)
+  "Return the current known status for given package."
+  (plist-get (el-get-read-all-packages-status)
+	     (el-get-package-symbol package)))
+
+(defun el-get-save-package-status (package status)
+  "Save given package status"
+  (let ((p (el-get-package-symbol package))
+	(s (el-get-read-all-packages-status)))
+    (with-temp-file el-get-status-file
+      (insert
+       (format "%S" (if s (plist-put s p status)
+		      `(,p ,status)))))))
 
 
 ;;
@@ -1027,20 +1071,34 @@ entry."
 	 (commands (plist-get source :build)))
     ;; post-install is the right place to run install-hook
     (run-hooks hooks)
-    ;; build then init
-    (el-get-build package commands nil nil (lambda (package) (el-get-init package)))))
+    (if commands
+	;; build then init
+	(el-get-build package commands nil nil
+		      (lambda (package)
+			(el-get-save-package-status package "installed")
+			(el-get-init package)))
+      ;; if there's no commands, just mark as installed
+      (el-get-save-package-status package "installed"))))
 
 (defun el-get-install (package)
   "Install PACKAGE."
   (interactive (list (el-get-read-package-name "Install")))
   (el-get-error-unless-package-p package)
+
+  (let ((status (el-get-read-package-status package)))
+    (when (string= "installed" status)
+      (error "Package %s is already installed." package))
+    (when (string= "required" status)
+      (error "Package %s failed to install, remove it first." package)))
+
   (let* ((source   (el-get-package-def package))
 	 (method   (plist-get source :type))
 	 (install  (el-get-method method :install))
 	 (url      (plist-get source :url)))
 
-    ;; check we can install the package
+    ;; check we can install the package and save to "required" status
     (el-get-check-init)
+    (el-get-save-package-status package "required")
 
     ;; and install the package now
     (message "el-get install %s" package)
