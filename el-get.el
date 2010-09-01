@@ -231,22 +231,23 @@ definition provided by `el-get' recipes locally.
 
 
 (defun el-get-method (method-name action)
-  "return the function to call for doing action (e.g. install) in given method"
+  "Return the function to call for doing action (e.g. install) in
+given method."
   (let* ((method  (intern-soft (concat ":" (format "%s" method-name))))
 	 (actions (plist-get el-get-methods method)))
     (plist-get actions action)))
 
 (defun el-get-check-init ()
-  "Check that we can run el-get"
+  "Check that we can run el-get."
   (unless (file-directory-p el-get-dir)
     (make-directory el-get-dir)))
 
 (defun el-get-package-directory (package)
-  "Returns the package installation directory absolute name"
+  "Returns the package installation directory absolute name."
   (concat (file-name-as-directory el-get-dir) package))
 
 (defun el-get-add-path-to-list (package list path)
-  "(add-to-list list path) checking for path existence within
+  "(add-to-list LIST PATH) checking for path existence within
 given package directory."
   (let* ((pdir     (el-get-package-directory package))
 	 (fullpath (expand-file-name (concat (file-name-as-directory pdir) path))))
@@ -255,7 +256,8 @@ given package directory."
     (add-to-list list fullpath)))
 
 (defun el-get-package-exists-p (package)
-  "true only when the given package name is either a directory or a symlink in el-get-dir"
+  "Return true only when the given package name is either a
+directory or a symlink in el-get-dir."
   (let ((pdir (el-get-package-directory package)))
     ;; seems overkill as file-directory-p will always be true
     (or (file-directory-p pdir)
@@ -266,7 +268,7 @@ given package directory."
 ;; call-process-list utility, to do same as bash && feature
 ;;
 (defun el-get-start-process-list-sentinel (proc change)
-  "When proc has exited and was successful, chain next command"
+  "When proc has exited and was successful, chain next command."
   (when (eq (process-status proc) 'exit)
     (let ((status  (process-exit-status proc))
 	  (cname   (process-get proc :command-name))
@@ -290,10 +292,10 @@ given package directory."
 	  (funcall final-f package))))))
 
 (defun el-get-start-process-list (package commands final-func)
-  "run each command one after the other, in order, stopping at
+  "Run each command one after the other, in order, stopping at
 first error.
 
-commands should be a list of plists with at least the following
+Commands should be a list of plists with at least the following
 properties:
 
 :default-directory
@@ -365,7 +367,8 @@ Any other property will get put into the process object.
 ;; git support
 ;;
 (defun el-get-git-executable ()
-  "return git executable to use, or signal an error when not found"
+  "Return git executable to use, or signal an error when not
+found."
   (let ((git-executable (if (and (boundp 'magit-git-executable)
 				 (file-executable-p magit-git-executable))
 			    magit-git-executable
@@ -377,7 +380,7 @@ Any other property will get put into the process object.
     git-executable))
 
 (defun el-get-git-clone (package url post-install-fun)
-  "clone the given package following the url"
+  "Clone the given package following the URL."
   (let* ((git-executable (el-get-git-executable))
 	 (name (format "*git clone %s*" package))
 	 (ok   (format "Package %s installed." package))
@@ -395,7 +398,7 @@ Any other property will get put into the process object.
      post-install-fun)))
 
 (defun el-get-git-pull (package url post-update-fun)
-  "git pull the package"
+  "git pull the package."
   (let* ((git-executable (el-get-git-executable))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*git pull %s*" package))
@@ -487,7 +490,7 @@ Any other property will get put into the process object.
      post-install-fun)))
 
 (defun el-get-bzr-pull (package url post-update-fun)
-  "bzr pull the package"
+  "bzr pull the package."
   (let* ((bzr-executable "bzr")
 	 (pdir (el-get-package-directory package))
 	 (name (format "*bzr pull %s*" package))
@@ -507,7 +510,7 @@ Any other property will get put into the process object.
 
 
 (defun el-get-cvs-checkout (package url post-install-fun)
-  "cvs checkout the package"
+  "cvs checkout the package."
   (let* ((cvs-executable (executable-find "cvs"))
 	 (source  (el-get-package-def package))
 	 (module  (plist-get source :module))
@@ -529,7 +532,7 @@ Any other property will get put into the process object.
      post-install-fun)))
 
 (defun el-get-cvs-update (package url post-update-fun)
-  "cvs checkout the package"
+  "cvs checkout the package."
   (let* ((cvs-executable (executable-find "cvs"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*cvs update %s*" package))
@@ -552,7 +555,7 @@ Any other property will get put into the process object.
 ;; utilities for both apt-get and fink support (dpkg based)
 ;;
 (defun el-get-dpkg-package-status (package)
-  "returns the package status from dpkg --get-selections"
+  "Return the package status from dpkg --get-selections."
   (substring 
    (shell-command-to-string 
     (format
@@ -590,7 +593,8 @@ Any other property will get put into the process object.
 (add-hook 'el-get-apt-get-install-hook 'el-get-dpkg-symlink)
 
 (defun el-get-sudo-password-process-filter (proc string)
-  "Filter function that fills the process buffer's and matches a password prompt"
+  "Filter function that fills the process buffer's and matches a
+password prompt."
   (unless (eq (process-status proc) 'exit)
     (with-current-buffer (process-buffer proc)
       ;; arrange to remember already seen content
@@ -610,7 +614,7 @@ Any other property will get put into the process object.
 	(setq el-get-sudo-password-process-filter-pos (point-max))))))
 
 (defun el-get-apt-get-install (package url post-install-fun)
-  "echo $pass | sudo -S apt-get install package"
+  "echo $pass | sudo -S apt-get install PACKAGE"
   (let* ((name (format "*apt-get install %s*" package))
 	 (ok   (format "Package %s installed." package))
 	 (ko   (format "Could not install package %s." package)))
@@ -627,7 +631,7 @@ Any other property will get put into the process object.
      post-install-fun)))
 
 (defun el-get-apt-get-remove (package url post-remove-fun)
-  "apt-get remove package, url is there for API compliance"
+  "apt-get remove PACKAGE, URL is there for API compliance"
   (let* ((name (format "*apt-get remove %s*" package))
 	 (ok   (format "Package %s removed." package))
 	 (ko   (format "Could not remove package %s." package)))
@@ -650,7 +654,7 @@ Any other property will get put into the process object.
 ;; fink support
 ;;
 (defun el-get-fink-install (package url post-install-fun)
-  "sudo -S fink install package"
+  "sudo -S fink install PACKAGE"
   (let* ((name (format "*fink install %s*" package))
 	 (ok   (format "Package %s installed." package))
 	 (ko   (format "Could not install package %s." package)))
@@ -669,7 +673,7 @@ Any other property will get put into the process object.
 (add-hook 'el-get-fink-install-hook 'el-get-dpkg-symlink)
 
 (defun el-get-fink-remove (package url post-remove-fun)
-  "apt-get remove package, url is there for API compliance"
+  "apt-get remove PACKAGE. URL is there for API compliance."
   (let* ((name (format "*fink remove %s*" package))
 	 (ok   (format "Package %s removed." package))
 	 (ko   (format "Could not remove package %s." package)))
@@ -692,8 +696,8 @@ Any other property will get put into the process object.
 ;; ELPA support
 ;;
 (defun el-get-elpa-package-directory (package)
-  "return the directory where ELPA stores a package, or nil if
-package isn't currently installed by ELPA."
+  "Return the directory where ELPA stores PACKAGE, or nil if
+PACKAGE isn't currently installed by ELPA."
   (let* ((pname (format "%s" package))  ; easy way to cope with symbols etc.
 
 	 (l
@@ -720,7 +724,7 @@ package isn't currently installed by ELPA."
 	       " && ln -s \"" elpa-dir "\" \"" package "\"")))))
 
 (defun el-get-elpa-install (package url post-install-fun)
-  "ask elpa to install given package"
+  "Ask elpa to install given PACKAGE."
   (let ((elpa-dir (el-get-elpa-package-directory package)))
     (unless (and elpa-dir (file-directory-p elpa-dir))
       (package-install (intern-soft package)))
@@ -731,7 +735,7 @@ package isn't currently installed by ELPA."
   (funcall post-install-fun package))
 
 (defun el-get-elpa-update (package url post-update-fun)
-  "ask elpa to update given package"
+  "Ask elpa to update given PACKAGE."
   (el-get-rmdir (concat (file-name-as-directory package-user-dir) package nil))
   (package-install (intern-soft package))
   (funcall post-install-fun package))
@@ -741,9 +745,9 @@ package isn't currently installed by ELPA."
 ;; http support
 ;;
 (defun el-get-http-retrieve-callback (url-arg package post-install-fun &optional dest)
-  "callback function for `url-retrieve', store the emacs lisp file for the package.
+  "Callback function for `url-retrieve', store the emacs lisp file for the package.
 
-url-arg is nil in my tests but url-retrieve seems to insist on
+URL-ARG is nil in my tests but `url-retrieve' seems to insist on
 passing it the the callback function nonetheless."
   (let* ((pdir   (el-get-package-directory package))
 	 (dest   (or dest (concat (file-name-as-directory pdir) package ".el")))
@@ -759,7 +763,7 @@ passing it the the callback function nonetheless."
   (funcall post-install-fun package))
 
 (defun el-get-http-install (package url post-install-fun &optional dest)
-  "Dowload a single-file package over HTTP and store it in dest, or in package.el"
+  "Dowload a single-file PACKAGE over HTTP and store it in DEST, or in PACKAGE.el"
   (let ((pdir   (el-get-package-directory package)))
     (unless (file-directory-p pdir)
       (make-directory pdir))
@@ -771,7 +775,8 @@ passing it the the callback function nonetheless."
 ;; http-tar support (archive)
 ;;
 (defun el-get-http-tar-cleanup-extract-hook ()
-  "Cleanup after tar xzf: if there's only one subdir, move all the files up"
+  "Cleanup after tar xzf: if there's only one subdir, move all
+the files up."
   (let* ((pdir    (el-get-package-directory package))
 	 (url     (plist-get source :url))
 	 (tarfile (file-name-nondirectory url))
@@ -787,7 +792,7 @@ passing it the the callback function nonetheless."
 	(shell-command rmdir)))))
 
 (defun el-get-http-tar-install (package url post-install-fun)
-  "Dowload a tar archive package over HTTP "
+  "Dowload a tar archive package over HTTP."
   (let* ((source  (el-get-package-def package))
 	 (options (plist-get source :options))
 	 (pdir    (el-get-package-directory package))
@@ -822,7 +827,7 @@ passing it the the callback function nonetheless."
   (funcall post-remove-fun package))
 
 (defun el-get-build (package commands &optional subdir sync post-build-fun)
-  "run each command from the package directory"
+  "Run each command from the package directory."
   (let* ((pdir   (el-get-package-directory package))
 	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir))
 	 (buf    (format "*el-get-build: %s*" package)) 
@@ -859,7 +864,7 @@ passing it the the callback function nonetheless."
 	(el-get-start-process-list package process-list post-build-fun)))))
 
 (defun el-get-read-recipe (package)
-  "Return the package source definition for package, from the recipes"
+  "Return the source definition for PACKAGE, from the recipes."
   (loop for dir in el-get-recipe-path
 	for recipe = (concat (file-name-as-directory dir) package ".el")
 	if (file-exists-p recipe)
@@ -868,12 +873,13 @@ passing it the the callback function nonetheless."
 		      (read-from-string (buffer-string))))))
 
 (defun el-get-source-name (source)
-  "Return the package name (stringp) given an `el-get-sources' entry"
+  "Return the package name (stringp) given an `el-get-sources'
+entry."
   (if (symbolp source) (symbol-name source)
     (format "%s" (plist-get source :name))))
 
 (defun el-get-package-def (package)
-  "Return a single `el-get-sources' entry for given package"
+  "Return a single `el-get-sources' entry for PACKAGE."
   (let ((source (loop for src in el-get-sources
 		      when (string= package (el-get-source-name src))
 		      return src)))
@@ -897,25 +903,36 @@ passing it the the callback function nonetheless."
 ;;
 ;; User Interface, Interactive part
 ;;
-(defun el-get-read-package-name (action &optional package)
-  "Ask user for a package name in minibuffer, with completion.
 
-When given a package name, check for its existence"
-  (let ((plist 
-	  (mapcar (lambda (x) 
-		    (if (symbolp x) (format "%S" x)
-		      (format "%s" (plist-get x :name))))
-		  el-get-sources)))
-    (if package
-	(unless (member package plist)
-	  (error "el-get: can not find package name `%s' in `el-get-sources'" package))
-      (completing-read (format "%s package: " action) plist))))
+(defun el-get-package-name-list ()
+  "Return package a list of all package names from
+`el-get-sources'."
+  (mapcar (lambda (x)
+            (if (symbolp x) (format "%S" x)
+              (format "%s" (plist-get x :name))))
+          el-get-sources))
 
-(defun el-get-init (&optional package)
-  "Care about load-path, Info-directory-list, and (require 'features)"
-  (interactive)
-  (let* ((package  (or package (el-get-read-package-name "Init" package)))
-	 (source   (el-get-package-def package))
+(defun el-get-package-p (package)
+  "Check that PACKAGE is actually a valid package according to
+`el-get-sources'."
+  (member package (el-get-package-name-list)))
+
+(defun el-get-error-unless-package-p (package)
+  "Raise en error if PACKAGE is not a valid package according to
+`el-get-package-p'."
+  (unless (el-get-package-p package)
+    (error "el-get: can not find package name `%s' in `el-get-sources'" package)))
+
+(defun el-get-read-package-name (action)
+  "Ask user for a package name in minibuffer, with completion."
+  (completing-read (format "%s package: " action)
+                   (el-get-package-name-list) nil t))
+
+(defun el-get-init (package)
+  "Care about `load-path', `Info-directory-list', and (require 'features)."
+  (interactive (list (el-get-read-package-name "Init")))
+  (el-get-error-unless-package-p package)
+  (let* ((source   (el-get-package-def package))
 	 (method   (plist-get source :type))
 	 (loads    (plist-get source :load))
 	 (feats    (plist-get source :features))
@@ -986,7 +1003,7 @@ When given a package name, check for its existence"
     package))
 
 (defun el-get-post-install (package)
-  "Post install a package. This will get run by a sentinel."
+  "Post install PACKAGE. This will get run by a sentinel."
   (let* ((source   (el-get-package-def package))
 	 (hooks    (el-get-method (plist-get source :type) :install-hook))
 	 (commands (plist-get source :build)))
@@ -995,11 +1012,11 @@ When given a package name, check for its existence"
     ;; build then init
     (el-get-build package commands nil nil (lambda (package) (el-get-init package)))))
 
-(defun el-get-install (&optional package)
-  "Install given package. Read the package name with completion when not given."
-  (interactive)
-  (let* ((package (or package (el-get-read-package-name "Install" package)))
-	 (source   (el-get-package-def package))
+(defun el-get-install (package)
+  "Install PACKAGE."
+  (interactive (list (el-get-read-package-name "Install")))
+  (el-get-is-package package)
+  (let* ((source   (el-get-package-def package))
 	 (method   (plist-get source :type))
 	 (install  (el-get-method method :install))
 	 (url      (plist-get source :url)))
@@ -1012,17 +1029,17 @@ When given a package name, check for its existence"
     (funcall install package url 'el-get-post-install)))
 
 (defun el-get-post-update (package)
-  "Post update a package. This will get run by a sentinel."
+  "Post update PACKAGE. This will get run by a sentinel."
   (let* ((source   (el-get-package-def package))
 	 (commands (plist-get source :build)))
     (el-get-build package commands nil nil 
 		  (lambda (package) (message "el-get-post-update %s: done" package)))))
 
-(defun el-get-update (&optional package)
-  "Update given package. Read the package name with completion when not given."
-  (interactive)
-  (let* ((package (or package (el-get-read-package-name "Update" package)))
-	 (source   (el-get-package-def package))
+(defun el-get-update (package)
+  "Update PACKAGE."
+  (interactive (list (el-get-read-package-name "Update")))
+  (el-get-error-unless-package-p package)
+  (let* ((source   (el-get-package-def package))
 	 (method   (plist-get source :type))
 	 (update   (el-get-method method :update))
 	 (url      (plist-get source :url))
@@ -1032,17 +1049,17 @@ When given a package name, check for its existence"
     (funcall update package url 'el-get-post-update)))
 
 (defun el-get-post-remove (package)
-  "run the post-remove hooks"
+  "Run the post-remove hooks for PACKAGE."
   (let* ((source  (el-get-package-def package))
 	 (hooks   (el-get-method (plist-get source :type) :remove-hook)))
     (when hooks
       (run-hooks hooks))))
 
 (defun el-get-remove (&optional package)
-  "Remove given package. Read the package name with completion when not given."
-  (interactive)
-  (let* ((package (or package (el-get-read-package-name "Remove" package)))
-	 (source   (el-get-package-def package))
+  "Remove PACKAGE."
+  (interactive (list (el-get-read-package-name "Remove")))
+  (el-get-error-unless-package-p package)
+  (let* ((source   (el-get-package-def package))
 	 (method   (plist-get source :type))
 	 (remove   (el-get-method method :remove))
 	 (url      (plist-get source :url)))
@@ -1050,12 +1067,11 @@ When given a package name, check for its existence"
     (message "el-get remove %s" package)
     (funcall remove package url 'el-get-post-remove)))
 
-(defun el-get-cd (&optional package)
+(defun el-get-cd (package)
   "Open dired in the package directory."
-  (interactive)
-  (let* ((package (or package (el-get-read-package-name "cd to" package)))
-	 (pdir    (el-get-package-directory package)))
-    (dired pdir)))
+  (interactive (list (el-get-read-package-name "cd to")))
+  (el-get-error-unless-package-p package)
+  (dired (el-get-package-directory package)))
 
 
 ;;
