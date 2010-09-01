@@ -583,7 +583,7 @@ found."
 			((eq method 'fink)    el-get-fink-base)))
 	 (debdir  (concat (file-name-as-directory basedir) package)))
     (unless (file-directory-p pdir)
-      (shell-command 
+      (shell-command
        (concat "cd " el-get-dir " && ln -s " debdir  " " package)))))
 
 (defun el-get-dpkg-remove-symlink ()
@@ -592,7 +592,7 @@ found."
     (message "PHOQUE %S" pdir)
     (when (file-symlink-p pdir)
       (message (concat "cd " el-get-dir " && rm -f " package))
-      (shell-command 
+      (shell-command
        (concat "cd " el-get-dir " && rm -f " package)))))
 
 
