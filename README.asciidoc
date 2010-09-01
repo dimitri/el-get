@@ -134,6 +134,15 @@ We do not intend to provide recipes for advanced types such as +apt-get+ and
 +elpa+ because there's so little to win here, and maintaining a package list
 would take too much time.
 
+When using recipes, your el-get-sources might look like the following:
+(setq el-get-sources
+      '((:name bbdb)
+	(:name magit)
+	(:name twitter)
+	(:name scratch)
+	(:name vkill)
+	(:name el-get)))
+
 === Build Commands
 
 Avoid +make install+ that will move files into a proper destination place,
