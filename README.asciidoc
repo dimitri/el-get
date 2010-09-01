@@ -183,12 +183,6 @@ using copy paste. Here's the patch: http://github.com/dimitri/el-get/commit/4945
 
 == Gotchas
 
-=== C-h v require-final-newline
-
-Some user experienced problems downloading +tar+ archives because of using
-this variable via +vimpulse+. Adding a newline to an archive ain't good for
-its consistency.
-
 === Package Status
 
 +el-get+ will now save some package status information into the file
