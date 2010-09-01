@@ -986,7 +986,7 @@ entry."
     ;; features, only ELPA will handle them on its own
     (unless (eq method 'elpa)
       ;; if a feature is provided, require it now
-      (when feats 
+      (when feats
 	(mapc (lambda (feat)
 		(let ((feature (if (stringp feat) (intern-soft feat) feat)))
 		  (message "require '%s" (require feature))))
