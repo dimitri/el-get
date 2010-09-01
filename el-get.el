@@ -967,8 +967,12 @@ When given a package name, check for its existence"
     (unless (eq method 'elpa)
       ;; if a feature is provided, require it now
       (when feats 
-	(mapc (lambda (feature) (message "require '%s" (require feature)))
-	      (if (symbolp feats) (list feats) feats))))
+	(mapc (lambda (feat)
+		(let ((feature (if (stringp feat) (intern-soft feat) feat)))
+		  (message "require '%s" (require feature))))
+	      (cond ((symbolp feats) (list feats))
+		    ((stringp feats) (list (intern-soft feats)))
+		    (t feats)))))
 
     ;; call the "after" user function
     (when (and after (functionp after))
