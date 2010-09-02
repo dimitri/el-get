@@ -298,7 +298,7 @@ directory or a symlink in el-get-dir."
 	  (progn
 	    (when (process-buffer proc)
 	      (set-window-buffer (selected-window) cbuf))
-	    (error "el-get: %s" cname errorm))
+	    (error "el-get: %s %s" cname errorm))
 	(message "el-get: %s" message))
 
       (when cbuf (kill-buffer cbuf))
