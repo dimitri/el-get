@@ -608,6 +608,8 @@ found."
 ;;
 (add-hook 'el-get-apt-get-install-hook 'el-get-dpkg-symlink)
 
+(defvar el-get-sudo-password-process-filter-pos)
+
 (defun el-get-sudo-password-process-filter (proc string)
   "Filter function that fills the process buffer's and matches a
 password prompt."
