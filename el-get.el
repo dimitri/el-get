@@ -986,7 +986,7 @@ entry."
 		  el-get-sources))
 	 (dedup (remove-duplicates package-name-list :test 'string=)))
     (unless (= (length dedup) (length package-name-list))
-      (error "You have duplicated in `el-get-sources', time to choose."))
+      (error "You have duplicates in `el-get-sources', time to choose."))
     package-name-list))
 
 (defun el-get-package-p (package)
