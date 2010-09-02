@@ -582,10 +582,10 @@ found."
 ;; get the global value of package, which has been set before calling
 ;; run-hooks.
 ;;
-(defun el-get-dpkg-symlink ()
+(defun el-get-dpkg-symlink (package)
   "ln -s /usr/share/emacs/site-lisp/package ~/.emacs.d/el-get/package"
   (let* ((pdir    (el-get-package-directory package))
-	 (method  (plist-get source :type))
+	 (method  (plist-get (el-get-package-def package) :type))
 	 (basedir (cond ((eq method 'apt-get) el-get-apt-get-base)
 			((eq method 'fink)    el-get-fink-base)))
 	 (debdir  (concat (file-name-as-directory basedir) package)))
@@ -593,7 +593,7 @@ found."
       (shell-command
        (concat "cd " el-get-dir " && ln -s " debdir  " " package)))))
 
-(defun el-get-dpkg-remove-symlink ()
+(defun el-get-dpkg-remove-symlink (package)
   "rm -f ~/.emacs.d/el-get/package"
   (let* ((pdir    (el-get-package-directory package)))
     (message "PHOQUE %S" pdir)
@@ -799,11 +799,11 @@ passing it the the callback function nonetheless."
 ;;
 ;; http-tar support (archive)
 ;;
-(defun el-get-http-tar-cleanup-extract-hook ()
+(defun el-get-http-tar-cleanup-extract-hook (package)
   "Cleanup after tar xzf: if there's only one subdir, move all
 the files up."
   (let* ((pdir    (el-get-package-directory package))
-	 (url     (plist-get source :url))
+	 (url     (plist-get (el-get-package-def package) :url))
 	 (tarfile (file-name-nondirectory url))
 	 (files   (directory-files pdir nil "[^.]$")))
     ;; if there's only one directory, move its content up and get rid of it
@@ -1085,7 +1085,8 @@ entry."
 	 (hooks    (el-get-method (plist-get source :type) :install-hook))
 	 (commands (plist-get source :build)))
     ;; post-install is the right place to run install-hook
-    (run-hooks hooks)
+    (dolist (hook hooks)
+      (run-hook-with-args hooks package))
     (if commands
 	;; build then init
 	(el-get-build package commands nil nil
@@ -1144,8 +1145,8 @@ entry."
   "Run the post-remove hooks for PACKAGE."
   (let* ((source  (el-get-package-def package))
 	 (hooks   (el-get-method (plist-get source :type) :remove-hook)))
-    (when hooks
-      (run-hooks hooks))))
+    (dolist (hook hooks)
+      (run-hook-with-args hook package))))
 
 (defun el-get-remove (&optional package)
   "Remove PACKAGE."
