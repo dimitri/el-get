@@ -961,6 +961,16 @@ entry."
        (format "%S" (if s (plist-put s p status)
 		      `(,p ,status)))))))
 
+(defun el-get-count-package-with-status (status)
+  "Return how many packages are currently in given status"
+  (loop for (p s) on (el-get-read-all-packages-status) by 'cddr 
+	if (string= status s) sum 1))
+
+(defun el-get-package-status (package &optional package-status-plist)
+  "Return current status of package from given list"
+  (let ((status-plist (or package-status-plist (el-get-read-all-packages-status))))
+    (plist-get status-plist (el-get-package-symbol package))))
+
 
 ;;
 ;; User Interface, Interactive part
@@ -969,10 +979,15 @@ entry."
 (defun el-get-package-name-list ()
   "Return package a list of all package names from
 `el-get-sources'."
-  (mapcar (lambda (x)
-            (if (symbolp x) (format "%S" x)
-              (format "%s" (plist-get x :name))))
-          el-get-sources))
+  (let* ((package-name-list
+	  (mapcar (lambda (x)
+		    (if (symbolp x) (format "%S" x)
+		      (format "%s" (plist-get x :name))))
+		  el-get-sources))
+	 (dedup (remove-duplicates package-name-list :test 'string=)))
+    (unless (= (length dedup) (length package-name-list))
+      (error "You have duplicated in `el-get-sources', time to choose."))
+    package-name-list))
 
 (defun el-get-package-p (package)
   "Check that PACKAGE is actually a valid package according to
@@ -1153,7 +1168,7 @@ entry."
 ;;
 ;; User Interface, Non Interactive part
 ;;
-(defun el-get ()
+(defun el-get (&optional sync)
   "Check that all sources have been downloaded once, and init them as needed.
 
 This will not update the sources by using `apt-get install' or
@@ -1165,13 +1180,39 @@ el-get is also responsible for doing (require 'feature) for each
 and every feature declared in `el-get-sources', so that it's
 suitable for use in your emacs init script.
 "
-  (mapcar
-   (lambda (source)
-     (let* ((package (el-get-source-name source)))
-       ;; check if the package needs to be fetched (and built)
-       (if (el-get-package-exists-p package)
-	   (el-get-init package)
-	 (el-get-install package))))
-   el-get-sources))
+  (let* ((p-status    (el-get-read-all-packages-status))
+         (total       (length (el-get-package-name-list)))
+         (installed   (el-get-count-package-with-status "installed"))
+         progress ret)
+    (when sync
+      (setq progress 
+	    (make-progress-reporter 
+	     "Waiting for `el-get' to complete… " 0 (- total installed) 0)))
+    ;; keep the result of mapcar to return it even in the 'sync case
+    (setq 
+     ret
+     (mapcar
+      (lambda (source)
+	(let* ((package (el-get-source-name source))
+	       (status  (el-get-package-status package p-status)))
+	  ;; check if the package needs to be fetched (and built)
+	  (if (el-get-package-exists-p package)
+	      (if (and status (string= "installed" status))
+		  (el-get-init package)
+		(error "Package %s failed to install, remove it first." package))
+	    (el-get-install package))))
+      el-get-sources))
+
+    ;; el-get-install is async, that's now ongoing.
+    (when sync
+      (while (> (- total installed) 0)
+	(sleep-for 0.2)
+	(setq installed (el-get-count-package-with-status "installed"))
+	(progress-reporter-update progress (- total installed)))
+      (progress-reporter-done progress))
+
+    ;; return the list of packages
+    ret))
+      
 
 (provide 'el-get)
