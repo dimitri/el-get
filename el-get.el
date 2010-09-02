@@ -754,7 +754,8 @@ PACKAGE isn't currently installed by ELPA."
 
 (defun el-get-elpa-update (package url post-update-fun)
   "Ask elpa to update given PACKAGE."
-  (el-get-rmdir (concat (file-name-as-directory package-user-dir) package nil))
+  (el-get-rmdir (concat (file-name-as-directory package-user-dir) package nil)
+                url nil)
   (package-install (intern-soft package))
   (funcall post-install-fun package))
 
