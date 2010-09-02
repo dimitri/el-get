@@ -772,7 +772,7 @@ passing it the the callback function nonetheless."
 	 (dest   (or dest (concat (file-name-as-directory pdir) package ".el")))
 	 (part   (concat dest ".part")))
     ;; prune HTTP headers before save
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (re-search-forward "^$" nil 'move)
     (forward-char)
     (delete-region (point-min) (point))
