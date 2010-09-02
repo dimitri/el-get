@@ -67,10 +67,7 @@
 
 (require 'dired)
 (require 'package nil t) ; that's ELPA, but you can use el-get to install it
-
-(eval-when-compile
-  ;; yes we do need the loop facility, for merging 2 property lists
-  (require 'cl))
+(require 'cl)            ; needed for `remove-duplicates'
 
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
@@ -298,7 +295,7 @@ directory or a symlink in el-get-dir."
 	  (progn
 	    (when (process-buffer proc)
 	      (set-window-buffer (selected-window) cbuf))
-	    (error "el-get: %s" cname errorm))
+	    (error "el-get: %s %s" cname errorm))
 	(message "el-get: %s" message))
 
       (when cbuf (kill-buffer cbuf))
@@ -582,10 +579,10 @@ found."
 ;; get the global value of package, which has been set before calling
 ;; run-hooks.
 ;;
-(defun el-get-dpkg-symlink ()
+(defun el-get-dpkg-symlink (package)
   "ln -s /usr/share/emacs/site-lisp/package ~/.emacs.d/el-get/package"
   (let* ((pdir    (el-get-package-directory package))
-	 (method  (plist-get source :type))
+	 (method  (plist-get (el-get-package-def package) :type))
 	 (basedir (cond ((eq method 'apt-get) el-get-apt-get-base)
 			((eq method 'fink)    el-get-fink-base)))
 	 (debdir  (concat (file-name-as-directory basedir) package)))
@@ -593,7 +590,7 @@ found."
       (shell-command
        (concat "cd " el-get-dir " && ln -s " debdir  " " package)))))
 
-(defun el-get-dpkg-remove-symlink ()
+(defun el-get-dpkg-remove-symlink (package)
   "rm -f ~/.emacs.d/el-get/package"
   (let* ((pdir    (el-get-package-directory package)))
     (message "PHOQUE %S" pdir)
@@ -607,6 +604,8 @@ found."
 ;; apt-get support
 ;;
 (add-hook 'el-get-apt-get-install-hook 'el-get-dpkg-symlink)
+
+(defvar el-get-sudo-password-process-filter-pos)
 
 (defun el-get-sudo-password-process-filter (proc string)
   "Filter function that fills the process buffer's and matches a
@@ -752,9 +751,10 @@ PACKAGE isn't currently installed by ELPA."
 
 (defun el-get-elpa-update (package url post-update-fun)
   "Ask elpa to update given PACKAGE."
-  (el-get-rmdir (concat (file-name-as-directory package-user-dir) package nil))
+  (el-get-rmdir (concat (file-name-as-directory package-user-dir) package nil)
+                url nil)
   (package-install (intern-soft package))
-  (funcall post-install-fun package))
+  (funcall post-update-fun package))
 
 
 ;;
@@ -769,7 +769,7 @@ passing it the the callback function nonetheless."
 	 (dest   (or dest (concat (file-name-as-directory pdir) package ".el")))
 	 (part   (concat dest ".part")))
     ;; prune HTTP headers before save
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (re-search-forward "^$" nil 'move)
     (forward-char)
     (delete-region (point-min) (point))
@@ -799,11 +799,11 @@ passing it the the callback function nonetheless."
 ;;
 ;; http-tar support (archive)
 ;;
-(defun el-get-http-tar-cleanup-extract-hook ()
+(defun el-get-http-tar-cleanup-extract-hook (package)
   "Cleanup after tar xzf: if there's only one subdir, move all
 the files up."
   (let* ((pdir    (el-get-package-directory package))
-	 (url     (plist-get source :url))
+	 (url     (plist-get (el-get-package-def package) :url))
 	 (tarfile (file-name-nondirectory url))
 	 (files   (directory-files pdir nil "[^.]$")))
     ;; if there's only one directory, move its content up and get rid of it
@@ -986,7 +986,7 @@ entry."
 		  el-get-sources))
 	 (dedup (remove-duplicates package-name-list :test 'string=)))
     (unless (= (length dedup) (length package-name-list))
-      (error "You have duplicated in `el-get-sources', time to choose."))
+      (error "You have duplicates in `el-get-sources', time to choose."))
     package-name-list))
 
 (defun el-get-package-p (package)
@@ -1085,14 +1085,16 @@ entry."
 	 (hooks    (el-get-method (plist-get source :type) :install-hook))
 	 (commands (plist-get source :build)))
     ;; post-install is the right place to run install-hook
-    (run-hooks hooks)
+    (dolist (hook hooks)
+      (run-hook-with-args hooks package))
     (if commands
 	;; build then init
 	(el-get-build package commands nil nil
 		      (lambda (package)
-			(el-get-save-package-status package "installed")
-			(el-get-init package)))
-      ;; if there's no commands, just mark as installed
+                        (el-get-init package)
+			(el-get-save-package-status package "installed")))
+      ;; if there's no commands, just init and mark as installed
+      (el-get-init package)
       (el-get-save-package-status package "installed"))))
 
 (defun el-get-install (package)
@@ -1143,8 +1145,8 @@ entry."
   "Run the post-remove hooks for PACKAGE."
   (let* ((source  (el-get-package-def package))
 	 (hooks   (el-get-method (plist-get source :type) :remove-hook)))
-    (when hooks
-      (run-hooks hooks))))
+    (dolist (hook hooks)
+      (run-hook-with-args hook package))))
 
 (defun el-get-remove (&optional package)
   "Remove PACKAGE."
