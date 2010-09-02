@@ -67,10 +67,7 @@
 
 (require 'dired)
 (require 'package nil t) ; that's ELPA, but you can use el-get to install it
-
-(eval-when-compile
-  ;; yes we do need the loop facility, for merging 2 property lists
-  (require 'cl))
+(require 'cl)            ; needed for `remove-duplicates'
 
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
