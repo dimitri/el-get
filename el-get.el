@@ -757,7 +757,7 @@ PACKAGE isn't currently installed by ELPA."
   (el-get-rmdir (concat (file-name-as-directory package-user-dir) package nil)
                 url nil)
   (package-install (intern-soft package))
-  (funcall post-install-fun package))
+  (funcall post-update-fun package))
 
 
 ;;
