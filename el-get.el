@@ -1090,9 +1090,10 @@ entry."
 	;; build then init
 	(el-get-build package commands nil nil
 		      (lambda (package)
-			(el-get-save-package-status package "installed")
-			(el-get-init package)))
-      ;; if there's no commands, just mark as installed
+                        (el-get-init package)
+			(el-get-save-package-status package "installed")))
+      ;; if there's no commands, just init and mark as installed
+      (el-get-init package)
       (el-get-save-package-status package "installed"))))
 
 (defun el-get-install (package)
