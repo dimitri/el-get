@@ -173,6 +173,11 @@ M-x el-get-install::
     following the +source+ you've already setup. Depending on the +type+ of
     the +package+, this will fail for an already installed package.
 
+    When using C-u, +el-get-install+ will allow for installing any package
+    you have a recipe for, instead of only proposing packages from
+    +el-get-sources+.
+
+
 M-x el-get-update::
 
     Will prompt for a package name, with completion, then update it. This
@@ -185,6 +190,14 @@ M-x el-get-remove::
     deleting the directory where the source package lies. Sometime we have
     to use external tools instead (+apt-get+, e.g.). No effort is made to
     unload the features.
+
+    When using C-u, +el-get-remove+ will allow for installing any package
+    you have a recipe for, instead of only proposing packages from
+    +el-get-sources+.
+
+The +C-u+ alternatives are not provided for the +el-get-update+ and
++el-get-init+ command, on the grounds that if you want to use them you
+probably should now have the package into your +el-get-sources+ proper.
 
 == Internals
 

@@ -911,14 +911,38 @@ the files up."
 ;;
 ;; recipes
 ;;
+(defun el-get-read-recipe-file (filename)
+  "Read given filename and return its content (a valid form is expected)"
+  (car (with-temp-buffer
+	 (insert-file-contents-literally filename)
+	 (read-from-string (buffer-string)))))
+
 (defun el-get-read-recipe (package)
   "Return the source definition for PACKAGE, from the recipes."
   (loop for dir in el-get-recipe-path
 	for recipe = (concat (file-name-as-directory dir) package ".el")
 	if (file-exists-p recipe)
-	return (car (with-temp-buffer
-		      (insert-file-contents-literally recipe)
-		      (read-from-string (buffer-string))))))
+	return (el-get-read-recipe-file recipe)))
+
+(defun el-get-read-all-recipes (&optional merge)
+  "Return the list of all the recipes, formated like `el-get-sources'.
+
+Only consider any given recipe only once even if present in
+multiple dirs from `el-get-recipe-path'. The first recipe found
+is the one considered.
+
+When MERGE is non-nil, the recipes from `el-get-recipe-path' will
+get merged to `el-get-sources'."
+  (let ((packages (when merge (mapcar 'el-get-source-name el-get-sources))))
+    (append
+     (when merge el-get-sources)
+     (loop for dir in el-get-recipe-path
+	   nconc (loop for recipe in (directory-files dir nil "\.el$")
+		       for filename = (concat (file-name-as-directory dir) recipe)
+		       and package = (file-name-sans-extension (file-name-nondirectory recipe))
+		       unless (member package packages)
+		       do (push package packages)
+		       and collect (el-get-read-recipe-file filename))))))
 
 (defun el-get-source-name (source)
   "Return the package name (stringp) given an `el-get-sources'
@@ -990,28 +1014,37 @@ entry."
   (let ((status-plist (or package-status-plist (el-get-read-all-packages-status))))
     (plist-get status-plist (el-get-package-symbol package))))
 
+;;
+;; Get list duplicates
+;;
+(defun el-get-duplicates (list)
+  "Return duplicates found in list."
+  (loop with dups and once
+	for elt in list
+	if (member elt once) collect elt into dups
+	else collect elt into once
+	finally return dups))
+
 
 ;;
 ;; User Interface, Interactive part
 ;;
-
-(defun el-get-package-name-list ()
+(defun el-get-package-name-list (&optional merge-recipes)
   "Return package a list of all package names from
 `el-get-sources'."
-  (let* ((package-name-list
-	  (mapcar (lambda (x)
-		    (if (symbolp x) (format "%S" x)
-		      (format "%s" (plist-get x :name))))
-		  el-get-sources))
-	 (dedup (remove-duplicates package-name-list :test 'string=)))
-    (unless (= (length dedup) (length package-name-list))
-      (error "You have duplicates in `el-get-sources', time to choose."))
+  (let* ((el-get-sources    (if merge-recipes (el-get-read-all-recipes 'merge)
+			      el-get-sources))
+	 (package-name-list (mapcar 'el-get-source-name el-get-sources))
+	 (duplicates        (el-get-duplicates package-name-list)))
+    (when duplicates
+      (error "Please remove duplicates in `el-get-sources': %S." duplicates))
     package-name-list))
 
 (defun el-get-package-p (package)
   "Check that PACKAGE is actually a valid package according to
 `el-get-sources'."
-  (member package (el-get-package-name-list)))
+  ;; don't check for duplicates in this function
+  (member package (mapcar 'el-get-source-name el-get-sources)))
 
 (defun el-get-error-unless-package-p (package)
   "Raise en error if PACKAGE is not a valid package according to
@@ -1019,10 +1052,10 @@ entry."
   (unless (el-get-package-p package)
     (error "el-get: can not find package name `%s' in `el-get-sources'" package)))
 
-(defun el-get-read-package-name (action)
+(defun el-get-read-package-name (action &optional merge-recipes)
   "Ask user for a package name in minibuffer, with completion."
   (completing-read (format "%s package: " action)
-                   (el-get-package-name-list) nil t))
+                   (el-get-package-name-list merge-recipes) nil t))
 
 (defun el-get-init (package)
   "Care about `load-path', `Info-directory-list', and (require 'features)."
@@ -1100,7 +1133,13 @@ entry."
 
 (defun el-get-post-install (package)
   "Post install PACKAGE. This will get run by a sentinel."
-  (let* ((source   (el-get-package-def package))
+  ;; the dynamic binding usage to avoid editing `el-get-sources' will not
+  ;; follow async calls and process sentinels, so re-do it here if needed.
+  (let* ((names    (el-get-package-name-list))
+	 (merged   (not (member package names)))
+	 (el-get-sources (if merged (el-get-read-all-recipes 'merge) 
+			   el-get-sources))
+	 (source   (el-get-package-def package))
 	 (hooks    (el-get-method (plist-get source :type) :install-hook))
 	 (commands (plist-get source :build)))
     ;; post-install is the right place to run install-hook
@@ -1116,28 +1155,38 @@ entry."
       (el-get-save-package-status package "installed"))))
 
 (defun el-get-install (package)
-  "Install PACKAGE."
-  (interactive (list (el-get-read-package-name "Install")))
-  (el-get-error-unless-package-p package)
+  "Install PACKAGE.
 
-  (let ((status (el-get-read-package-status package)))
-    (when (string= "installed" status)
-      (error "Package %s is already installed." package))
-    (when (string= "required" status)
-      (error "Package %s failed to install, remove it first." package)))
+When using C-u, `el-get-install' will allow for installing any
+package you have a recipe for, instead of only proposing packages
+from `el-get-sources'.
+"
+  (interactive (list (el-get-read-package-name "Install" current-prefix-arg)))
+  ;; use dynamic binding to pretend package is part of `el-get-sources'
+  ;; without having to edit the user setup --- that's what C-u is for.
+  (let ((el-get-sources (if current-prefix-arg 
+			    (el-get-read-all-recipes 'merge)
+			  el-get-sources)))
+    (el-get-error-unless-package-p package)
 
-  (let* ((source   (el-get-package-def package))
-	 (method   (plist-get source :type))
-	 (install  (el-get-method method :install))
-	 (url      (plist-get source :url)))
+    (let ((status (el-get-read-package-status package)))
+      (when (string= "installed" status)
+	(error "Package %s is already installed." package))
+      (when (string= "required" status)
+	(error "Package %s failed to install, remove it first." package)))
 
-    ;; check we can install the package and save to "required" status
-    (el-get-check-init)
-    (el-get-save-package-status package "required")
+    (let* ((source   (el-get-package-def package))
+	   (method   (plist-get source :type))
+	   (install  (el-get-method method :install))
+	   (url      (plist-get source :url)))
 
-    ;; and install the package now
-    (message "el-get install %s" package)
-    (funcall install package url 'el-get-post-install)))
+      ;; check we can install the package and save to "required" status
+      (el-get-check-init)
+      (el-get-save-package-status package "required")
+
+      ;; and install the package now, *then* message about it
+      (funcall install package url 'el-get-post-install)
+      (message "el-get install %s" package))))
 
 (defun el-get-post-update (package)
   "Post update PACKAGE. This will get run by a sentinel."
@@ -1156,27 +1205,40 @@ entry."
 	 (url      (plist-get source :url))
 	 (commands (plist-get source :build)))
     ;; update the package now
-    (message "el-get update %s" package)
-    (funcall update package url 'el-get-post-update)))
+    (funcall update package url 'el-get-post-update)
+    (message "el-get update %s" package)))
 
 (defun el-get-post-remove (package)
   "Run the post-remove hooks for PACKAGE."
-  (let* ((source  (el-get-package-def package))
+  ;; see comments in el-get-post-install
+  (let* ((names    (el-get-package-name-list))
+	 (merged   (not (member package names)))
+	 (el-get-sources (if merged (el-get-read-all-recipes 'merge) 
+			   el-get-sources))
+	 (source  (el-get-package-def package))
 	 (hooks   (el-get-method (plist-get source :type) :remove-hook)))
     (run-hook-with-args hooks package)))
 
-(defun el-get-remove (&optional package)
-  "Remove PACKAGE."
-  (interactive (list (el-get-read-package-name "Remove")))
-  (el-get-error-unless-package-p package)
-  (let* ((source   (el-get-package-def package))
-	 (method   (plist-get source :type))
-	 (remove   (el-get-method method :remove))
-	 (url      (plist-get source :url)))
-    ;; remove the package now
-    (message "el-get remove %s" package)
-    (funcall remove package url 'el-get-post-remove)
-    (el-get-save-package-status package "removed")))
+(defun el-get-remove (package)
+  "Remove PACKAGE.
+
+When using C-u, `el-get-remove' will allow for removing any
+package you have a recipe for, instead of only proposing packages
+from `el-get-sources'."
+  (interactive (list (el-get-read-package-name "Remove" current-prefix-arg)))
+  ;; see comment in el-get-install
+  (let ((el-get-sources (if current-prefix-arg 
+			    (el-get-read-all-recipes 'merge)
+			  el-get-sources)))
+    (el-get-error-unless-package-p package)
+    (let* ((source   (el-get-package-def package))
+	   (method   (plist-get source :type))
+	   (remove   (el-get-method method :remove))
+	   (url      (plist-get source :url)))
+      ;; remove the package now
+      (funcall remove package url 'el-get-post-remove)
+      (el-get-save-package-status package "removed")
+      (message "el-get remove %s" package))))
 
 (defun el-get-cd (package)
   "Open dired in the package directory."
