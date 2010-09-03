@@ -25,6 +25,7 @@
 ;;   - Implement package status on-disk saving so that installing over a
 ;;     previously failed install is in theory possible. Currently `el-get'
 ;;     will refrain from removing your package automatically, though.
+;;   - Fix ELPA remove method, adding a "removed" state too.
 ;;
 ;;  0.9 - 2010-08-24 - build me a shell
 ;;
@@ -81,6 +82,7 @@
 (defvar el-get-fink-install-hook     nil "Hook run after fink install.")
 (defvar el-get-fink-remove-hook      nil "Hook run after fink remove.")
 (defvar el-get-elpa-install-hook     nil "Hook run after ELPA package install.")
+(defvar el-get-elpa-remove-hook      nil "Hook run after ELPA package remove.")
 (defvar el-get-http-install-hook     nil "Hook run after http retrieve.")
 (defvar el-get-http-tar-install-hook nil "Hook run after http-tar package install.")
 
@@ -114,7 +116,8 @@
     :elpa    (:install el-get-elpa-install
 		       :install-hook el-get-elpa-install-hook
 		       :update el-get-elpa-update
-		       :remove el-get-rmdir)
+		       :remove el-get-elpa-remove
+		       :remove-hook el-get-elpa-remove-hook)
     :http    (:install el-get-http-install
 		       :install-hook el-get-http-install-hook
 		       :update el-get-http-install
@@ -734,9 +737,10 @@ PACKAGE isn't currently installed by ELPA."
   "ln -s ~/.emacs.d/elpa/<package> ~/.emacs.d/el-get/<package>"
   (let ((elpa-dir (el-get-elpa-package-directory package)))
     (unless (el-get-package-exists-p package)
-      (shell-command
-       (concat "cd " el-get-dir
-	       " && ln -s \"" elpa-dir "\" \"" package "\"")))))
+      (message 
+       (shell-command
+	(concat "cd " el-get-dir
+		" && ln -s \"" elpa-dir "\" \"" package "\""))))))
 
 (defun el-get-elpa-install (package url post-install-fun)
   "Ask elpa to install given PACKAGE."
@@ -751,10 +755,22 @@ PACKAGE isn't currently installed by ELPA."
 
 (defun el-get-elpa-update (package url post-update-fun)
   "Ask elpa to update given PACKAGE."
-  (el-get-rmdir (concat (file-name-as-directory package-user-dir) package nil)
-                url nil)
+  (el-get-elpa-remove package url nil)
   (package-install (intern-soft package))
   (funcall post-update-fun package))
+
+(defun el-get-elpa-remove (package url post-remove-fun)
+  "Remove the right directory where ELPA did install the package."
+  (el-get-rmdir package url post-remove-fun))
+
+(defun el-get-elpa-post-remove (package)
+  "Do remove the ELPA bits for package, now"
+  (let ((p-elpa-dir (el-get-elpa-package-directory package)))
+    (if p-elpa-dir
+	(dired-delete-file p-elpa-dir 'always)
+      (message "el-get: could not find ELPA dir for %s." package))))
+
+(add-hook 'el-get-elpa-remove-hook 'el-get-elpa-post-remove)
 
 
 ;;
@@ -848,8 +864,11 @@ the files up."
 ;;
 (defun el-get-rmdir (package url post-remove-fun)
   "Just rm -rf the package directory. Follow symlinks."
-  (dired-delete-file (el-get-package-directory package) 'always)
-  (funcall post-remove-fun package))
+  (let ((pdir (el-get-package-directory package)))
+    (if (file-exists-p pdir)
+	(dired-delete-file pdir 'always)
+      (message "el-get could not find package directory \"%s\"" pdir))
+    (funcall post-remove-fun package)))
 
 (defun el-get-build (package commands &optional subdir sync post-build-fun)
   "Run each command from the package directory."
@@ -1145,8 +1164,7 @@ entry."
   "Run the post-remove hooks for PACKAGE."
   (let* ((source  (el-get-package-def package))
 	 (hooks   (el-get-method (plist-get source :type) :remove-hook)))
-    (dolist (hook hooks)
-      (run-hook-with-args hook package))))
+    (run-hook-with-args hooks package)))
 
 (defun el-get-remove (&optional package)
   "Remove PACKAGE."
@@ -1158,7 +1176,8 @@ entry."
 	 (url      (plist-get source :url)))
     ;; remove the package now
     (message "el-get remove %s" package)
-    (funcall remove package url 'el-get-post-remove)))
+    (funcall remove package url 'el-get-post-remove)
+    (el-get-save-package-status package "removed")))
 
 (defun el-get-cd (package)
   "Open dired in the package directory."
