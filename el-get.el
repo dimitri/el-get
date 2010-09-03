@@ -1104,8 +1104,7 @@ entry."
 	 (hooks    (el-get-method (plist-get source :type) :install-hook))
 	 (commands (plist-get source :build)))
     ;; post-install is the right place to run install-hook
-    (dolist (hook hooks)
-      (run-hook-with-args hooks package))
+    (run-hook-with-args hooks package)
     (if commands
 	;; build then init
 	(el-get-build package commands nil nil
