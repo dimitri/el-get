@@ -778,14 +778,15 @@ PACKAGE isn't currently installed by ELPA."
 ;;
 ;; http support
 ;;
-(defun el-get-http-retrieve-callback (url-arg package post-install-fun &optional dest)
+(defun el-get-http-retrieve-callback (url-arg package post-install-fun &optional dest sources)
   "Callback function for `url-retrieve', store the emacs lisp file for the package.
 
 URL-ARG is nil in my tests but `url-retrieve' seems to insist on
 passing it the the callback function nonetheless."
   (let* ((pdir   (el-get-package-directory package))
 	 (dest   (or dest (concat (file-name-as-directory pdir) package ".el")))
-	 (part   (concat dest ".part")))
+	 (part   (concat dest ".part"))
+	 (el-get-sources (if sources sources el-get-sources)))
     ;; prune HTTP headers before save
     (goto-char (point-min))
     (re-search-forward "^$" nil 'move)
@@ -802,7 +803,7 @@ passing it the the callback function nonetheless."
     (unless (file-directory-p pdir)
       (make-directory pdir))
     (url-retrieve
-     url 'el-get-http-retrieve-callback `(,package ,post-install-fun ,dest))))
+     url 'el-get-http-retrieve-callback `(,package ,post-install-fun ,dest ,el-get-sources))))
 
 
 ;;
@@ -846,16 +847,17 @@ the files up."
 	 (ko      (format "Could not install package %s." package))
 	 (post `(lambda (package)
 		  ;; tar xzf `basename url`
-		  (el-get-start-process-list
-		   package
-		   '((:command-name ,name
-				    :buffer-name ,name
-				    :default-directory ,pdir
-				    :program ,(executable-find "tar")
-				    :args (,@options ,tarfile)
-				    :message ,ok
-				    :error ,ko))
-		   ,(symbol-function post-install-fun)))))
+		  (let ((el-get-sources '(,@el-get-sources)))
+		    (el-get-start-process-list
+		     package
+		     '((:command-name ,name
+				      :buffer-name ,name
+				      :default-directory ,pdir
+				      :program ,(executable-find "tar")
+				      :args (,@options ,tarfile)
+				      :message ,ok
+				      :error ,ko))
+		     ,(symbol-function post-install-fun))))))
     (el-get-http-install package url post dest)))
 
 (add-hook 'el-get-http-tar-install-hook 'el-get-http-tar-cleanup-extract-hook)
