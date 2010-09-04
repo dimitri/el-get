@@ -293,7 +293,8 @@ directory or a symlink in el-get-dir."
 	  (errorm  (process-get proc :error))
 	  (package (process-get proc :el-get-package))
 	  (final-f (process-get proc :el-get-final-func))
-	  (next    (process-get proc :el-get-start-process-list)))
+	  (next    (process-get proc :el-get-start-process-list))
+	  (el-get-sources (process-get proc :el-get-sources)))
       (if (not (eq 0 status))
 	  (progn
 	    (when (process-buffer proc)
@@ -372,6 +373,7 @@ Any other property will get put into the process object.
 
       ;; add the properties to the process, then set the sentinel
       (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
+      (process-put proc :el-get-sources el-get-sources)
       (process-put proc :el-get-package package)
       (process-put proc :el-get-final-func final-func)
       (process-put proc :el-get-start-process-list (cdr commands))
@@ -1133,13 +1135,7 @@ entry."
 
 (defun el-get-post-install (package)
   "Post install PACKAGE. This will get run by a sentinel."
-  ;; the dynamic binding usage to avoid editing `el-get-sources' will not
-  ;; follow async calls and process sentinels, so re-do it here if needed.
-  (let* ((names    (el-get-package-name-list))
-	 (merged   (not (member package names)))
-	 (el-get-sources (if merged (el-get-read-all-recipes 'merge) 
-			   el-get-sources))
-	 (source   (el-get-package-def package))
+  (let* ((source   (el-get-package-def package))
 	 (hooks    (el-get-method (plist-get source :type) :install-hook))
 	 (commands (plist-get source :build)))
     ;; post-install is the right place to run install-hook
@@ -1210,12 +1206,7 @@ from `el-get-sources'.
 
 (defun el-get-post-remove (package)
   "Run the post-remove hooks for PACKAGE."
-  ;; see comments in el-get-post-install
-  (let* ((names    (el-get-package-name-list))
-	 (merged   (not (member package names)))
-	 (el-get-sources (if merged (el-get-read-all-recipes 'merge) 
-			   el-get-sources))
-	 (source  (el-get-package-def package))
+  (let* ((source  (el-get-package-def package))
 	 (hooks   (el-get-method (plist-get source :type) :remove-hook)))
     (run-hook-with-args hooks package)))
 
