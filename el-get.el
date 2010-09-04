@@ -786,7 +786,8 @@ passing it the the callback function nonetheless."
   (let* ((pdir   (el-get-package-directory package))
 	 (dest   (or dest (concat (file-name-as-directory pdir) package ".el")))
 	 (part   (concat dest ".part"))
-	 (el-get-sources (if sources sources el-get-sources)))
+	 (el-get-sources (if sources sources el-get-sources))
+	 (require-final-newline nil))
     ;; prune HTTP headers before save
     (goto-char (point-min))
     (re-search-forward "^$" nil 'move)
