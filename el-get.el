@@ -1214,7 +1214,11 @@ from `el-get-sources'.
   (let* ((source   (el-get-package-def package))
 	 (commands (plist-get source :build)))
     (el-get-build package commands nil nil
-		  (lambda (package) (message "el-get-post-update %s: done" package)))))
+		  (lambda (package) 
+		    (message "el-get-post-update %s: done" package)
+		    ;; fix trailing failed installs
+		    (when (string= (el-get-read-package-status package) "required")
+		      (el-get-save-package-status package "installed"))))))
 
 (defun el-get-update (package)
   "Update PACKAGE."
