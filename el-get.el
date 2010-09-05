@@ -1144,10 +1144,10 @@ entry."
       ;; if a feature is provided, require it now
       (when feats
 	(mapc (lambda (feat)
-		(let ((feature (if (stringp feat) (intern-soft feat) feat)))
+		(let ((feature (if (stringp feat) (intern feat) feat)))
 		  (message "require '%s" (require feature))))
 	      (cond ((symbolp feats) (list feats))
-		    ((stringp feats) (list (intern-soft feats)))
+		    ((stringp feats) (list (intern feats)))
 		    (t feats)))))
 
     ;; call the "after" user function
