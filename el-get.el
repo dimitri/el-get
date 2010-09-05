@@ -26,6 +26,7 @@
 ;;     previously failed install is in theory possible. Currently `el-get'
 ;;     will refrain from removing your package automatically, though.
 ;;   - Fix ELPA remove method, adding a "removed" state too.
+;;   - Implement CVS login support.
 ;;
 ;;  0.9 - 2010-08-24 - build me a shell
 ;;
@@ -229,10 +230,16 @@ definition provided by `el-get' recipes locally.
 
 :options
 
-    Currently only used by the http-tar support for you to give
-    the tar options you want to use. Typically would be \"xzf\",
-    but you might want to choose \"xjf\" for handling .tar.bz
-    files e.g.
+    Currently used by http-tar and cvs support.
+
+    When using http-tar, it allows you to give the tar options
+    you want to use. Typically would be \"xzf\", but you might
+    want to choose \"xjf\" for handling .tar.bz files e.g.
+
+    When using CVS, when it's set to \"login\", `el-get' will
+    first issue a `cvs login' against the server, asking you
+    interactively (in the minibuffer) any password you might to
+    enter, and only then it will run the `cvs checkout' command.
 
 :module
 
@@ -527,20 +534,35 @@ found."
      post-update-fun)))
 
 
+;;
+;; CVS support
+;;
 (defun el-get-cvs-checkout (package url post-install-fun)
   "cvs checkout the package."
   (let* ((cvs-executable (executable-find "cvs"))
 	 (source  (el-get-package-def package))
 	 (module  (plist-get source :module))
+	 (options (plist-get source :options))
 	 (name    (format "*cvs checkout %s*" package))
 	 (ok      (format "Checked out package %s." package))
 	 (ko      (format "Could not checkout package %s." package)))
 
-    (message "%S" `(:args ("-d" ,url "checkout" "-d" ,package ,module)))
+    ;; (message "%S" `(:args ("-d" ,url "checkout" "-d" ,package ,module)))
+    ;; (message "el-get-cvs-checkout: %S" (string= options "login"))
 
     (el-get-start-process-list
      package
-     `((:command-name ,name
+     `(,@(when (string= options "login")
+	   `((:command-name ,(format "*cvs login %s*" package)
+			    :buffer-name ,(format "*cvs login %s*" package)
+			    :default-directory ,el-get-dir
+			    :process-filter ,(function el-get-sudo-password-process-filter)
+			    :program ,cvs-executable
+			    :args ("-d" ,url "login")
+			    :message "cvs login"
+			    :error "Could not login against the cvs server")))
+
+       (:command-name ,name
 		      :buffer-name ,name
 		      :default-directory ,el-get-dir
 		      :program ,cvs-executable
