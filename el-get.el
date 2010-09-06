@@ -376,6 +376,7 @@ Any other property will get put into the process object.
 				  (file-name-as-directory
 				   (expand-file-name cdir))
 				default-directory))
+	   (process-connection-type nil) ; pipe, don't pretend we're a pty
 	   (proc    (apply startf cname cbuf program args)))
 
       ;; add the properties to the process, then set the sentinel
