@@ -898,6 +898,18 @@ the files up."
       (message "el-get could not find package directory \"%s\"" pdir))
     (funcall post-remove-fun package)))
 
+(defun el-get-build-command-program (name)
+  "Given the user command name, get the command program to execute.
+
+That will find the program in current $PATH for you, unless given
+command name is a relative filename beginning with \"./\", or its
+absolute filename obtained with expand-file-name is executable."
+  (let ((fullname (expand-file-name name))
+	(exe      (executable-find name)))
+    (cond ((string-match "^\./" name)   name)
+	  ((file-executable-p fullname) fullname)
+	  (t (or exe name)))))
+
 (defun el-get-build (package commands &optional subdir sync post-build-fun)
   "Run each command from the package directory."
   (let* ((pdir   (el-get-package-directory package))
@@ -918,9 +930,7 @@ the files up."
 	     (mapcar (lambda (c)
 		       (let* ((split    (split-string c))
 			      (name     (car split))
-			      (program  (if (file-executable-p (expand-file-name name))
-					    (expand-file-name name)
-					  (executable-find name)))
+			      (program  (el-get-build-command-program name))
 			      (args     (cdr split)))
 
 			 `(:command-name ,name
