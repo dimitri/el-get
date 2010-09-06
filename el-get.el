@@ -25,6 +25,8 @@
 ;;   - Implement package status on-disk saving so that installing over a
 ;;     previously failed install is in theory possible. Currently `el-get'
 ;;     will refrain from removing your package automatically, though.
+;;   - Fix ELPA remove method, adding a "removed" state too.
+;;   - Implement CVS login support.
 ;;
 ;;  0.9 - 2010-08-24 - build me a shell
 ;;
@@ -67,10 +69,7 @@
 
 (require 'dired)
 (require 'package nil t) ; that's ELPA, but you can use el-get to install it
-
-(eval-when-compile
-  ;; yes we do need the loop facility, for merging 2 property lists
-  (require 'cl))
+(require 'cl)            ; needed for `remove-duplicates'
 
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
@@ -84,6 +83,7 @@
 (defvar el-get-fink-install-hook     nil "Hook run after fink install.")
 (defvar el-get-fink-remove-hook      nil "Hook run after fink remove.")
 (defvar el-get-elpa-install-hook     nil "Hook run after ELPA package install.")
+(defvar el-get-elpa-remove-hook      nil "Hook run after ELPA package remove.")
 (defvar el-get-http-install-hook     nil "Hook run after http retrieve.")
 (defvar el-get-http-tar-install-hook nil "Hook run after http-tar package install.")
 
@@ -117,7 +117,8 @@
     :elpa    (:install el-get-elpa-install
 		       :install-hook el-get-elpa-install-hook
 		       :update el-get-elpa-update
-		       :remove el-get-rmdir)
+		       :remove el-get-elpa-remove
+		       :remove-hook el-get-elpa-remove-hook)
     :http    (:install el-get-http-install
 		       :install-hook el-get-http-install-hook
 		       :update el-get-http-install
@@ -229,10 +230,16 @@ definition provided by `el-get' recipes locally.
 
 :options
 
-    Currently only used by the http-tar support for you to give
-    the tar options you want to use. Typically would be \"xzf\",
-    but you might want to choose \"xjf\" for handling .tar.bz
-    files e.g.
+    Currently used by http-tar and cvs support.
+
+    When using http-tar, it allows you to give the tar options
+    you want to use. Typically would be \"xzf\", but you might
+    want to choose \"xjf\" for handling .tar.bz files e.g.
+
+    When using CVS, when it's set to \"login\", `el-get' will
+    first issue a `cvs login' against the server, asking you
+    interactively (in the minibuffer) any password you might to
+    enter, and only then it will run the `cvs checkout' command.
 
 :module
 
@@ -293,12 +300,13 @@ directory or a symlink in el-get-dir."
 	  (errorm  (process-get proc :error))
 	  (package (process-get proc :el-get-package))
 	  (final-f (process-get proc :el-get-final-func))
-	  (next    (process-get proc :el-get-start-process-list)))
+	  (next    (process-get proc :el-get-start-process-list))
+	  (el-get-sources (process-get proc :el-get-sources)))
       (if (not (eq 0 status))
 	  (progn
 	    (when (process-buffer proc)
 	      (set-window-buffer (selected-window) cbuf))
-	    (error "el-get: %s" cname errorm))
+	    (error "el-get: %s %s" cname errorm))
 	(message "el-get: %s" message))
 
       (when cbuf (kill-buffer cbuf))
@@ -372,6 +380,7 @@ Any other property will get put into the process object.
 
       ;; add the properties to the process, then set the sentinel
       (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
+      (process-put proc :el-get-sources el-get-sources)
       (process-put proc :el-get-package package)
       (process-put proc :el-get-final-func final-func)
       (process-put proc :el-get-start-process-list (cdr commands))
@@ -525,20 +534,35 @@ found."
      post-update-fun)))
 
 
+;;
+;; CVS support
+;;
 (defun el-get-cvs-checkout (package url post-install-fun)
   "cvs checkout the package."
   (let* ((cvs-executable (executable-find "cvs"))
 	 (source  (el-get-package-def package))
 	 (module  (plist-get source :module))
+	 (options (plist-get source :options))
 	 (name    (format "*cvs checkout %s*" package))
 	 (ok      (format "Checked out package %s." package))
 	 (ko      (format "Could not checkout package %s." package)))
 
-    (message "%S" `(:args ("-d" ,url "checkout" "-d" ,package ,module)))
+    ;; (message "%S" `(:args ("-d" ,url "checkout" "-d" ,package ,module)))
+    ;; (message "el-get-cvs-checkout: %S" (string= options "login"))
 
     (el-get-start-process-list
      package
-     `((:command-name ,name
+     `(,@(when (string= options "login")
+	   `((:command-name ,(format "*cvs login %s*" package)
+			    :buffer-name ,(format "*cvs login %s*" package)
+			    :default-directory ,el-get-dir
+			    :process-filter ,(function el-get-sudo-password-process-filter)
+			    :program ,cvs-executable
+			    :args ("-d" ,url "login")
+			    :message "cvs login"
+			    :error "Could not login against the cvs server")))
+
+       (:command-name ,name
 		      :buffer-name ,name
 		      :default-directory ,el-get-dir
 		      :program ,cvs-executable
@@ -582,10 +606,10 @@ found."
 ;; get the global value of package, which has been set before calling
 ;; run-hooks.
 ;;
-(defun el-get-dpkg-symlink ()
+(defun el-get-dpkg-symlink (package)
   "ln -s /usr/share/emacs/site-lisp/package ~/.emacs.d/el-get/package"
   (let* ((pdir    (el-get-package-directory package))
-	 (method  (plist-get source :type))
+	 (method  (plist-get (el-get-package-def package) :type))
 	 (basedir (cond ((eq method 'apt-get) el-get-apt-get-base)
 			((eq method 'fink)    el-get-fink-base)))
 	 (debdir  (concat (file-name-as-directory basedir) package)))
@@ -593,7 +617,7 @@ found."
       (shell-command
        (concat "cd " el-get-dir " && ln -s " debdir  " " package)))))
 
-(defun el-get-dpkg-remove-symlink ()
+(defun el-get-dpkg-remove-symlink (package)
   "rm -f ~/.emacs.d/el-get/package"
   (let* ((pdir    (el-get-package-directory package)))
     (message "PHOQUE %S" pdir)
@@ -607,6 +631,8 @@ found."
 ;; apt-get support
 ;;
 (add-hook 'el-get-apt-get-install-hook 'el-get-dpkg-symlink)
+
+(defvar el-get-sudo-password-process-filter-pos)
 
 (defun el-get-sudo-password-process-filter (proc string)
   "Filter function that fills the process buffer's and matches a
@@ -735,9 +761,10 @@ PACKAGE isn't currently installed by ELPA."
   "ln -s ~/.emacs.d/elpa/<package> ~/.emacs.d/el-get/<package>"
   (let ((elpa-dir (el-get-elpa-package-directory package)))
     (unless (el-get-package-exists-p package)
-      (shell-command
-       (concat "cd " el-get-dir
-	       " && ln -s \"" elpa-dir "\" \"" package "\"")))))
+      (message 
+       (shell-command
+	(concat "cd " el-get-dir
+		" && ln -s \"" elpa-dir "\" \"" package "\""))))))
 
 (defun el-get-elpa-install (package url post-install-fun)
   "Ask elpa to install given PACKAGE."
@@ -752,24 +779,39 @@ PACKAGE isn't currently installed by ELPA."
 
 (defun el-get-elpa-update (package url post-update-fun)
   "Ask elpa to update given PACKAGE."
-  (el-get-rmdir (concat (file-name-as-directory package-user-dir) package nil))
+  (el-get-elpa-remove package url nil)
   (package-install (intern-soft package))
-  (funcall post-install-fun package))
+  (funcall post-update-fun package))
+
+(defun el-get-elpa-remove (package url post-remove-fun)
+  "Remove the right directory where ELPA did install the package."
+  (el-get-rmdir package url post-remove-fun))
+
+(defun el-get-elpa-post-remove (package)
+  "Do remove the ELPA bits for package, now"
+  (let ((p-elpa-dir (el-get-elpa-package-directory package)))
+    (if p-elpa-dir
+	(dired-delete-file p-elpa-dir 'always)
+      (message "el-get: could not find ELPA dir for %s." package))))
+
+(add-hook 'el-get-elpa-remove-hook 'el-get-elpa-post-remove)
 
 
 ;;
 ;; http support
 ;;
-(defun el-get-http-retrieve-callback (url-arg package post-install-fun &optional dest)
+(defun el-get-http-retrieve-callback (url-arg package post-install-fun &optional dest sources)
   "Callback function for `url-retrieve', store the emacs lisp file for the package.
 
 URL-ARG is nil in my tests but `url-retrieve' seems to insist on
 passing it the the callback function nonetheless."
   (let* ((pdir   (el-get-package-directory package))
 	 (dest   (or dest (concat (file-name-as-directory pdir) package ".el")))
-	 (part   (concat dest ".part")))
+	 (part   (concat dest ".part"))
+	 (el-get-sources (if sources sources el-get-sources))
+	 (require-final-newline nil))
     ;; prune HTTP headers before save
-    (beginning-of-buffer)
+    (goto-char (point-min))
     (re-search-forward "^$" nil 'move)
     (forward-char)
     (delete-region (point-min) (point))
@@ -784,7 +826,7 @@ passing it the the callback function nonetheless."
     (unless (file-directory-p pdir)
       (make-directory pdir))
     (url-retrieve
-     url 'el-get-http-retrieve-callback `(,package ,post-install-fun ,dest))))
+     url 'el-get-http-retrieve-callback `(,package ,post-install-fun ,dest ,el-get-sources))))
 
 
 ;;
@@ -799,11 +841,11 @@ passing it the the callback function nonetheless."
 ;;
 ;; http-tar support (archive)
 ;;
-(defun el-get-http-tar-cleanup-extract-hook ()
+(defun el-get-http-tar-cleanup-extract-hook (package)
   "Cleanup after tar xzf: if there's only one subdir, move all
 the files up."
   (let* ((pdir    (el-get-package-directory package))
-	 (url     (plist-get source :url))
+	 (url     (plist-get (el-get-package-def package) :url))
 	 (tarfile (file-name-nondirectory url))
 	 (files   (directory-files pdir nil "[^.]$")))
     ;; if there's only one directory, move its content up and get rid of it
@@ -828,16 +870,17 @@ the files up."
 	 (ko      (format "Could not install package %s." package))
 	 (post `(lambda (package)
 		  ;; tar xzf `basename url`
-		  (el-get-start-process-list
-		   package
-		   '((:command-name ,name
-				    :buffer-name ,name
-				    :default-directory ,pdir
-				    :program ,(executable-find "tar")
-				    :args (,@options ,tarfile)
-				    :message ,ok
-				    :error ,ko))
-		   ,(symbol-function post-install-fun)))))
+		  (let ((el-get-sources '(,@el-get-sources)))
+		    (el-get-start-process-list
+		     package
+		     '((:command-name ,name
+				      :buffer-name ,name
+				      :default-directory ,pdir
+				      :program ,(executable-find "tar")
+				      :args (,@options ,tarfile)
+				      :message ,ok
+				      :error ,ko))
+		     ,(symbol-function post-install-fun))))))
     (el-get-http-install package url post dest)))
 
 (add-hook 'el-get-http-tar-install-hook 'el-get-http-tar-cleanup-extract-hook)
@@ -848,8 +891,11 @@ the files up."
 ;;
 (defun el-get-rmdir (package url post-remove-fun)
   "Just rm -rf the package directory. Follow symlinks."
-  (dired-delete-file (el-get-package-directory package) 'always)
-  (funcall post-remove-fun package))
+  (let ((pdir (el-get-package-directory package)))
+    (if (file-exists-p pdir)
+	(dired-delete-file pdir 'always)
+      (message "el-get could not find package directory \"%s\"" pdir))
+    (funcall post-remove-fun package)))
 
 (defun el-get-build (package commands &optional subdir sync post-build-fun)
   "Run each command from the package directory."
@@ -892,14 +938,38 @@ the files up."
 ;;
 ;; recipes
 ;;
+(defun el-get-read-recipe-file (filename)
+  "Read given filename and return its content (a valid form is expected)"
+  (car (with-temp-buffer
+	 (insert-file-contents-literally filename)
+	 (read-from-string (buffer-string)))))
+
 (defun el-get-read-recipe (package)
   "Return the source definition for PACKAGE, from the recipes."
   (loop for dir in el-get-recipe-path
 	for recipe = (concat (file-name-as-directory dir) package ".el")
 	if (file-exists-p recipe)
-	return (car (with-temp-buffer
-		      (insert-file-contents-literally recipe)
-		      (read-from-string (buffer-string))))))
+	return (el-get-read-recipe-file recipe)))
+
+(defun el-get-read-all-recipes (&optional merge)
+  "Return the list of all the recipes, formated like `el-get-sources'.
+
+Only consider any given recipe only once even if present in
+multiple dirs from `el-get-recipe-path'. The first recipe found
+is the one considered.
+
+When MERGE is non-nil, the recipes from `el-get-recipe-path' will
+get merged to `el-get-sources'."
+  (let ((packages (when merge (mapcar 'el-get-source-name el-get-sources))))
+    (append
+     (when merge el-get-sources)
+     (loop for dir in el-get-recipe-path
+	   nconc (loop for recipe in (directory-files dir nil "\.el$")
+		       for filename = (concat (file-name-as-directory dir) recipe)
+		       and package = (file-name-sans-extension (file-name-nondirectory recipe))
+		       unless (member package packages)
+		       do (push package packages)
+		       and collect (el-get-read-recipe-file filename))))))
 
 (defun el-get-source-name (source)
   "Return the package name (stringp) given an `el-get-sources'
@@ -961,23 +1031,47 @@ entry."
        (format "%S" (if s (plist-put s p status)
 		      `(,p ,status)))))))
 
+(defun el-get-count-package-with-status (status)
+  "Return how many packages are currently in given status"
+  (loop for (p s) on (el-get-read-all-packages-status) by 'cddr 
+	if (string= status s) sum 1))
+
+(defun el-get-package-status (package &optional package-status-plist)
+  "Return current status of package from given list"
+  (let ((status-plist (or package-status-plist (el-get-read-all-packages-status))))
+    (plist-get status-plist (el-get-package-symbol package))))
+
+;;
+;; Get list duplicates
+;;
+(defun el-get-duplicates (list)
+  "Return duplicates found in list."
+  (loop with dups and once
+	for elt in list
+	if (member elt once) collect elt into dups
+	else collect elt into once
+	finally return dups))
+
 
 ;;
 ;; User Interface, Interactive part
 ;;
-
-(defun el-get-package-name-list ()
+(defun el-get-package-name-list (&optional merge-recipes)
   "Return package a list of all package names from
 `el-get-sources'."
-  (mapcar (lambda (x)
-            (if (symbolp x) (format "%S" x)
-              (format "%s" (plist-get x :name))))
-          el-get-sources))
+  (let* ((el-get-sources    (if merge-recipes (el-get-read-all-recipes 'merge)
+			      el-get-sources))
+	 (package-name-list (mapcar 'el-get-source-name el-get-sources))
+	 (duplicates        (el-get-duplicates package-name-list)))
+    (when duplicates
+      (error "Please remove duplicates in `el-get-sources': %S." duplicates))
+    package-name-list))
 
 (defun el-get-package-p (package)
   "Check that PACKAGE is actually a valid package according to
 `el-get-sources'."
-  (member package (el-get-package-name-list)))
+  ;; don't check for duplicates in this function
+  (member package (mapcar 'el-get-source-name el-get-sources)))
 
 (defun el-get-error-unless-package-p (package)
   "Raise en error if PACKAGE is not a valid package according to
@@ -985,10 +1079,10 @@ entry."
   (unless (el-get-package-p package)
     (error "el-get: can not find package name `%s' in `el-get-sources'" package)))
 
-(defun el-get-read-package-name (action)
+(defun el-get-read-package-name (action &optional merge-recipes)
   "Ask user for a package name in minibuffer, with completion."
   (completing-read (format "%s package: " action)
-                   (el-get-package-name-list) nil t))
+                   (el-get-package-name-list merge-recipes) nil t))
 
 (defun el-get-init (package)
   "Care about `load-path', `Info-directory-list', and (require 'features)."
@@ -1050,10 +1144,10 @@ entry."
       ;; if a feature is provided, require it now
       (when feats
 	(mapc (lambda (feat)
-		(let ((feature (if (stringp feat) (intern-soft feat) feat)))
+		(let ((feature (if (stringp feat) (intern feat) feat)))
 		  (message "require '%s" (require feature))))
 	      (cond ((symbolp feats) (list feats))
-		    ((stringp feats) (list (intern-soft feats)))
+		    ((stringp feats) (list (intern feats)))
 		    (t feats)))))
 
     ;; call the "after" user function
@@ -1070,46 +1164,61 @@ entry."
 	 (hooks    (el-get-method (plist-get source :type) :install-hook))
 	 (commands (plist-get source :build)))
     ;; post-install is the right place to run install-hook
-    (run-hooks hooks)
+    (run-hook-with-args hooks package)
     (if commands
 	;; build then init
 	(el-get-build package commands nil nil
 		      (lambda (package)
-			(el-get-save-package-status package "installed")
-			(el-get-init package)))
-      ;; if there's no commands, just mark as installed
+                        (el-get-init package)
+			(el-get-save-package-status package "installed")))
+      ;; if there's no commands, just init and mark as installed
+      (el-get-init package)
       (el-get-save-package-status package "installed"))))
 
 (defun el-get-install (package)
-  "Install PACKAGE."
-  (interactive (list (el-get-read-package-name "Install")))
-  (el-get-error-unless-package-p package)
+  "Install PACKAGE.
 
-  (let ((status (el-get-read-package-status package)))
-    (when (string= "installed" status)
-      (error "Package %s is already installed." package))
-    (when (string= "required" status)
-      (error "Package %s failed to install, remove it first." package)))
+When using C-u, `el-get-install' will allow for installing any
+package you have a recipe for, instead of only proposing packages
+from `el-get-sources'.
+"
+  (interactive (list (el-get-read-package-name "Install" current-prefix-arg)))
+  ;; use dynamic binding to pretend package is part of `el-get-sources'
+  ;; without having to edit the user setup --- that's what C-u is for.
+  (let ((el-get-sources (if current-prefix-arg 
+			    (el-get-read-all-recipes 'merge)
+			  el-get-sources)))
+    (el-get-error-unless-package-p package)
 
-  (let* ((source   (el-get-package-def package))
-	 (method   (plist-get source :type))
-	 (install  (el-get-method method :install))
-	 (url      (plist-get source :url)))
+    (let ((status (el-get-read-package-status package)))
+      (when (string= "installed" status)
+	(error "Package %s is already installed." package))
+      (when (string= "required" status)
+	(error "Package %s failed to install, remove it first." package)))
 
-    ;; check we can install the package and save to "required" status
-    (el-get-check-init)
-    (el-get-save-package-status package "required")
+    (let* ((source   (el-get-package-def package))
+	   (method   (plist-get source :type))
+	   (install  (el-get-method method :install))
+	   (url      (plist-get source :url)))
 
-    ;; and install the package now
-    (message "el-get install %s" package)
-    (funcall install package url 'el-get-post-install)))
+      ;; check we can install the package and save to "required" status
+      (el-get-check-init)
+      (el-get-save-package-status package "required")
+
+      ;; and install the package now, *then* message about it
+      (funcall install package url 'el-get-post-install)
+      (message "el-get install %s" package))))
 
 (defun el-get-post-update (package)
   "Post update PACKAGE. This will get run by a sentinel."
   (let* ((source   (el-get-package-def package))
 	 (commands (plist-get source :build)))
     (el-get-build package commands nil nil
-		  (lambda (package) (message "el-get-post-update %s: done" package)))))
+		  (lambda (package) 
+		    (message "el-get-post-update %s: done" package)
+		    ;; fix trailing failed installs
+		    (when (string= (el-get-read-package-status package) "required")
+		      (el-get-save-package-status package "installed"))))))
 
 (defun el-get-update (package)
   "Update PACKAGE."
@@ -1121,27 +1230,35 @@ entry."
 	 (url      (plist-get source :url))
 	 (commands (plist-get source :build)))
     ;; update the package now
-    (message "el-get update %s" package)
-    (funcall update package url 'el-get-post-update)))
+    (funcall update package url 'el-get-post-update)
+    (message "el-get update %s" package)))
 
 (defun el-get-post-remove (package)
   "Run the post-remove hooks for PACKAGE."
   (let* ((source  (el-get-package-def package))
 	 (hooks   (el-get-method (plist-get source :type) :remove-hook)))
-    (when hooks
-      (run-hooks hooks))))
+    (run-hook-with-args hooks package)))
 
-(defun el-get-remove (&optional package)
-  "Remove PACKAGE."
-  (interactive (list (el-get-read-package-name "Remove")))
-  (el-get-error-unless-package-p package)
-  (let* ((source   (el-get-package-def package))
-	 (method   (plist-get source :type))
-	 (remove   (el-get-method method :remove))
-	 (url      (plist-get source :url)))
-    ;; remove the package now
-    (message "el-get remove %s" package)
-    (funcall remove package url 'el-get-post-remove)))
+(defun el-get-remove (package)
+  "Remove PACKAGE.
+
+When using C-u, `el-get-remove' will allow for removing any
+package you have a recipe for, instead of only proposing packages
+from `el-get-sources'."
+  (interactive (list (el-get-read-package-name "Remove" current-prefix-arg)))
+  ;; see comment in el-get-install
+  (let ((el-get-sources (if current-prefix-arg 
+			    (el-get-read-all-recipes 'merge)
+			  el-get-sources)))
+    (el-get-error-unless-package-p package)
+    (let* ((source   (el-get-package-def package))
+	   (method   (plist-get source :type))
+	   (remove   (el-get-method method :remove))
+	   (url      (plist-get source :url)))
+      ;; remove the package now
+      (funcall remove package url 'el-get-post-remove)
+      (el-get-save-package-status package "removed")
+      (message "el-get remove %s" package))))
 
 (defun el-get-cd (package)
   "Open dired in the package directory."
@@ -1153,7 +1270,7 @@ entry."
 ;;
 ;; User Interface, Non Interactive part
 ;;
-(defun el-get ()
+(defun el-get (&optional sync)
   "Check that all sources have been downloaded once, and init them as needed.
 
 This will not update the sources by using `apt-get install' or
@@ -1165,13 +1282,39 @@ el-get is also responsible for doing (require 'feature) for each
 and every feature declared in `el-get-sources', so that it's
 suitable for use in your emacs init script.
 "
-  (mapcar
-   (lambda (source)
-     (let* ((package (el-get-source-name source)))
-       ;; check if the package needs to be fetched (and built)
-       (if (el-get-package-exists-p package)
-	   (el-get-init package)
-	 (el-get-install package))))
-   el-get-sources))
+  (let* ((p-status    (el-get-read-all-packages-status))
+         (total       (length (el-get-package-name-list)))
+         (installed   (el-get-count-package-with-status "installed"))
+         progress ret)
+    (when sync
+      (setq progress 
+	    (make-progress-reporter 
+	     "Waiting for `el-get' to complete… " 0 (- total installed) 0)))
+    ;; keep the result of mapcar to return it even in the 'sync case
+    (setq 
+     ret
+     (mapcar
+      (lambda (source)
+	(let* ((package (el-get-source-name source))
+	       (status  (el-get-package-status package p-status)))
+	  ;; check if the package needs to be fetched (and built)
+	  (if (el-get-package-exists-p package)
+	      (if (and status (string= "installed" status))
+		  (el-get-init package)
+		(error "Package %s failed to install, remove it first." package))
+	    (el-get-install package))))
+      el-get-sources))
+
+    ;; el-get-install is async, that's now ongoing.
+    (when sync
+      (while (> (- total installed) 0)
+	(sleep-for 0.2)
+	(setq installed (el-get-count-package-with-status "installed"))
+	(progress-reporter-update progress (- total installed)))
+      (progress-reporter-done progress))
+
+    ;; return the list of packages
+    ret))
+      
 
 (provide 'el-get)

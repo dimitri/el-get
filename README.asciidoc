@@ -111,6 +111,23 @@ only 'init' already installed ones.
 Tracking if a +source+ is not by checking for the existance of a directory
 or symlink in +el-get-dir+, defaulting to +~/.emacs.d/el-get+.
 
+=== Sync or async?
+
+Most often you want +el-get-install+ and +el-get-build+ to stay out of the
+way and be 'asynchronous', so that you can continue using Emacs while your
+new package is getting ready. But imagine you're starting up Emacs after a
++git pull+ on the other computer (after a commute, say), and there's some
+newer packages for this instance to consider installing. 
+
+Now you want a synchronous install, right?
+
+So, by default +(el-get)+ is asynchronous, but you can ask for it to be sync
+this way:
+
+  (el-get 'sync)
+
+You even get a progress report!
+
 === Sources
 
 See the documentation of the +el-get-sources+ variable for details.
@@ -165,6 +182,11 @@ M-x el-get-install::
     following the +source+ you've already setup. Depending on the +type+ of
     the +package+, this will fail for an already installed package.
 
+    When using C-u, +el-get-install+ will allow for installing any package
+    you have a recipe for, instead of only proposing packages from
+    +el-get-sources+.
+
+
 M-x el-get-update::
 
     Will prompt for a package name, with completion, then update it. This
@@ -177,6 +199,14 @@ M-x el-get-remove::
     deleting the directory where the source package lies. Sometime we have
     to use external tools instead (+apt-get+, e.g.). No effort is made to
     unload the features.
+
+    When using C-u, +el-get-remove+ will allow for installing any package
+    you have a recipe for, instead of only proposing packages from
+    +el-get-sources+.
+
+The +C-u+ alternatives are not provided for the +el-get-update+ and
++el-get-init+ command, on the grounds that if you want to use them you
+probably should now have the package into your +el-get-sources+ proper.
 
 == Internals
 
