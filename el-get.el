@@ -1311,8 +1311,11 @@ suitable for use in your emacs init script.
 	  ;; check if the package needs to be fetched (and built)
 	  (if (el-get-package-exists-p package)
 	      (if (and status (string= "installed" status))
-		  (el-get-init package)
-		(error "Package %s failed to install, remove it first." package))
+		  (condition-case err 
+		      (el-get-init package)
+		    ((debug error) ;; catch-all, allow for debugging
+		     (message "%S" (error-message-string err))))
+		(message "Package %s failed to install, remove it first." package))
 	    (el-get-install package))))
       el-get-sources))
 
