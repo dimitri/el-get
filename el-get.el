@@ -26,6 +26,7 @@
 ;;     previously failed install is in theory possible. Currently `el-get'
 ;;     will refrain from removing your package automatically, though.
 ;;   - Fix ELPA remove method, adding a "removed" state too.
+;;   - Implement CVS login support.
 ;;
 ;;  0.9 - 2010-08-24 - build me a shell
 ;;
@@ -229,10 +230,16 @@ definition provided by `el-get' recipes locally.
 
 :options
 
-    Currently only used by the http-tar support for you to give
-    the tar options you want to use. Typically would be \"xzf\",
-    but you might want to choose \"xjf\" for handling .tar.bz
-    files e.g.
+    Currently used by http-tar and cvs support.
+
+    When using http-tar, it allows you to give the tar options
+    you want to use. Typically would be \"xzf\", but you might
+    want to choose \"xjf\" for handling .tar.bz files e.g.
+
+    When using CVS, when it's set to \"login\", `el-get' will
+    first issue a `cvs login' against the server, asking you
+    interactively (in the minibuffer) any password you might to
+    enter, and only then it will run the `cvs checkout' command.
 
 :module
 
@@ -293,7 +300,8 @@ directory or a symlink in el-get-dir."
 	  (errorm  (process-get proc :error))
 	  (package (process-get proc :el-get-package))
 	  (final-f (process-get proc :el-get-final-func))
-	  (next    (process-get proc :el-get-start-process-list)))
+	  (next    (process-get proc :el-get-start-process-list))
+	  (el-get-sources (process-get proc :el-get-sources)))
       (if (not (eq 0 status))
 	  (progn
 	    (when (process-buffer proc)
@@ -372,6 +380,7 @@ Any other property will get put into the process object.
 
       ;; add the properties to the process, then set the sentinel
       (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
+      (process-put proc :el-get-sources el-get-sources)
       (process-put proc :el-get-package package)
       (process-put proc :el-get-final-func final-func)
       (process-put proc :el-get-start-process-list (cdr commands))
@@ -525,20 +534,35 @@ found."
      post-update-fun)))
 
 
+;;
+;; CVS support
+;;
 (defun el-get-cvs-checkout (package url post-install-fun)
   "cvs checkout the package."
   (let* ((cvs-executable (executable-find "cvs"))
 	 (source  (el-get-package-def package))
 	 (module  (plist-get source :module))
+	 (options (plist-get source :options))
 	 (name    (format "*cvs checkout %s*" package))
 	 (ok      (format "Checked out package %s." package))
 	 (ko      (format "Could not checkout package %s." package)))
 
-    (message "%S" `(:args ("-d" ,url "checkout" "-d" ,package ,module)))
+    ;; (message "%S" `(:args ("-d" ,url "checkout" "-d" ,package ,module)))
+    ;; (message "el-get-cvs-checkout: %S" (string= options "login"))
 
     (el-get-start-process-list
      package
-     `((:command-name ,name
+     `(,@(when (string= options "login")
+	   `((:command-name ,(format "*cvs login %s*" package)
+			    :buffer-name ,(format "*cvs login %s*" package)
+			    :default-directory ,el-get-dir
+			    :process-filter ,(function el-get-sudo-password-process-filter)
+			    :program ,cvs-executable
+			    :args ("-d" ,url "login")
+			    :message "cvs login"
+			    :error "Could not login against the cvs server")))
+
+       (:command-name ,name
 		      :buffer-name ,name
 		      :default-directory ,el-get-dir
 		      :program ,cvs-executable
@@ -776,14 +800,16 @@ PACKAGE isn't currently installed by ELPA."
 ;;
 ;; http support
 ;;
-(defun el-get-http-retrieve-callback (url-arg package post-install-fun &optional dest)
+(defun el-get-http-retrieve-callback (url-arg package post-install-fun &optional dest sources)
   "Callback function for `url-retrieve', store the emacs lisp file for the package.
 
 URL-ARG is nil in my tests but `url-retrieve' seems to insist on
 passing it the the callback function nonetheless."
   (let* ((pdir   (el-get-package-directory package))
 	 (dest   (or dest (concat (file-name-as-directory pdir) package ".el")))
-	 (part   (concat dest ".part")))
+	 (part   (concat dest ".part"))
+	 (el-get-sources (if sources sources el-get-sources))
+	 (require-final-newline nil))
     ;; prune HTTP headers before save
     (goto-char (point-min))
     (re-search-forward "^$" nil 'move)
@@ -800,7 +826,7 @@ passing it the the callback function nonetheless."
     (unless (file-directory-p pdir)
       (make-directory pdir))
     (url-retrieve
-     url 'el-get-http-retrieve-callback `(,package ,post-install-fun ,dest))))
+     url 'el-get-http-retrieve-callback `(,package ,post-install-fun ,dest ,el-get-sources))))
 
 
 ;;
@@ -844,16 +870,17 @@ the files up."
 	 (ko      (format "Could not install package %s." package))
 	 (post `(lambda (package)
 		  ;; tar xzf `basename url`
-		  (el-get-start-process-list
-		   package
-		   '((:command-name ,name
-				    :buffer-name ,name
-				    :default-directory ,pdir
-				    :program ,(executable-find "tar")
-				    :args (,@options ,tarfile)
-				    :message ,ok
-				    :error ,ko))
-		   ,(symbol-function post-install-fun)))))
+		  (let ((el-get-sources '(,@el-get-sources)))
+		    (el-get-start-process-list
+		     package
+		     '((:command-name ,name
+				      :buffer-name ,name
+				      :default-directory ,pdir
+				      :program ,(executable-find "tar")
+				      :args (,@options ,tarfile)
+				      :message ,ok
+				      :error ,ko))
+		     ,(symbol-function post-install-fun))))))
     (el-get-http-install package url post dest)))
 
 (add-hook 'el-get-http-tar-install-hook 'el-get-http-tar-cleanup-extract-hook)
@@ -1117,10 +1144,10 @@ entry."
       ;; if a feature is provided, require it now
       (when feats
 	(mapc (lambda (feat)
-		(let ((feature (if (stringp feat) (intern-soft feat) feat)))
+		(let ((feature (if (stringp feat) (intern feat) feat)))
 		  (message "require '%s" (require feature))))
 	      (cond ((symbolp feats) (list feats))
-		    ((stringp feats) (list (intern-soft feats)))
+		    ((stringp feats) (list (intern feats)))
 		    (t feats)))))
 
     ;; call the "after" user function
@@ -1133,13 +1160,7 @@ entry."
 
 (defun el-get-post-install (package)
   "Post install PACKAGE. This will get run by a sentinel."
-  ;; the dynamic binding usage to avoid editing `el-get-sources' will not
-  ;; follow async calls and process sentinels, so re-do it here if needed.
-  (let* ((names    (el-get-package-name-list))
-	 (merged   (not (member package names)))
-	 (el-get-sources (if merged (el-get-read-all-recipes 'merge) 
-			   el-get-sources))
-	 (source   (el-get-package-def package))
+  (let* ((source   (el-get-package-def package))
 	 (hooks    (el-get-method (plist-get source :type) :install-hook))
 	 (commands (plist-get source :build)))
     ;; post-install is the right place to run install-hook
@@ -1193,7 +1214,11 @@ from `el-get-sources'.
   (let* ((source   (el-get-package-def package))
 	 (commands (plist-get source :build)))
     (el-get-build package commands nil nil
-		  (lambda (package) (message "el-get-post-update %s: done" package)))))
+		  (lambda (package) 
+		    (message "el-get-post-update %s: done" package)
+		    ;; fix trailing failed installs
+		    (when (string= (el-get-read-package-status package) "required")
+		      (el-get-save-package-status package "installed"))))))
 
 (defun el-get-update (package)
   "Update PACKAGE."
@@ -1210,12 +1235,7 @@ from `el-get-sources'.
 
 (defun el-get-post-remove (package)
   "Run the post-remove hooks for PACKAGE."
-  ;; see comments in el-get-post-install
-  (let* ((names    (el-get-package-name-list))
-	 (merged   (not (member package names)))
-	 (el-get-sources (if merged (el-get-read-all-recipes 'merge) 
-			   el-get-sources))
-	 (source  (el-get-package-def package))
+  (let* ((source  (el-get-package-def package))
 	 (hooks   (el-get-method (plist-get source :type) :remove-hook)))
     (run-hook-with-args hooks package)))
 
