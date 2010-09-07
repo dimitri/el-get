@@ -820,7 +820,8 @@ passing it the the callback function nonetheless."
     (when (file-exists-p dest)
       (delete-file dest))
     (rename-file part dest)
-    (message "Wrote %s" dest))
+    (message "Wrote %s" dest)
+    (kill-buffer))
   (funcall post-install-fun package))
 
 (defun el-get-http-install (package url post-install-fun &optional dest)
