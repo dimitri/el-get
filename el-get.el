@@ -376,6 +376,7 @@ Any other property will get put into the process object.
 				  (file-name-as-directory
 				   (expand-file-name cdir))
 				default-directory))
+	   (process-connection-type nil) ; pipe, don't pretend we're a pty
 	   (proc    (apply startf cname cbuf program args)))
 
       ;; add the properties to the process, then set the sentinel
@@ -385,7 +386,11 @@ Any other property will get put into the process object.
       (process-put proc :el-get-final-func final-func)
       (process-put proc :el-get-start-process-list (cdr commands))
       (set-process-sentinel proc 'el-get-start-process-list-sentinel)
-      (when filter (set-process-filter proc filter)))))
+      (when filter (set-process-filter proc filter))))
+  ;; no commands, still run the final-func
+  (unless commands
+    (when (functionp final-func)
+      (funcall final-func package))))
 
 
 ;;
@@ -816,8 +821,11 @@ passing it the the callback function nonetheless."
     (forward-char)
     (delete-region (point-min) (point))
     (write-file part)
+    (when (file-exists-p dest)
+      (delete-file dest))
     (rename-file part dest)
-    (message "Renamed to %s" dest))
+    (message "Wrote %s" dest)
+    (kill-buffer))
   (funcall post-install-fun package))
 
 (defun el-get-http-install (package url post-install-fun &optional dest)
@@ -897,6 +905,18 @@ the files up."
       (message "el-get could not find package directory \"%s\"" pdir))
     (funcall post-remove-fun package)))
 
+(defun el-get-build-command-program (name)
+  "Given the user command name, get the command program to execute.
+
+That will find the program in current $PATH for you, unless given
+command name is a relative filename beginning with \"./\", or its
+absolute filename obtained with expand-file-name is executable."
+  (let ((fullname (expand-file-name name))
+	(exe      (executable-find name)))
+    (cond ((string-match "^\./" name)   name)
+	  ((file-executable-p fullname) fullname)
+	  (t (or exe name)))))
+
 (defun el-get-build (package commands &optional subdir sync post-build-fun)
   "Run each command from the package directory."
   (let* ((pdir   (el-get-package-directory package))
@@ -917,9 +937,7 @@ the files up."
 	     (mapcar (lambda (c)
 		       (let* ((split    (split-string c))
 			      (name     (car split))
-			      (program  (if (file-executable-p (expand-file-name name))
-					    (expand-file-name name)
-					  (executable-find name)))
+			      (program  (el-get-build-command-program name))
 			      (args     (cdr split)))
 
 			 `(:command-name ,name
@@ -1215,7 +1233,7 @@ from `el-get-sources'.
 	 (commands (plist-get source :build)))
     (el-get-build package commands nil nil
 		  (lambda (package) 
-		    (message "el-get-post-update %s: done" package)
+		    (el-get-init package)
 		    ;; fix trailing failed installs
 		    (when (string= (el-get-read-package-status package) "required")
 		      (el-get-save-package-status package "installed"))))))
@@ -1300,8 +1318,11 @@ suitable for use in your emacs init script.
 	  ;; check if the package needs to be fetched (and built)
 	  (if (el-get-package-exists-p package)
 	      (if (and status (string= "installed" status))
-		  (el-get-init package)
-		(error "Package %s failed to install, remove it first." package))
+		  (condition-case err 
+		      (el-get-init package)
+		    ((debug error) ;; catch-all, allow for debugging
+		     (message "%S" (error-message-string err))))
+		(message "Package %s failed to install, remove it first." package))
 	    (el-get-install package))))
       el-get-sources))
 
