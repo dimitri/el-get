@@ -817,8 +817,10 @@ passing it the the callback function nonetheless."
     (forward-char)
     (delete-region (point-min) (point))
     (write-file part)
+    (when (file-exists-p dest)
+      (delete-file dest))
     (rename-file part dest)
-    (message "Renamed to %s" dest))
+    (message "Wrote %s" dest))
   (funcall post-install-fun package))
 
 (defun el-get-http-install (package url post-install-fun &optional dest)
