@@ -2,5 +2,7 @@
        :type git
        :url "git://github.com/barak/BBDB.git"
        :load-path ("./lisp" "./bits")
-       :info "texinfo"
-       :build ("./configure" "make"))
+       :build ("./configure" "make")
+       :build/darwin ("./configure --with-emacs=/Applications/Emacs.app/Contents/MacOS/Emacs" "make autoloads" "make")
+       :info "texinfo")
+

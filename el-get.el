@@ -27,6 +27,8 @@
 ;;     will refrain from removing your package automatically, though.
 ;;   - Fix ELPA remove method, adding a "removed" state too.
 ;;   - Implement CVS login support.
+;;   - Add lots of recipes
+;;   - Add support for `system-type' specific build commands
 ;;
 ;;  0.9 - 2010-08-24 - build me a shell
 ;;
@@ -203,6 +205,11 @@ definition provided by `el-get' recipes locally.
 :build
 
     Your build recipe gets there, often it looks like (\"./configure\" \"make\")
+
+:build/system-type
+
+    Your specific build recipe for a given `system-type' gets
+    there and looks like :build.
 
 :load-path
 
@@ -905,6 +912,14 @@ the files up."
       (message "el-get could not find package directory \"%s\"" pdir))
     (funcall post-remove-fun package)))
 
+(defun el-get-build-commands (package)
+  "Given a PACKAGE, returns its building commands."
+  (let* ((source     (el-get-package-def package))
+	 (build-type (intern (format ":build/%s" system-type))))
+    (or (plist-get source build-type)
+	(plist-get source :build))))
+    
+
 (defun el-get-build-command-program (name)
   "Given the user command name, get the command program to execute.
 
@@ -1180,7 +1195,7 @@ entry."
   "Post install PACKAGE. This will get run by a sentinel."
   (let* ((source   (el-get-package-def package))
 	 (hooks    (el-get-method (plist-get source :type) :install-hook))
-	 (commands (plist-get source :build)))
+	 (commands (el-get-build-commands package)))
     ;; post-install is the right place to run install-hook
     (run-hook-with-args hooks package)
     (if commands
@@ -1230,7 +1245,7 @@ from `el-get-sources'.
 (defun el-get-post-update (package)
   "Post update PACKAGE. This will get run by a sentinel."
   (let* ((source   (el-get-package-def package))
-	 (commands (plist-get source :build)))
+	 (commands (el-get-build-commands package)))
     (el-get-build package commands nil nil
 		  (lambda (package) 
 		    (el-get-init package)
