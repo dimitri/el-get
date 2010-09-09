@@ -38,6 +38,7 @@ instead.
    `(lambda (proc change)
       (when (eq (process-status proc) 'exit)
 	(setq default-directory (file-name-as-directory ,pdir))
+	(setq el-get-sources ',el-get-sources)
 	(load (concat (file-name-as-directory ,pdir) ,package ".el"))
 	(el-get-init "el-get")
 	(with-current-buffer (process-buffer proc)
