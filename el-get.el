@@ -766,7 +766,7 @@ PACKAGE isn't currently installed by ELPA."
   "ln -s ~/.emacs.d/elpa/<package> ~/.emacs.d/el-get/<package>"
   (let ((elpa-dir (el-get-elpa-package-directory package)))
     (unless (el-get-package-exists-p package)
-      (message 
+      (message "%s"
        (shell-command
 	(concat "cd " el-get-dir
 		" && ln -s \"" elpa-dir "\" \"" package "\""))))))
