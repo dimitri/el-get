@@ -4,5 +4,5 @@
        :build ("./configure" "make")
        :build/darwin ("./configure --with-emacs=/Applications/Emacs.app/Contents/MacOS/Emacs" "make"))
        :info "texi"
-       :load-path ("lisp" "contrib")
+       :load-path ("lisp")
        :features gnus-load)
