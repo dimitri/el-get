@@ -973,9 +973,9 @@ absolute filename obtained with expand-file-name is executable."
 ;;
 (defun el-get-read-recipe-file (filename)
   "Read given filename and return its content (a valid form is expected)"
-  (car (with-temp-buffer
-	 (insert-file-contents-literally filename)
-	 (read-from-string (buffer-string)))))
+  (with-temp-buffer
+    (insert-file-contents-literally filename)
+    (read (current-buffer))))
 
 (defun el-get-read-recipe (package)
   "Return the source definition for PACKAGE, from the recipes."
