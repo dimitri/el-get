@@ -29,6 +29,7 @@
 ;;   - Implement CVS login support.
 ;;   - Add lots of recipes
 ;;   - Add support for `system-type' specific build commands
+;;   - Byte compile files from the load-path entries or :compile files
 ;;
 ;;  0.9 - 2010-08-24 - build me a shell
 ;;
@@ -215,6 +216,15 @@ definition provided by `el-get' recipes locally.
 
     This should be a list of directories you want `el-get' to add
     to your `load-path'.
+
+:compile
+
+    Allow to restrict what to byte-compile: by default, `el-get'
+    will compile all elisp files in the :load-path
+    directories. Given a :compile property, `el-get' will only
+    byte-compile those given files in the property value. This
+    property can be a `listp' or a `stringp' if you want to
+    compile only one file.
 
 :info
 
@@ -1126,6 +1136,7 @@ entry."
 	 (loads    (plist-get source :load))
 	 (feats    (plist-get source :features))
 	 (el-path  (or (plist-get source :load-path) '(".")))
+	 (compile  (plist-get source :compile))
 	 (infodir  (plist-get source :info))
 	 (after    (plist-get source :after))
 	 (pdir     (el-get-package-directory package)))
@@ -1162,10 +1173,14 @@ entry."
 	   package
 	   `(,(format "%s %s.info dir" el-get-install-info infofile)) infodir-rel t))))
 
-    ;; Compile .el files in that directory
+    ;; byte-compile either :compile entries or anything in load-path
     (let ((byte-compile-warnings nil))
-      (dolist (dir el-path)
-        (byte-recompile-directory (expand-file-name dir) 0)))
+      (if compile
+	  (dolist (f (if (listp compile) compile (list compile)))
+	    (byte-compile-file (concat (file-name-as-directory pdir) f)))
+	;; Compile .el files in that directory
+	(dolist (dir el-path)
+	  (byte-recompile-directory (expand-file-name dir) 0))))
 
     ;; loads
     (when loads
