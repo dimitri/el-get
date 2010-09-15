@@ -1162,6 +1162,11 @@ entry."
 	   package
 	   `(,(format "%s %s.info dir" el-get-install-info infofile)) infodir-rel t))))
 
+    ;; Compile .el files in that directory
+    (let ((byte-compile-warnings nil))
+      (dolist (dir el-path)
+        (byte-recompile-directory (expand-file-name dir) 0)))
+
     ;; loads
     (when loads
       (mapc (lambda (file)
