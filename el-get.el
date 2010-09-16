@@ -73,6 +73,7 @@
 (require 'dired)
 (require 'package nil t) ; that's ELPA, but you can use el-get to install it
 (require 'cl)            ; needed for `remove-duplicates'
+(require 'bytecomp)
 
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
