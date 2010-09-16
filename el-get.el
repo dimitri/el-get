@@ -1182,7 +1182,7 @@ entry."
 		   (elc (concat (file-name-sans-extension el) ".elc")))
 	      (when (or (not (file-exists-p elc))
 			(file-newer-than-file-p el elc))
-		(byte-compile-file (concat (file-name-as-directory pdir) f)))))
+		(byte-compile-file el))))
 	;; Compile .el files in that directory
 	(dolist (dir el-path)
 	  (byte-recompile-directory 
