@@ -1177,7 +1177,11 @@ entry."
     (let ((byte-compile-warnings nil))
       (if compile
 	  (dolist (f (if (listp compile) compile (list compile)))
-	    (byte-compile-file (concat (file-name-as-directory pdir) f)))
+	    (let* ((el  (concat (file-name-as-directory pdir) f))
+		   (elc (concat (file-name-sans-extension el) ".elc")))
+	      (when (or (not (file-exists-p elc))
+			(file-newer-than-file-p el elc))
+		(byte-compile-file (concat (file-name-as-directory pdir) f)))))
 	;; Compile .el files in that directory
 	(dolist (dir el-path)
 	  (byte-recompile-directory 
