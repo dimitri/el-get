@@ -1185,8 +1185,8 @@ entry."
 		(byte-compile-file el))))
 	;; Compile .el files in that directory
 	(dolist (dir el-path)
-	  (byte-recompile-directory 
-	   (expand-file-name (concat (file-name-as-directory pdir) dir) 0)))))
+	  (byte-recompile-directory
+	   (expand-file-name (concat (file-name-as-directory pdir) dir)) 0))))
 
     ;; loads
     (when loads
