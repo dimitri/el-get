@@ -221,11 +221,11 @@ definition provided by `el-get' recipes locally.
 :compile
 
     Allow to restrict what to byte-compile: by default, `el-get'
-    will compile all elisp files in the :load-path
-    directories. Given a :compile property, `el-get' will only
-    byte-compile those given files in the property value. This
-    property can be a `listp' or a `stringp' if you want to
-    compile only one file.
+    will compile all elisp files in the :load-path directories,
+    unless a :build command exists for the package source. Given
+    a :compile property, `el-get' will only byte-compile those
+    given files in the property value. This property can be a
+    `listp' or a `stringp' if you want to compile only one file.
 
 :info
 
@@ -1183,10 +1183,11 @@ entry."
 	      (when (or (not (file-exists-p elc))
 			(file-newer-than-file-p el elc))
 		(byte-compile-file el))))
-	;; Compile .el files in that directory
-	(dolist (dir el-path)
-	  (byte-recompile-directory
-	   (expand-file-name (concat (file-name-as-directory pdir) dir)) 0))))
+	;; Compile .el files in that directory --- unless we have build instructions
+	(unless (el-get-build-commands package)
+	  (dolist (dir el-path)
+	    (byte-recompile-directory
+	     (expand-file-name (concat (file-name-as-directory pdir) dir)) 0)))))
 
     ;; loads
     (when loads

@@ -159,6 +159,13 @@ that's for distributors to care, like +debian+ for example. In our case, you
 probably just want your package +foo+ to be all installed into
 +~/.emacs.d/el-get/foo+, right? So, no +make install+.
 
+=== Byte Compiling
+
++el-get+ will 'byte compile' the elisp for the package when its source
+definition includes a +:compile+ property set to the list of files to byte
+compile (or to a single file), or all the +.el+ files found in the package
+when there's no +:build+ command.
+
 === Some more commands?
 
 Yes, ok.
