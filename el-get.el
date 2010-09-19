@@ -30,6 +30,8 @@
 ;;   - Add lots of recipes
 ;;   - Add support for `system-type' specific build commands
 ;;   - Byte compile files from the load-path entries or :compile files
+;;   - Implement support for git submodules with the command
+;;     `git submodule update --init --recursive`
 ;;
 ;;  0.9 - 2010-08-24 - build me a shell
 ;;
@@ -431,6 +433,7 @@ found."
 (defun el-get-git-clone (package url post-install-fun)
   "Clone the given package following the URL."
   (let* ((git-executable (el-get-git-executable))
+	 (pdir (el-get-package-directory package))
 	 (name (format "*git clone %s*" package))
 	 (ok   (format "Package %s installed." package))
 	 (ko   (format "Could not install package %s." package)))
@@ -443,7 +446,14 @@ found."
 		      :program ,git-executable
 		      :args ( "--no-pager" "clone" ,url ,package)
 		      :message ,ok
-		      :error ,ko))
+		      :error ,ko)
+       (:command-name "*git submodule update*"
+		      :buffer-name ,name
+		      :default-directory ,pdir
+		      :program ,git-executable
+		      :args ("--no-pager" "submodule" "update" "--init" "--recursive")
+		      :message "git submodule update ok"
+		      :error "Could not update git submodules"))
      post-install-fun)))
 
 (defun el-get-git-pull (package url post-update-fun)
@@ -462,7 +472,14 @@ found."
 		      :program ,git-executable
 		      :args ( "--no-pager" "pull")
 		      :message ,ok
-		      :error ,ko))
+		      :error ,ko)
+       (:command-name "*git submodule update*"
+		      :buffer-name ,name
+		      :default-directory ,pdir
+		      :program ,git-executable
+		      :args ("--no-pager" "submodule" "update" "--init" "--recursive")
+		      :message "git submodule update ok"
+		      :error "Could not update git submodules"))
      post-update-fun)))
 
 
