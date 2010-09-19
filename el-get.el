@@ -1093,10 +1093,10 @@ entry."
        (format "%S" (if s (plist-put s p status)
 		      `(,p ,status)))))))
 
-(defun el-get-count-package-with-status (status)
+(defun el-get-count-package-with-status (&rest status)
   "Return how many packages are currently in given status"
   (loop for (p s) on (el-get-read-all-packages-status) by 'cddr 
-	if (string= status s) sum 1))
+	if (member s status) sum 1))
 
 (defun el-get-package-status (package &optional package-status-plist)
   "Return current status of package from given list"
@@ -1369,7 +1369,18 @@ the el-get-sources setup.
 el-get is also responsible for doing (require 'feature) for each
 and every feature declared in `el-get-sources', so that it's
 suitable for use in your emacs init script.
-"
+
+By default (SYNC is nil), `el-get' will run all the installs
+concurrently so that you can still use Emacs to do your normal
+work. When SYNC is non-nil (any value will do, 'sync for
+example), then `el-get' will enter a wait-loop and only let you
+use Emacs once it has finished with its job. That's useful an
+option to use in your `user-init-file'.
+
+Please note that the `el-get-init' part of `el-get' is always
+done synchronously, so you will have to wait here. There's
+`byte-compile' support though, and the packages you use are
+welcome to use `autoload' too."
   (let* ((p-status    (el-get-read-all-packages-status))
          (total       (length (el-get-package-name-list)))
          (installed   (el-get-count-package-with-status "installed"))
@@ -1400,12 +1411,12 @@ suitable for use in your emacs init script.
     (when sync
       (while (> (- total installed) 0)
 	(sleep-for 0.2)
-	(setq installed (el-get-count-package-with-status "installed"))
+	;; don't forget to account for installation failure
+	(setq installed (el-get-count-package-with-status "installed" "required"))
 	(progress-reporter-update progress (- total installed)))
       (progress-reporter-done progress))
 
     ;; return the list of packages
     ret))
-      
 
 (provide 'el-get)
