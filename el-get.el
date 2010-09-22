@@ -1370,6 +1370,24 @@ from `el-get-sources'."
   (el-get-error-unless-package-p package)
   (dired (el-get-package-directory package)))
 
+;;
+;; notify user with emacs notifications API (new in 24)
+;;
+(when (require 'notifications nil t)
+  (defun el-get-post-install-notification (package)
+    "Notify the PACKAGE has been installed."
+    (notifications-notify
+     :title (format "%s installed" package)
+     :body "This package has been installed successfully by el-get."))
+  (add-hook 'el-get-post-install-hooks 'el-get-post-install-notification)
+
+  (defun el-get-post-update-notification (package)
+    "Notify the PACKAGE has been updated."
+    (notifications-notify
+     :title (format "%s updated" package)
+     :body "This package has been updated successfully by el-get."))
+  (add-hook 'el-get-post-update-hooks 'el-get-post-update-notification))
+
 
 ;;
 ;; User Interface, Non Interactive part
@@ -1434,20 +1452,5 @@ welcome to use `autoload' too."
 
     ;; return the list of packages
     ret))
-
-(when (require 'notifications nil t)
-  (defun el-get-post-update-notification (package)
-    "Notify the PACKAGE has been updated."
-    (notifications-notify
-     :title (format "%s updated" package)
-     :body "This package has been updated successfully by el-get."))
-  (add-hook 'el-get-post-update-hooks 'el-get-post-update-notification)
-
-  (defun el-get-post-install-notification (package)
-    "Notify the PACKAGE has been installed."
-    (notifications-notify
-     :title (format "%s installed" package)
-     :body "This package has been installed successfully by el-get."))
-  (add-hook 'el-get-post-install-hooks 'el-get-post-install-notification))
 
 (provide 'el-get)
