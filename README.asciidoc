@@ -166,6 +166,12 @@ definition includes a +:compile+ property set to the list of files to byte
 compile (or to a single file), or all the +.el+ files found in the package
 when there's no +:build+ command.
 
+=== Hooks
+
++el-get+ offers a variety of specific hooks (read the source), and two
+general purposes hooks facilities: +el-get-post-install-hooks+ and
++el-get-post-update-hooks+, called with the package name as argument.
+
 === Some more commands?
 
 Yes, ok.

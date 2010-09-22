@@ -32,6 +32,7 @@
 ;;   - Byte compile files from the load-path entries or :compile files
 ;;   - Implement support for git submodules with the command
 ;;     `git submodule update --init --recursive`
+;;   - Add catch-all post-install and post-update hooks
 ;;
 ;;  0.9 - 2010-08-24 - build me a shell
 ;;
@@ -87,7 +88,7 @@ It will get called with the package as first argument."
   :type 'hook)
 
 (defcustom el-get-post-update-hooks nil
-  "Hooks to run after installing a package.
+  "Hooks to run after updating a package.
 It will get called with the package as first argument."
   :group 'el-get
   :type 'hook)
