@@ -80,6 +80,18 @@
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
 
+(defcustom el-get-post-install-hooks nil
+  "Hooks to run after installing a package.
+It will get called with the package as first argument."
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-post-update-hooks nil
+  "Hooks to run after installing a package.
+It will get called with the package as first argument."
+  :group 'el-get
+  :type 'hook)
+
 (defvar el-get-git-clone-hook        nil "Hook run after git clone.")
 (defvar el-get-git-svn-clone-hook    nil "Hook run after git svn clone.")
 (defvar el-get-bzr-branch-hook       nil "Hook run after bzr branch.")
@@ -1261,7 +1273,8 @@ entry."
 			(el-get-save-package-status package "installed")))
       ;; if there's no commands, just init and mark as installed
       (el-get-init package)
-      (el-get-save-package-status package "installed"))))
+      (el-get-save-package-status package "installed")))
+  (run-hooks-with-args el-get-post-install-hooks package))
 
 (defun el-get-install (package)
   "Install PACKAGE.
@@ -1306,7 +1319,8 @@ from `el-get-sources'.
 		    (el-get-init package)
 		    ;; fix trailing failed installs
 		    (when (string= (el-get-read-package-status package) "required")
-		      (el-get-save-package-status package "installed"))))))
+		      (el-get-save-package-status package "installed")))))
+  (run-hooks-with-args el-get-post-update-hooks package))
 
 (defun el-get-update (package)
   "Update PACKAGE."
