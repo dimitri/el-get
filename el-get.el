@@ -33,6 +33,7 @@
 ;;   - Implement support for git submodules with the command
 ;;     `git submodule update --init --recursive`
 ;;   - Add catch-all post-install and post-update hooks
+;;   - Add desktop notification on install/update.
 ;;
 ;;  0.9 - 2010-08-24 - build me a shell
 ;;
@@ -1433,5 +1434,20 @@ welcome to use `autoload' too."
 
     ;; return the list of packages
     ret))
+
+(when (require 'notifications nil t)
+  (defun el-get-post-update-notification (package)
+    "Notify the PACKAGE has been updated."
+    (notifications-notify
+     :title (format "%s updated" package)
+     :body "This package has been updated successfully by el-get."))
+  (add-hook 'el-get-post-update-hooks 'el-get-post-update-notification)
+
+  (defun el-get-post-install-notification (package)
+    "Notify the PACKAGE has been installed."
+    (notifications-notify
+     :title (format "%s installed" package)
+     :body "This package has been installed successfully by el-get."))
+  (add-hook 'el-get-post-install-hooks 'el-get-post-install-notification))
 
 (provide 'el-get)
