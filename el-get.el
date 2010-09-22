@@ -1275,7 +1275,7 @@ entry."
       ;; if there's no commands, just init and mark as installed
       (el-get-init package)
       (el-get-save-package-status package "installed")))
-  (run-hooks-with-args el-get-post-install-hooks package))
+  (run-hook-with-args 'el-get-post-install-hooks package))
 
 (defun el-get-install (package)
   "Install PACKAGE.
@@ -1321,7 +1321,7 @@ from `el-get-sources'.
 		    ;; fix trailing failed installs
 		    (when (string= (el-get-read-package-status package) "required")
 		      (el-get-save-package-status package "installed")))))
-  (run-hooks-with-args el-get-post-update-hooks package))
+  (run-hook-with-args 'el-get-post-update-hooks package))
 
 (defun el-get-update (package)
   "Update PACKAGE."
