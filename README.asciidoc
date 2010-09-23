@@ -109,8 +109,8 @@ You see that +el-get-sources+ exemple up there? It finishes with a single
 +(el-get)+ call. That's it. It will 'install' new +sources+ on the list and
 only 'init' already installed ones.
 
-Tracking if a +source+ is not by checking for the existance of a directory
-or symlink in +el-get-dir+, defaulting to +~/.emacs.d/el-get+.
+The status of each package is tracked into +~/.emacs.d/el-get/.status.el+
+(by default) and can get the values +required+, +installed+ or +removed+.
 
 === Sync or async?
 
