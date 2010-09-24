@@ -192,6 +192,9 @@ the named package action in the given method."
 (defvar el-get-install-info (or (executable-find "ginstall-info")
 				(executable-find "install-info")))
 
+;; we support notifications on darwin too, thanks to growlnotify
+(defvar el-get-growl-notify "/usr/local/bin/growlnotify")
+
 (defvar el-get-sources nil
   "List of sources for packages.
 
@@ -1373,19 +1376,34 @@ from `el-get-sources'."
 ;;
 ;; notify user with emacs notifications API (new in 24)
 ;;
-(when (require 'notifications nil t)
+(when (and (eq system-type 'darwin) (not (fboundp 'growl))
+	   (file-executable-p el-get-growl-notify))
+  (defun growl (title message)
+    "Send a message to growl, that implements notifications for darwin"
+    (let* ((name  "*growl*")
+	   (proc
+	    (start-process name name el-get-growl-notify title "-a" "Emacs")))
+      (process-send-string proc (concat message "\n"))
+      (process-send-eof proc))))
+
+(defun el-get-notify (title message)
+  "Notify the user using either the dbus based API or the `growl' one"
+  ;; we use cond for potential adding of notification methods
+  (cond ((fboundp 'notifications-notify) (notifications-notify title message))
+	((fboundp 'growl)                (growl title message))))
+
+(when (or (and (fboundp 'dbus-register-signal) (require 'notifications nil t))
+	  (fboundp 'growl))
   (defun el-get-post-install-notification (package)
     "Notify the PACKAGE has been installed."
-    (notifications-notify
-     :title (format "%s installed" package)
-     :body "This package has been installed successfully by el-get."))
+    (el-get-notify (format "%s installed" package)
+		   "This package has been installed successfully by el-get."))
   (add-hook 'el-get-post-install-hooks 'el-get-post-install-notification)
 
   (defun el-get-post-update-notification (package)
     "Notify the PACKAGE has been updated."
-    (notifications-notify
-     :title (format "%s updated" package)
-     :body "This package has been updated successfully by el-get."))
+    (el-get-notify (format "%s updated" package)
+		   "This package has been updated successfully by el-get."))
   (add-hook 'el-get-post-update-hooks 'el-get-post-update-notification))
 
 
