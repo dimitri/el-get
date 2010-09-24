@@ -1376,7 +1376,8 @@ from `el-get-sources'."
 ;;
 ;; notify user with emacs notifications API (new in 24)
 ;;
-(when (and (eq system-type 'darwin) (not (fboundp 'growl))
+(when (and (eq system-type 'darwin)
+	   (not (fboundp 'growl))
 	   (file-executable-p el-get-growl-notify))
   (defun growl (title message)
     "Send a message to growl, that implements notifications for darwin"
@@ -1388,12 +1389,16 @@ from `el-get-sources'."
 
 (defun el-get-notify (title message)
   "Notify the user using either the dbus based API or the `growl' one"
+  (when (fboundp 'dbus-register-signal)
+    ;; avoid a bug in Emacs 24.0 under darwin
+    (require 'notifications nil t))
+
   ;; we use cond for potential adding of notification methods
   (cond ((fboundp 'notifications-notify) (notifications-notify title message))
-	((fboundp 'growl)                (growl title message))))
+	((fboundp 'growl)                (growl title message))
+	(t                               (message "%s: %s" title message))))
 
-(when (or (and (fboundp 'dbus-register-signal) (require 'notifications nil t))
-	  (fboundp 'growl))
+(when (or (fboundp 'notifications-notify) (fboundp 'growl))
   (defun el-get-post-install-notification (package)
     "Notify the PACKAGE has been installed."
     (el-get-notify (format "%s installed" package)
