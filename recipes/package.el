@@ -3,5 +3,14 @@
        :url "http://tromey.com/elpa/package.el"
        :features package
        :after (lambda ()
-                (make-directory (expand-file-name "~/.emacs.d/elpa") t)
+                (setq package-user-dir 
+                      (expand-file-name 
+                       (convert-standard-filename 
+                        (concat (file-name-as-directory 
+                                 (el-get-package-directory "package")) 
+                                "elpa")))
+                      package-directory-list 
+                      (list (file-name-as-directory package-user-dir) 
+                            "/usr/share/emacs/site-lisp/elpa/"))
+                (make-directory package-user-dir t)
                 (package-initialize)))
