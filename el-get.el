@@ -1394,7 +1394,8 @@ from `el-get-sources'."
     (require 'notifications nil t))
 
   ;; we use cond for potential adding of notification methods
-  (cond ((fboundp 'notifications-notify) (notifications-notify title message))
+  (cond ((fboundp 'notifications-notify) (notifications-notify
+                                          :title title :body message))
 	((fboundp 'growl)                (growl title message))
 	(t                               (message "%s: %s" title message))))
 
