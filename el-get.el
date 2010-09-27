@@ -1291,7 +1291,7 @@ from `el-get-sources'.
   (interactive (list (el-get-read-package-name "Install" current-prefix-arg)))
   ;; use dynamic binding to pretend package is part of `el-get-sources'
   ;; without having to edit the user setup --- that's what C-u is for.
-  (let ((el-get-sources (if current-prefix-arg 
+  (let ((el-get-sources (if current-prefix-arg
 			    (el-get-read-all-recipes 'merge)
 			  el-get-sources)))
     (el-get-error-unless-package-p package)
@@ -1320,7 +1320,7 @@ from `el-get-sources'.
   (let* ((source   (el-get-package-def package))
 	 (commands (el-get-build-commands package)))
     (el-get-build package commands nil nil
-		  (lambda (package) 
+		  (lambda (package)
 		    (el-get-init package)
 		    ;; fix trailing failed installs
 		    (when (string= (el-get-read-package-status package) "required")
