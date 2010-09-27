@@ -1324,8 +1324,8 @@ from `el-get-sources'.
 		    (el-get-init package)
 		    ;; fix trailing failed installs
 		    (when (string= (el-get-read-package-status package) "required")
-		      (el-get-save-package-status package "installed")))))
-  (run-hook-with-args 'el-get-post-update-hooks package))
+		      (el-get-save-package-status package "installed"))
+                    (run-hook-with-args 'el-get-post-update-hooks package)))))
 
 (defun el-get-update (package)
   "Update PACKAGE."
