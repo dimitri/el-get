@@ -82,6 +82,8 @@
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
 
+(defconst el-get-version "1.0" "el-get version number")
+
 (defcustom el-get-post-install-hooks nil
   "Hooks to run after installing a package.
 It will get called with the package as first argument."
@@ -1135,6 +1137,11 @@ entry."
 ;;
 ;; User Interface, Interactive part
 ;;
+(defun el-get-version ()
+  "Message the current el-get version"
+  (interactive)
+  (message "el-get version %s" el-get-version))
+
 (defun el-get-package-name-list (&optional merge-recipes)
   "Return package a list of all package names from
 `el-get-sources'."
