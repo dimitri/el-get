@@ -4,7 +4,7 @@
 ;;
 ;; Author: Dimitri Fontaine <dim@tapoueh.org>
 ;; URL: http://www.emacswiki.org/emacs/el-get.el
-;; Version: 0.9
+;; Version: 1.0
 ;; Created: 2010-06-17
 ;; Keywords: emacs package elisp install elpa git git-svn bzr cvs apt-get fink http http-tar emacswiki
 ;; Licence: WTFPL, grab your copy here: http://sam.zoy.org/wtfpl/
@@ -16,7 +16,7 @@
 ;;
 ;; Changelog
 ;;
-;;  0.10 - <WIP> - Can I haz your recipes?
+;;  1.0 - 2010-10-07 - Can I haz your recipes?
 ;;
 ;;   - Implement el-get recipes so that el-get-sources can be a simple list
 ;;     of symbols. Now that there's an authoritative git repository, where
@@ -964,7 +964,7 @@ the files up."
 	 (build-type (intern (format ":build/%s" system-type))))
     (or (plist-get source build-type)
 	(plist-get source :build))))
-    
+
 
 (defun el-get-build-command-program (name)
   "Given the user command name, get the command program to execute.
@@ -1112,7 +1112,7 @@ entry."
 
 (defun el-get-count-package-with-status (&rest status)
   "Return how many packages are currently in given status"
-  (loop for (p s) on (el-get-read-all-packages-status) by 'cddr 
+  (loop for (p s) on (el-get-read-all-packages-status) by 'cddr
 	if (member s status) sum 1))
 
 (defun el-get-package-status (package &optional package-status-plist)
@@ -1354,7 +1354,7 @@ package you have a recipe for, instead of only proposing packages
 from `el-get-sources'."
   (interactive (list (el-get-read-package-name "Remove" current-prefix-arg)))
   ;; see comment in el-get-install
-  (let ((el-get-sources (if current-prefix-arg 
+  (let ((el-get-sources (if current-prefix-arg
 			    (el-get-read-all-recipes 'merge)
 			  el-get-sources)))
     (el-get-error-unless-package-p package)
@@ -1444,11 +1444,11 @@ welcome to use `autoload' too."
          (installed   (el-get-count-package-with-status "installed"))
          progress ret)
     (when sync
-      (setq progress 
-	    (make-progress-reporter 
+      (setq progress
+	    (make-progress-reporter
 	     "Waiting for `el-get' to complete… " 0 (- total installed) 0)))
     ;; keep the result of mapcar to return it even in the 'sync case
-    (setq 
+    (setq
      ret
      (mapcar
       (lambda (source)
@@ -1457,7 +1457,7 @@ welcome to use `autoload' too."
 	  ;; check if the package needs to be fetched (and built)
 	  (if (el-get-package-exists-p package)
 	      (if (and status (string= "installed" status))
-		  (condition-case err 
+		  (condition-case err
 		      (el-get-init package)
 		    ((debug error) ;; catch-all, allow for debugging
 		     (message "%S" (error-message-string err))))
