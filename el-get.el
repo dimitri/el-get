@@ -1203,6 +1203,7 @@ entry."
 	 (feats    (plist-get source :features))
 	 (el-path  (or (plist-get source :load-path) '(".")))
 	 (compile  (plist-get source :compile))
+	 (nocomp   (and (plist-member source :compile) (not compile)))
 	 (infodir  (plist-get source :info))
 	 (after    (plist-get source :after))
 	 (pdir     (el-get-package-directory package)))
@@ -1248,11 +1249,11 @@ entry."
                 ;; we accept directories, files and file name regexp
                 (cond ((file-directory-p fp) (byte-recompile-directory fp 0))
                       ((file-exists-p fp)    (el-get-byte-compile-file pdir path))
-                      (t ; regexp case
+                      (t                 ; regexp case
                        (dolist (file (directory-files pdir nil path))
                          (el-get-byte-compile-file pdir file))))))
           ;; Compile .el files in that directory --- unless we have build instructions
-          (unless (el-get-build-commands package)
+          (unless (or nocomp (el-get-build-commands package))
             (dolist (dir el-path)
               (byte-recompile-directory
                (expand-file-name (concat (file-name-as-directory pdir) dir)) 0))))))
