@@ -16,6 +16,12 @@
 ;;
 ;; Changelog
 ;;
+;;  1.1 - <WIP> - Nobody's testing until the release
+;;
+;;   - Adapt to package.el from Emacs24 by using relative symlinks to ELPA
+;;     packages ((package-user-dir) is "~/.emacs.d/elpa" now, so needs to
+;;     get expanded at least)
+;;
 ;;  1.0 - 2010-10-07 - Can I haz your recipes?
 ;;
 ;;   - Implement el-get recipes so that el-get-sources can be a simple list
@@ -809,8 +815,10 @@ PACKAGE isn't currently installed by ELPA."
 	  (mapcar 'split-string
 		  (split-string
 		   (shell-command-to-string
-		    (concat "ls -i1 "
-			    (file-name-as-directory package-user-dir))))))
+		    (concat
+		     "ls -i1 "
+		     (expand-file-name
+		      (file-name-as-directory package-user-dir)))))))
 
 	 (realname (try-completion pname l)))
 
@@ -818,8 +826,8 @@ PACKAGE isn't currently installed by ELPA."
       realname)))
 
 (defun el-get-elpa-symlink-package (package)
-  "ln -s ~/.emacs.d/elpa/<package> ~/.emacs.d/el-get/<package>"
-  (let ((elpa-dir (el-get-elpa-package-directory package)))
+  "ln -s ../elpa/<package> ~/.emacs.d/el-get/<package>"
+  (let ((elpa-dir (file-relative-name (el-get-elpa-package-directory package))))
     (unless (el-get-package-exists-p package)
       (message "%s"
        (shell-command
