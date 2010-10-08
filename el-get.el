@@ -827,7 +827,8 @@ PACKAGE isn't currently installed by ELPA."
 
 (defun el-get-elpa-symlink-package (package)
   "ln -s ../elpa/<package> ~/.emacs.d/el-get/<package>"
-  (let ((elpa-dir (file-relative-name (el-get-elpa-package-directory package))))
+  (let ((elpa-dir (file-relative-name
+		   (el-get-elpa-package-directory package) el-get-dir)))
     (unless (el-get-package-exists-p package)
       (message "%s"
        (shell-command
