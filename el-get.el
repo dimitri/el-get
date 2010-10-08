@@ -102,6 +102,12 @@ It will get called with the package as first argument."
   :group 'el-get
   :type 'hook)
 
+(defcustom el-get-byte-compile t
+  "Whether or not to byte-compile packages. Can be used to
+disable byte-compilation globally."
+  :group 'el-get
+  :type 'boolean)
+
 (defvar el-get-git-clone-hook        nil "Hook run after git clone.")
 (defvar el-get-git-svn-clone-hook    nil "Hook run after git svn clone.")
 (defvar el-get-bzr-branch-hook       nil "Hook run after bzr branch.")
@@ -1233,22 +1239,23 @@ entry."
 	   package
 	   `(,(format "%s %s.info dir" el-get-install-info infofile)) infodir-rel t))))
 
-    ;; byte-compile either :compile entries or anything in load-path
-    (let ((byte-compile-warnings nil))
-      (if compile
-	  (dolist (path (if (listp compile) compile (list compile)))
-	    (let ((fp (concat (file-name-as-directory pdir) path)))
-	      ;; we accept directories, files and file name regexp
-	      (cond ((file-directory-p fp) (byte-recompile-directory fp 0))
-		    ((file-exists-p fp)    (el-get-byte-compile-file pdir path))
-		    (t ; regexp case
-		     (dolist (file (directory-files pdir nil path))
-		       (el-get-byte-compile-file pdir file))))))
-	;; Compile .el files in that directory --- unless we have build instructions
-	(unless (el-get-build-commands package)
-	  (dolist (dir el-path)
-	    (byte-recompile-directory
-	     (expand-file-name (concat (file-name-as-directory pdir) dir)) 0)))))
+    (when el-get-byte-compile
+      ;; byte-compile either :compile entries or anything in load-path
+      (let ((byte-compile-warnings nil))
+        (if compile
+            (dolist (path (if (listp compile) compile (list compile)))
+              (let ((fp (concat (file-name-as-directory pdir) path)))
+                ;; we accept directories, files and file name regexp
+                (cond ((file-directory-p fp) (byte-recompile-directory fp 0))
+                      ((file-exists-p fp)    (el-get-byte-compile-file pdir path))
+                      (t ; regexp case
+                       (dolist (file (directory-files pdir nil path))
+                         (el-get-byte-compile-file pdir file))))))
+          ;; Compile .el files in that directory --- unless we have build instructions
+          (unless (el-get-build-commands package)
+            (dolist (dir el-path)
+              (byte-recompile-directory
+               (expand-file-name (concat (file-name-as-directory pdir) dir)) 0))))))
 
     ;; loads
     (when loads
