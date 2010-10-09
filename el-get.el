@@ -137,6 +137,10 @@ disable byte-compilation globally."
 		       :install-hook el-get-bzr-branch-hook
 		       :update el-get-bzr-pull
 		       :remove el-get-rmdir)
+    :svn     (:install el-get-svn-checkout
+		       :install-hook el-get-svn-checkout-hook
+		       :update el-get-svn-update
+		       :remove el-get-rmdir)
     :cvs     (:install el-get-cvs-checkout
 		       :install-hook el-get-cvs-checkout-hook
 		       :update el-get-cvs-update
@@ -608,6 +612,49 @@ found."
 		      :default-directory ,pdir
 		      :program ,bzr-executable
 		      :args ( "pull" )
+		      :message ,ok
+		      :error ,ko))
+     post-update-fun)))
+
+;;
+;; svn support
+;;
+(defun el-get-svn-checkout (package url post-install-fun)
+  "cvs checkout the package."
+  (let* ((svn-executable (executable-find "svn"))
+	 (source  (el-get-package-def package))
+	 (module  (plist-get source :module))
+	 (options (plist-get source :options))
+	 (name    (format "*svn checkout %s*" package))
+	 (ok      (format "Checked out package %s." package))
+	 (ko      (format "Could not checkout package %s." package)))
+
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :default-directory ,el-get-dir
+		      :program ,svn-executable
+		      :args ("checkout"  ,url ,package)
+		      :message ,ok
+		      :error ,ko))
+     post-install-fun)))
+
+(defun el-get-svn-update (package url post-update-fun)
+  "update the package using svn."
+  (let* ((svn-executable (executable-find "svn"))
+	 (pdir (el-get-package-directory package))
+	 (name (format "*svn update %s*" package))
+	 (ok   (format "Updated package %s." package))
+	 (ko   (format "Could not update package %s." package)))
+
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :default-directory ,pdir
+		      :program ,svn-executable
+		      :args ("update")
 		      :message ,ok
 		      :error ,ko))
      post-update-fun)))
