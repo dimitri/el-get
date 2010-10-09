@@ -137,9 +137,17 @@ disable byte-compilation globally."
 		       :install-hook el-get-bzr-branch-hook
 		       :update el-get-bzr-pull
 		       :remove el-get-rmdir)
+    :svn     (:install el-get-svn-checkout
+		       :install-hook el-get-svn-checkout-hook
+		       :update el-get-svn-update
+		       :remove el-get-rmdir)
     :cvs     (:install el-get-cvs-checkout
 		       :install-hook el-get-cvs-checkout-hook
 		       :update el-get-cvs-update
+		       :remove el-get-rmdir)
+    :darcs   (:install el-get-darcs-get
+		       :install-hook el-get-darcs-get-hook
+		       :update el-get-darcs-pull
 		       :remove el-get-rmdir)
     :apt-get (:install el-get-apt-get-install
 		       :install-hook el-get-apt-get-install-hook
@@ -607,6 +615,49 @@ found."
 		      :message ,ok
 		      :error ,ko))
      post-update-fun)))
+
+;;
+;; svn support
+;;
+(defun el-get-svn-checkout (package url post-install-fun)
+  "cvs checkout the package."
+  (let* ((svn-executable (executable-find "svn"))
+	 (source  (el-get-package-def package))
+	 (module  (plist-get source :module))
+	 (options (plist-get source :options))
+	 (name    (format "*svn checkout %s*" package))
+	 (ok      (format "Checked out package %s." package))
+	 (ko      (format "Could not checkout package %s." package)))
+
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :default-directory ,el-get-dir
+		      :program ,svn-executable
+		      :args ("checkout"  ,url ,package)
+		      :message ,ok
+		      :error ,ko))
+     post-install-fun)))
+
+(defun el-get-svn-update (package url post-update-fun)
+  "update the package using svn."
+  (let* ((svn-executable (executable-find "svn"))
+	 (pdir (el-get-package-directory package))
+	 (name (format "*svn update %s*" package))
+	 (ok   (format "Updated package %s." package))
+	 (ko   (format "Could not update package %s." package)))
+
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :default-directory ,pdir
+		      :program ,svn-executable
+		      :args ("update")
+		      :message ,ok
+		      :error ,ko))
+     post-update-fun)))
 
 
 ;;
@@ -661,6 +712,45 @@ found."
 		      :default-directory ,pdir
 		      :program ,cvs-executable
 		      :args ("update" "-dP")
+		      :message ,ok
+		      :error ,ko))
+     post-update-fun)))
+
+;;
+;; darcs support
+;;
+(defun el-get-darcs-get (package url post-install-fun)
+  "Get a given PACKAGE following the URL using darcs."
+  (let* ((darcs-executable "darcs")
+	 (name (format "*darcs get %s*" package))
+	 (ok   (format "Package %s installed" package))
+	 (ko   (format "Could not install package %s." package)))
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :default-directory ,el-get-dir
+		      :program ,darcs-executable
+		      :args ("get" ,url ,package)
+		      :message ,ok
+		      :error ,ko))
+     post-install-fun)))
+
+(defun el-get-darcs-pull (package url post-update-fun)
+  "darcs pull the package."
+  (let* ((darcs-executable "darcs")
+	 (pdir (el-get-package-directory package))
+	 (name (format "*darcs pull %s*" package))
+	 (ok   (format "Pulled package %s." package))
+	 (ko   (format "Could not update package %s." package)))
+
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :default-directory ,pdir
+		      :program ,darcs-executable
+		      :args ( "pull" )
 		      :message ,ok
 		      :error ,ko))
      post-update-fun)))
