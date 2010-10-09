@@ -4,7 +4,7 @@
 ;;
 ;; Author: Dimitri Fontaine <dim@tapoueh.org>
 ;; URL: http://www.emacswiki.org/emacs/el-get.el
-;; Version: 1.0
+;; Version: 1.1~dev
 ;; Created: 2010-06-17
 ;; Keywords: emacs package elisp install elpa git git-svn bzr cvs apt-get fink http http-tar emacswiki
 ;; Licence: WTFPL, grab your copy here: http://sam.zoy.org/wtfpl/
@@ -21,6 +21,7 @@
 ;;   - Adapt to package.el from Emacs24 by using relative symlinks to ELPA
 ;;     packages ((package-user-dir) is "~/.emacs.d/elpa" now, so needs to
 ;;     get expanded at least)
+;;   - Allow to bypass byte compiling entirely with a single global var
 ;;
 ;;  1.0 - 2010-10-07 - Can I haz your recipes?
 ;;
@@ -88,7 +89,7 @@
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
 
-(defconst el-get-version "1.0" "el-get version number")
+(defconst el-get-version "1.1~dev" "el-get version number")
 
 (defcustom el-get-post-install-hooks nil
   "Hooks to run after installing a package.
@@ -1244,6 +1245,7 @@ entry."
       ;; byte-compile either :compile entries or anything in load-path
       (let ((byte-compile-warnings nil))
         (if compile
+	    ;; only byte-compile what's in the :compile property of the recipe
             (dolist (path (if (listp compile) compile (list compile)))
               (let ((fp (concat (file-name-as-directory pdir) path)))
                 ;; we accept directories, files and file name regexp
@@ -1252,8 +1254,9 @@ entry."
                       (t ; regexp case
                        (dolist (file (directory-files pdir nil path))
                          (el-get-byte-compile-file pdir file))))))
-          ;; Compile .el files in that directory --- unless we have build instructions
-          (unless (el-get-build-commands package)
+          ;; Compile that directory, unless users asked not to (:compile nil)
+	  ;; or unless we have build instructions (then they should care)
+          (unless (or nocomp (el-get-build-commands package))
             (dolist (dir el-path)
               (byte-recompile-directory
                (expand-file-name (concat (file-name-as-directory pdir) dir)) 0))))))
