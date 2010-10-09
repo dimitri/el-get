@@ -22,6 +22,8 @@
 ;;     packages ((package-user-dir) is "~/.emacs.d/elpa" now, so needs to
 ;;     get expanded at least)
 ;;   - Allow to bypass byte compiling entirely with a single global var
+;;   - Have http local file default to something sane, not package.el
+;;   - Still more recipes
 ;;
 ;;  1.0 - 2010-10-07 - Can I haz your recipes?
 ;;
@@ -900,8 +902,14 @@ passing it the the callback function nonetheless."
   (funcall post-install-fun package))
 
 (defun el-get-http-install (package url post-install-fun &optional dest)
-  "Dowload a single-file PACKAGE over HTTP and store it in DEST, or in PACKAGE.el"
-  (let ((pdir   (el-get-package-directory package)))
+  "Dowload a single-file PACKAGE over HTTP and store it in DEST.
+
+Should dest be omited (nil), the url content will get written
+into its `file-name-nondirectory' part."
+  (let* ((pdir   (el-get-package-directory package))
+	 (dest   (or dest
+		     (concat (file-name-as-directory pdir)
+			     (file-name-nondirectory url)))))
     (unless (file-directory-p pdir)
       (make-directory pdir))
     (url-retrieve
