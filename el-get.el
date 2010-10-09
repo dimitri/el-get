@@ -139,6 +139,10 @@ disable byte-compilation globally."
 		       :install-hook el-get-cvs-checkout-hook
 		       :update el-get-cvs-update
 		       :remove el-get-rmdir)
+    :darcs   (:install el-get-darcs-get
+		       :install-hook el-get-darcs-get-hook
+		       :update el-get-darcs-pull
+		       :remove el-get-rmdir)
     :apt-get (:install el-get-apt-get-install
 		       :install-hook el-get-apt-get-install-hook
 		       :update el-get-apt-get-install
@@ -659,6 +663,45 @@ found."
 		      :default-directory ,pdir
 		      :program ,cvs-executable
 		      :args ("update" "-dP")
+		      :message ,ok
+		      :error ,ko))
+     post-update-fun)))
+
+;;
+;; darcs support
+;;
+(defun el-get-darcs-get (package url post-install-fun)
+  "Get a given PACKAGE following the URL using darcs."
+  (let* ((darcs-executable "darcs")
+	 (name (format "*darcs get %s*" package))
+	 (ok   (format "Package %s installed" package))
+	 (ko   (format "Could not install package %s." package)))
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :default-directory ,el-get-dir
+		      :program ,darcs-executable
+		      :args ("get" ,url ,package)
+		      :message ,ok
+		      :error ,ko))
+     post-install-fun)))
+
+(defun el-get-darcs-pull (package url post-update-fun)
+  "darcs pull the package."
+  (let* ((darcs-executable "darcs")
+	 (pdir (el-get-package-directory package))
+	 (name (format "*darcs pull %s*" package))
+	 (ok   (format "Pulled package %s." package))
+	 (ko   (format "Could not update package %s." package)))
+
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :default-directory ,pdir
+		      :program ,darcs-executable
+		      :args ( "pull" )
 		      :message ,ok
 		      :error ,ko))
      post-update-fun)))
