@@ -1,3 +1,3 @@
 (:name yasnippet
-       :type git-svn
+       :type svn
        :url "http://yasnippet.googlecode.com/svn/trunk/")

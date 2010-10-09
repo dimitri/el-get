@@ -6,7 +6,7 @@
 ;; URL: http://www.emacswiki.org/emacs/el-get.el
 ;; Version: 1.1~dev
 ;; Created: 2010-06-17
-;; Keywords: emacs package elisp install elpa git git-svn bzr cvs apt-get fink http http-tar emacswiki
+;; Keywords: emacs package elisp install elpa git git-svn bzr cvs svn darcs apt-get fink http http-tar emacswiki
 ;; Licence: WTFPL, grab your copy here: http://sam.zoy.org/wtfpl/
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -23,6 +23,7 @@
 ;;     get expanded at least)
 ;;   - Allow to bypass byte compiling entirely with a single global var
 ;;   - Have http local file default to something sane, not package.el
+;;   - Implement support for svn and darcs too
 ;;   - Still more recipes
 ;;
 ;;  1.0 - 2010-10-07 - Can I haz your recipes?
@@ -115,6 +116,8 @@ disable byte-compilation globally."
 (defvar el-get-git-svn-clone-hook    nil "Hook run after git svn clone.")
 (defvar el-get-bzr-branch-hook       nil "Hook run after bzr branch.")
 (defvar el-get-cvs-checkout-hook     nil "Hook run after cvs checkout.")
+(defvar el-get-svn-checkout-hook     nil "Hook run after svn checkout.")
+(defvar el-get-darcs-get-hook        nil "Hook run after darcs get.")
 (defvar el-get-apt-get-install-hook  nil "Hook run after apt-get install.")
 (defvar el-get-apt-get-remove-hook   nil "Hook run after apt-get remove.")
 (defvar el-get-fink-install-hook     nil "Hook run after fink install.")
@@ -204,6 +207,12 @@ the named package action in the given method."
 
 (defvar el-get-fink (executable-find "fink")
   "The fink executable.")
+
+(defvar el-get-svn (executable-find "svn")
+  "The svn executable.")
+
+(defvar el-get-darcs (executable-find "darcs")
+  "The darcs executable.")
 
 (defvar el-get-fink-base "/sw/share/doc"
   "Where to link the el-get symlink to, /<package> will get appended.")
@@ -615,16 +624,15 @@ found."
 		      :message ,ok
 		      :error ,ko))
      post-update-fun)))
+
 
 ;;
 ;; svn support
 ;;
 (defun el-get-svn-checkout (package url post-install-fun)
-  "cvs checkout the package."
-  (let* ((svn-executable (executable-find "svn"))
+  "svn checkout the package."
+  (let* ((svn-executable el-get-svn)
 	 (source  (el-get-package-def package))
-	 (module  (plist-get source :module))
-	 (options (plist-get source :options))
 	 (name    (format "*svn checkout %s*" package))
 	 (ok      (format "Checked out package %s." package))
 	 (ko      (format "Could not checkout package %s." package)))
@@ -635,14 +643,14 @@ found."
 		      :buffer-name ,name
 		      :default-directory ,el-get-dir
 		      :program ,svn-executable
-		      :args ("checkout"  ,url ,package)
+		      :args ("checkout" ,url ,package)
 		      :message ,ok
 		      :error ,ko))
      post-install-fun)))
 
 (defun el-get-svn-update (package url post-update-fun)
   "update the package using svn."
-  (let* ((svn-executable (executable-find "svn"))
+  (let* ((svn-executable el-get-svn)
 	 (pdir (el-get-package-directory package))
 	 (name (format "*svn update %s*" package))
 	 (ok   (format "Updated package %s." package))
@@ -715,13 +723,14 @@ found."
 		      :message ,ok
 		      :error ,ko))
      post-update-fun)))
+
 
 ;;
 ;; darcs support
 ;;
 (defun el-get-darcs-get (package url post-install-fun)
   "Get a given PACKAGE following the URL using darcs."
-  (let* ((darcs-executable "darcs")
+  (let* ((darcs-executable el-get-darcs)
 	 (name (format "*darcs get %s*" package))
 	 (ok   (format "Package %s installed" package))
 	 (ko   (format "Could not install package %s." package)))
@@ -731,14 +740,14 @@ found."
 		      :buffer-name ,name
 		      :default-directory ,el-get-dir
 		      :program ,darcs-executable
-		      :args ("get" ,url ,package)
+		      :args ("get" "--lazy" ,url ,package)
 		      :message ,ok
 		      :error ,ko))
      post-install-fun)))
 
 (defun el-get-darcs-pull (package url post-update-fun)
   "darcs pull the package."
-  (let* ((darcs-executable "darcs")
+  (let* ((darcs-executable el-get-darcs)
 	 (pdir (el-get-package-directory package))
 	 (name (format "*darcs pull %s*" package))
 	 (ok   (format "Pulled package %s." package))
