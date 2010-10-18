@@ -126,6 +126,8 @@ disable byte-compilation globally."
 (defvar el-get-elpa-remove-hook      nil "Hook run after ELPA package remove.")
 (defvar el-get-http-install-hook     nil "Hook run after http retrieve.")
 (defvar el-get-http-tar-install-hook nil "Hook run after http-tar package install.")
+(defvar el-get-pacman-install-hook   nil "Hook run after pacman install.")
+(defvar el-get-pacman-remove-hook    nil "Hook run after pacman remove.")
 
 (defcustom el-get-methods
   '(:git     (:install el-get-git-clone
@@ -178,7 +180,12 @@ disable byte-compilation globally."
     :http-tar (:install el-get-http-tar-install
 		       :install-hook el-get-http-tar-install-hook
 		       :update el-get-http-tar-install
-		       :remove el-get-rmdir))
+		       :remove el-get-rmdir)
+    :pacman   (:install el-get-pacman-install
+                        :install-hook el-get-pacman-install-hook
+                        :update el-get-pacman-install
+                        :remove el-get-pacman-remove
+                        :remove-hook el-get-pacman-remove-hook))
   "Register methods that el-get can use to fetch and update a given package.
 
 The methods list is a PLIST, each entry has a method name
@@ -220,6 +227,9 @@ the named package action in the given method."
 (defvar el-get-emacswiki-base-url
   "http://www.emacswiki.org/emacs/download/%s.el"
   "The base URL where to fetch :emacswiki packages")
+
+(defvar el-get-pacman-base "/usr/share/emacs/site-lisp"
+  "Where to link the el-get symlink to, /<package> will get appended.")
 
 ;; debian uses ginstall-info and it's compatible to fink's install-info on
 ;; MacOSX, so:
@@ -785,7 +795,8 @@ found."
   (let* ((pdir    (el-get-package-directory package))
 	 (method  (plist-get (el-get-package-def package) :type))
 	 (basedir (cond ((eq method 'apt-get) el-get-apt-get-base)
-			((eq method 'fink)    el-get-fink-base)))
+			((eq method 'fink)    el-get-fink-base)
+			((eq method 'pacman)  el-get-pacman-base)))
 	 (debdir  (concat (file-name-as-directory basedir) package)))
     (unless (file-directory-p pdir)
       (shell-command
@@ -1070,6 +1081,48 @@ the files up."
     (el-get-http-install package url post dest)))
 
 (add-hook 'el-get-http-tar-install-hook 'el-get-http-tar-cleanup-extract-hook)
+
+
+;;
+;; pacman support)
+;;
+(add-hook 'el-get-pacman-install-hook 'el-get-dpkg-symlink)
+
+(defun el-get-pacman-install (package url post-install-fun)
+  "echo $pass | sudo -S pacman install PACKAGE"
+  (let* ((name (format "*pacman install %s*" package))
+	 (ok   (format "Package %s installed." package))
+	 (ko   (format "Could not install package %s." package)))
+
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :process-filter ,(function el-get-sudo-password-process-filter)
+		      :program ,(executable-find "sudo")
+		      :args ("-S" ,(executable-find "pacman") "--sync" "--noconfirm" ,package)
+		      :message ,ok
+		      :error ,ko))
+     post-install-fun)))
+
+(defun el-get-pacman-remove (package url post-remove-fun)
+  "pacman remove PACKAGE, URL is there for API compliance"
+  (let* ((name (format "*pacman remove %s*" package))
+	 (ok   (format "Package %s removed." package))
+	 (ko   (format "Could not remove package %s." package)))
+
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :process-filter ,(function el-get-sudo-password-process-filter)
+		      :program ,(executable-find "sudo")
+		      :args ("-S" ,(executable-find "pacman") "--remove" "--noconfirm" ,package)
+		      :message ,ok
+		      :error ,ko))
+     post-remove-fun)))
+
+(add-hook 'el-get-pacman-remove-hook 'el-get-dpkg-remove-symlink)
 
 
 ;;
