@@ -842,7 +842,9 @@ password prompt."
 
 (defun el-get-apt-get-install (package url post-install-fun)
   "echo $pass | sudo -S apt-get install PACKAGE"
-  (let* ((name (format "*apt-get install %s*" package))
+  (let* ((source  (el-get-package-def package))
+         (pkgname (or (plist-get source :pkgname) package))
+         (name (format "*apt-get install %s*" package))
 	 (ok   (format "Package %s installed." package))
 	 (ko   (format "Could not install package %s." package)))
 
@@ -852,14 +854,16 @@ password prompt."
 		      :buffer-name ,name
 		      :process-filter ,(function el-get-sudo-password-process-filter)
 		      :program ,(executable-find "sudo")
-		      :args ("-S" ,(executable-find "apt-get") "install" ,package)
+		      :args ("-S" ,(executable-find "apt-get") "install" ,pkgname)
 		      :message ,ok
 		      :error ,ko))
      post-install-fun)))
 
 (defun el-get-apt-get-remove (package url post-remove-fun)
   "apt-get remove PACKAGE, URL is there for API compliance"
-  (let* ((name (format "*apt-get remove %s*" package))
+  (let* ((source  (el-get-package-def package))
+         (pkgname (or (plist-get source :pkgname) package))
+         (name (format "*apt-get remove %s*" package))
 	 (ok   (format "Package %s removed." package))
 	 (ko   (format "Could not remove package %s." package)))
 
@@ -869,7 +873,7 @@ password prompt."
 		      :buffer-name ,name
 		      :process-filter ,(function el-get-sudo-password-process-filter)
 		      :program ,(executable-find "sudo")
-		      :args ("-S" ,(executable-find "apt-get") "remove" "-y" ,package)
+		      :args ("-S" ,(executable-find "apt-get") "remove" "-y" ,pkgname)
 		      :message ,ok
 		      :error ,ko))
      post-remove-fun)))
@@ -1090,9 +1094,11 @@ the files up."
 
 (defun el-get-pacman-install (package url post-install-fun)
   "echo $pass | sudo -S pacman install PACKAGE"
-  (let* ((name (format "*pacman install %s*" package))
-	 (ok   (format "Package %s installed." package))
-	 (ko   (format "Could not install package %s." package)))
+  (let* ((source  (el-get-package-def package))
+         (pkgname (or (plist-get source :pkgname) package))
+         (name    (format "*pacman install %s*" package))
+	 (ok      (format "Package %s installed." package))
+	 (ko      (format "Could not install package %s." package)))
 
     (el-get-start-process-list
      package
@@ -1100,16 +1106,18 @@ the files up."
 		      :buffer-name ,name
 		      :process-filter ,(function el-get-sudo-password-process-filter)
 		      :program ,(executable-find "sudo")
-		      :args ("-S" ,(executable-find "pacman") "--sync" "--noconfirm" ,package)
+		      :args ("-S" ,(executable-find "pacman") "--sync" "--noconfirm" ,pkgname)
 		      :message ,ok
 		      :error ,ko))
      post-install-fun)))
 
 (defun el-get-pacman-remove (package url post-remove-fun)
   "pacman remove PACKAGE, URL is there for API compliance"
-  (let* ((name (format "*pacman remove %s*" package))
-	 (ok   (format "Package %s removed." package))
-	 (ko   (format "Could not remove package %s." package)))
+  (let* ((source  (el-get-package-def package))
+         (pkgname (or (plist-get source :pkgname) package))
+         (name    (format "*pacman remove %s*" package))
+	 (ok      (format "Package %s removed." package))
+	 (ko      (format "Could not remove package %s." package)))
 
     (el-get-start-process-list
      package
@@ -1117,7 +1125,7 @@ the files up."
 		      :buffer-name ,name
 		      :process-filter ,(function el-get-sudo-password-process-filter)
 		      :program ,(executable-find "sudo")
-		      :args ("-S" ,(executable-find "pacman") "--remove" "--noconfirm" ,package)
+		      :args ("-S" ,(executable-find "pacman") "--remove" "--noconfirm" ,pkgname)
 		      :message ,ok
 		      :error ,ko))
      post-remove-fun)))
