@@ -1424,7 +1424,10 @@ entry."
                          (el-get-byte-compile-file pdir file))))))
           ;; Compile that directory, unless users asked not to (:compile nil)
 	  ;; or unless we have build instructions (then they should care)
-          (unless (or nocomp (el-get-build-commands package))
+          ;; or unless we have installed pre-compiled package
+          (unless (or nocomp
+                      (el-get-build-commands package)
+                      (member method '(apt-get pacman)))
             (dolist (dir el-path)
               (byte-recompile-directory
                (expand-file-name (concat (file-name-as-directory pdir) dir)) 0))))))
