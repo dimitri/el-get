@@ -1377,8 +1377,8 @@ entry."
 	 (after    (plist-get source :after))
 	 (pdir     (el-get-package-directory package)))
 
-    ;; apt-get and ELPA will take care of load-path, Info-directory-list
-    (unless (member method '(elpa apt-get fink))
+    ;; apt-get, pacman and ELPA will take care of load-path, Info-directory-list
+    (unless (member method '(elpa apt-get fink pacman))
       ;; append entries to load-path and Info-directory-list
       (mapc (lambda (path)
 	      (el-get-add-path-to-list package 'load-path path))
