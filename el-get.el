@@ -1141,8 +1141,8 @@ the files up."
 		      :error ,ko))
      `(lambda (package)
         (setq el-get-pacman-running nil)
-        (when (functionp ',post-install-fun)
-          (funcall ',post-install-fun package))))))
+        (when (functionp ',post-remove-fun)
+          (funcall ',post-remove-fun package))))))
 
 (add-hook 'el-get-pacman-remove-hook 'el-get-dpkg-remove-symlink)
 
