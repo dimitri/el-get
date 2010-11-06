@@ -1376,6 +1376,11 @@ entry."
 	      (file-newer-than-file-p el elc))
       (byte-compile-file el))))
 
+(defun el-get-set-info-path (package infodir-rel)
+  (require 'info)
+  (info-initialize)
+  (el-get-add-path-to-list package 'Info-directory-list infodir-rel))
+
 (defun el-get-init (package)
   "Care about `load-path', `Info-directory-list', and (require 'features)."
   (interactive (list (el-get-read-package-name "Init")))
@@ -1410,18 +1415,15 @@ entry."
 				(not (file-directory-p infodir-abs-conf)))
 			   infodir-abs-conf
 			 (concat (file-name-as-directory infodir-abs) package))))
-
-	(when (and infodir
-		   (file-directory-p infodir-abs)
-		   (not (file-exists-p info-dir)))
-	  (require 'info)
-	  (info-initialize)
-	  ;; add to Info-directory-list
-	  (el-get-add-path-to-list package 'Info-directory-list infodir-rel)
-	  ;; build the infodir entry, too
-	  (el-get-build
-	   package
-	   `(,(format "%s %s.info dir" el-get-install-info infofile)) infodir-rel t))))
+        (if (file-exists-p info-dir)
+            (el-get-set-info-path package infodir-rel)
+          (when (and infodir
+                     (file-directory-p infodir-abs)
+                     (not (file-exists-p info-dir)))
+            (el-get-set-info-path package infodir-rel)
+            (el-get-build
+             package
+             `(,(format "%s %s.info dir" el-get-install-info infofile)) infodir-rel t)))))
 
     (when el-get-byte-compile
       ;; byte-compile either :compile entries or anything in load-path
