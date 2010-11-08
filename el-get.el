@@ -25,6 +25,7 @@
 ;;   - Have http local file default to something sane, not package.el
 ;;   - Implement support for svn and darcs too
 ;;   - Still more recipes
+;;   - Add support for the `pacman' package manager (ARCH Linux)
 ;;
 ;;  1.0 - 2010-10-07 - Can I haz your recipes?
 ;;
@@ -126,6 +127,8 @@ disable byte-compilation globally."
 (defvar el-get-elpa-remove-hook      nil "Hook run after ELPA package remove.")
 (defvar el-get-http-install-hook     nil "Hook run after http retrieve.")
 (defvar el-get-http-tar-install-hook nil "Hook run after http-tar package install.")
+(defvar el-get-pacman-install-hook   nil "Hook run after pacman install.")
+(defvar el-get-pacman-remove-hook    nil "Hook run after pacman remove.")
 
 (defcustom el-get-methods
   '(:git     (:install el-get-git-clone
@@ -171,6 +174,10 @@ disable byte-compilation globally."
 		       :install-hook el-get-http-install-hook
 		       :update el-get-http-install
 		       :remove el-get-rmdir)
+    :ftp     (:install el-get-http-install
+		       :install-hook el-get-http-install-hook
+		       :update el-get-http-install
+		       :remove el-get-rmdir)
     :emacswiki (:install el-get-emacswiki-install
 		       :install-hook el-get-http-install-hook
 		       :update el-get-emacswiki-install
@@ -178,7 +185,12 @@ disable byte-compilation globally."
     :http-tar (:install el-get-http-tar-install
 		       :install-hook el-get-http-tar-install-hook
 		       :update el-get-http-tar-install
-		       :remove el-get-rmdir))
+		       :remove el-get-rmdir)
+    :pacman   (:install el-get-pacman-install
+                        :install-hook el-get-pacman-install-hook
+                        :update el-get-pacman-install
+                        :remove el-get-pacman-remove
+                        :remove-hook el-get-pacman-remove-hook))
   "Register methods that el-get can use to fetch and update a given package.
 
 The methods list is a PLIST, each entry has a method name
@@ -221,6 +233,9 @@ the named package action in the given method."
   "http://www.emacswiki.org/emacs/download/%s.el"
   "The base URL where to fetch :emacswiki packages")
 
+(defvar el-get-pacman-base "/usr/share/emacs/site-lisp"
+  "Where to link the el-get symlink to, /<package> will get appended.")
+
 ;; debian uses ginstall-info and it's compatible to fink's install-info on
 ;; MacOSX, so:
 (defvar el-get-install-info (or (executable-find "ginstall-info")
@@ -246,6 +261,12 @@ definition provided by `el-get' recipes locally.
     The name of the package. It can be different from the name of
     the directory where the package is stored (after a `git
     clone' for example, in which case a symlink will be created.
+
+:pkgname
+
+    The name of the package for the underlying package management
+    system (`apt-get', `fink' or `pacman'), which can be
+    different from the Emacs package name.
 
 :type
 
@@ -785,7 +806,8 @@ found."
   (let* ((pdir    (el-get-package-directory package))
 	 (method  (plist-get (el-get-package-def package) :type))
 	 (basedir (cond ((eq method 'apt-get) el-get-apt-get-base)
-			((eq method 'fink)    el-get-fink-base)))
+			((eq method 'fink)    el-get-fink-base)
+			((eq method 'pacman)  el-get-pacman-base)))
 	 (debdir  (concat (file-name-as-directory basedir) package)))
     (unless (file-directory-p pdir)
       (shell-command
@@ -831,7 +853,9 @@ password prompt."
 
 (defun el-get-apt-get-install (package url post-install-fun)
   "echo $pass | sudo -S apt-get install PACKAGE"
-  (let* ((name (format "*apt-get install %s*" package))
+  (let* ((source  (el-get-package-def package))
+         (pkgname (or (plist-get source :pkgname) package))
+         (name (format "*apt-get install %s*" package))
 	 (ok   (format "Package %s installed." package))
 	 (ko   (format "Could not install package %s." package)))
 
@@ -841,14 +865,16 @@ password prompt."
 		      :buffer-name ,name
 		      :process-filter ,(function el-get-sudo-password-process-filter)
 		      :program ,(executable-find "sudo")
-		      :args ("-S" ,(executable-find "apt-get") "install" ,package)
+		      :args ("-S" ,(executable-find "apt-get") "install" ,pkgname)
 		      :message ,ok
 		      :error ,ko))
      post-install-fun)))
 
 (defun el-get-apt-get-remove (package url post-remove-fun)
   "apt-get remove PACKAGE, URL is there for API compliance"
-  (let* ((name (format "*apt-get remove %s*" package))
+  (let* ((source  (el-get-package-def package))
+         (pkgname (or (plist-get source :pkgname) package))
+         (name (format "*apt-get remove %s*" package))
 	 (ok   (format "Package %s removed." package))
 	 (ko   (format "Could not remove package %s." package)))
 
@@ -858,7 +884,7 @@ password prompt."
 		      :buffer-name ,name
 		      :process-filter ,(function el-get-sudo-password-process-filter)
 		      :program ,(executable-find "sudo")
-		      :args ("-S" ,(executable-find "apt-get") "remove" "-y" ,package)
+		      :args ("-S" ,(executable-find "apt-get") "remove" "-y" ,pkgname)
 		      :message ,ok
 		      :error ,ko))
      post-remove-fun)))
@@ -872,6 +898,7 @@ password prompt."
 (defun el-get-fink-install (package url post-install-fun)
   "sudo -S fink install PACKAGE"
   (let* ((name (format "*fink install %s*" package))
+         (pkgname (or (plist-get source :pkgname) package))
 	 (ok   (format "Package %s installed." package))
 	 (ko   (format "Could not install package %s." package)))
 
@@ -881,7 +908,7 @@ password prompt."
 		      :buffer-name ,name
 		      :process-filter ,(function el-get-sudo-password-process-filter)
 		      :program ,(executable-find "sudo")
-		      :args ("-S" ,(executable-find "fink") "install" ,package)
+		      :args ("-S" ,(executable-find "fink") "install" ,pkgname)
 		      :message ,ok
 		      :error ,ko))
      post-install-fun)))
@@ -891,6 +918,7 @@ password prompt."
 (defun el-get-fink-remove (package url post-remove-fun)
   "apt-get remove PACKAGE. URL is there for API compliance."
   (let* ((name (format "*fink remove %s*" package))
+         (pkgname (or (plist-get source :pkgname) package))
 	 (ok   (format "Package %s removed." package))
 	 (ko   (format "Could not remove package %s." package)))
 
@@ -900,7 +928,7 @@ password prompt."
 		      :buffer-name ,name
 		      :process-filter ,(function el-get-sudo-password-process-filter)
 		      :program ,(executable-find "sudo")
-		      :args ("-S" ,(executable-find "fink") "-y" "remove" ,package)
+		      :args ("-S" ,(executable-find "fink") "-y" "remove" ,pkgname)
 		      :message ,ok
 		      :error ,ko))
      post-remove-fun)))
@@ -1070,6 +1098,52 @@ the files up."
     (el-get-http-install package url post dest)))
 
 (add-hook 'el-get-http-tar-install-hook 'el-get-http-tar-cleanup-extract-hook)
+
+
+;;
+;; pacman support)
+;;
+(add-hook 'el-get-pacman-install-hook 'el-get-dpkg-symlink)
+
+(defun el-get-pacman-install (package url post-install-fun)
+  "echo $pass | sudo -S pacman install PACKAGE"
+  (let* ((source  (el-get-package-def package))
+         (pkgname (or (plist-get source :pkgname) package))
+         (name    (format "*pacman install %s*" package))
+	 (ok      (format "Package %s installed." package))
+	 (ko      (format "Could not install package %s." package)))
+
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :process-filter ,(function el-get-sudo-password-process-filter)
+		      :program ,(executable-find "sudo")
+		      :args ("-S" ,(executable-find "pacman") "--sync" "--noconfirm" "--needed" ,pkgname)
+		      :message ,ok
+		      :error ,ko))
+     post-install-fun)))
+
+(defun el-get-pacman-remove (package url post-remove-fun)
+  "pacman remove PACKAGE, URL is there for API compliance"
+  (let* ((source  (el-get-package-def package))
+         (pkgname (or (plist-get source :pkgname) package))
+         (name    (format "*pacman remove %s*" package))
+	 (ok      (format "Package %s removed." package))
+	 (ko      (format "Could not remove package %s." package)))
+
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :process-filter ,(function el-get-sudo-password-process-filter)
+		      :program ,(executable-find "sudo")
+		      :args ("-S" ,(executable-find "pacman") "--remove" "--noconfirm" ,pkgname)
+		      :message ,ok
+		      :error ,ko))
+     post-remove-fun)))
+
+(add-hook 'el-get-pacman-remove-hook 'el-get-dpkg-remove-symlink)
 
 
 ;;
@@ -1301,6 +1375,11 @@ entry."
 	      (file-newer-than-file-p el elc))
       (byte-compile-file el))))
 
+(defun el-get-set-info-path (package infodir-rel)
+  (require 'info)
+  (info-initialize)
+  (el-get-add-path-to-list package 'Info-directory-list infodir-rel))
+
 (defun el-get-init (package)
   "Care about `load-path', `Info-directory-list', and (require 'features)."
   (interactive (list (el-get-read-package-name "Init")))
@@ -1316,8 +1395,8 @@ entry."
 	 (after    (plist-get source :after))
 	 (pdir     (el-get-package-directory package)))
 
-    ;; apt-get and ELPA will take care of load-path, Info-directory-list
-    (unless (member method '(elpa apt-get fink))
+    ;; apt-get, pacman and ELPA will take care of load-path, Info-directory-list
+    (unless (member method '(elpa apt-get fink pacman))
       ;; append entries to load-path and Info-directory-list
       (mapc (lambda (path)
 	      (el-get-add-path-to-list package 'load-path path))
@@ -1335,18 +1414,15 @@ entry."
 				(not (file-directory-p infodir-abs-conf)))
 			   infodir-abs-conf
 			 (concat (file-name-as-directory infodir-abs) package))))
-
-	(when (and infodir
-		   (file-directory-p infodir-abs)
-		   (not (file-exists-p info-dir)))
-	  (require 'info)
-	  (info-initialize)
-	  ;; add to Info-directory-list
-	  (el-get-add-path-to-list package 'Info-directory-list infodir-rel)
-	  ;; build the infodir entry, too
-	  (el-get-build
-	   package
-	   `(,(format "%s %s.info dir" el-get-install-info infofile)) infodir-rel t))))
+        (if (file-exists-p info-dir)
+            (el-get-set-info-path package infodir-rel)
+          (when (and infodir
+                     (file-directory-p infodir-abs)
+                     (not (file-exists-p info-dir)))
+            (el-get-set-info-path package infodir-rel)
+            (el-get-build
+             package
+             `(,(format "%s %s.info dir" el-get-install-info infofile)) infodir-rel t)))))
 
     (when el-get-byte-compile
       ;; byte-compile either :compile entries or anything in load-path
@@ -1363,7 +1439,10 @@ entry."
                          (el-get-byte-compile-file pdir file))))))
           ;; Compile that directory, unless users asked not to (:compile nil)
 	  ;; or unless we have build instructions (then they should care)
-          (unless (or nocomp (el-get-build-commands package))
+          ;; or unless we have installed pre-compiled package
+          (unless (or nocomp
+                      (el-get-build-commands package)
+                      (member method '(apt-get fink pacman)))
             (dolist (dir el-path)
               (byte-recompile-directory
                (expand-file-name (concat (file-name-as-directory pdir) dir)) 0))))))
