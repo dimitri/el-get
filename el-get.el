@@ -1101,8 +1101,6 @@ the files up."
 ;;
 (add-hook 'el-get-pacman-install-hook 'el-get-dpkg-symlink)
 
-(defvar el-get-pacman-running nil)
-
 (defun el-get-pacman-install (package url post-install-fun)
   "echo $pass | sudo -S pacman install PACKAGE"
   (let* ((source  (el-get-package-def package))
@@ -1110,9 +1108,6 @@ the files up."
          (name    (format "*pacman install %s*" package))
 	 (ok      (format "Package %s installed." package))
 	 (ko      (format "Could not install package %s." package)))
-    (while el-get-pacman-running
-      (sit-for 0.250))
-    (setq el-get-pacman-running t)
 
     (el-get-start-process-list
      package
@@ -1123,10 +1118,7 @@ the files up."
 		      :args ("-S" ,(executable-find "pacman") "--sync" "--noconfirm" "--needed" ,pkgname)
 		      :message ,ok
 		      :error ,ko))
-     `(lambda (package)
-        (setq el-get-pacman-running nil)
-        (when (functionp ',post-install-fun)
-          (funcall ',post-install-fun package))))))
+     post-install-fun)))
 
 (defun el-get-pacman-remove (package url post-remove-fun)
   "pacman remove PACKAGE, URL is there for API compliance"
@@ -1135,9 +1127,6 @@ the files up."
          (name    (format "*pacman remove %s*" package))
 	 (ok      (format "Package %s removed." package))
 	 (ko      (format "Could not remove package %s." package)))
-    (while el-get-pacman-running
-      (sit-for 0.250))
-    (setq el-get-pacman-running t)
 
     (el-get-start-process-list
      package
@@ -1148,10 +1137,7 @@ the files up."
 		      :args ("-S" ,(executable-find "pacman") "--remove" "--noconfirm" ,pkgname)
 		      :message ,ok
 		      :error ,ko))
-     `(lambda (package)
-        (setq el-get-pacman-running nil)
-        (when (functionp ',post-remove-fun)
-          (funcall ',post-remove-fun package))))))
+     post-remove-fun)))
 
 (add-hook 'el-get-pacman-remove-hook 'el-get-dpkg-remove-symlink)
 
