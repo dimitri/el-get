@@ -25,6 +25,7 @@
 ;;   - Have http local file default to something sane, not package.el
 ;;   - Implement support for svn and darcs too
 ;;   - Still more recipes
+;;   - Add support for the `pacman' package manager (ARCH Linux)
 ;;
 ;;  1.0 - 2010-10-07 - Can I haz your recipes?
 ;;
@@ -256,6 +257,12 @@ definition provided by `el-get' recipes locally.
     The name of the package. It can be different from the name of
     the directory where the package is stored (after a `git
     clone' for example, in which case a symlink will be created.
+
+:pkgname
+
+    The name of the package for the underlying package management
+    system (`apt-get', `fink' or `pacman'), which can be
+    different from the Emacs package name.
 
 :type
 
@@ -887,6 +894,7 @@ password prompt."
 (defun el-get-fink-install (package url post-install-fun)
   "sudo -S fink install PACKAGE"
   (let* ((name (format "*fink install %s*" package))
+         (pkgname (or (plist-get source :pkgname) package))
 	 (ok   (format "Package %s installed." package))
 	 (ko   (format "Could not install package %s." package)))
 
@@ -896,7 +904,7 @@ password prompt."
 		      :buffer-name ,name
 		      :process-filter ,(function el-get-sudo-password-process-filter)
 		      :program ,(executable-find "sudo")
-		      :args ("-S" ,(executable-find "fink") "install" ,package)
+		      :args ("-S" ,(executable-find "fink") "install" ,pkgname)
 		      :message ,ok
 		      :error ,ko))
      post-install-fun)))
@@ -906,6 +914,7 @@ password prompt."
 (defun el-get-fink-remove (package url post-remove-fun)
   "apt-get remove PACKAGE. URL is there for API compliance."
   (let* ((name (format "*fink remove %s*" package))
+         (pkgname (or (plist-get source :pkgname) package))
 	 (ok   (format "Package %s removed." package))
 	 (ko   (format "Could not remove package %s." package)))
 
@@ -915,7 +924,7 @@ password prompt."
 		      :buffer-name ,name
 		      :process-filter ,(function el-get-sudo-password-process-filter)
 		      :program ,(executable-find "sudo")
-		      :args ("-S" ,(executable-find "fink") "-y" "remove" ,package)
+		      :args ("-S" ,(executable-find "fink") "-y" "remove" ,pkgname)
 		      :message ,ok
 		      :error ,ko))
      post-remove-fun)))
@@ -1443,7 +1452,7 @@ entry."
           ;; or unless we have installed pre-compiled package
           (unless (or nocomp
                       (el-get-build-commands package)
-                      (member method '(apt-get pacman)))
+                      (member method '(apt-get fink pacman)))
             (dolist (dir el-path)
               (byte-recompile-directory
                (expand-file-name (concat (file-name-as-directory pdir) dir)) 0))))))
