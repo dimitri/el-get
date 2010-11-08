@@ -174,6 +174,10 @@ disable byte-compilation globally."
 		       :install-hook el-get-http-install-hook
 		       :update el-get-http-install
 		       :remove el-get-rmdir)
+    :ftp     (:install el-get-http-install
+		       :install-hook el-get-http-install-hook
+		       :update el-get-http-install
+		       :remove el-get-rmdir)
     :emacswiki (:install el-get-emacswiki-install
 		       :install-hook el-get-http-install-hook
 		       :update el-get-emacswiki-install
