@@ -408,6 +408,11 @@ directory or a symlink in el-get-dir."
 	(when (functionp final-f)
 	  (funcall final-f package))))))
 
+(defvar el-get-default-process-sync nil
+  "Non-nil value asks `el-get-start-process-list' to run current
+process syncronously. Can be overriden by :sync property in
+commands argument of `el-get-start-process-list'")
+
 (defun el-get-start-process-list (package commands final-func)
   "Run each command one after the other, in order, stopping at
 first error.
@@ -452,6 +457,10 @@ properties:
 
    The error to send upon failure
 
+:sync
+
+   When set to non-nil value, run syncronously.
+
 Any other property will get put into the process object.
 "
   (when commands
@@ -464,22 +473,37 @@ Any other property will get put into the process object.
 	   (program (plist-get c :program))
 	   (args    (plist-get c :args))
 	   (shell   (plist-get c :shell))
-	   (startf  (if shell #'start-process-shell-command #'start-process))
+	   (sync    (if (plist-member c :sync) (plist-get c :sync)
+                      el-get-default-process-sync))
 	   (default-directory (if cdir
 				  (file-name-as-directory
 				   (expand-file-name cdir))
-				default-directory))
-	   (process-connection-type nil) ; pipe, don't pretend we're a pty
-	   (proc    (apply startf cname cbuf program args)))
-
-      ;; add the properties to the process, then set the sentinel
-      (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
-      (process-put proc :el-get-sources el-get-sources)
-      (process-put proc :el-get-package package)
-      (process-put proc :el-get-final-func final-func)
-      (process-put proc :el-get-start-process-list (cdr commands))
-      (set-process-sentinel proc 'el-get-start-process-list-sentinel)
-      (when filter (set-process-filter proc filter))))
+				default-directory)))
+      (if sync
+          (let* ((startf (if shell #'call-process-shell-command #'call-process))
+                 (dummy  (message "el-get is waiting for %S to complete" cname))
+                 (status (apply startf program nil cbuf t args))
+                 (message (plist-get c :message))
+                 (errorm  (plist-get c :error))
+                 (next    (cdr commands)))
+            (if (eq 0 status) (message "el-get: %s" message)
+              (set-window-buffer (selected-window) cbuf)
+              (error "el-get: %s %s" cname errorm))
+            (when cbuf (kill-buffer cbuf))
+            (if next (el-get-start-process-list package next final-func)
+              (when (functionp final-func)
+                (funcall final-func package))))
+        (let* ((startf (if shell #'start-process-shell-command #'start-process))
+               (process-connection-type nil) ; pipe, don't pretend we're a pty
+               (proc (apply startf cname cbuf program args)))
+          ;; add the properties to the process, then set the sentinel
+          (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
+          (process-put proc :el-get-sources el-get-sources)
+          (process-put proc :el-get-package package)
+          (process-put proc :el-get-final-func final-func)
+          (process-put proc :el-get-start-process-list (cdr commands))
+          (set-process-sentinel proc 'el-get-start-process-list-sentinel)
+          (when filter (set-process-filter proc filter))))))
   ;; no commands, still run the final-func
   (unless commands
     (when (functionp final-func)
@@ -1121,7 +1145,8 @@ the files up."
 		      :program ,(executable-find "sudo")
 		      :args ("-S" ,(executable-find "pacman") "--sync" "--noconfirm" "--needed" ,pkgname)
 		      :message ,ok
-		      :error ,ko))
+		      :error ,ko
+		      :sync t))
      post-install-fun)))
 
 (defun el-get-pacman-remove (package url post-remove-fun)
@@ -1140,7 +1165,8 @@ the files up."
 		      :program ,(executable-find "sudo")
 		      :args ("-S" ,(executable-find "pacman") "--remove" "--noconfirm" ,pkgname)
 		      :message ,ok
-		      :error ,ko))
+		      :error ,ko
+		      :sync t))
      post-remove-fun)))
 
 (add-hook 'el-get-pacman-remove-hook 'el-get-dpkg-remove-symlink)
@@ -1655,39 +1681,35 @@ welcome to use `autoload' too."
   (let* ((p-status    (el-get-read-all-packages-status))
          (total       (length (el-get-package-name-list)))
          (installed   (el-get-count-package-with-status "installed"))
-         progress ret)
-    (when sync
-      (setq progress
-	    (make-progress-reporter
-	     "Waiting for `el-get' to complete… " 0 (- total installed) 0)))
+         (progress (and (eq sync 'wait)
+                        (make-progress-reporter "Waiting for `el-get' to complete… "
+                                                0 (- total installed) 0)))
+         (el-get-default-process-sync (eq sync 'sync)))
     ;; keep the result of mapcar to return it even in the 'sync case
-    (setq
-     ret
-     (mapcar
-      (lambda (source)
-	(let* ((package (el-get-source-name source))
-	       (status  (el-get-package-status package p-status)))
-	  ;; check if the package needs to be fetched (and built)
-	  (if (el-get-package-exists-p package)
-	      (if (and status (string= "installed" status))
-		  (condition-case err
-		      (el-get-init package)
-		    ((debug error) ;; catch-all, allow for debugging
-		     (message "%S" (error-message-string err))))
-		(message "Package %s failed to install, remove it first." package))
-	    (el-get-install package))))
-      el-get-sources))
+    (prog1
+        (mapcar
+         (lambda (source)
+           (let* ((package (el-get-source-name source))
+                  (status  (el-get-package-status package p-status)))
+             ;; check if the package needs to be fetched (and built)
+             (if (el-get-package-exists-p package)
+                 (if (and status (string= "installed" status))
+                     (condition-case err
+                         (el-get-init package)
+                       ((debug error) ;; catch-all, allow for debugging
+                        (message "%S" (error-message-string err))))
+                   (message "Package %s failed to install, remove it first." package))
+               (el-get-install package))))
+         el-get-sources)
 
-    ;; el-get-install is async, that's now ongoing.
-    (when sync
-      (while (> (- total installed) 0)
-	(sleep-for 0.2)
-	;; don't forget to account for installation failure
-	(setq installed (el-get-count-package-with-status "installed" "required"))
-	(progress-reporter-update progress (- total installed)))
-      (progress-reporter-done progress))
+      ;; el-get-install is async, that's now ongoing.
+      (when progress
+        (while (> (- total installed) 0)
+          (sleep-for 0.2)
+          ;; don't forget to account for installation failure
+          (setq installed (el-get-count-package-with-status "installed" "required"))
+          (progress-reporter-update progress (- total installed)))
+        (progress-reporter-done progress)))))
 
-    ;; return the list of packages
-    ret))
 
 (provide 'el-get)
