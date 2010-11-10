@@ -408,6 +408,11 @@ directory or a symlink in el-get-dir."
 	(when (functionp final-f)
 	  (funcall final-f package))))))
 
+(defvar el-get-default-process-wait nil
+  "Non-nil value asks `el-get-start-process-list' to wait for current process
+to end before starting another. Can be overriden by :wait property in
+commands argument of `el-get-start-process-list'")
+
 (defun el-get-start-process-list (package commands final-func)
   "Run each command one after the other, in order, stopping at
 first error.
@@ -452,6 +457,10 @@ properties:
 
    The error to send upon failure
 
+:wait
+
+   When set to non-nil value, wait until process ends.
+
 Any other property will get put into the process object.
 "
   (when commands
@@ -465,6 +474,7 @@ Any other property will get put into the process object.
 	   (args    (plist-get c :args))
 	   (shell   (plist-get c :shell))
 	   (startf  (if shell #'start-process-shell-command #'start-process))
+	   (wait    (or (plist-get c :wait) el-get-default-process-wait))
 	   (default-directory (if cdir
 				  (file-name-as-directory
 				   (expand-file-name cdir))
@@ -479,7 +489,11 @@ Any other property will get put into the process object.
       (process-put proc :el-get-final-func final-func)
       (process-put proc :el-get-start-process-list (cdr commands))
       (set-process-sentinel proc 'el-get-start-process-list-sentinel)
-      (when filter (set-process-filter proc filter))))
+      (when filter (set-process-filter proc filter))
+      (when wait
+        (while (equal 'run (process-status proc))
+          (message "el-get is waiting for %S to complete" cname)
+          (sit-for 0.1 t)))))
   ;; no commands, still run the final-func
   (unless commands
     (when (functionp final-func)
@@ -1121,7 +1135,8 @@ the files up."
 		      :program ,(executable-find "sudo")
 		      :args ("-S" ,(executable-find "pacman") "--sync" "--noconfirm" "--needed" ,pkgname)
 		      :message ,ok
-		      :error ,ko))
+		      :error ,ko
+		      :wait t))
      post-install-fun)))
 
 (defun el-get-pacman-remove (package url post-remove-fun)
@@ -1140,7 +1155,8 @@ the files up."
 		      :program ,(executable-find "sudo")
 		      :args ("-S" ,(executable-find "pacman") "--remove" "--noconfirm" ,pkgname)
 		      :message ,ok
-		      :error ,ko))
+		      :error ,ko
+		      :wait t))
      post-remove-fun)))
 
 (add-hook 'el-get-pacman-remove-hook 'el-get-dpkg-remove-symlink)
@@ -1656,30 +1672,31 @@ welcome to use `autoload' too."
          (total       (length (el-get-package-name-list)))
          (installed   (el-get-count-package-with-status "installed"))
          progress ret)
-    (when sync
+    (when (eq sync 'sync)
       (setq progress
 	    (make-progress-reporter
 	     "Waiting for `el-get' to complete… " 0 (- total installed) 0)))
     ;; keep the result of mapcar to return it even in the 'sync case
-    (setq
-     ret
-     (mapcar
-      (lambda (source)
-	(let* ((package (el-get-source-name source))
-	       (status  (el-get-package-status package p-status)))
-	  ;; check if the package needs to be fetched (and built)
-	  (if (el-get-package-exists-p package)
-	      (if (and status (string= "installed" status))
-		  (condition-case err
-		      (el-get-init package)
-		    ((debug error) ;; catch-all, allow for debugging
-		     (message "%S" (error-message-string err))))
-		(message "Package %s failed to install, remove it first." package))
-	    (el-get-install package))))
-      el-get-sources))
+    (let ((el-get-default-process-wait (eq sync 'serialize)))
+      (setq
+       ret
+       (mapcar
+        (lambda (source)
+          (let* ((package (el-get-source-name source))
+                 (status  (el-get-package-status package p-status)))
+            ;; check if the package needs to be fetched (and built)
+            (if (el-get-package-exists-p package)
+                (if (and status (string= "installed" status))
+                    (condition-case err
+                        (el-get-init package)
+                      ((debug error) ;; catch-all, allow for debugging
+                       (message "%S" (error-message-string err))))
+                  (message "Package %s failed to install, remove it first." package))
+              (el-get-install package))))
+        el-get-sources)))
 
     ;; el-get-install is async, that's now ongoing.
-    (when sync
+    (when (eq sync 'sync)
       (while (> (- total installed) 0)
 	(sleep-for 0.2)
 	;; don't forget to account for installation failure
