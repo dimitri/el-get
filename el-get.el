@@ -473,28 +473,37 @@ Any other property will get put into the process object.
 	   (program (plist-get c :program))
 	   (args    (plist-get c :args))
 	   (shell   (plist-get c :shell))
-	   (startf  (if shell #'start-process-shell-command #'start-process))
 	   (sync    (if (plist-member c :sync) (plist-get c :sync)
                       el-get-default-process-sync))
 	   (default-directory (if cdir
 				  (file-name-as-directory
 				   (expand-file-name cdir))
-				default-directory))
-	   (process-connection-type nil) ; pipe, don't pretend we're a pty
-	   (proc    (apply startf cname cbuf program args)))
-
-      ;; add the properties to the process, then set the sentinel
-      (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
-      (process-put proc :el-get-sources el-get-sources)
-      (process-put proc :el-get-package package)
-      (process-put proc :el-get-final-func final-func)
-      (process-put proc :el-get-start-process-list (cdr commands))
-      (set-process-sentinel proc 'el-get-start-process-list-sentinel)
-      (when filter (set-process-filter proc filter))
-      (when sync
-        (while (equal 'run (process-status proc))
-          (message "el-get is waiting for %S to complete" cname)
-          (sit-for 0.1 t)))))
+				default-directory)))
+      (if sync
+          (let* ((startf (if shell #'call-process-shell-command #'call-process))
+                 (dummy  (message "el-get is waiting for %S to complete" cname))
+                 (status (apply startf program nil cbuf t args))
+                 (message (plist-get c :message))
+                 (errorm  (plist-get c :error))
+                 (next    (cdr commands)))
+            (if (eq 0 status) (message "el-get: %s" message)
+              (set-window-buffer (selected-window) cbuf)
+              (error "el-get: %s %s" cname errorm))
+            (when cbuf (kill-buffer cbuf))
+            (if next (el-get-start-process-list package next final-func)
+              (when (functionp final-func)
+                (funcall final-func package))))
+        (let* ((startf (if shell #'start-process-shell-command #'start-process))
+               (process-connection-type nil) ; pipe, don't pretend we're a pty
+               (proc (apply startf cname cbuf program args)))
+          ;; add the properties to the process, then set the sentinel
+          (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
+          (process-put proc :el-get-sources el-get-sources)
+          (process-put proc :el-get-package package)
+          (process-put proc :el-get-final-func final-func)
+          (process-put proc :el-get-start-process-list (cdr commands))
+          (set-process-sentinel proc 'el-get-start-process-list-sentinel)
+          (when filter (set-process-filter proc filter))))))
   ;; no commands, still run the final-func
   (unless commands
     (when (functionp final-func)
