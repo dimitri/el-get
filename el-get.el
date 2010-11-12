@@ -1671,40 +1671,35 @@ welcome to use `autoload' too."
   (let* ((p-status    (el-get-read-all-packages-status))
          (total       (length (el-get-package-name-list)))
          (installed   (el-get-count-package-with-status "installed"))
-         progress ret)
-    (when (eq sync 'sync)
-      (setq progress
-	    (make-progress-reporter
-	     "Waiting for `el-get' to complete… " 0 (- total installed) 0)))
+         (progress (and (eq sync 'sync)
+                        (make-progress-reporter "Waiting for `el-get' to complete… "
+                                                0 (- total installed) 0)))
+         (el-get-default-process-wait (eq sync 'serialize)))
     ;; keep the result of mapcar to return it even in the 'sync case
-    (let ((el-get-default-process-wait (eq sync 'serialize)))
-      (setq
-       ret
-       (mapcar
-        (lambda (source)
-          (let* ((package (el-get-source-name source))
-                 (status  (el-get-package-status package p-status)))
-            ;; check if the package needs to be fetched (and built)
-            (if (el-get-package-exists-p package)
-                (if (and status (string= "installed" status))
-                    (condition-case err
-                        (el-get-init package)
-                      ((debug error) ;; catch-all, allow for debugging
-                       (message "%S" (error-message-string err))))
-                  (message "Package %s failed to install, remove it first." package))
-              (el-get-install package))))
-        el-get-sources)))
+    (prog1
+        (mapcar
+         (lambda (source)
+           (let* ((package (el-get-source-name source))
+                  (status  (el-get-package-status package p-status)))
+             ;; check if the package needs to be fetched (and built)
+             (if (el-get-package-exists-p package)
+                 (if (and status (string= "installed" status))
+                     (condition-case err
+                         (el-get-init package)
+                       ((debug error) ;; catch-all, allow for debugging
+                        (message "%S" (error-message-string err))))
+                   (message "Package %s failed to install, remove it first." package))
+               (el-get-install package))))
+         el-get-sources)
 
-    ;; el-get-install is async, that's now ongoing.
-    (when (eq sync 'sync)
-      (while (> (- total installed) 0)
-	(sleep-for 0.2)
-	;; don't forget to account for installation failure
-	(setq installed (el-get-count-package-with-status "installed" "required"))
-	(progress-reporter-update progress (- total installed)))
-      (progress-reporter-done progress))
+      ;; el-get-install is async, that's now ongoing.
+      (when progress
+        (while (> (- total installed) 0)
+          (sleep-for 0.2)
+          ;; don't forget to account for installation failure
+          (setq installed (el-get-count-package-with-status "installed" "required"))
+          (progress-reporter-update progress (- total installed)))
+        (progress-reporter-done progress)))))
 
-    ;; return the list of packages
-    ret))
 
 (provide 'el-get)
