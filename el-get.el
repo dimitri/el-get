@@ -474,7 +474,8 @@ Any other property will get put into the process object.
 	   (args    (plist-get c :args))
 	   (shell   (plist-get c :shell))
 	   (startf  (if shell #'start-process-shell-command #'start-process))
-	   (sync    (or (plist-get c :sync) el-get-default-process-sync))
+	   (sync    (if (plist-member c :sync) (plist-get c :sync)
+                      el-get-default-process-sync))
 	   (default-directory (if cdir
 				  (file-name-as-directory
 				   (expand-file-name cdir))
