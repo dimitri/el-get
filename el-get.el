@@ -408,9 +408,9 @@ directory or a symlink in el-get-dir."
 	(when (functionp final-f)
 	  (funcall final-f package))))))
 
-(defvar el-get-default-process-wait nil
-  "Non-nil value asks `el-get-start-process-list' to wait for current process
-to end before starting another. Can be overriden by :wait property in
+(defvar el-get-default-process-sync nil
+  "Non-nil value asks `el-get-start-process-list' to run current
+process syncronously. Can be overriden by :sync property in
 commands argument of `el-get-start-process-list'")
 
 (defun el-get-start-process-list (package commands final-func)
@@ -457,9 +457,9 @@ properties:
 
    The error to send upon failure
 
-:wait
+:sync
 
-   When set to non-nil value, wait until process ends.
+   When set to non-nil value, run syncronously.
 
 Any other property will get put into the process object.
 "
@@ -474,7 +474,7 @@ Any other property will get put into the process object.
 	   (args    (plist-get c :args))
 	   (shell   (plist-get c :shell))
 	   (startf  (if shell #'start-process-shell-command #'start-process))
-	   (wait    (or (plist-get c :wait) el-get-default-process-wait))
+	   (sync    (or (plist-get c :sync) el-get-default-process-sync))
 	   (default-directory (if cdir
 				  (file-name-as-directory
 				   (expand-file-name cdir))
@@ -490,7 +490,7 @@ Any other property will get put into the process object.
       (process-put proc :el-get-start-process-list (cdr commands))
       (set-process-sentinel proc 'el-get-start-process-list-sentinel)
       (when filter (set-process-filter proc filter))
-      (when wait
+      (when sync
         (while (equal 'run (process-status proc))
           (message "el-get is waiting for %S to complete" cname)
           (sit-for 0.1 t)))))
@@ -1136,7 +1136,7 @@ the files up."
 		      :args ("-S" ,(executable-find "pacman") "--sync" "--noconfirm" "--needed" ,pkgname)
 		      :message ,ok
 		      :error ,ko
-		      :wait t))
+		      :sync t))
      post-install-fun)))
 
 (defun el-get-pacman-remove (package url post-remove-fun)
@@ -1156,7 +1156,7 @@ the files up."
 		      :args ("-S" ,(executable-find "pacman") "--remove" "--noconfirm" ,pkgname)
 		      :message ,ok
 		      :error ,ko
-		      :wait t))
+		      :sync t))
      post-remove-fun)))
 
 (add-hook 'el-get-pacman-remove-hook 'el-get-dpkg-remove-symlink)
@@ -1671,10 +1671,10 @@ welcome to use `autoload' too."
   (let* ((p-status    (el-get-read-all-packages-status))
          (total       (length (el-get-package-name-list)))
          (installed   (el-get-count-package-with-status "installed"))
-         (progress (and (eq sync 'sync)
+         (progress (and (eq sync 'wait)
                         (make-progress-reporter "Waiting for `el-get' to complete… "
                                                 0 (- total installed) 0)))
-         (el-get-default-process-wait (eq sync 'serialize)))
+         (el-get-default-process-sync (eq sync 'sync)))
     ;; keep the result of mapcar to return it even in the 'sync case
     (prog1
         (mapcar
