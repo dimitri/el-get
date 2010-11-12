@@ -26,6 +26,8 @@
 ;;   - Implement support for svn and darcs too
 ;;   - Still more recipes
 ;;   - Add support for the `pacman' package manager (ARCH Linux)
+;;   - (el-get 'sync) now really means synchronous, and serialized too
+;;   - el-get-start-process-list implements :sync, defaults to nil (async)
 ;;
 ;;  1.0 - 2010-10-07 - Can I haz your recipes?
 ;;
@@ -459,7 +461,7 @@ properties:
 
 :sync
 
-   When set to non-nil value, run syncronously.
+   When set to non-nil value, run synchronously.
 
 Any other property will get put into the process object.
 "
@@ -486,13 +488,16 @@ Any other property will get put into the process object.
                  (message (plist-get c :message))
                  (errorm  (plist-get c :error))
                  (next    (cdr commands)))
-            (if (eq 0 status) (message "el-get: %s" message)
+            (if (eq 0 status)
+		(message "el-get: %s" message)
               (set-window-buffer (selected-window) cbuf)
               (error "el-get: %s %s" cname errorm))
             (when cbuf (kill-buffer cbuf))
-            (if next (el-get-start-process-list package next final-func)
+            (if next
+		(el-get-start-process-list package next final-func)
               (when (functionp final-func)
                 (funcall final-func package))))
+	;; async case
         (let* ((startf (if shell #'start-process-shell-command #'start-process))
                (process-connection-type nil) ; pipe, don't pretend we're a pty
                (proc (apply startf cname cbuf program args)))
@@ -1669,23 +1674,32 @@ suitable for use in your emacs init script.
 
 By default (SYNC is nil), `el-get' will run all the installs
 concurrently so that you can still use Emacs to do your normal
-work. When SYNC is non-nil (any value will do, 'sync for
-example), then `el-get' will enter a wait-loop and only let you
-use Emacs once it has finished with its job. That's useful an
-option to use in your `user-init-file'.
+work.
+
+When SYNC is 'sync, each package will get installed one after the
+other, and any error will stop it all.
+
+When SYNC is 'wait, then `el-get' will enter a wait-loop and only
+let you use Emacs once it has finished with its job. That's
+useful an option to use in your `user-init-file'. Note that each
+package in the list gets installed in parallel with this option.
 
 Please note that the `el-get-init' part of `el-get' is always
 done synchronously, so you will have to wait here. There's
 `byte-compile' support though, and the packages you use are
 welcome to use `autoload' too."
+  (unless (or (null sync)
+	      (member sync '(sync wait)))
+    (error "el-get sync parameter should be either nil, sync or wait"))
   (let* ((p-status    (el-get-read-all-packages-status))
          (total       (length (el-get-package-name-list)))
          (installed   (el-get-count-package-with-status "installed"))
          (progress (and (eq sync 'wait)
-                        (make-progress-reporter "Waiting for `el-get' to complete… "
-                                                0 (- total installed) 0)))
+                        (make-progress-reporter
+			 "Waiting for `el-get' to complete… "
+			 0 (- total installed) 0)))
          (el-get-default-process-sync (eq sync 'sync)))
-    ;; keep the result of mapcar to return it even in the 'sync case
+    ;; keep the result of mapcar to return it even in the 'wait case
     (prog1
         (mapcar
          (lambda (source)
@@ -1710,6 +1724,5 @@ welcome to use `autoload' too."
           (setq installed (el-get-count-package-with-status "installed" "required"))
           (progress-reporter-update progress (- total installed)))
         (progress-reporter-done progress)))))
-
 
 (provide 'el-get)
