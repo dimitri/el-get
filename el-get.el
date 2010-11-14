@@ -6,7 +6,8 @@
 ;; URL: http://www.emacswiki.org/emacs/el-get.el
 ;; Version: 1.1~dev
 ;; Created: 2010-06-17
-;; Keywords: emacs package elisp install elpa git git-svn bzr cvs svn darcs apt-get fink http http-tar emacswiki
+;; Keywords: emacs package elisp install elpa git git-svn bzr cvs svn darcs hg
+;;           apt-get fink pacman http http-tar emacswiki
 ;; Licence: WTFPL, grab your copy here: http://sam.zoy.org/wtfpl/
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -26,6 +27,7 @@
 ;;   - Implement support for svn and darcs too
 ;;   - Still more recipes
 ;;   - Add support for the `pacman' package manager (ARCH Linux)
+;;   - Add support for mercurial
 ;;   - (el-get 'sync) now really means synchronous, and serialized too
 ;;   - el-get-start-process-list implements :sync, defaults to nil (async)
 ;;
@@ -1135,7 +1137,7 @@ the files up."
 
 
 ;;
-;; pacman support)
+;; pacman support
 ;;
 (add-hook 'el-get-pacman-install-hook 'el-get-dpkg-symlink)
 
@@ -1181,6 +1183,10 @@ the files up."
 
 (add-hook 'el-get-pacman-remove-hook 'el-get-dpkg-remove-symlink)
 
+
+;;
+;; mercurial (hg) support
+;;
 (defun el-get-hg-clone (package url post-install-fun)
   "Clone the given package following the URL."
   (let* ((hg-executable "hg")
