@@ -6,7 +6,8 @@
 ;; URL: http://www.emacswiki.org/emacs/el-get.el
 ;; Version: 1.1~dev
 ;; Created: 2010-06-17
-;; Keywords: emacs package elisp install elpa git git-svn bzr cvs svn darcs apt-get fink http http-tar emacswiki
+;; Keywords: emacs package elisp install elpa git git-svn bzr cvs svn darcs hg
+;;           apt-get fink pacman http http-tar emacswiki
 ;; Licence: WTFPL, grab your copy here: http://sam.zoy.org/wtfpl/
 ;;
 ;; This file is NOT part of GNU Emacs.
@@ -26,6 +27,7 @@
 ;;   - Implement support for svn and darcs too
 ;;   - Still more recipes
 ;;   - Add support for the `pacman' package manager (ARCH Linux)
+;;   - Add support for mercurial
 ;;   - (el-get 'sync) now really means synchronous, and serialized too
 ;;   - el-get-start-process-list implements :sync, defaults to nil (async)
 ;;
@@ -131,6 +133,7 @@ disable byte-compilation globally."
 (defvar el-get-http-tar-install-hook nil "Hook run after http-tar package install.")
 (defvar el-get-pacman-install-hook   nil "Hook run after pacman install.")
 (defvar el-get-pacman-remove-hook    nil "Hook run after pacman remove.")
+(defvar el-get-hg-clone-hook         nil "Hook run after hg clone.")
 
 (defcustom el-get-methods
   '(:git     (:install el-get-git-clone
@@ -192,7 +195,11 @@ disable byte-compilation globally."
                         :install-hook el-get-pacman-install-hook
                         :update el-get-pacman-install
                         :remove el-get-pacman-remove
-                        :remove-hook el-get-pacman-remove-hook))
+                        :remove-hook el-get-pacman-remove-hook)
+    :hg       (:install el-get-hg-clone
+                        :install-hook el-get-hg-clone-hook
+                        :update el-get-hg-pull
+                        :remove el-get-rmdir))
   "Register methods that el-get can use to fetch and update a given package.
 
 The methods list is a PLIST, each entry has a method name
@@ -1130,7 +1137,7 @@ the files up."
 
 
 ;;
-;; pacman support)
+;; pacman support
 ;;
 (add-hook 'el-get-pacman-install-hook 'el-get-dpkg-symlink)
 
@@ -1175,6 +1182,48 @@ the files up."
      post-remove-fun)))
 
 (add-hook 'el-get-pacman-remove-hook 'el-get-dpkg-remove-symlink)
+
+
+;;
+;; mercurial (hg) support
+;;
+(defun el-get-hg-clone (package url post-install-fun)
+  "Clone the given package following the URL."
+  (let* ((hg-executable "hg")
+	 (pdir (el-get-package-directory package))
+	 (name (format "*hg clone %s*" package))
+	 (ok   (format "Package %s installed." package))
+	 (ko   (format "Could not install package %s." package)))
+
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :default-directory ,el-get-dir
+		      :program ,hg-executable
+		      :args ("clone" ,url ,package)
+		      :message ,ok
+		      :error ,ko))
+     post-install-fun)))
+
+(defun el-get-hg-pull (package url post-update-fun)
+  "hg pull the package."
+  (let* ((hg-executable "hg")
+	 (pdir (el-get-package-directory package))
+	 (name (format "*hg pull %s*" package))
+	 (ok   (format "Pulled package %s." package))
+	 (ko   (format "Could not update package %s." package)))
+
+    (el-get-start-process-list
+     package
+     `((:command-name ,name
+		      :buffer-name ,name
+		      :default-directory ,pdir
+		      :program ,hg-executable
+		      :args ("pull" "--update")
+		      :message ,ok
+		      :error ,ko))
+     post-update-fun)))
 
 
 ;;
