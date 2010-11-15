@@ -532,7 +532,7 @@ found."
 				 (file-executable-p magit-git-executable))
 			    magit-git-executable
 			  (executable-find "git"))))
-    (unless (file-executable-p git-executable)
+    (unless (and git-executable (file-executable-p git-executable))
       (error
        (concat "el-get-git-clone requires `magit-git-executable' to be set, "
 	       "or the binary `git' to be found in your PATH")))
