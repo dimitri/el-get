@@ -122,10 +122,12 @@ newer packages for this instance to consider installing.
 
 Now you want a synchronous install, right?
 
-So, by default +(el-get)+ is asynchronous, but you can ask for it to be sync
-this way:
+So, by default +(el-get)+ is asynchronous, but you can ask for it to be
+sync, or to still be asynchronous but to wait until it finished before to
+give control back:
 
   (el-get 'sync)
+  (el-get 'wait)
 
 You even get a progress report!
 
