@@ -352,6 +352,20 @@ definition provided by `el-get' recipes locally.
 
     A function to run once `el-get' is done with `el-get-init',
     can be a lambda.
+
+:destination
+
+    Currently only used by both `http' and `ftp' supports, allows
+    to specify the target name of the downloaded file.
+
+    This option is useful if the package sould be retrived using
+    a presentation insterface (such as as web SCM tool).
+
+    For example, destination should be set to \"package.el\" if
+    the package url has the following scheme:
+
+   \"http://www.example.com/show-as-text?file=path/package.el\"
+   
 ")
 
 
@@ -1068,11 +1082,13 @@ passing it the the callback function nonetheless."
   "Dowload a single-file PACKAGE over HTTP and store it in DEST.
 
 Should dest be omited (nil), the url content will get written
-into its `file-name-nondirectory' part."
+into the package :destination option or its `file-name-nondirectory' part."
   (let* ((pdir   (el-get-package-directory package))
 	 (dest   (or dest
 		     (concat (file-name-as-directory pdir)
-			     (file-name-nondirectory url)))))
+			     (or
+			      (plist-get (el-get-package-def package) :destination)
+			      (file-name-nondirectory url))))))
     (unless (file-directory-p pdir)
       (make-directory pdir))
     (url-retrieve
