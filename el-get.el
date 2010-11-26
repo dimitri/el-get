@@ -30,6 +30,7 @@
 ;;   - Add support for mercurial
 ;;   - (el-get 'sync) now really means synchronous, and serialized too
 ;;   - el-get-start-process-list implements :sync, defaults to nil (async)
+;;   - Implement a :localname package property to help with some kind of URLs
 ;;
 ;;  1.0 - 2010-10-07 - Can I haz your recipes?
 ;;
@@ -353,7 +354,7 @@ definition provided by `el-get' recipes locally.
     A function to run once `el-get' is done with `el-get-init',
     can be a lambda.
 
-:destination
+:localname
 
     Currently only used by both `http' and `ftp' supports, allows
     to specify the target name of the downloaded file.
@@ -365,7 +366,7 @@ definition provided by `el-get' recipes locally.
     the package url has the following scheme:
 
    \"http://www.example.com/show-as-text?file=path/package.el\"
-   
+
 ")
 
 
@@ -1082,13 +1083,12 @@ passing it the the callback function nonetheless."
   "Dowload a single-file PACKAGE over HTTP and store it in DEST.
 
 Should dest be omited (nil), the url content will get written
-into the package :destination option or its `file-name-nondirectory' part."
+into the package :localname option or its `file-name-nondirectory' part."
   (let* ((pdir   (el-get-package-directory package))
+	 (fname  (or (plist-get (el-get-package-def package) :localname)
+		     (file-name-nondirectory url)))
 	 (dest   (or dest
-		     (concat (file-name-as-directory pdir)
-			     (or
-			      (plist-get (el-get-package-def package) :destination)
-			      (file-name-nondirectory url))))))
+		     (concat (file-name-as-directory pdir) fname))))
     (unless (file-directory-p pdir)
       (make-directory pdir))
     (url-retrieve
