@@ -31,6 +31,7 @@
 ;;   - (el-get 'sync) now really means synchronous, and serialized too
 ;;   - el-get-start-process-list implements :sync, defaults to nil (async)
 ;;   - Implement a :localname package property to help with some kind of URLs
+;;   - Add el-get-post-init-hooks
 ;;
 ;;  1.0 - 2010-10-07 - Can I haz your recipes?
 ;;
@@ -99,6 +100,12 @@
   :group 'convenience)
 
 (defconst el-get-version "1.1~dev" "el-get version number")
+
+(defcustom el-get-post-init-hooks nil
+  "Hooks to run after a package init.
+It will get called with the package as first argument."
+  :group 'el-get
+  :type 'hook)
 
 (defcustom el-get-post-install-hooks nil
   "Hooks to run after installing a package.
@@ -1569,6 +1576,9 @@ entry."
       (message "el-get: Calling init user function for package %s" package)
       (funcall after))
 
+    ;; and call the global init hooks
+    (run-hook-with-args 'el-get-post-init-hooks package)
+
     ;; return the package
     package))
 
@@ -1720,6 +1730,12 @@ from `el-get-sources'."
     (el-get-notify (format "%s updated" package)
 		   "This package has been updated successfully by el-get."))
   (add-hook 'el-get-post-update-hooks 'el-get-post-update-notification))
+
+(defun el-get-post-init-message (package)
+  "After PACKAGE init is done, just message about it"
+  (message "el-get initialized package %s" package))
+
+(add-hook 'el-get-post-init-hooks 'el-get-post-init-message)
 
 
 ;;
