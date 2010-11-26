@@ -1,5 +1,4 @@
 (:name ssh-config
        :type git
-       :url "git@github.com:renard/ssh-config-el.git"
-       :features ssh-config
-       :compile nil)
+       :url "git://github.com/renard/ssh-config-el.git"
+       :features ssh-config)
