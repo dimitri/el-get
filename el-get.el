@@ -32,6 +32,7 @@
 ;;   - el-get-start-process-list implements :sync, defaults to nil (async)
 ;;   - Implement a :localname package property to help with some kind of URLs
 ;;   - Add el-get-post-init-hooks
+;;   - Allow build commands to be evaluated, hence using some emacs variables
 ;;
 ;;  1.0 - 2010-10-07 - Can I haz your recipes?
 ;;
@@ -1262,10 +1263,12 @@ the files up."
 
 (defun el-get-build-commands (package)
   "Given a PACKAGE, returns its building commands."
-  (let* ((source     (el-get-package-def package))
-	 (build-type (intern (format ":build/%s" system-type))))
-    (or (plist-get source build-type)
-	(plist-get source :build))))
+  (let ((build-commands
+	 (let* ((source     (el-get-package-def package))
+		(build-type (intern (format ":build/%s" system-type))))
+	   (or (plist-get source build-type)
+	       (plist-get source :build)))))
+    (or (ignore-errors (eval build-commands)) build-commands)))
 
 
 (defun el-get-build-command-program (name)
