@@ -1064,11 +1064,8 @@ PACKAGE isn't currently installed by ELPA."
 ;;
 ;; http support
 ;;
-(defun el-get-http-retrieve-callback (url-arg package post-install-fun &optional dest sources)
-  "Callback function for `url-retrieve', store the emacs lisp file for the package.
-
-URL-ARG is nil in my tests but `url-retrieve' seems to insist on
-passing it the the callback function nonetheless."
+(defun el-get-http-retrieve-callback (status package post-install-fun &optional dest sources)
+  "Callback function for `url-retrieve', store the emacs lisp file for the package."
   (let* ((pdir   (el-get-package-directory package))
 	 (dest   (or dest (concat (file-name-as-directory pdir) package ".el")))
 	 (part   (concat dest ".part"))

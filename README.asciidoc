@@ -16,6 +16,20 @@ Here's the 'lazy installer' for everyone to use, except for the early
 adopters, who will have to adapt their +el-get-sources+ to use +github+
 instead.
 
+Easy way first:
+
+--------------------------------------
+;; So the idea is that you copy/paste this code into your *scratch* buffer,
+;; hit C-j, and you have a working el-get.
+(url-retrieve
+ "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+ (lambda (s)
+   (end-of-buffer)
+   (eval-print-last-sexp)))
+--------------------------------------
+
+More involved way:
+
 --------------------------------------
 ;; So the idea is that you copy/paste this code into your *scratch* buffer,
 ;; hit C-j, and you have a working el-get.
