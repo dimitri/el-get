@@ -1525,7 +1525,11 @@ entry."
             (el-get-set-info-path package infodir-rel)
             (el-get-build
              package
-             `(,(format "%s %s.info dir" el-get-install-info infofile)) infodir-rel t)))))
+             `(,(format "%s %s dir"
+			el-get-install-info
+			(if (string= (substring infofile -5) ".info")
+			    infofile
+			  (concat infofile ".info"))) infodir-rel t))))))
 
     (when el-get-byte-compile
       ;; byte-compile either :compile entries or anything in load-path
