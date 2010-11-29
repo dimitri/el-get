@@ -1463,7 +1463,13 @@ entry."
   "Raise en error if PACKAGE is not a valid package according to
 `el-get-package-p'."
   (unless (el-get-package-p package)
-    (error "el-get: can not find package name `%s' in `el-get-sources'" package)))
+    (error "el-get: can not find package name `%s' in `el-get-sources'" package))
+  ;; check for recipe too
+  (let ((recipe (el-get-package-def package)))
+    (unless recipe
+      (error "el-get: package `%s' has no recipe" package))
+    (unless (plist-member recipe :type)
+      (error "el-get: package `%s' has incomplete recipe (no :type)" package))))
 
 (defun el-get-read-package-name (action &optional merge-recipes)
   "Ask user for a package name in minibuffer, with completion."
