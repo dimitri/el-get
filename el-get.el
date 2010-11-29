@@ -30,6 +30,11 @@
 ;;   - Add support for mercurial
 ;;   - (el-get 'sync) now really means synchronous, and serialized too
 ;;   - el-get-start-process-list implements :sync, defaults to nil (async)
+;;   - Implement a :localname package property to help with some kind of URLs
+;;   - Add el-get-post-init-hooks
+;;   - Allow build commands to be evaluated, hence using some emacs variables
+;;   - Finaly walk the extra mile and remove "required" packages at install
+;;   - Implement support for the "Do you want to continue" apt-get prompt
 ;;
 ;;  1.0 - 2010-10-07 - Can I haz your recipes?
 ;;
@@ -98,6 +103,12 @@
   :group 'convenience)
 
 (defconst el-get-version "1.1~dev" "el-get version number")
+
+(defcustom el-get-post-init-hooks nil
+  "Hooks to run after a package init.
+It will get called with the package as first argument."
+  :group 'el-get
+  :type 'hook)
 
 (defcustom el-get-post-install-hooks nil
   "Hooks to run after installing a package.
@@ -220,6 +231,9 @@ the named package action in the given method."
   (concat (file-name-as-directory el-get-dir) ".status.el")
   "Define where to store and read the package statuses")
 
+(defvar el-get-emacs (concat invocation-directory invocation-name)
+  "Where to find the currently running emacs, a facility for :build commands")
+
 (defvar el-get-apt-get (executable-find "apt-get")
   "The apt-get executable.")
 
@@ -289,7 +303,10 @@ definition provided by `el-get' recipes locally.
 
 :build
 
-    Your build recipe gets there, often it looks like (\"./configure\" \"make\")
+    Your build recipe gets there, often it looks
+    like (\"./configure\" \"make\").  The list will be evaluated
+    so that you can build it at run time too, using things such
+    as `(,(concat \"make EMACS=\" el-get-emacs \"all\")) for example.
 
 :build/system-type
 
@@ -352,6 +369,20 @@ definition provided by `el-get' recipes locally.
 
     A function to run once `el-get' is done with `el-get-init',
     can be a lambda.
+
+:localname
+
+    Currently only used by both `http' and `ftp' supports, allows
+    to specify the target name of the downloaded file.
+
+    This option is useful if the package sould be retrived using
+    a presentation insterface (such as as web SCM tool).
+
+    For example, destination should be set to \"package.el\" if
+    the package url has the following scheme:
+
+   \"http://www.example.com/show-as-text?file=path/package.el\"
+
 ")
 
 
@@ -852,7 +883,6 @@ found."
 (defun el-get-dpkg-remove-symlink (package)
   "rm -f ~/.emacs.d/el-get/package"
   (let* ((pdir    (el-get-package-directory package)))
-    (message "PHOQUE %S" pdir)
     (when (file-symlink-p pdir)
       (message (concat "cd " el-get-dir " && rm -f " package))
       (shell-command
@@ -876,6 +906,7 @@ password prompt."
 	(make-local-variable 'el-get-sudo-password-process-filter-pos)
 	(setq el-get-sudo-password-process-filter-pos (point-min)))
 
+      ;; first, check about passwords
       (save-excursion
 	(goto-char (point-max))
 	(insert string)
@@ -884,8 +915,17 @@ password prompt."
 	(while (re-search-forward "password" nil t)
 	  (let* ((prompt (thing-at-point 'line))
 		 (pass   (read-passwd prompt)))
-	    (process-send-string proc (concat pass "\n"))))
-	(setq el-get-sudo-password-process-filter-pos (point-max))))))
+	    (process-send-string proc (concat pass "\n")))))
+
+      ;; second, check about "Do you want to continue [Y/n]?" prompts
+      (save-excursion
+	(while (re-search-forward "Do you want to continue" nil t)
+	  (set-window-buffer (selected-window) (process-buffer proc))
+	  (let* ((prompt (thing-at-point 'line))
+		 (cont   (yes-or-no-p (concat prompt " "))))
+	    (process-send-string proc (concat (if cont "y" "n") "\n")))))
+
+      (setq el-get-sudo-password-process-filter-pos (point-max)))))
 
 (defun el-get-apt-get-install (package url post-install-fun)
   "echo $pass | sudo -S apt-get install PACKAGE"
@@ -1041,11 +1081,8 @@ PACKAGE isn't currently installed by ELPA."
 ;;
 ;; http support
 ;;
-(defun el-get-http-retrieve-callback (url-arg package post-install-fun &optional dest sources)
-  "Callback function for `url-retrieve', store the emacs lisp file for the package.
-
-URL-ARG is nil in my tests but `url-retrieve' seems to insist on
-passing it the the callback function nonetheless."
+(defun el-get-http-retrieve-callback (status package post-install-fun &optional dest sources)
+  "Callback function for `url-retrieve', store the emacs lisp file for the package."
   (let* ((pdir   (el-get-package-directory package))
 	 (dest   (or dest (concat (file-name-as-directory pdir) package ".el")))
 	 (part   (concat dest ".part"))
@@ -1068,11 +1105,12 @@ passing it the the callback function nonetheless."
   "Dowload a single-file PACKAGE over HTTP and store it in DEST.
 
 Should dest be omited (nil), the url content will get written
-into its `file-name-nondirectory' part."
+into the package :localname option or its `file-name-nondirectory' part."
   (let* ((pdir   (el-get-package-directory package))
+	 (fname  (or (plist-get (el-get-package-def package) :localname)
+		     (file-name-nondirectory url)))
 	 (dest   (or dest
-		     (concat (file-name-as-directory pdir)
-			     (file-name-nondirectory url)))))
+		     (concat (file-name-as-directory pdir) fname))))
     (unless (file-directory-p pdir)
       (make-directory pdir))
     (url-retrieve
@@ -1239,10 +1277,12 @@ the files up."
 
 (defun el-get-build-commands (package)
   "Given a PACKAGE, returns its building commands."
-  (let* ((source     (el-get-package-def package))
-	 (build-type (intern (format ":build/%s" system-type))))
-    (or (plist-get source build-type)
-	(plist-get source :build))))
+  (let ((build-commands
+	 (let* ((source     (el-get-package-def package))
+		(build-type (intern (format ":build/%s" system-type))))
+	   (or (plist-get source build-type)
+	       (plist-get source :build)))))
+    (or (ignore-errors (eval build-commands)) build-commands)))
 
 
 (defun el-get-build-command-program (name)
@@ -1440,7 +1480,13 @@ entry."
   "Raise en error if PACKAGE is not a valid package according to
 `el-get-package-p'."
   (unless (el-get-package-p package)
-    (error "el-get: can not find package name `%s' in `el-get-sources'" package)))
+    (error "el-get: can not find package name `%s' in `el-get-sources'" package))
+  ;; check for recipe too
+  (let ((recipe (el-get-package-def package)))
+    (unless recipe
+      (error "el-get: package `%s' has no recipe" package))
+    (unless (plist-member recipe :type)
+      (error "el-get: package `%s' has incomplete recipe (no :type)" package))))
 
 (defun el-get-read-package-name (action &optional merge-recipes)
   "Ask user for a package name in minibuffer, with completion."
@@ -1502,7 +1548,11 @@ entry."
             (el-get-set-info-path package infodir-rel)
             (el-get-build
              package
-             `(,(format "%s %s.info dir" el-get-install-info infofile)) infodir-rel t)))))
+             `(,(format "%s %s dir"
+			el-get-install-info
+			(if (string= (substring infofile -5) ".info")
+			    infofile
+			  (concat infofile ".info"))) infodir-rel t))))))
 
     (when el-get-byte-compile
       ;; byte-compile either :compile entries or anything in load-path
@@ -1553,6 +1603,9 @@ entry."
       (message "el-get: Calling init user function for package %s" package)
       (funcall after))
 
+    ;; and call the global init hooks
+    (run-hook-with-args 'el-get-post-init-hooks package)
+
     ;; return the package
     package))
 
@@ -1589,16 +1642,18 @@ from `el-get-sources'.
 			  el-get-sources)))
     (el-get-error-unless-package-p package)
 
-    (let ((status (el-get-read-package-status package)))
-      (when (string= "installed" status)
-	(error "Package %s is already installed." package))
-      (when (string= "required" status)
-	(error "Package %s failed to install, remove it first." package)))
-
-    (let* ((source   (el-get-package-def package))
+    (let* ((status   (el-get-read-package-status package))
+	   (source   (el-get-package-def package))
 	   (method   (plist-get source :type))
 	   (install  (el-get-method method :install))
 	   (url      (plist-get source :url)))
+
+      (when (string= "installed" status)
+	(error "Package %s is already installed." package))
+
+      (when (string= "required" status)
+	(message "Package %s failed to install, removing it first." package)
+	(el-get-remove package))
 
       ;; check we can install the package and save to "required" status
       (el-get-check-init)
@@ -1704,6 +1759,12 @@ from `el-get-sources'."
     (el-get-notify (format "%s updated" package)
 		   "This package has been updated successfully by el-get."))
   (add-hook 'el-get-post-update-hooks 'el-get-post-update-notification))
+
+(defun el-get-post-init-message (package)
+  "After PACKAGE init is done, just message about it"
+  (message "el-get initialized package %s" package))
+
+(add-hook 'el-get-post-init-hooks 'el-get-post-init-message)
 
 
 ;;
