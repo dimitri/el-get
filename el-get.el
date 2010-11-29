@@ -231,6 +231,9 @@ the named package action in the given method."
   (concat (file-name-as-directory el-get-dir) ".status.el")
   "Define where to store and read the package statuses")
 
+(defvar el-get-emacs (concat invocation-directory invocation-name)
+  "Where to find the currently running emacs, a facility for :build commands")
+
 (defvar el-get-apt-get (executable-find "apt-get")
   "The apt-get executable.")
 
@@ -300,7 +303,10 @@ definition provided by `el-get' recipes locally.
 
 :build
 
-    Your build recipe gets there, often it looks like (\"./configure\" \"make\")
+    Your build recipe gets there, often it looks
+    like (\"./configure\" \"make\").  The list will be evaluated
+    so that you can build it at run time too, using things such
+    as `(,(concat \"make EMACS=\" el-get-emacs \"all\")) for example.
 
 :build/system-type
 

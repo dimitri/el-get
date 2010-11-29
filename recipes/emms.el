@@ -5,5 +5,5 @@
        :load-path ("./lisp")
        :features emms-setup
        :build ("make autoloads" "make")
-       :build/darwin `(,(concat "make EMACS=" invocation-directory invocation-name " autoloads all")))
+       :build/darwin `(,(concat "make EMACS=" el-get-emacs " autoloads all")))
 
