@@ -30,6 +30,9 @@
 ;;   - Add support for mercurial
 ;;   - (el-get 'sync) now really means synchronous, and serialized too
 ;;   - el-get-start-process-list implements :sync, defaults to nil (async)
+;;   - Implement a :localname package property to help with some kind of URLs
+;;   - Add el-get-post-init-hooks
+;;   - Allow build commands to be evaluated, hence using some emacs variables
 ;;
 ;;  1.0 - 2010-10-07 - Can I haz your recipes?
 ;;
@@ -98,6 +101,12 @@
   :group 'convenience)
 
 (defconst el-get-version "1.1~dev" "el-get version number")
+
+(defcustom el-get-post-init-hooks nil
+  "Hooks to run after a package init.
+It will get called with the package as first argument."
+  :group 'el-get
+  :type 'hook)
 
 (defcustom el-get-post-install-hooks nil
   "Hooks to run after installing a package.
@@ -352,6 +361,20 @@ definition provided by `el-get' recipes locally.
 
     A function to run once `el-get' is done with `el-get-init',
     can be a lambda.
+
+:localname
+
+    Currently only used by both `http' and `ftp' supports, allows
+    to specify the target name of the downloaded file.
+
+    This option is useful if the package sould be retrived using
+    a presentation insterface (such as as web SCM tool).
+
+    For example, destination should be set to \"package.el\" if
+    the package url has the following scheme:
+
+   \"http://www.example.com/show-as-text?file=path/package.el\"
+
 ")
 
 
@@ -1041,11 +1064,8 @@ PACKAGE isn't currently installed by ELPA."
 ;;
 ;; http support
 ;;
-(defun el-get-http-retrieve-callback (url-arg package post-install-fun &optional dest sources)
-  "Callback function for `url-retrieve', store the emacs lisp file for the package.
-
-URL-ARG is nil in my tests but `url-retrieve' seems to insist on
-passing it the the callback function nonetheless."
+(defun el-get-http-retrieve-callback (status package post-install-fun &optional dest sources)
+  "Callback function for `url-retrieve', store the emacs lisp file for the package."
   (let* ((pdir   (el-get-package-directory package))
 	 (dest   (or dest (concat (file-name-as-directory pdir) package ".el")))
 	 (part   (concat dest ".part"))
@@ -1068,11 +1088,12 @@ passing it the the callback function nonetheless."
   "Dowload a single-file PACKAGE over HTTP and store it in DEST.
 
 Should dest be omited (nil), the url content will get written
-into its `file-name-nondirectory' part."
+into the package :localname option or its `file-name-nondirectory' part."
   (let* ((pdir   (el-get-package-directory package))
+	 (fname  (or (plist-get (el-get-package-def package) :localname)
+		     (file-name-nondirectory url)))
 	 (dest   (or dest
-		     (concat (file-name-as-directory pdir)
-			     (file-name-nondirectory url)))))
+		     (concat (file-name-as-directory pdir) fname))))
     (unless (file-directory-p pdir)
       (make-directory pdir))
     (url-retrieve
@@ -1239,10 +1260,12 @@ the files up."
 
 (defun el-get-build-commands (package)
   "Given a PACKAGE, returns its building commands."
-  (let* ((source     (el-get-package-def package))
-	 (build-type (intern (format ":build/%s" system-type))))
-    (or (plist-get source build-type)
-	(plist-get source :build))))
+  (let ((build-commands
+	 (let* ((source     (el-get-package-def package))
+		(build-type (intern (format ":build/%s" system-type))))
+	   (or (plist-get source build-type)
+	       (plist-get source :build)))))
+    (or (ignore-errors (eval build-commands)) build-commands)))
 
 
 (defun el-get-build-command-program (name)
@@ -1553,6 +1576,9 @@ entry."
       (message "el-get: Calling init user function for package %s" package)
       (funcall after))
 
+    ;; and call the global init hooks
+    (run-hook-with-args 'el-get-post-init-hooks package)
+
     ;; return the package
     package))
 
@@ -1704,6 +1730,12 @@ from `el-get-sources'."
     (el-get-notify (format "%s updated" package)
 		   "This package has been updated successfully by el-get."))
   (add-hook 'el-get-post-update-hooks 'el-get-post-update-notification))
+
+(defun el-get-post-init-message (package)
+  "After PACKAGE init is done, just message about it"
+  (message "el-get initialized package %s" package))
+
+(add-hook 'el-get-post-init-hooks 'el-get-post-init-message)
 
 
 ;;
