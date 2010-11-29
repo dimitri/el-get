@@ -33,6 +33,7 @@
 ;;   - Implement a :localname package property to help with some kind of URLs
 ;;   - Add el-get-post-init-hooks
 ;;   - Allow build commands to be evaluated, hence using some emacs variables
+;;   - Finaly walk the extra mile and remove "required" packages at install
 ;;
 ;;  1.0 - 2010-10-07 - Can I haz your recipes?
 ;;
@@ -1625,16 +1626,18 @@ from `el-get-sources'.
 			  el-get-sources)))
     (el-get-error-unless-package-p package)
 
-    (let ((status (el-get-read-package-status package)))
-      (when (string= "installed" status)
-	(error "Package %s is already installed." package))
-      (when (string= "required" status)
-	(error "Package %s failed to install, remove it first." package)))
-
-    (let* ((source   (el-get-package-def package))
+    (let* ((status   (el-get-read-package-status package))
+	   (source   (el-get-package-def package))
 	   (method   (plist-get source :type))
 	   (install  (el-get-method method :install))
 	   (url      (plist-get source :url)))
+
+      (when (string= "installed" status)
+	(error "Package %s is already installed." package))
+
+      (when (string= "required" status)
+	(message "Package %s failed to install, removing it first." package)
+	(el-get-remove package))
 
       ;; check we can install the package and save to "required" status
       (el-get-check-init)
