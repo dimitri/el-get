@@ -34,6 +34,7 @@
 ;;   - Add el-get-post-init-hooks
 ;;   - Allow build commands to be evaluated, hence using some emacs variables
 ;;   - Finaly walk the extra mile and remove "required" packages at install
+;;   - Implement support for the "Do you want to continue" apt-get prompt
 ;;
 ;;  1.0 - 2010-10-07 - Can I haz your recipes?
 ;;
@@ -876,7 +877,6 @@ found."
 (defun el-get-dpkg-remove-symlink (package)
   "rm -f ~/.emacs.d/el-get/package"
   (let* ((pdir    (el-get-package-directory package)))
-    (message "PHOQUE %S" pdir)
     (when (file-symlink-p pdir)
       (message (concat "cd " el-get-dir " && rm -f " package))
       (shell-command
@@ -900,6 +900,7 @@ password prompt."
 	(make-local-variable 'el-get-sudo-password-process-filter-pos)
 	(setq el-get-sudo-password-process-filter-pos (point-min)))
 
+      ;; first, check about passwords
       (save-excursion
 	(goto-char (point-max))
 	(insert string)
@@ -908,8 +909,17 @@ password prompt."
 	(while (re-search-forward "password" nil t)
 	  (let* ((prompt (thing-at-point 'line))
 		 (pass   (read-passwd prompt)))
-	    (process-send-string proc (concat pass "\n"))))
-	(setq el-get-sudo-password-process-filter-pos (point-max))))))
+	    (process-send-string proc (concat pass "\n")))))
+
+      ;; second, check about "Do you want to continue [Y/n]?" prompts
+      (save-excursion
+	(while (re-search-forward "Do you want to continue" nil t)
+	  (set-window-buffer (selected-window) (process-buffer proc))
+	  (let* ((prompt (thing-at-point 'line))
+		 (cont   (yes-or-no-p (concat prompt " "))))
+	    (process-send-string proc (concat (if cont "y" "n") "\n")))))
+
+      (setq el-get-sudo-password-process-filter-pos (point-max)))))
 
 (defun el-get-apt-get-install (package url post-install-fun)
   "echo $pass | sudo -S apt-get install PACKAGE"
