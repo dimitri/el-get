@@ -3,7 +3,7 @@
        :module "wanderlust"
        :url ":pserver:anonymous@cvs.m17n.org:/cvs/root"
        :build `,(let* ((pardir (file-name-as-directory ".."))
-                       (emacs (concat invocation-directory invocation-name))
+                       (emacs (concat el-get-emacs))
                        (deps (apply 'append (mapcar (lambda (x) `("-L" ,(concat pardir x)))
                                             '("apel" "flim" "semi"))))
                        (prep (prin1-to-string
