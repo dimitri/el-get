@@ -1552,7 +1552,7 @@ entry."
 			el-get-install-info
 			(if (string= (substring infofile -5) ".info")
 			    infofile
-			  (concat infofile ".info"))) infodir-rel t))))))
+			  (concat infofile ".info")))) infodir-rel t)))))
 
     (when el-get-byte-compile
       ;; byte-compile either :compile entries or anything in load-path
