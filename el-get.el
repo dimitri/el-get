@@ -369,7 +369,7 @@ definition provided by `el-get' recipes locally.
 :before
 
     A pre-init function to run once before `el-get-init' calls
-    `load' and `require', can be a lambda.
+    `load' and `require'.
 
 :after
 
@@ -1585,8 +1585,8 @@ entry."
                (expand-file-name (concat (file-name-as-directory pdir) dir)) 0))))))
 
     ;; call the "before" user function
-    (when (and before(functionp before))
-      (message "el-get: Calling pre-init user function for package %s" package)
+    (when (and before (functionp before))
+      (message "el-get: Calling :before function for package %s" package)
       (funcall before))
 
     ;; loads
@@ -1612,7 +1612,7 @@ entry."
 
     ;; call the "after" user function
     (when (and after (functionp after))
-      (message "el-get: Calling init user function for package %s" package)
+      (message "el-get: Calling :after function for package %s" package)
       (funcall after))
 
     ;; and call the global init hooks
@@ -1747,19 +1747,29 @@ from `el-get-sources'."
       (process-send-string proc (concat message "\n"))
       (process-send-eof proc))))
 
+;;
+;; Notification support is either the internal one provided by Emacs 24, or
+;; the external growl one as defined above, or the one provided by the
+;; add-on found on http://www.emacswiki.org/emacs/notify.el (there's a
+;; recipe) for older Emacs versions users
+;;
 (defun el-get-notify (title message)
   "Notify the user using either the dbus based API or the `growl' one"
-  (when (fboundp 'dbus-register-signal)
-    ;; avoid a bug in Emacs 24.0 under darwin
-    (require 'notifications nil t))
+  (if (fboundp 'dbus-register-signal)
+      ;; avoid a bug in Emacs 24.0 under darwin
+      (require 'notifications nil t)
+    ;; else try notify.el, there's a recipe for it
+    (unless (fboundp 'notify)
+      (when (featurep 'notify)
+	(require 'notify))))
 
-  ;; we use cond for potential adding of notification methods
-  (cond ((fboundp 'notifications-notify) (notifications-notify
-                                          :title title :body message))
+  (cond ((fboundp 'notifications-notify) (notifications-notify :title title
+							       :body message))
+	((fboundp 'notify)               (notify title message))
 	((fboundp 'growl)                (growl title message))
 	(t                               (message "%s: %s" title message))))
 
-(when (or (fboundp 'notifications-notify) (fboundp 'growl))
+(when (or (fboundp 'notifications-notify) (fboundp 'notify) (fboundp 'growl))
   (defun el-get-post-install-notification (package)
     "Notify the PACKAGE has been installed."
     (el-get-notify (format "%s installed" package)
