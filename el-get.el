@@ -35,6 +35,7 @@
 ;;   - Allow build commands to be evaluated, hence using some emacs variables
 ;;   - Finaly walk the extra mile and remove "required" packages at install
 ;;   - Implement support for the "Do you want to continue" apt-get prompt
+;;   - implement :before user defined function to run before init
 ;;
 ;;  1.0 - 2010-10-07 - Can I haz your recipes?
 ;;
@@ -364,6 +365,11 @@ definition provided by `el-get' recipes locally.
 
     Currently only used by the `csv' support, allow you to
     configure the module you want to checkout in the given URL.
+
+:before
+
+    A pre-init function to run once before `el-get-init' calls
+    `load' and `require', can be a lambda.
 
 :after
 
@@ -1519,6 +1525,7 @@ entry."
 	 (nocomp   (and (plist-member source :compile) (not compile)))
 	 (infodir  (plist-get source :info))
 	 (after    (plist-get source :after))
+	 (before   (plist-get source :before))
 	 (pdir     (el-get-package-directory package)))
 
     ;; apt-get, pacman and ELPA will take care of load-path, Info-directory-list
@@ -1576,6 +1583,11 @@ entry."
             (dolist (dir el-path)
               (byte-recompile-directory
                (expand-file-name (concat (file-name-as-directory pdir) dir)) 0))))))
+
+    ;; call the "before" user function
+    (when (and before(functionp before))
+      (message "el-get: Calling pre-init user function for package %s" package)
+      (funcall before))
 
     ;; loads
     (when loads
