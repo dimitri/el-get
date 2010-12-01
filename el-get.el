@@ -369,7 +369,7 @@ definition provided by `el-get' recipes locally.
 :before
 
     A pre-init function to run once before `el-get-init' calls
-    `load' and `require', can be a lambda.
+    `load' and `require'.
 
 :after
 
@@ -1585,8 +1585,8 @@ entry."
                (expand-file-name (concat (file-name-as-directory pdir) dir)) 0))))))
 
     ;; call the "before" user function
-    (when (and before(functionp before))
-      (message "el-get: Calling pre-init user function for package %s" package)
+    (when (and before (functionp before))
+      (message "el-get: Calling :before function for package %s" package)
       (funcall before))
 
     ;; loads
@@ -1612,7 +1612,7 @@ entry."
 
     ;; call the "after" user function
     (when (and after (functionp after))
-      (message "el-get: Calling init user function for package %s" package)
+      (message "el-get: Calling :after function for package %s" package)
       (funcall after))
 
     ;; and call the global init hooks
