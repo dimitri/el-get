@@ -35,6 +35,7 @@
 ;;   - Allow build commands to be evaluated, hence using some emacs variables
 ;;   - Finaly walk the extra mile and remove "required" packages at install
 ;;   - Implement support for the "Do you want to continue" apt-get prompt
+;;   - implement :before user defined function to run before init
 ;;
 ;;  1.0 - 2010-10-07 - Can I haz your recipes?
 ;;
@@ -364,6 +365,11 @@ definition provided by `el-get' recipes locally.
 
     Currently only used by the `csv' support, allow you to
     configure the module you want to checkout in the given URL.
+
+:before
+
+    A pre-init function to run once before `el-get-init' calls
+    `load' and `require'.
 
 :after
 
@@ -1519,6 +1525,7 @@ entry."
 	 (nocomp   (and (plist-member source :compile) (not compile)))
 	 (infodir  (plist-get source :info))
 	 (after    (plist-get source :after))
+	 (before   (plist-get source :before))
 	 (pdir     (el-get-package-directory package)))
 
     ;; apt-get, pacman and ELPA will take care of load-path, Info-directory-list
@@ -1552,7 +1559,7 @@ entry."
 			el-get-install-info
 			(if (string= (substring infofile -5) ".info")
 			    infofile
-			  (concat infofile ".info"))) infodir-rel t))))))
+			  (concat infofile ".info")))) infodir-rel t)))))
 
     (when el-get-byte-compile
       ;; byte-compile either :compile entries or anything in load-path
@@ -1577,6 +1584,11 @@ entry."
               (byte-recompile-directory
                (expand-file-name (concat (file-name-as-directory pdir) dir)) 0))))))
 
+    ;; call the "before" user function
+    (when (and before (functionp before))
+      (message "el-get: Calling :before function for package %s" package)
+      (funcall before))
+
     ;; loads
     (when loads
       (mapc (lambda (file)
@@ -1600,7 +1612,7 @@ entry."
 
     ;; call the "after" user function
     (when (and after (functionp after))
-      (message "el-get: Calling init user function for package %s" package)
+      (message "el-get: Calling :after function for package %s" package)
       (funcall after))
 
     ;; and call the global init hooks
@@ -1735,19 +1747,29 @@ from `el-get-sources'."
       (process-send-string proc (concat message "\n"))
       (process-send-eof proc))))
 
+;;
+;; Notification support is either the internal one provided by Emacs 24, or
+;; the external growl one as defined above, or the one provided by the
+;; add-on found on http://www.emacswiki.org/emacs/notify.el (there's a
+;; recipe) for older Emacs versions users
+;;
 (defun el-get-notify (title message)
   "Notify the user using either the dbus based API or the `growl' one"
-  (when (fboundp 'dbus-register-signal)
-    ;; avoid a bug in Emacs 24.0 under darwin
-    (require 'notifications nil t))
+  (if (fboundp 'dbus-register-signal)
+      ;; avoid a bug in Emacs 24.0 under darwin
+      (require 'notifications nil t)
+    ;; else try notify.el, there's a recipe for it
+    (unless (fboundp 'notify)
+      (when (featurep 'notify)
+	(require 'notify))))
 
-  ;; we use cond for potential adding of notification methods
-  (cond ((fboundp 'notifications-notify) (notifications-notify
-                                          :title title :body message))
+  (cond ((fboundp 'notifications-notify) (notifications-notify :title title
+							       :body message))
+	((fboundp 'notify)               (notify title message))
 	((fboundp 'growl)                (growl title message))
 	(t                               (message "%s: %s" title message))))
 
-(when (or (fboundp 'notifications-notify) (fboundp 'growl))
+(when (or (fboundp 'notifications-notify) (fboundp 'notify) (fboundp 'growl))
   (defun el-get-post-install-notification (package)
     "Notify the PACKAGE has been installed."
     (el-get-notify (format "%s installed" package)
