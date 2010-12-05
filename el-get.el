@@ -1512,7 +1512,13 @@ entry."
   (el-get-add-path-to-list package 'Info-directory-list infodir-rel))
 
 (defun el-get-init (package)
-  "Care about `load-path', `Info-directory-list', and (require 'features)."
+  "Make the named PACKAGE available for use.
+
+Add PACKAGE's directory (or `:load-path' if specified) to the
+`load-path', add any its `:info' directory to
+`Info-directory-list', and `require' its `:features'.  Will be
+called by `el-get' (usually at startup) for each package in
+`el-get-sources'."
   (interactive (list (el-get-read-package-name "Init")))
   (el-get-error-unless-package-name-p package)
   (let* ((source   (el-get-package-def package))
