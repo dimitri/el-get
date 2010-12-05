@@ -364,7 +364,7 @@ definition provided by `el-get' recipes locally.
 
 :module
 
-    Currently only used by the `csv' support, allow you to
+    Currently only used by the `cvs' support, allow you to
     configure the module you want to checkout in the given URL.
 
 :before
