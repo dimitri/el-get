@@ -1539,7 +1539,7 @@ called by `el-get' (usually at startup) for each package in
       ;; append entries to load-path and Info-directory-list
       (mapc (lambda (path)
 	      (el-get-add-path-to-list package 'load-path path))
-	    (if (stringp el-path) (list el-path) el-path))
+	    el-path)
 
       (let* ((infodir-abs-conf (concat pdir infodir))
 	     (infodir-abs (if (file-directory-p infodir-abs-conf)
