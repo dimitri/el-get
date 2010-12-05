@@ -393,6 +393,14 @@ definition provided by `el-get' recipes locally.
 ")
 
 
+(defun el-get-load-path (package)
+  "Return the list of absolute directory names to be added to
+`load-path' by the named PACKAGE."
+  (let* ((source   (el-get-package-def package))
+	 (el-path  (or (plist-get source :load-path) '(".")))
+         (pkg-dir (el-get-package-directory package)))
+    (mapcar (lambda (p) (expand-file-name p pkg-dir)) el-path)))
+
 (defun el-get-method (method-name action)
   "Return the function to call for doing action (e.g. install) in
 given method."
@@ -1526,7 +1534,7 @@ called by `el-get' (usually at startup) for each package in
 	 (method   (plist-get source :type))
 	 (loads    (plist-get source :load))
 	 (feats    (plist-get source :features))
-	 (el-path  (or (plist-get source :load-path) '(".")))
+	 (el-path  (el-get-load-path package))
 	 (compile  (plist-get source :compile))
 	 (nocomp   (and (plist-member source :compile) (not compile)))
 	 (infodir  (plist-get source :info))
@@ -1587,8 +1595,7 @@ called by `el-get' (usually at startup) for each package in
                       (el-get-build-commands package)
                       (member method '(apt-get fink pacman)))
             (dolist (dir el-path)
-              (byte-recompile-directory
-               (expand-file-name (concat pdir dir)) 0))))))
+              (byte-recompile-directory dir 0))))))
 
     ;; call the "before" user function
     (when (and before (functionp before))
