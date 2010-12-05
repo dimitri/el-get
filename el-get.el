@@ -413,7 +413,7 @@ given method."
   "(add-to-list LIST PATH) checking for path existence within
 given package directory."
   (let* ((pdir     (el-get-package-directory package))
-	 (fullpath (expand-file-name (concat pdir path))))
+	 (fullpath (expand-file-name path pdir)))
     (unless (file-directory-p fullpath)
       (error "el-get could not find directory `%s' for package %s, at %s" path package fullpath))
     (add-to-list list fullpath)))
