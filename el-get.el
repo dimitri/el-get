@@ -1477,23 +1477,21 @@ entry."
       (error "Please remove duplicates in `el-get-sources': %S." duplicates))
     package-name-list))
 
-(defun el-get-package-p (package)
-  "Check that PACKAGE is actually a valid package according to
-`el-get-sources'."
+(defun el-get-package-name-p (package-name)
+  "Check that PACKAGE-NAME is the name of a package in `el-get-sources'."
   ;; don't check for duplicates in this function
-  (member package (mapcar 'el-get-source-name el-get-sources)))
+  (member package-name (mapcar 'el-get-source-name el-get-sources)))
 
-(defun el-get-error-unless-package-p (package)
-  "Raise en error if PACKAGE is not a valid package according to
-`el-get-package-p'."
-  (unless (el-get-package-p package)
-    (error "el-get: can not find package name `%s' in `el-get-sources'" package))
+(defun el-get-error-unless-package-name-p (package-name)
+  "Raise an error if PACKAGE-NAME does not name a package in `el-get-sources'."
+  (unless (el-get-package-name-p package-name)
+    (error "el-get: can not find package name `%s' in `el-get-sources'" package-name))
   ;; check for recipe too
-  (let ((recipe (el-get-package-def package)))
+  (let ((recipe (el-get-package-def package-name)))
     (unless recipe
-      (error "el-get: package `%s' has no recipe" package))
+      (error "el-get: package `%s' has no recipe" package-name))
     (unless (plist-member recipe :type)
-      (error "el-get: package `%s' has incomplete recipe (no :type)" package))))
+      (error "el-get: package `%s' has incomplete recipe (no :type)" package-name))))
 
 (defun el-get-read-package-name (action &optional merge-recipes)
   "Ask user for a package name in minibuffer, with completion."
@@ -1516,7 +1514,7 @@ entry."
 (defun el-get-init (package)
   "Care about `load-path', `Info-directory-list', and (require 'features)."
   (interactive (list (el-get-read-package-name "Init")))
-  (el-get-error-unless-package-p package)
+  (el-get-error-unless-package-name-p package)
   (let* ((source   (el-get-package-def package))
 	 (method   (plist-get source :type))
 	 (loads    (plist-get source :load))
@@ -1653,7 +1651,7 @@ from `el-get-sources'.
   (let ((el-get-sources (if current-prefix-arg
 			    (el-get-read-all-recipes 'merge)
 			  el-get-sources)))
-    (el-get-error-unless-package-p package)
+    (el-get-error-unless-package-name-p package)
 
     (let* ((status   (el-get-read-package-status package))
 	   (source   (el-get-package-def package))
@@ -1691,7 +1689,7 @@ from `el-get-sources'.
 (defun el-get-update (package)
   "Update PACKAGE."
   (interactive (list (el-get-read-package-name "Update")))
-  (el-get-error-unless-package-p package)
+  (el-get-error-unless-package-name-p package)
   (let* ((source   (el-get-package-def package))
 	 (method   (plist-get source :type))
 	 (update   (el-get-method method :update))
@@ -1718,7 +1716,7 @@ from `el-get-sources'."
   (let ((el-get-sources (if current-prefix-arg
 			    (el-get-read-all-recipes 'merge)
 			  el-get-sources)))
-    (el-get-error-unless-package-p package)
+    (el-get-error-unless-package-name-p package)
     (let* ((source   (el-get-package-def package))
 	   (method   (plist-get source :type))
 	   (remove   (el-get-method method :remove))
@@ -1731,7 +1729,7 @@ from `el-get-sources'."
 (defun el-get-cd (package)
   "Open dired in the package directory."
   (interactive (list (el-get-read-package-name "cd to")))
-  (el-get-error-unless-package-p package)
+  (el-get-error-unless-package-name-p package)
   (dired (el-get-package-directory package)))
 
 ;;
