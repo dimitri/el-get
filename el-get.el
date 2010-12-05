@@ -407,13 +407,13 @@ given method."
 
 (defun el-get-package-directory (package)
   "Returns the package installation directory absolute name."
-  (concat (file-name-as-directory el-get-dir) package))
+  (file-name-as-directory (concat (file-name-as-directory el-get-dir) package)))
 
 (defun el-get-add-path-to-list (package list path)
   "(add-to-list LIST PATH) checking for path existence within
 given package directory."
   (let* ((pdir     (el-get-package-directory package))
-	 (fullpath (expand-file-name (concat (file-name-as-directory pdir) path))))
+	 (fullpath (expand-file-name (concat pdir path))))
     (unless (file-directory-p fullpath)
       (error "el-get could not find directory `%s' for package %s, at %s" path package fullpath))
     (add-to-list list fullpath)))
@@ -1091,7 +1091,7 @@ PACKAGE isn't currently installed by ELPA."
 (defun el-get-http-retrieve-callback (status package post-install-fun &optional dest sources)
   "Callback function for `url-retrieve', store the emacs lisp file for the package."
   (let* ((pdir   (el-get-package-directory package))
-	 (dest   (or dest (concat (file-name-as-directory pdir) package ".el")))
+	 (dest   (or dest (concat pdir package ".el")))
 	 (part   (concat dest ".part"))
 	 (el-get-sources (if sources sources el-get-sources))
 	 (require-final-newline nil))
@@ -1117,7 +1117,7 @@ into the package :localname option or its `file-name-nondirectory' part."
 	 (fname  (or (plist-get (el-get-package-def package) :localname)
 		     (file-name-nondirectory url)))
 	 (dest   (or dest
-		     (concat (file-name-as-directory pdir) fname))))
+		     (concat pdir fname))))
     (unless (file-directory-p pdir)
       (make-directory pdir))
     (url-retrieve
@@ -1159,7 +1159,7 @@ the files up."
 	 (options (plist-get source :options))
 	 (pdir    (el-get-package-directory package))
 	 (tarfile (file-name-nondirectory url))
-	 (dest    (concat (file-name-as-directory pdir) tarfile))
+	 (dest    (concat pdir tarfile))
 	 (name    (format "*tar %s %s*" options url))
 	 (ok      (format "Package %s installed." package))
 	 (ko      (format "Could not install package %s." package))
@@ -1307,7 +1307,7 @@ absolute filename obtained with expand-file-name is executable."
 (defun el-get-build (package commands &optional subdir sync post-build-fun)
   "Run each command from the package directory."
   (let* ((pdir   (el-get-package-directory package))
-	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir))
+	 (wdir   (if subdir (concat pdir subdir) pdir))
 	 (buf    (format "*el-get-build: %s*" package))
 	 (default-directory wdir))
     (if sync
@@ -1499,8 +1499,9 @@ entry."
                    (el-get-package-name-list merge-recipes) nil t))
 
 (defun el-get-byte-compile-file (pdir f)
-  "byte-compile the PDIR/F file if there's no .elc or the source is newer"
-  (let* ((el  (concat (file-name-as-directory pdir) f))
+  "byte-compile the file F in PDIR (a directory name) if there's
+no .elc or the source is newer"
+  (let* ((el  (concat pdir f))
 	 (elc (concat (file-name-sans-extension el) ".elc")))
     (when (or (not (file-exists-p elc))
 	      (file-newer-than-file-p el elc))
@@ -1540,7 +1541,7 @@ called by `el-get' (usually at startup) for each package in
 	      (el-get-add-path-to-list package 'load-path path))
 	    (if (stringp el-path) (list el-path) el-path))
 
-      (let* ((infodir-abs-conf (concat (file-name-as-directory pdir) infodir))
+      (let* ((infodir-abs-conf (concat pdir infodir))
 	     (infodir-abs (if (file-directory-p infodir-abs-conf)
 			      infodir-abs-conf
 			    (file-name-directory infodir-abs-conf)))
@@ -1572,7 +1573,7 @@ called by `el-get' (usually at startup) for each package in
         (if compile
 	    ;; only byte-compile what's in the :compile property of the recipe
             (dolist (path (if (listp compile) compile (list compile)))
-              (let ((fp (concat (file-name-as-directory pdir) path)))
+              (let ((fp (concat pdir path)))
                 ;; we accept directories, files and file name regexp
                 (cond ((file-directory-p fp) (byte-recompile-directory fp 0))
                       ((file-exists-p fp)    (el-get-byte-compile-file pdir path))
@@ -1587,7 +1588,7 @@ called by `el-get' (usually at startup) for each package in
                       (member method '(apt-get fink pacman)))
             (dolist (dir el-path)
               (byte-recompile-directory
-               (expand-file-name (concat (file-name-as-directory pdir) dir)) 0))))))
+               (expand-file-name (concat pdir dir)) 0))))))
 
     ;; call the "before" user function
     (when (and before (functionp before))
@@ -1597,7 +1598,7 @@ called by `el-get' (usually at startup) for each package in
     ;; loads
     (when loads
       (mapc (lambda (file)
-	      (let ((pfile (concat (file-name-as-directory pdir) file)))
+	      (let ((pfile (concat pdir file)))
 		(unless (file-exists-p pfile)
 		  (error "el-get could not find file '%s'" pfile))
 		(message "el-get: load '%s'" pfile)
