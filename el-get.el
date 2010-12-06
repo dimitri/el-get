@@ -1367,7 +1367,6 @@ absolute filename obtained with expand-file-name is executable."
       ;; async
       (let ((process-list
 	     (mapcar (lambda (c)
-                       (message "******* %S" c)
 		       (let* ((split    (if (stringp c) 
                                             (split-string c) 
                                           (mapcar 'shell-quote-argument c)))
