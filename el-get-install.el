@@ -24,7 +24,7 @@
        (bname             "*el-get bootstrap*")
        (pdir              (concat (file-name-as-directory el-get-dir) package))
        (git               (or (executable-find "git") (error "Unable to find `git'")))
-       (url               "git://github.com/dimitri/el-get.git")
+       (url               "git://github.com/dabrahams/el-get.git")
        (el-get-sources    `((:name ,package :type "git" :url ,url :features el-get :compile "el-get.el")))
        (default-directory el-get-dir)
        (process-connection-type nil) ; pipe, no pty (--no-progress)

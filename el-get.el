@@ -304,10 +304,25 @@ definition provided by `el-get' recipes locally.
 
 :build
 
-    Your build recipe gets there, often it looks
-    like (\"./configure\" \"make\").  The list will be evaluated
-    so that you can build it at run time too, using things such
-    as `(,(concat \"make EMACS=\" el-get-emacs \"all\")) for example.
+    Your build recipe, a list.  
+
+    A recipe R whose `car' is a string will first be converted
+    to (cons 'list R).  For example, (\"./configure\" \"make\")
+    becomes (list \"./configure\" \"make\")
+
+    The recipe will be `eval''d, allowing constructs like
+    `(,(concat \"make EMACS=\" el-get-emacs \"all\"))'.  
+
+    Finally, each element of the recipe will be interpreted as
+    a command:
+
+    * If it is a string, it will be interpreted directly by the
+      shell.
+
+    * Otherwise, if it is a list, any list sub-elements will be
+      recursively \"flattened\" (see `el-get-flatten').  The
+      resulting strings will be interpreted as individual shell
+      arguments, appropriately quoted.
 
 :build/system-type
 
@@ -536,7 +551,7 @@ Any other property will get put into the process object.
 				default-directory)))
       (if sync
           (let* ((startf (if shell #'call-process-shell-command #'call-process))
-                 (dummy  (message "el-get is waiting for %S to complete" cname))
+                 (dummy  (message "el-get is waiting for %S to complete on args: %S" cname args))
                  (status (apply startf program nil cbuf t args))
                  (message (plist-get c :message))
                  (errorm  (plist-get c :error))
@@ -1291,14 +1306,20 @@ the files up."
     (funcall post-remove-fun package)))
 
 (defun el-get-build-commands (package)
-  "Given a PACKAGE, returns its building commands."
-  (let ((build-commands
-	 (let* ((source     (el-get-package-def package))
-		(build-type (intern (format ":build/%s" system-type))))
-	   (or (plist-get source build-type)
-	       (plist-get source :build)))))
-    (or (ignore-errors (eval build-commands)) build-commands)))
+  "Return a list of build commands for the named PACKAGE.
 
+The result will either be nil; a list of strings, each one to be
+interpreted as a shell command; or a list of lists of
+strings, each string representing a single shell argument."
+  (let* ((source     (el-get-package-def package))
+         (build-type (intern (format ":build/%s" system-type)))
+         (build-commands
+	   (or (plist-get source build-type)
+	       (plist-get source :build))))
+    (unless (null build-commands)
+      (if (stringp (car build-commands))
+          build-commands
+        (mapcar 'el-get-flatten (eval build-commands))))))
 
 (defun el-get-build-command-program (name)
   "Given the user command name, get the command program to execute.
@@ -1312,25 +1333,45 @@ absolute filename obtained with expand-file-name is executable."
 	  ((file-executable-p fullname) fullname)
 	  (t (or exe name)))))
 
+(defun el-get-flatten (arg)
+  "Return a version of ARG as a one-level list
+
+ (el-get-flatten 'x) => '(x)
+ (el-get-flatten '(a (b c (d)) e)) => '(a b c d e)
+"
+  (if (listp arg)
+      (apply 'append (mapcar 'el-get-flatten arg))
+    `(,arg))
+)
+
 (defun el-get-build (package commands &optional subdir sync post-build-fun)
   "Run each command from the package directory."
   (let* ((pdir   (el-get-package-directory package))
 	 (wdir   (if subdir (concat pdir subdir) pdir))
 	 (buf    (format "*el-get-build: %s*" package))
 	 (default-directory wdir))
+
     (if sync
 	(progn
 	  (dolist (c commands)
-	    (message "el-get %s: cd %s && %s" package wdir c)
-	    (message "%S" (shell-command-to-string
-			   (concat "cd " wdir " && " c))))
+            (let ((default-directory wdir)
+                  (cmd 
+                   (if (stringp c) c
+                     (mapconcat 'shell-quote-argument c " "))))
+              (message "el-get %s (in %s): %s" package wdir cmd)
+              (message "%S" (shell-command-to-string cmd))
+			   ))
 	  (when (and post-build-fun (functionp post-build-fun))
 	    (funcall post-build-fun)))
 
       ;; async
       (let ((process-list
 	     (mapcar (lambda (c)
-		       (let* ((split    (split-string c))
+                       (message "******* %S" c)
+		       (let* ((split    (if (stringp c) 
+                                            (split-string c) 
+                                          (mapcar 'shell-quote-argument c)))
+                              (c        (mapconcat 'identity split " "))
 			      (name     (car split))
 			      (program  (el-get-build-command-program name))
 			      (args     (cdr split)))
