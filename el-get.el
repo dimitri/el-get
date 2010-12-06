@@ -1546,14 +1546,14 @@ entry."
   (completing-read (format "%s package: " action)
                    (el-get-package-name-list merge-recipes) nil t))
 
-(defun el-get-byte-compile-file (pdir f)
-  "byte-compile the file F in PDIR (a directory name) if there's
-no .elc or the source is newer"
-  (let* ((el  (concat pdir f))
-	 (elc (concat (file-name-sans-extension el) ".elc")))
+(defun el-get-byte-compile-file (el)
+  "byte-compile the file EL if there's no .elc or the source is newer"
+  (let* ((elc (concat (file-name-sans-extension el) ".elc")))
     (when (or (not (file-exists-p elc))
-	      (file-newer-than-file-p el elc))
-      (byte-compile-file el))))
+	      (and (file-newer-than-file-p el elc) 
+                   (progn (delete-file elc) t))) ;; in case compilation fails
+      (byte-compile-file el)
+      )))
 
 (defun el-get-set-info-path (package infodir-rel)
   (require 'info)
@@ -1624,10 +1624,10 @@ called by `el-get' (usually at startup) for each package in
               (let ((fp (concat pdir path)))
                 ;; we accept directories, files and file name regexp
                 (cond ((file-directory-p fp) (byte-recompile-directory fp 0))
-                      ((file-exists-p fp)    (el-get-byte-compile-file pdir path))
+                      ((file-exists-p fp)    (el-get-byte-compile-file (concat pdir path)))
                       (t ; regexp case
                        (dolist (file (directory-files pdir nil path))
-                         (el-get-byte-compile-file pdir file))))))
+                         (el-get-byte-compile-file (concat pdir file)))))))
           ;; Compile that directory, unless users asked not to (:compile nil)
 	  ;; or unless we have build instructions (then they should care)
           ;; or unless we have installed pre-compiled package
