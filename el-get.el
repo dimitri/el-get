@@ -1624,8 +1624,7 @@ shouldn't be invoked directly."
 is nil, marks all installed packages as needing new autoloads."
   
   ;; If this is the first invalidation, launch the hook
-  (unless el-get-outdated-autoloads
-    (add-hook 'post-command-hook 'el-get-update-autoloads))
+  (add-hook 'post-command-hook 'el-get-update-autoloads)
 
   ;; Save the package names for later
   (mapc (lambda (p) (add-to-list 'el-get-outdated-autoloads p))
