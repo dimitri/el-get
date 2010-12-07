@@ -1561,6 +1561,14 @@ entry."
       (byte-compile-file el)
       )))
 
+(defun el-get-save-and-kill (file)
+  "Save and kill all buffers visiting the named FILE"
+  (let (buf)
+    (while (setq buf (find-buffer-visiting file))
+      (with-current-buffer buf
+        (save-buffer)
+        (kill-buffer)))))
+
 (defun el-get-ensure-byte-compilable-autoload-file (file)
   "If FILE doesn't already exist, create it as a byte-compilable
   autoload file (the default created by autoload.el has a local
@@ -1608,15 +1616,31 @@ shouldn't be invoked directly."
       (if (string= (el-get-package-status p) "installed")
           (apply 'update-directory-autoloads (el-get-load-path p))))
 
+    (el-get-save-and-kill el-get-autoload-file)
+
     (message "el-get: byte-compiling autoload file")
     (el-get-byte-compile-file el-get-autoload-file)
 
     (el-get-eval-autoloads)
-
-    (let ((buf (find-file-noselect el-get-autoload-file)))
-      (save-buffer buf)
-      (kill-buffer buf))
   )
+)
+
+(defconst el-get-load-suffix-regexp
+  (concat (mapconcat 'regexp-quote (get-load-suffixes) "\\|") "\\'"))
+
+(defun el-get-remove-autoloads (package)
+  "Remove from `el-get-autoload-file' any autoloads associated
+with the named PACKAGE" 
+  (with-temp-buffer ;; empty buffer to trick `autoload-find-destination'
+    (let ((generated-autoload-file el-get-autoload-file)
+          (autoload-modified-buffers `(,(current-buffer))))
+      (dolist (dir (el-get-load-path package))
+        (when (file-directory-p dir)
+          (dolist (f (directory-files dir t el-get-load-suffix-regexp))
+            ;; this will clear out any autoloads associated with the file
+            (autoload-find-destination f)
+            )))))
+  (el-get-save-and-kill el-get-autoload-file)
 )
 
 (defun el-get-invalidate-autoloads ( &optional package )
@@ -1862,9 +1886,9 @@ from `el-get-sources'."
 	   (remove   (el-get-method method :remove))
 	   (url      (plist-get source :url)))
       ;; remove the package now
+      (el-get-remove-autoloads package)
       (funcall remove package url 'el-get-post-remove)
       (el-get-save-package-status package "removed")
-      (el-get-invalidate-autoloads)
       (message "el-get remove %s" package))))
 
 (defun el-get-cd (package)
