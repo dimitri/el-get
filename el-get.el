@@ -314,18 +314,14 @@ definition provided by `el-get' recipes locally.
 
     Your build recipe, a list.  
 
-    A recipe R whose `car' is a string will first be converted
-    to (cons 'list R).  For example, (\"./configure\" \"make\")
-    becomes (list \"./configure\" \"make\")
+    A recipe R whose `car' is not a string will be replaced
+    by (eval R).
 
-    The recipe will be `eval''d, allowing constructs like
-    `(,(concat \"make EMACS=\" el-get-emacs \"all\"))'.  
-
-    Finally, each element of the recipe will be interpreted as
+    Then, each element of the recipe will be interpreted as
     a command:
 
-    * If it is a string, it will be interpreted directly by the
-      shell.
+    * If the element is a string, it will be interpreted directly
+      by the shell.
 
     * Otherwise, if it is a list, any list sub-elements will be
       recursively \"flattened\" (see `el-get-flatten').  The
@@ -1324,10 +1320,12 @@ strings, each string representing a single shell argument."
          (build-commands
 	   (or (plist-get source build-type)
 	       (plist-get source :build))))
-    (unless (null build-commands)
-      (if (stringp (car build-commands))
-          build-commands
-        (mapcar 'el-get-flatten (eval build-commands))))))
+
+    (unless (stringp (car build-commands))
+      (setq build-commands (eval build-commands)))
+
+    (mapcar (lambda (x) (if (stringp x) x (el-get-flatten x)))
+            build-commands)))
 
 (defun el-get-build-command-program (name)
   "Given the user command name, get the command program to execute.
