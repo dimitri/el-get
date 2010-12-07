@@ -1572,8 +1572,6 @@ entry."
   (unless (file-exists-p file)
     (write-region 
      (replace-regexp-in-string ";; no-byte-compile: t\n" "" (autoload-rubric file)) nil file)
-    (with-current-buffer (find-file-noselect file)
-      (save-buffer))
     ))
 
 (defun el-get-load-fast (file)
@@ -1616,6 +1614,10 @@ shouldn't be invoked directly."
     (el-get-byte-compile-file el-get-autoload-file)
 
     (el-get-eval-autoloads)
+
+    (let ((buf (find-file-noselect el-get-autoload-file)))
+      (save-buffer buf)
+      (kill-buffer buf))
   )
 )
 
