@@ -313,7 +313,7 @@ definition provided by `el-get' recipes locally.
 
 :load-path
 
-    This should be a list of directories you want `el-get' to add
+    A directory or a list of directories you want `el-get' to add
     to your `load-path'. Those directories are relative to where
     the package gets installed.
 
