@@ -301,10 +301,21 @@ definition provided by `el-get' recipes locally.
 
 :build
 
-    Your build recipe gets there, often it looks
-    like (\"./configure\" \"make\").  The list will be evaluated
-    so that you can build it at run time too, using things such
-    as `(,(concat \"make EMACS=\" el-get-emacs \"all\")) for example.
+    Your build recipe, a list.  
+
+    A recipe R whose `car' is not a string will be replaced
+    by (eval R).
+
+    Then, each element of the recipe will be interpreted as
+    a command:
+
+    * If the element is a string, it will be interpreted directly
+      by the shell.
+
+    * Otherwise, if it is a list, any list sub-elements will be
+      recursively \"flattened\" (see `el-get-flatten').  The
+      resulting strings will be interpreted as individual shell
+      arguments, appropriately quoted.
 
 :build/system-type
 
@@ -533,7 +544,7 @@ Any other property will get put into the process object.
 				default-directory)))
       (if sync
           (let* ((startf (if shell #'call-process-shell-command #'call-process))
-                 (dummy  (message "el-get is waiting for %S to complete" cname))
+                 (dummy  (message "el-get is waiting for %S to complete on args: %S" cname args))
                  (status (apply startf program nil cbuf t args))
                  (message (plist-get c :message))
                  (errorm  (plist-get c :error))
@@ -1296,14 +1307,22 @@ the files up."
     (funcall post-remove-fun package)))
 
 (defun el-get-build-commands (package)
-  "Given a PACKAGE, returns its building commands."
-  (let ((build-commands
-	 (let* ((source     (el-get-package-def package))
-		(build-type (intern (format ":build/%s" system-type))))
-	   (or (plist-get source build-type)
-	       (plist-get source :build)))))
-    (or (ignore-errors (eval build-commands)) build-commands)))
+  "Return a list of build commands for the named PACKAGE.
 
+The result will either be nil; a list of strings, each one to be
+interpreted as a shell command; or a list of lists of
+strings, each string representing a single shell argument."
+  (let* ((source     (el-get-package-def package))
+         (build-type (intern (format ":build/%s" system-type)))
+         (build-commands
+	   (or (plist-get source build-type)
+	       (plist-get source :build))))
+
+    (unless (stringp (car build-commands))
+      (setq build-commands (eval build-commands)))
+
+    (mapcar (lambda (x) (if (stringp x) x (el-get-flatten x)))
+            build-commands)))
 
 (defun el-get-build-command-program (name)
   "Given the user command name, get the command program to execute.
@@ -1333,19 +1352,31 @@ absolute filename obtained with expand-file-name is executable."
 	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir))
 	 (buf    (format "*el-get-build: %s*" package))
 	 (default-directory wdir))
+
     (if sync
 	(progn
 	  (dolist (c commands)
-	    (message "el-get %s: cd %s && %s" package wdir c)
-	    (message "%S" (shell-command-to-string
-			   (concat "cd " wdir " && " c))))
+            ;; dimitri had some problems with the use of
+            ;; default-directory once -- using an explicit cd until we
+            ;; can run effective tests
+            (let (;(default-directory wdir) 
+                  (cmd 
+                   (concat "cd"  (shell-quote-argument wdir) " && "
+                           (if (stringp c) c
+                             (mapconcat 'shell-quote-argument c " ")))))
+              (message "el-get %s (in %s): %s" package wdir cmd)
+              (message "%S" (shell-command-to-string cmd))
+			   ))
 	  (when (and post-build-fun (functionp post-build-fun))
 	    (funcall post-build-fun)))
 
       ;; async
       (let ((process-list
 	     (mapcar (lambda (c)
-		       (let* ((split    (split-string c))
+		       (let* ((split    (if (stringp c) 
+                                            (split-string c) 
+                                          (mapcar 'shell-quote-argument c)))
+                              (c        (mapconcat 'identity split " "))
 			      (name     (car split))
 			      (program  (el-get-build-command-program name))
 			      (args     (cdr split)))
