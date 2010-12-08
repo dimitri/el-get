@@ -410,7 +410,7 @@ given method."
   "(add-to-list LIST PATH) checking for path existence within
 given package directory."
   (let* ((pdir     (el-get-package-directory package))
-	 (fullpath (expand-file-name (concat (file-name-as-directory pdir) path))))
+	 (fullpath (expand-file-name path (file-name-as-directory pdir))))
     (unless (file-directory-p fullpath)
       (error "el-get could not find directory `%s' for package %s, at %s" path package fullpath))
     (add-to-list list fullpath)))
@@ -1588,7 +1588,7 @@ entry."
                       (member method '(apt-get fink pacman)))
             (dolist (dir el-path)
               (byte-recompile-directory
-               (expand-file-name (concat (file-name-as-directory pdir) dir)) 0))))))
+               (expand-file-name dir (file-name-as-directory pdir)) 0))))))
 
     ;; call the "before" user function
     (when (and before (functionp before))
