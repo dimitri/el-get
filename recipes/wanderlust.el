@@ -1,4 +1,4 @@
-(:name wl
+(:name wanderlust
        :type cvs 
        :module "wanderlust" 
        :url ":pserver:anonymous@cvs.m17n.org:/cvs/root" 
@@ -19,5 +19,5 @@
                '(("wl-texinfo-format" "doc")
                  ("compile-wl-package"  "site-lisp" "icons") 
                  ("install-wl-package" "site-lisp" "icons")))
-       :info "doc"
+       :info "doc/wl.info"
        :load-path ("site-lisp/wl"))
