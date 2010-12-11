@@ -34,7 +34,7 @@ More involved way:
 ;; So the idea is that you copy/paste this code into your *scratch* buffer,
 ;; hit C-j, and you have a working el-get.
 
-(let* ((el-get-dir        (expand-file-name "/tmp/emacs.d/el-get/"))
+(let* ((el-get-dir        (expand-file-name "~/.emacs.d/el-get/"))
        (dummy             (unless (file-directory-p el-get-dir)
 			    (make-directory el-get-dir t)))
        (package           "el-get")

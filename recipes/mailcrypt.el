@@ -7,7 +7,7 @@
                 "./configure"
                 ,(mapconcat 'shell-quote-argument
                             `("make"
-                              ,(concat "EMACS=" invocation-directory invocation-name)
+                              ,(concat "EMACS=" el-get-emacs)
                               "INFOFILES=mailcrypt.info") " ")
                 )
 )
