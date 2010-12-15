@@ -7,5 +7,5 @@
                    (concat "make " target " EMACS=" el-get-emacs))
                  '("clean" "all"))
        :load-path ("elisp")
-       :feature distel-setup)
+       :features distel-setup)
 
