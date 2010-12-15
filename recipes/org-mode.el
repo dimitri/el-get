@@ -8,5 +8,4 @@
                  '("clean" "all" "doc"))
        :load-path ("lisp" "contrib/lisp")
        :features org-install)
-)
 
