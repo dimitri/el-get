@@ -6,5 +6,6 @@
                  (lambda (target)
                    (concat "make " target " EMACS=" el-get-emacs))
                  '("clean" "all"))
+       :load-path ("lisp")
        :features ess-site)
 
