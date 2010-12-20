@@ -4,7 +4,7 @@
 ;;
 ;; Author: Dimitri Fontaine <dim@tapoueh.org>
 ;; URL: http://www.emacswiki.org/emacs/el-get.el
-;; Version: 1.1~dev
+;; Version: 1.1
 ;; Created: 2010-06-17
 ;; Keywords: emacs package elisp install elpa git git-svn bzr cvs svn darcs hg
 ;;           apt-get fink pacman http http-tar emacswiki
@@ -17,7 +17,7 @@
 ;;
 ;; Changelog
 ;;
-;;  1.1 - <WIP> - Nobody's testing until the release
+;;  1.1 - 2010-12-20 - Nobody's testing until the release
 ;;
 ;;   - Adapt to package.el from Emacs24 by using relative symlinks to ELPA
 ;;     packages ((package-user-dir) is "~/.emacs.d/elpa" now, so needs to
