@@ -4,7 +4,7 @@
 ;;
 ;; Author: Dimitri Fontaine <dim@tapoueh.org>
 ;; URL: http://www.emacswiki.org/emacs/el-get.el
-;; Version: 1.1~dev
+;; Version: 1.1
 ;; Created: 2010-06-17
 ;; Keywords: emacs package elisp install elpa git git-svn bzr cvs svn darcs hg
 ;;           apt-get fink pacman http http-tar emacswiki
@@ -17,7 +17,7 @@
 ;;
 ;; Changelog
 ;;
-;;  1.1 - <WIP> - Nobody's testing until the release
+;;  1.1 - 2010-12-20 - Nobody's testing until the release
 ;;
 ;;   - Adapt to package.el from Emacs24 by using relative symlinks to ELPA
 ;;     packages ((package-user-dir) is "~/.emacs.d/elpa" now, so needs to
@@ -246,9 +246,6 @@ the named package action in the given method."
 
 (defvar el-get-svn (executable-find "svn")
   "The svn executable.")
-
-(defvar el-get-darcs (executable-find "darcs")
-  "The darcs executable.")
 
 (defvar el-get-fink-base "/sw/share/doc"
   "Where to link the el-get symlink to, /<package> will get appended.")
@@ -823,9 +820,17 @@ found."
 ;;
 ;; darcs support
 ;;
+(defun el-get-darcs-executable ()
+  "Return darcs executable to use, or signal an error when not
+found."
+  (let ((darcs-executable (executable-find "darcs")))
+    (unless (and darcs-executable (file-executable-p darcs-executable))
+      (error "The  `darcs' binary can not be found in your PATH"))
+    darcs-executable))
+
 (defun el-get-darcs-get (package url post-install-fun)
   "Get a given PACKAGE following the URL using darcs."
-  (let* ((darcs-executable el-get-darcs)
+  (let* ((darcs-executable (el-get-darcs-executable))
 	 (name (format "*darcs get %s*" package))
 	 (ok   (format "Package %s installed" package))
 	 (ko   (format "Could not install package %s." package)))
@@ -842,7 +847,7 @@ found."
 
 (defun el-get-darcs-pull (package url post-update-fun)
   "darcs pull the package."
-  (let* ((darcs-executable el-get-darcs)
+  (let* ((darcs-executable (el-get-darcs-executable))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*darcs pull %s*" package))
 	 (ok   (format "Pulled package %s." package))
