@@ -361,7 +361,7 @@ definition provided by `el-get' recipes locally.
 
 :module
 
-    Currently only used by the `csv' support, allow you to
+    Currently only used by the `cvs' support, allow you to
     configure the module you want to checkout in the given URL.
 
 :before
@@ -379,8 +379,8 @@ definition provided by `el-get' recipes locally.
     Currently only used by both `http' and `ftp' supports, allows
     to specify the target name of the downloaded file.
 
-    This option is useful if the package sould be retrived using
-    a presentation insterface (such as as web SCM tool).
+    This option is useful if the package should be retrieved using
+    a presentation interface (such as as web SCM tool).
 
     For example, destination should be set to \"package.el\" if
     the package url has the following scheme:
@@ -454,7 +454,7 @@ directory or a symlink in el-get-dir."
 
 (defvar el-get-default-process-sync nil
   "Non-nil value asks `el-get-start-process-list' to run current
-process syncronously. Can be overriden by :sync property in
+process synchronously. Can be overridden by :sync property in
 commands argument of `el-get-start-process-list'")
 
 (defun el-get-start-process-list (package commands final-func)
@@ -1116,7 +1116,7 @@ PACKAGE isn't currently installed by ELPA."
 (defun el-get-http-install (package url post-install-fun &optional dest)
   "Dowload a single-file PACKAGE over HTTP and store it in DEST.
 
-Should dest be omited (nil), the url content will get written
+Should dest be omitted (nil), the url content will get written
 into the package :localname option or its `file-name-nondirectory' part."
   (let* ((pdir   (el-get-package-directory package))
 	 (fname  (or (plist-get (el-get-package-def package) :localname)
@@ -1362,7 +1362,7 @@ absolute filename obtained with expand-file-name is executable."
 	return (el-get-read-recipe-file recipe)))
 
 (defun el-get-read-all-recipes (&optional merge)
-  "Return the list of all the recipes, formated like `el-get-sources'.
+  "Return the list of all the recipes, formatted like `el-get-sources'.
 
 Only consider any given recipe only once even if present in
 multiple dirs from `el-get-recipe-path'. The first recipe found
