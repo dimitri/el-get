@@ -1842,7 +1842,7 @@ welcome to use `autoload' too."
                         (make-progress-reporter
 			 "Waiting for `el-get' to complete… "
 			 0 (- total installed) 0)))
-         (el-get-default-process-sync (eq sync 'sync)))
+         (el-get-default-process-sync sync))
     ;; keep the result of mapcar to return it even in the 'wait case
     (prog1
         (mapcar
