@@ -403,8 +403,8 @@ given method."
     (make-directory el-get-dir)))
 
 (defun el-get-package-directory (package)
-  "Returns the package installation directory absolute name."
-  (concat (file-name-as-directory el-get-dir) package))
+  "Return the abosolute directory name of the named PACKAGE's directory."
+  (file-name-as-directory (concat (file-name-as-directory el-get-dir) package)))
 
 (defun el-get-add-path-to-list (package list path)
   "(add-to-list LIST PATH) checking for path existence within
