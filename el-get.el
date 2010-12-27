@@ -1482,23 +1482,21 @@ entry."
       (error "Please remove duplicates in `el-get-sources': %S." duplicates))
     package-name-list))
 
-(defun el-get-package-p (package)
-  "Check that PACKAGE is actually a valid package according to
-`el-get-sources'."
+(defun el-get-package-p (package-name)
+  "Check that PACKAGE-NAME is the name of a package in `el-get-sources'."
   ;; don't check for duplicates in this function
-  (member package (mapcar 'el-get-source-name el-get-sources)))
+  (member package-name (mapcar 'el-get-source-name el-get-sources)))
 
-(defun el-get-error-unless-package-p (package)
-  "Raise en error if PACKAGE is not a valid package according to
-`el-get-package-p'."
-  (unless (el-get-package-p package)
-    (error "el-get: can not find package name `%s' in `el-get-sources'" package))
+(defun el-get-error-unless-package-p (package-name)
+  "Raise an error if PACKAGE-NAME does not name a package in `el-get-sources'."
+  (unless (el-get-package-p package-name)
+    (error "el-get: can not find package name `%s' in `el-get-sources'" package-name))
   ;; check for recipe too
-  (let ((recipe (el-get-package-def package)))
+  (let ((recipe (el-get-package-def package-name)))
     (unless recipe
-      (error "el-get: package `%s' has no recipe" package))
+      (error "el-get: package `%s' has no recipe" package-name))
     (unless (plist-member recipe :type)
-      (error "el-get: package `%s' has incomplete recipe (no :type)" package))))
+      (error "el-get: package `%s' has incomplete recipe (no :type)" package-name))))
 
 (defun el-get-read-package-name (action &optional merge-recipes)
   "Ask user for a package name in minibuffer, with completion."
