@@ -99,6 +99,7 @@
 (require 'package nil t) ; that's ELPA, but you can use el-get to install it
 (require 'cl)            ; needed for `remove-duplicates'
 (require 'bytecomp)
+(require 'autoload)
 
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
@@ -232,6 +233,13 @@ the named package action in the given method."
   (concat (file-name-as-directory el-get-dir) ".status.el")
   "Define where to store and read the package statuses")
 
+(defvar el-get-autoload-file
+  (concat (file-name-as-directory el-get-dir) ".loaddefs.el")
+  "Where generated autoloads are saved")
+
+(defvar el-get-outdated-autoloads nil
+  "List of package names whose autoloads are outdated")
+
 (defvar el-get-emacs (concat invocation-directory invocation-name)
   "Where to find the currently running emacs, a facility for :build commands")
 
@@ -301,10 +309,21 @@ definition provided by `el-get' recipes locally.
 
 :build
 
-    Your build recipe gets there, often it looks
-    like (\"./configure\" \"make\").  The list will be evaluated
-    so that you can build it at run time too, using things such
-    as `(,(concat \"make EMACS=\" el-get-emacs \"all\")) for example.
+    Your build recipe, a list.  
+
+    A recipe R whose `car' is not a string will be replaced
+    by (eval R).
+
+    Then, each element of the recipe will be interpreted as
+    a command:
+
+    * If the element is a string, it will be interpreted directly
+      by the shell.
+
+    * Otherwise, if it is a list, any list sub-elements will be
+      recursively \"flattened\" (see `el-get-flatten').  The
+      resulting strings will be interpreted as individual shell
+      arguments, appropriately quoted.
 
 :build/system-type
 
@@ -313,7 +332,7 @@ definition provided by `el-get' recipes locally.
 
 :load-path
 
-    This should be a list of directories you want `el-get' to add
+    A directory or a list of directories you want `el-get' to add
     to your `load-path'. Those directories are relative to where
     the package gets installed.
 
@@ -390,6 +409,14 @@ definition provided by `el-get' recipes locally.
 ")
 
 
+(defun el-get-load-path (package)
+  "Return the list of absolute directory names to be added to
+`load-path' by the named PACKAGE."
+  (let* ((source   (el-get-package-def package))
+	 (el-path  (el-get-flatten (or (plist-get source :load-path) ".")))
+         (pkg-dir (el-get-package-directory package)))
+    (mapcar (lambda (p) (expand-file-name p pkg-dir)) el-path)))
+
 (defun el-get-method (method-name action)
   "Return the function to call for doing action (e.g. install) in
 given method."
@@ -403,14 +430,14 @@ given method."
     (make-directory el-get-dir)))
 
 (defun el-get-package-directory (package)
-  "Returns the package installation directory absolute name."
-  (concat (file-name-as-directory el-get-dir) package))
+  "Return the abosolute directory name of the named PACKAGE's directory."
+  (file-name-as-directory (concat (file-name-as-directory el-get-dir) package)))
 
 (defun el-get-add-path-to-list (package list path)
   "(add-to-list LIST PATH) checking for path existence within
 given package directory."
   (let* ((pdir     (el-get-package-directory package))
-	 (fullpath (expand-file-name (concat (file-name-as-directory pdir) path))))
+	 (fullpath (expand-file-name path (file-name-as-directory pdir))))
     (unless (file-directory-p fullpath)
       (error "el-get could not find directory `%s' for package %s, at %s" path package fullpath))
     (add-to-list list fullpath)))
@@ -525,7 +552,7 @@ Any other property will get put into the process object.
 				default-directory)))
       (if sync
           (let* ((startf (if shell #'call-process-shell-command #'call-process))
-                 (dummy  (message "el-get is waiting for %S to complete" cname))
+                 (dummy  (message "el-get is waiting for %S to complete on args: %S" cname args))
                  (status (apply startf program nil cbuf t args))
                  (message (plist-get c :message))
                  (errorm  (plist-get c :error))
@@ -1125,8 +1152,14 @@ into the package :localname option or its `file-name-nondirectory' part."
 		     (concat (file-name-as-directory pdir) fname))))
     (unless (file-directory-p pdir)
       (make-directory pdir))
-    (url-retrieve
-     url 'el-get-http-retrieve-callback `(,package ,post-install-fun ,dest ,el-get-sources))))
+
+    (if (not el-get-default-process-sync)
+        (url-retrieve url 'el-get-http-retrieve-callback 
+                      `(,package ,post-install-fun ,dest ,el-get-sources))
+      
+      (with-current-buffer (url-retrieve-synchronously url)
+        (el-get-http-retrieve-callback nil package post-install-fun dest el-get-sources)))))
+  
 
 
 ;;
@@ -1288,14 +1321,22 @@ the files up."
     (funcall post-remove-fun package)))
 
 (defun el-get-build-commands (package)
-  "Given a PACKAGE, returns its building commands."
-  (let ((build-commands
-	 (let* ((source     (el-get-package-def package))
-		(build-type (intern (format ":build/%s" system-type))))
-	   (or (plist-get source build-type)
-	       (plist-get source :build)))))
-    (or (ignore-errors (eval build-commands)) build-commands)))
+  "Return a list of build commands for the named PACKAGE.
 
+The result will either be nil; a list of strings, each one to be
+interpreted as a shell command; or a list of lists of
+strings, each string representing a single shell argument."
+  (let* ((source     (el-get-package-def package))
+         (build-type (intern (format ":build/%s" system-type)))
+         (build-commands
+	   (or (plist-get source build-type)
+	       (plist-get source :build))))
+
+    (unless (stringp (car build-commands))
+      (setq build-commands (eval build-commands)))
+
+    (mapcar (lambda (x) (if (stringp x) x (el-get-flatten x)))
+            build-commands)))
 
 (defun el-get-build-command-program (name)
   "Given the user command name, get the command program to execute.
@@ -1309,25 +1350,47 @@ absolute filename obtained with expand-file-name is executable."
 	  ((file-executable-p fullname) fullname)
 	  (t (or exe name)))))
 
+(defun el-get-flatten (arg)
+  "Return a version of ARG as a one-level list
+
+ (el-get-flatten 'x) => '(x)
+ (el-get-flatten '(a (b c (d)) e)) => '(a b c d e)
+"
+  (if (listp arg)
+      (apply 'append (mapcar 'el-get-flatten arg))
+    `(,arg)))
+
 (defun el-get-build (package commands &optional subdir sync post-build-fun)
   "Run each command from the package directory."
   (let* ((pdir   (el-get-package-directory package))
 	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir))
 	 (buf    (format "*el-get-build: %s*" package))
 	 (default-directory wdir))
+
     (if sync
 	(progn
 	  (dolist (c commands)
-	    (message "el-get %s: cd %s && %s" package wdir c)
-	    (message "%S" (shell-command-to-string
-			   (concat "cd " wdir " && " c))))
+            ;; dimitri had some problems with the use of
+            ;; default-directory once -- using an explicit cd until we
+            ;; can run effective tests
+            (let (;(default-directory wdir) 
+                  (cmd 
+                   (concat "cd"  (shell-quote-argument wdir) " && "
+                           (if (stringp c) c
+                             (mapconcat 'shell-quote-argument c " ")))))
+              (message "el-get %s (in %s): %s" package wdir cmd)
+              (message "%S" (shell-command-to-string cmd))
+			   ))
 	  (when (and post-build-fun (functionp post-build-fun))
 	    (funcall post-build-fun)))
 
       ;; async
       (let ((process-list
 	     (mapcar (lambda (c)
-		       (let* ((split    (split-string c))
+		       (let* ((split    (if (stringp c) 
+                                            (split-string c) 
+                                          (mapcar 'shell-quote-argument c)))
+                              (c        (mapconcat 'identity split " "))
 			      (name     (car split))
 			      (program  (el-get-build-command-program name))
 			      (args     (cdr split)))
@@ -1482,36 +1545,130 @@ entry."
       (error "Please remove duplicates in `el-get-sources': %S." duplicates))
     package-name-list))
 
-(defun el-get-package-p (package)
-  "Check that PACKAGE is actually a valid package according to
-`el-get-sources'."
+(defun el-get-package-p (package-name)
+  "Check that PACKAGE-NAME is the name of a package in `el-get-sources'."
   ;; don't check for duplicates in this function
-  (member package (mapcar 'el-get-source-name el-get-sources)))
+  (member package-name (mapcar 'el-get-source-name el-get-sources)))
 
-(defun el-get-error-unless-package-p (package)
-  "Raise en error if PACKAGE is not a valid package according to
-`el-get-package-p'."
-  (unless (el-get-package-p package)
-    (error "el-get: can not find package name `%s' in `el-get-sources'" package))
+(defun el-get-error-unless-package-p (package-name)
+  "Raise an error if PACKAGE-NAME does not name a package in `el-get-sources'."
+  (unless (el-get-package-p package-name)
+    (error "el-get: can not find package name `%s' in `el-get-sources'" package-name))
   ;; check for recipe too
-  (let ((recipe (el-get-package-def package)))
+  (let ((recipe (el-get-package-def package-name)))
     (unless recipe
-      (error "el-get: package `%s' has no recipe" package))
+      (error "el-get: package `%s' has no recipe" package-name))
     (unless (plist-member recipe :type)
-      (error "el-get: package `%s' has incomplete recipe (no :type)" package))))
+      (error "el-get: package `%s' has incomplete recipe (no :type)" package-name))))
 
 (defun el-get-read-package-name (action &optional merge-recipes)
   "Ask user for a package name in minibuffer, with completion."
   (completing-read (format "%s package: " action)
                    (el-get-package-name-list merge-recipes) nil t))
 
-(defun el-get-byte-compile-file (pdir f)
-  "byte-compile the PDIR/F file if there's no .elc or the source is newer"
-  (let* ((el  (concat (file-name-as-directory pdir) f))
-	 (elc (concat (file-name-sans-extension el) ".elc")))
+(defun el-get-byte-compile-file (el)
+  "byte-compile the file EL if there's no .elc or the source is newer"
+  (let* ((elc (concat (file-name-sans-extension el) ".elc")))
     (when (or (not (file-exists-p elc))
-	      (file-newer-than-file-p el elc))
+	      (and (file-newer-than-file-p el elc) 
+                   (progn (delete-file elc) t))) ;; in case compilation fails
       (byte-compile-file el))))
+
+(defun el-get-save-and-kill (file)
+  "Save and kill all buffers visiting the named FILE"
+  (let (buf)
+    (while (setq buf (find-buffer-visiting file))
+      (with-current-buffer buf
+        (save-buffer)
+        (kill-buffer)))))
+
+(defun el-get-ensure-byte-compilable-autoload-file (file)
+  "If FILE doesn't already exist, create it as a byte-compilable
+  autoload file (the default created by autoload.el has a local
+  no-byte-compile variable that suppresses byte compilation)."
+  ;; If we don't explicitly strip out the no-byte-compile variable,
+  ;; autoload.el will create it on demand
+  (unless (file-exists-p file)
+    (write-region 
+     (replace-regexp-in-string ";; no-byte-compile: t\n" "" (autoload-rubric file)) nil file)))
+
+(defun el-get-load-fast (file)
+  "Load the compiled version of FILE if it exists; else load FILE verbatim"
+  (load (file-name-sans-extension file)))
+
+(defun el-get-eval-autoloads ()
+  "Evaluate the autoloads from the autoload file."
+  (message "el-get: evaluating autoload file")
+  (el-get-load-fast el-get-autoload-file))
+
+(defun el-get-update-autoloads ()
+  "Regenerate, compile, and load any outdated packages' autoloads.
+
+This function will run from `post-command-hook', and usually
+shouldn't be invoked directly."
+
+  (message "el-get: updating outdated autoloads")
+  (setq el-get-autoload-timer nil) ;; Allow a new update to be primed
+
+  (let ((outdated el-get-outdated-autoloads)
+        ;; use dynamic scoping to set up our loaddefs file for
+        ;; update-directory-autoloads
+        (generated-autoload-file el-get-autoload-file))
+
+    ;; make sure we can actually byte-compile it
+    (el-get-ensure-byte-compilable-autoload-file generated-autoload-file)
+
+    ;; clear the list early in case of errors
+    (setq el-get-outdated-autoloads nil)
+
+    (dolist (p outdated)
+      (if (string= (el-get-package-status p) "installed")
+          (apply 'update-directory-autoloads (el-get-load-path p))))
+
+    (el-get-save-and-kill el-get-autoload-file)
+
+    (message "el-get: byte-compiling autoload file")
+    (el-get-byte-compile-file el-get-autoload-file)
+
+    (el-get-eval-autoloads)))
+
+(defconst el-get-load-suffix-regexp
+  (concat (mapconcat 'regexp-quote (get-load-suffixes) "\\|") "\\'"))
+
+(defun el-get-remove-autoloads (package)
+  "Remove from `el-get-autoload-file' any autoloads associated
+with the named PACKAGE" 
+  (with-temp-buffer ;; empty buffer to trick `autoload-find-destination'
+    (let ((generated-autoload-file el-get-autoload-file)
+          (autoload-modified-buffers `(,(current-buffer))))
+      (dolist (dir (el-get-load-path package))
+        (when (file-directory-p dir)
+          (dolist (f (directory-files dir t el-get-load-suffix-regexp))
+            ;; this will clear out any autoloads associated with the file
+            (autoload-find-destination f))))))
+  (el-get-save-and-kill el-get-autoload-file))
+
+(defvar el-get-autoload-timer nil
+  "Where the currently primed autoload timer (if any) is stored")
+
+(defun el-get-invalidate-autoloads ( &optional package )
+  "Mark the named PACKAGE as needing new autoloads.  If PACKAGE
+is nil, marks all installed packages as needing new autoloads." 
+
+  ;; Trigger autoload recomputation unless it's already been done
+  (unless el-get-autoload-timer
+    (setq el-get-autoload-timer
+          (run-with-idle-timer 0 nil 'el-get-update-autoloads)))
+
+  ;; Save the package names for later
+  (mapc (lambda (p) (add-to-list 'el-get-outdated-autoloads p))
+        (if package `(,package) (mapcar 'el-get-source-name el-get-sources)))
+
+  ;; If we're invalidating everything, try to start from a clean slate
+  (unless package
+    (ignore-errors 
+      (delete-file el-get-autoload-file)
+      (delete-file (concat (file-name-sans-extension el-get-autoload-file) ".elc")))))
 
 (defun el-get-set-info-path (package infodir-rel)
   (require 'info)
@@ -1519,14 +1676,20 @@ entry."
   (el-get-add-path-to-list package 'Info-directory-list infodir-rel))
 
 (defun el-get-init (package)
-  "Care about `load-path', `Info-directory-list', and (require 'features)."
+  "Make the named PACKAGE available for use.
+
+Add PACKAGE's directory (or `:load-path' if specified) to the
+`load-path', add any its `:info' directory to
+`Info-directory-list', and `require' its `:features'.  Will be
+called by `el-get' (usually at startup) for each package in
+`el-get-sources'."
   (interactive (list (el-get-read-package-name "Init")))
   (el-get-error-unless-package-p package)
   (let* ((source   (el-get-package-def package))
 	 (method   (plist-get source :type))
 	 (loads    (plist-get source :load))
 	 (feats    (plist-get source :features))
-	 (el-path  (or (plist-get source :load-path) '(".")))
+	 (el-path  (el-get-load-path package))
 	 (compile  (plist-get source :compile))
 	 (nocomp   (and (plist-member source :compile) (not compile)))
 	 (infodir  (plist-get source :info))
@@ -1576,10 +1739,10 @@ entry."
               (let ((fp (concat (file-name-as-directory pdir) path)))
                 ;; we accept directories, files and file name regexp
                 (cond ((file-directory-p fp) (byte-recompile-directory fp 0))
-                      ((file-exists-p fp)    (el-get-byte-compile-file pdir path))
+                      ((file-exists-p fp)    (el-get-byte-compile-file (concat pdir path)))
                       (t ; regexp case
                        (dolist (file (directory-files pdir nil path))
-                         (el-get-byte-compile-file pdir file))))))
+                         (el-get-byte-compile-file (concat pdir file)))))))
           ;; Compile that directory, unless users asked not to (:compile nil)
 	  ;; or unless we have build instructions (then they should care)
           ;; or unless we have installed pre-compiled package
@@ -1588,7 +1751,7 @@ entry."
                       (member method '(apt-get fink pacman)))
             (dolist (dir el-path)
               (byte-recompile-directory
-               (expand-file-name (concat (file-name-as-directory pdir) dir)) 0))))))
+               (expand-file-name dir (file-name-as-directory pdir)) 0))))))
 
     ;; call the "before" user function
     (when (and before (functionp before))
@@ -1602,7 +1765,7 @@ entry."
 		(unless (file-exists-p pfile)
 		  (error "el-get could not find file '%s'" pfile))
 		(message "el-get: load '%s'" pfile)
-		(load pfile)))
+		(el-get-load-fast pfile)))
 	    (if (stringp loads) (list loads) loads)))
 
     ;; features, only ELPA will handle them on its own
@@ -1632,17 +1795,18 @@ entry."
   (let* ((source   (el-get-package-def package))
 	 (hooks    (el-get-method (plist-get source :type) :install-hook))
 	 (commands (el-get-build-commands package)))
+
     ;; post-install is the right place to run install-hook
     (run-hook-with-args hooks package)
-    (if commands
-	;; build then init
-	(el-get-build package commands nil nil
-		      (lambda (package)
-                        (el-get-init package)
-			(el-get-save-package-status package "installed")))
-      ;; if there's no commands, just init and mark as installed
-      (el-get-init package)
-      (el-get-save-package-status package "installed")))
+
+    (let ((wrap-up (lambda (package) 
+                     (el-get-invalidate-autoloads package)
+                     (el-get-init package)
+                     (el-get-save-package-status package "installed"))))
+      (if commands
+          (el-get-build package commands nil nil wrap-up)
+        (apply wrap-up `(,package)))))
+
   (run-hook-with-args 'el-get-post-install-hooks package))
 
 (defun el-get-install (package)
@@ -1676,6 +1840,8 @@ from `el-get-sources'.
       ;; check we can install the package and save to "required" status
       (el-get-check-init)
       (el-get-save-package-status package "required")
+
+      (el-get-invalidate-autoloads package)
 
       ;; and install the package now, *then* message about it
       (funcall install package url 'el-get-post-install)
@@ -1729,6 +1895,7 @@ from `el-get-sources'."
 	   (remove   (el-get-method method :remove))
 	   (url      (plist-get source :url)))
       ;; remove the package now
+      (el-get-remove-autoloads package)
       (funcall remove package url 'el-get-post-remove)
       (el-get-save-package-status package "removed")
       (message "el-get remove %s" package))))
@@ -1828,7 +1995,10 @@ done synchronously, so you will have to wait here. There's
 welcome to use `autoload' too."
   (unless (or (null sync)
 	      (member sync '(sync wait)))
-    (error "el-get sync parameter should be either nil, sync or wait"))
+    (error "el-get sync parameter should be either nil, sync or wait")) 
+  ;; If there's no autoload file, everything needs to be regenerated.
+  (if (not (file-exists-p el-get-autoload-file)) (el-get-invalidate-autoloads))
+
   (let* ((p-status    (el-get-read-all-packages-status))
          (total       (length (el-get-package-name-list)))
          (installed   (el-get-count-package-with-status "installed"))
@@ -1836,7 +2006,7 @@ welcome to use `autoload' too."
                         (make-progress-reporter
 			 "Waiting for `el-get' to complete… "
 			 0 (- total installed) 0)))
-         (el-get-default-process-sync (eq sync 'sync)))
+         (el-get-default-process-sync sync))
     ;; keep the result of mapcar to return it even in the 'wait case
     (prog1
         (mapcar
@@ -1861,6 +2031,10 @@ welcome to use `autoload' too."
           ;; don't forget to account for installation failure
           (setq installed (el-get-count-package-with-status "installed" "required"))
           (progress-reporter-update progress (- total installed)))
-        (progress-reporter-done progress)))))
+        (progress-reporter-done progress))))
+
+  ;; unless we have autoloads to update, just load them now
+  (unless el-get-outdated-autoloads
+    (el-get-eval-autoloads)))
 
 (provide 'el-get)
