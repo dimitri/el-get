@@ -390,6 +390,14 @@ definition provided by `el-get' recipes locally.
 ")
 
 
+(defun el-get-load-path (package)
+  "Return the list of absolute directory names to be added to
+`load-path' by the named PACKAGE."
+  (let* ((source   (el-get-package-def package))
+	 (el-path  (el-get-flatten (or (plist-get source :load-path) ".")))
+         (pkg-dir (el-get-package-directory package)))
+    (mapcar (lambda (p) (expand-file-name p pkg-dir)) el-path)))
+
 (defun el-get-method (method-name action)
   "Return the function to call for doing action (e.g. install) in
 given method."
@@ -1309,6 +1317,16 @@ absolute filename obtained with expand-file-name is executable."
 	  ((file-executable-p fullname) fullname)
 	  (t (or exe name)))))
 
+(defun el-get-flatten (arg)
+  "Return a version of ARG as a one-level list
+
+ (el-get-flatten 'x) => '(x)
+ (el-get-flatten '(a (b c (d)) e)) => '(a b c d e)
+"
+  (if (listp arg)
+      (apply 'append (mapcar 'el-get-flatten arg))
+    `(,arg)))
+
 (defun el-get-build (package commands &optional subdir sync post-build-fun)
   "Run each command from the package directory."
   (let* ((pdir   (el-get-package-directory package))
@@ -1526,7 +1544,7 @@ entry."
 	 (method   (plist-get source :type))
 	 (loads    (plist-get source :load))
 	 (feats    (plist-get source :features))
-	 (el-path  (or (plist-get source :load-path) '(".")))
+	 (el-path  (el-get-load-path package))
 	 (compile  (plist-get source :compile))
 	 (nocomp   (and (plist-member source :compile) (not compile)))
 	 (infodir  (plist-get source :info))
