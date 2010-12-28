@@ -1,4 +1,4 @@
-(:name autofit-frame
+(:name fit-frame
        :type emacswiki
-       :features autofit-frame
+       :features fit-frame
        :after (lambda () (add-hook 'after-make-frame-functions 'fit-frame)))
