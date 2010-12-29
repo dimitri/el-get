@@ -1675,16 +1675,19 @@ is nil, marks all installed packages as needing new autoloads."
   (info-initialize)
   (el-get-add-path-to-list package 'Info-directory-list infodir-rel))
 
-(defun el-get-init (package)
+(defun el-get-init (package &optional noerror)
   "Make the named PACKAGE available for use.
 
 Add PACKAGE's directory (or `:load-path' if specified) to the
 `load-path', add any its `:info' directory to
 `Info-directory-list', and `require' its `:features'.  Will be
 called by `el-get' (usually at startup) for each package in
-`el-get-sources'."
+`el-get-sources'.
+
+Optional parameter NOERROR, if non-nil, suppresses errors in case
+package is not listed in `el-get-sources'"
   (interactive (list (el-get-read-package-name "Init")))
-  (el-get-error-unless-package-p package)
+  (unless noerror (el-get-error-unless-package-p package))
   (let* ((source   (el-get-package-def package))
 	 (method   (plist-get source :type))
 	 (loads    (plist-get source :load))
@@ -1790,23 +1793,26 @@ called by `el-get' (usually at startup) for each package in
     ;; return the package
     package))
 
-(defun el-get-post-install (package)
-  "Post install PACKAGE. This will get run by a sentinel."
+(defun el-get-post-install (package &optional noerror)
+  "Post install PACKAGE. This will get run by a sentinel.
+
+Optional parameter NOERROR, if non-nil, suppresses errors in case
+package is not listed in `el-get-sources'"
   (let* ((source   (el-get-package-def package))
 	 (hooks    (el-get-method (plist-get source :type) :install-hook))
 	 (commands (el-get-build-commands package)))
 
     ;; post-install is the right place to run install-hook
     (run-hook-with-args hooks package)
-
-    (let ((wrap-up (lambda (package) 
-                     (el-get-invalidate-autoloads package)
-                     (el-get-init package)
-                     (el-get-save-package-status package "installed"))))
-      (if commands
-          (el-get-build package commands nil nil wrap-up)
-        (apply wrap-up `(,package)))))
-
+    (if commands
+	;; build then init
+	(el-get-build package commands nil nil
+		      (lambda (package)
+                        (el-get-init package noerror)
+			(el-get-save-package-status package "installed")))
+      ;; if there's no commands, just init and mark as installed
+      (el-get-init package noerror)
+      (el-get-save-package-status package "installed")))
   (run-hook-with-args 'el-get-post-install-hooks package))
 
 (defun el-get-install (package)
