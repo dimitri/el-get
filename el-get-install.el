@@ -26,7 +26,6 @@
        (pdir              (file-name-as-directory (concat el-get-root package)))
        (git               (or (executable-find "git") (error "Unable to find `git'")))
        (url               "git://github.com/dimitri/el-get.git")
-       (el-get-sources    `((:name ,package :type "git" :url ,url :features el-get :compile "el-get.el")))
        (default-directory el-get-root)
        (process-connection-type nil) ; pipe, no pty (--no-progress)
 
@@ -38,7 +37,7 @@
     (error "Couldn't get el-get from the Git repository"))
 
   (load (concat pdir package ".el"))
-  (el-get-init "el-get")
+  (el-get-post-install "el-get" 'noerror)
   (with-current-buffer buf
     (goto-char (point-max))
     (insert "\nCongrats, el-get is installed and ready to serve!")))
