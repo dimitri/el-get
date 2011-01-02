@@ -17,14 +17,16 @@
 ;; So the idea is that you copy/paste this code into your *scratch* buffer,
 ;; hit C-j, and you have a working el-get.
 
-(let* ((el-get-root       (file-name-as-directory 
-                           (concat (file-name-as-directory user-emacs-directory) "el-get")))
+(let* ((el-get-root
+	(file-name-as-directory
+	 (concat (file-name-as-directory user-emacs-directory) "el-get")))
        (dummy             (unless (file-directory-p el-get-root)
 			    (make-directory el-get-root t)))
        (package           "el-get")
        (buf               (switch-to-buffer "*el-get bootstrap*"))
        (pdir              (file-name-as-directory (concat el-get-root package)))
-       (git               (or (executable-find "git") (error "Unable to find `git'")))
+       (git               (or (executable-find "git")
+			      (error "Unable to find `git'")))
        (url               "git://github.com/dimitri/el-get.git")
        (default-directory el-get-root)
        (process-connection-type nil) ; pipe, no pty (--no-progress)
