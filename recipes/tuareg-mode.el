@@ -2,6 +2,7 @@
        :type git
        :url "git://github.com/emacsmirror/tuareg.git"
        :load-path (".")
+       :build ("make elc")
        :after
        (lambda ()
          (add-to-list 'auto-mode-alist '("\\.ml[iylp]?" . tuareg-mode))
