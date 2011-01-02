@@ -1127,12 +1127,13 @@ into the package :localname option or its `file-name-nondirectory' part."
       (make-directory pdir))
 
     (if (not el-get-default-process-sync)
-        (url-retrieve url 'el-get-http-retrieve-callback 
+        (url-retrieve url 'el-get-http-retrieve-callback
                       `(,package ,post-install-fun ,dest ,el-get-sources))
-      
+
       (with-current-buffer (url-retrieve-synchronously url)
-        (el-get-http-retrieve-callback nil package post-install-fun dest el-get-sources)))))
-  
+        (el-get-http-retrieve-callback
+	 nil package post-install-fun dest el-get-sources)))))
+
 
 
 ;;
