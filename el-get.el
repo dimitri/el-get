@@ -17,6 +17,11 @@
 ;;
 ;; Changelog
 ;;
+;;  1.2 - WIP - Still growing
+;;
+;;   - Add support for autoloads
+;;   - fix 'wait support for http (using sync retrieval)
+;;
 ;;  1.1 - 2010-12-20 - Nobody's testing until the release
 ;;
 ;;   - Adapt to package.el from Emacs24 by using relative symlinks to ELPA
@@ -99,6 +104,7 @@
 (require 'package nil t) ; that's ELPA, but you can use el-get to install it
 (require 'cl)            ; needed for `remove-duplicates'
 (require 'bytecomp)
+(require 'autoload)
 
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
@@ -231,6 +237,13 @@ the named package action in the given method."
 (defvar el-get-status-file
   (concat (file-name-as-directory el-get-dir) ".status.el")
   "Define where to store and read the package statuses")
+
+(defvar el-get-autoload-file
+  (concat (file-name-as-directory el-get-dir) ".loaddefs.el")
+  "Where generated autoloads are saved")
+
+(defvar el-get-outdated-autoloads nil
+  "List of package names whose autoloads are outdated")
 
 (defvar el-get-emacs (concat invocation-directory invocation-name)
   "Where to find the currently running emacs, a facility for :build commands")
@@ -390,6 +403,23 @@ definition provided by `el-get' recipes locally.
 ")
 
 
+(defun el-get-flatten (arg)
+  "Return a version of ARG as a one-level list
+
+ (el-get-flatten 'x) => '(x)
+ (el-get-flatten '(a (b c (d)) e)) => '(a b c d e)"
+  (if (listp arg)
+      (apply 'append (mapcar 'el-get-flatten arg))
+    (list arg)))
+
+(defun el-get-load-path (package)
+  "Return the list of absolute directory names to be added to
+`load-path' by the named PACKAGE."
+  (let* ((source   (el-get-package-def package))
+	 (el-path  (el-get-flatten (or (plist-get source :load-path) ".")))
+         (pkg-dir (el-get-package-directory package)))
+    (mapcar (lambda (p) (expand-file-name p pkg-dir)) el-path)))
+
 (defun el-get-method (method-name action)
   "Return the function to call for doing action (e.g. install) in
 given method."
@@ -1125,8 +1155,15 @@ into the package :localname option or its `file-name-nondirectory' part."
 		     (concat (file-name-as-directory pdir) fname))))
     (unless (file-directory-p pdir)
       (make-directory pdir))
-    (url-retrieve
-     url 'el-get-http-retrieve-callback `(,package ,post-install-fun ,dest ,el-get-sources))))
+
+    (if (not el-get-default-process-sync)
+        (url-retrieve url 'el-get-http-retrieve-callback
+                      `(,package ,post-install-fun ,dest ,el-get-sources))
+
+      (with-current-buffer (url-retrieve-synchronously url)
+        (el-get-http-retrieve-callback
+	 nil package post-install-fun dest el-get-sources)))))
+
 
 
 ;;
@@ -1513,15 +1550,118 @@ entry."
 	      (file-newer-than-file-p el elc))
       (byte-compile-file el))))
 
+(defun el-get-save-and-kill (file)
+  "Save and kill all buffers visiting the named FILE"
+  (let (buf)
+    (while (setq buf (find-buffer-visiting file))
+      (with-current-buffer buf
+        (save-buffer)
+        (kill-buffer)))))
+
+(defun el-get-ensure-byte-compilable-autoload-file (file)
+  "If FILE doesn't already exist, create it as a byte-compilable
+  autoload file (the default created by autoload.el has a local
+  no-byte-compile variable that suppresses byte compilation)."
+  ;; If we don't explicitly strip out the no-byte-compile variable,
+  ;; autoload.el will create it on demand
+  (unless (file-exists-p file)
+    (write-region
+     (replace-regexp-in-string ";; no-byte-compile: t\n" ""
+			       (autoload-rubric file)) nil file)))
+
+(defun el-get-load-fast (file)
+  "Load the compiled version of FILE if it exists; else load FILE verbatim"
+  (load (file-name-sans-extension file)))
+
+(defun el-get-eval-autoloads ()
+  "Evaluate the autoloads from the autoload file."
+  (message "el-get: evaluating autoload file")
+  (el-get-load-fast el-get-autoload-file))
+
+(defun el-get-update-autoloads ()
+  "Regenerate, compile, and load any outdated packages' autoloads.
+
+This function will run from `post-command-hook', and usually
+shouldn't be invoked directly."
+
+  (message "el-get: updating outdated autoloads")
+
+  ;; Don't run again until explicitly added
+  (remove-hook 'post-command-hook 'el-get-update-autoloads)
+  (let ((outdated el-get-outdated-autoloads)
+        ;; use dynamic scoping to set up our loaddefs file for
+        ;; update-directory-autoloads
+        (generated-autoload-file el-get-autoload-file))
+
+    ;; make sure we can actually byte-compile it
+    (el-get-ensure-byte-compilable-autoload-file generated-autoload-file)
+
+    ;; clear the list early in case of errors
+    (setq el-get-outdated-autoloads nil)
+
+    (dolist (p outdated)
+      (if (string= (el-get-package-status p) "installed")
+          (apply 'update-directory-autoloads (el-get-load-path p))))
+
+    (el-get-save-and-kill el-get-autoload-file)
+
+    (message "el-get: byte-compiling autoload file")
+    (el-get-byte-compile-file el-get-autoload-file)
+
+    (el-get-eval-autoloads)))
+
+(defconst el-get-load-suffix-regexp
+  (concat (mapconcat 'regexp-quote (get-load-suffixes) "\\|") "\\'"))
+
+(defun el-get-remove-autoloads (package)
+  "Remove from `el-get-autoload-file' any autoloads associated
+with the named PACKAGE"
+  (with-temp-buffer ;; empty buffer to trick `autoload-find-destination'
+    (let ((generated-autoload-file el-get-autoload-file)
+          (autoload-modified-buffers (list (current-buffer))))
+      (dolist (dir (el-get-load-path package))
+        (when (file-directory-p dir)
+          (dolist (f (directory-files dir t el-get-load-suffix-regexp))
+            ;; this will clear out any autoloads associated with the file
+            (autoload-find-destination f))))))
+  (el-get-save-and-kill el-get-autoload-file))
+
+(defun el-get-invalidate-autoloads ( &optional package )
+  "Mark the named PACKAGE as needing new autoloads.  If PACKAGE
+is nil, marks all installed packages as needing new autoloads."
+  ;; If this is the first invalidation, launch the hook
+  (add-hook 'post-command-hook 'el-get-update-autoloads)
+
+  ;; Save the package names for later
+  (mapc (lambda (p) (add-to-list 'el-get-outdated-autoloads p))
+        (if package (list package)
+	  (mapcar 'el-get-source-name el-get-sources)))
+
+  ;; If we're invalidating everything, try to start from a clean slate
+  (unless package
+    (ignore-errors
+      (delete-file el-get-autoload-file)
+      (delete-file
+       (concat (file-name-sans-extension el-get-autoload-file) ".elc")))))
+
 (defun el-get-set-info-path (package infodir-rel)
   (require 'info)
   (info-initialize)
   (el-get-add-path-to-list package 'Info-directory-list infodir-rel))
 
-(defun el-get-init (package)
-  "Care about `load-path', `Info-directory-list', and (require 'features)."
+(defun el-get-init (package &optional noerror)
+  "Make the named PACKAGE available for use.
+
+Add PACKAGE's directory (or `:load-path' if specified) to the
+`load-path', add any its `:info' directory to
+`Info-directory-list', and `require' its `:features'.  Will be
+called by `el-get' (usually at startup) for each package in
+`el-get-sources'.
+
+Optional parameter NOERROR, if non-nil, suppresses errors in case
+package is not listed in `el-get-sources'"
   (interactive (list (el-get-read-package-name "Init")))
-  (el-get-error-unless-package-p package)
+  (unless noerror (el-get-error-unless-package-p package))
   (let* ((source   (el-get-package-def package))
 	 (method   (plist-get source :type))
 	 (loads    (plist-get source :load))
@@ -1602,7 +1742,7 @@ entry."
 		(unless (file-exists-p pfile)
 		  (error "el-get could not find file '%s'" pfile))
 		(message "el-get: load '%s'" pfile)
-		(load pfile)))
+		(el-get-load-fast pfile)))
 	    (if (stringp loads) (list loads) loads)))
 
     ;; features, only ELPA will handle them on its own
@@ -1627,22 +1767,26 @@ entry."
     ;; return the package
     package))
 
-(defun el-get-post-install (package)
-  "Post install PACKAGE. This will get run by a sentinel."
+(defun el-get-post-install (package &optional noerror)
+  "Post install PACKAGE. This will get run by a sentinel.
+
+Optional parameter NOERROR, if non-nil, suppresses errors in case
+package is not listed in `el-get-sources'"
   (let* ((source   (el-get-package-def package))
 	 (hooks    (el-get-method (plist-get source :type) :install-hook))
 	 (commands (el-get-build-commands package)))
+
     ;; post-install is the right place to run install-hook
     (run-hook-with-args hooks package)
-    (if commands
-	;; build then init
-	(el-get-build package commands nil nil
-		      (lambda (package)
-                        (el-get-init package)
-			(el-get-save-package-status package "installed")))
-      ;; if there's no commands, just init and mark as installed
-      (el-get-init package)
-      (el-get-save-package-status package "installed")))
+
+    (let ((wrap-up (lambda (package)
+                     (el-get-invalidate-autoloads package)
+                     (el-get-init package)
+                     (el-get-save-package-status package "installed"))))
+      (if commands
+          (el-get-build package commands nil nil wrap-up)
+        (funcall wrap-up package))))
+
   (run-hook-with-args 'el-get-post-install-hooks package))
 
 (defun el-get-install (package)
@@ -1676,6 +1820,8 @@ from `el-get-sources'.
       ;; check we can install the package and save to "required" status
       (el-get-check-init)
       (el-get-save-package-status package "required")
+
+      (el-get-invalidate-autoloads package)
 
       ;; and install the package now, *then* message about it
       (funcall install package url 'el-get-post-install)
@@ -1729,6 +1875,7 @@ from `el-get-sources'."
 	   (remove   (el-get-method method :remove))
 	   (url      (plist-get source :url)))
       ;; remove the package now
+      (el-get-remove-autoloads package)
       (funcall remove package url 'el-get-post-remove)
       (el-get-save-package-status package "removed")
       (message "el-get remove %s" package))))
@@ -1829,6 +1976,9 @@ welcome to use `autoload' too."
   (unless (or (null sync)
 	      (member sync '(sync wait)))
     (error "el-get sync parameter should be either nil, sync or wait"))
+  ;; If there's no autoload file, everything needs to be regenerated.
+  (if (not (file-exists-p el-get-autoload-file)) (el-get-invalidate-autoloads))
+
   (let* ((p-status    (el-get-read-all-packages-status))
          (total       (length (el-get-package-name-list)))
          (installed   (el-get-count-package-with-status "installed"))
@@ -1836,7 +1986,7 @@ welcome to use `autoload' too."
                         (make-progress-reporter
 			 "Waiting for `el-get' to complete… "
 			 0 (- total installed) 0)))
-         (el-get-default-process-sync (eq sync 'sync)))
+         (el-get-default-process-sync sync))
     ;; keep the result of mapcar to return it even in the 'wait case
     (prog1
         (mapcar
@@ -1861,6 +2011,10 @@ welcome to use `autoload' too."
           ;; don't forget to account for installation failure
           (setq installed (el-get-count-package-with-status "installed" "required"))
           (progress-reporter-update progress (- total installed)))
-        (progress-reporter-done progress)))))
+        (progress-reporter-done progress))))
+
+  ;; unless we have autoloads to update, just load them now
+  (unless el-get-outdated-autoloads
+    (el-get-eval-autoloads)))
 
 (provide 'el-get)
