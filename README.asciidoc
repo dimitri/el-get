@@ -12,9 +12,8 @@ for you to setup the extension. Or call it a package.
 
 == How to Install it?
 
-Here's the 'lazy installer' for everyone to use, except for the early
-adopters, who will have to adapt their +el-get-sources+ to use +github+
-instead.
+Here's the 'lazy installer'. It will use +git+ to 'clone' this github
+repository at the right place on your system.
 
 Easy way first:
 
