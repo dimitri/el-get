@@ -1682,17 +1682,18 @@ package is not listed in `el-get-sources'"
 	    (if (stringp el-path) (list el-path) el-path))
 
       (let* ((infodir-abs-conf (concat pdir infodir))
-	     (infodir-abs (if (file-directory-p infodir-abs-conf)
-			      infodir-abs-conf
-			    (file-name-directory infodir-abs-conf)))
+	     (infodir-abs (file-name-as-directory 
+                           (if (file-directory-p infodir-abs-conf)
+                               infodir-abs-conf
+                             (file-name-directory infodir-abs-conf))))
 	     (infodir-rel (if (file-directory-p infodir-abs-conf)
 			      infodir
 			    (file-name-directory infodir)))
-	     (info-dir    (concat (file-name-as-directory infodir-abs) "dir"))
+	     (info-dir    (concat infodir-abs "dir"))
 	     (infofile (if (and (file-exists-p infodir-abs-conf)
 				(not (file-directory-p infodir-abs-conf)))
 			   infodir-abs-conf
-			 (concat (file-name-as-directory infodir-abs) package))))
+			 (concat infodir-abs package))))
         (if (file-exists-p info-dir)
             (el-get-set-info-path package infodir-rel)
           (when (and infodir
