@@ -1723,7 +1723,7 @@ package is not listed in `el-get-sources'"
 	    (if (stringp el-path) (list el-path) el-path))
 
       (let* ((infodir-abs-conf (concat pdir infodir))
-	     (infodir-abs (file-name-as-directory 
+	     (infodir-abs (file-name-as-directory
                            (if (file-directory-p infodir-abs-conf)
                                infodir-abs-conf
                              (file-name-directory infodir-abs-conf))))
