@@ -1665,7 +1665,7 @@ with the named PACKAGE"
 
 (defun el-get-invalidate-autoloads ( &optional package )
   "Mark the named PACKAGE as needing new autoloads.  If PACKAGE
-is nil, marks all installed packages as needing new autoloads." 
+is nil, marks all installed packages as needing new autoloads."
 
   ;; Trigger autoload recomputation unless it's already been done
   (unless el-get-autoload-timer
