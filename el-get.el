@@ -338,7 +338,7 @@ definition provided by `el-get' recipes locally.
 
 :load-path
 
-    This should be a list of directories you want `el-get' to add
+    A directory or a list of directories you want `el-get' to add
     to your `load-path'. Those directories are relative to where
     the package gets installed.
 
@@ -1611,14 +1611,14 @@ entry."
     package-name-list))
 
 (defun el-get-package-p (package)
-  "Check that PACKAGE is actually a valid package according to
+  "Return non-nil unless PACKAGE is the name of a package in
 `el-get-sources'."
   ;; don't check for duplicates in this function
   (member package (mapcar 'el-get-source-name el-get-sources)))
 
 (defun el-get-error-unless-package-p (package)
-  "Raise en error if PACKAGE is not a valid package according to
-`el-get-package-p'."
+  "Raise an error if PACKAGE does not name a package in `el-get-sources'
+that has a valid recipe."
   (unless (el-get-package-p package)
     (error "el-get: can not find package name `%s' in `el-get-sources'" package))
   ;; check for recipe too
