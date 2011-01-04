@@ -19,5 +19,5 @@
                '(("wl-texinfo-format" "doc")
                  ("compile-wl-package"  "site-lisp" "icons") 
                  ("install-wl-package" "site-lisp" "icons")))
-       :info "doc"
+       :info "doc/wl.info"
        :load-path ("site-lisp/wl"))
