@@ -314,7 +314,7 @@ definition provided by `el-get' recipes locally.
 
 :build
 
-    Your build recipe, a list.  
+    Your build recipe, a list.
 
     A recipe R whose `car' is not a string will be replaced
     by (eval R).
@@ -451,9 +451,13 @@ given method."
   "(add-to-list LIST PATH) checking for path existence within
 given package directory."
   (let* ((pdir     (el-get-package-directory package))
-	 (fullpath (expand-file-name (concat (file-name-as-directory pdir) path))))
+	 (expanded (expand-file-name (or path ".")))
+	 (fullpath (if (file-name-absolute-p expanded)
+		       expanded
+		      (concat (file-name-as-directory pdir) expanded))))
     (unless (file-directory-p fullpath)
-      (error "el-get could not find directory `%s' for package %s, at %s" path package fullpath))
+      (error "el-get could not find directory `%s' for package %s, at %s"
+	     path package fullpath))
     (add-to-list list fullpath)))
 
 (defun el-get-package-exists-p (package)
@@ -1347,6 +1351,9 @@ strings, each string representing a single shell argument."
 	   (or (plist-get source build-type)
 	       (plist-get source :build))))
 
+    (unless (listp build-commands)
+      (error "build commands for package %s are not a list" package))
+
     (unless (stringp (car build-commands))
       (setq build-commands (eval build-commands)))
 
@@ -1377,7 +1384,7 @@ absolute filename obtained with expand-file-name is executable."
             ;; dimitri had some problems with the use of
             ;; default-directory once -- using an explicit cd until we
             ;; can run effective tests
-            (let ((cmd 
+            (let ((cmd
                    (concat "cd"  (shell-quote-argument wdir) " && "
                            (if (stringp c) c
                              (mapconcat 'shell-quote-argument c " ")))))
