@@ -1767,8 +1767,7 @@ package is not listed in `el-get-sources'"
                       (el-get-build-commands package)
                       (member method '(apt-get fink pacman)))
             (dolist (dir el-path)
-              (byte-recompile-directory
-               (expand-file-name (concat (file-name-as-directory pdir) dir)) 0))))))
+              (byte-recompile-directory dir 0))))))
 
     ;; call the "before" user function
     (when (and before (functionp before))
