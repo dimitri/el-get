@@ -1,18 +1,23 @@
-(:name wl
-       :type cvs
-       :module "wanderlust"
-       :url ":pserver:anonymous@cvs.m17n.org:/cvs/root"
-       :build `,(let* ((pardir (file-name-as-directory ".."))
-                       (emacs (concat el-get-emacs))
-                       (deps (apply 'append (mapcar (lambda (x) `("-L" ,(concat pardir x)))
-                                            '("apel" "flim" "semi"))))
-                       (prep (prin1-to-string
-                              '(progn (setq wl-install-utils t)(setq wl-info-lang "en")(setq wl-news-lang "en")))))
+(:name wanderlust
+       :type cvs 
+       :module "wanderlust" 
+       :url ":pserver:anonymous@cvs.m17n.org:/cvs/root" 
+       :build (mapcar
+               (lambda (target-and-dirs) 
+                 (list el-get-emacs 
+                       (mapcar (lambda (pkg) 
+                                 (mapcar (lambda (d) `("-L" ,d)) (el-get-load-path pkg)))
+                               '("apel" "flim" "semi"))
 
-                  (mapcar (lambda (target)
-                            (mapconcat 'shell-quote-argument
-                                       (append `(,emacs) deps `("--eval" ,prep "-batch" "-q" "-no-site-file" "-l" "WL-MK" "-f" ,target "NONE" "NONE")) " "))
-                          '("compile-wl-package" "wl-texinfo-format")))
+                       "--eval" (prin1-to-string 
+                                 '(progn (setq wl-install-utils t)
+                                         (setq wl-info-lang "en")
+                                         (setq wl-news-lang "en")))
+
+                       (split-string "-batch -q -no-site-file -l WL-MK -f")
+                       target-and-dirs))
+               '(("wl-texinfo-format" "doc")
+                 ("compile-wl-package"  "site-lisp" "icons") 
+                 ("install-wl-package" "site-lisp" "icons")))
        :info "doc"
-       :load-path ("wl" "elmo" "utils")
-       )
+       :load-path ("site-lisp/wl"))
