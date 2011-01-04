@@ -455,7 +455,7 @@ given package directory."
 	 (expanded (expand-file-name (or path ".")))
 	 (fullpath (if (file-name-absolute-p expanded)
 		       expanded
-		      (concat (file-name-as-directory pdir) expanded))))
+		     (expand-file-name expanded pdir))))
     (unless (file-directory-p fullpath)
       (error "el-get could not find directory `%s' for package %s, at %s"
 	     path package fullpath))
