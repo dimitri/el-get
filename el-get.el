@@ -1585,9 +1585,8 @@ This function will run from `post-command-hook', and usually
 shouldn't be invoked directly."
 
   (message "el-get: updating outdated autoloads")
+  (setq el-get-autoload-timer nil) ;; Allow a new update to be primed
 
-  ;; Don't run again until explicitly added
-  (remove-hook 'post-command-hook 'el-get-update-autoloads)
   (let ((outdated el-get-outdated-autoloads)
         ;; use dynamic scoping to set up our loaddefs file for
         ;; update-directory-autoloads
@@ -1626,11 +1625,17 @@ with the named PACKAGE"
             (autoload-find-destination f))))))
   (el-get-save-and-kill el-get-autoload-file))
 
+(defvar el-get-autoload-timer nil
+  "Where the currently primed autoload timer (if any) is stored")
+
 (defun el-get-invalidate-autoloads ( &optional package )
   "Mark the named PACKAGE as needing new autoloads.  If PACKAGE
-is nil, marks all installed packages as needing new autoloads."
-  ;; If this is the first invalidation, launch the hook
-  (add-hook 'post-command-hook 'el-get-update-autoloads)
+is nil, marks all installed packages as needing new autoloads." 
+
+  ;; Trigger autoload recomputation unless it's already been done
+  (unless el-get-autoload-timer
+    (setq el-get-autoload-timer
+          (run-with-idle-timer 0 nil 'el-get-update-autoloads)))
 
   ;; Save the package names for later
   (mapc (lambda (p) (add-to-list 'el-get-outdated-autoloads p))
