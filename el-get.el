@@ -1722,7 +1722,7 @@ package is not listed in `el-get-sources'"
 	      (el-get-add-path-to-list package 'load-path path))
 	    (if (stringp el-path) (list el-path) el-path))
 
-      (let* ((infodir-abs-conf (concat (file-name-as-directory pdir) infodir))
+      (let* ((infodir-abs-conf (concat pdir infodir))
 	     (infodir-abs (if (file-directory-p infodir-abs-conf)
 			      infodir-abs-conf
 			    (file-name-directory infodir-abs-conf)))
@@ -1754,7 +1754,7 @@ package is not listed in `el-get-sources'"
         (if compile
 	    ;; only byte-compile what's in the :compile property of the recipe
             (dolist (path (if (listp compile) compile (list compile)))
-              (let ((fp (concat (file-name-as-directory pdir) path)))
+              (let ((fp (concat pdir path)))
                 ;; we accept directories, files and file name regexp
                 (cond ((file-directory-p fp) (byte-recompile-directory fp 0))
                       ((file-exists-p fp)    (el-get-byte-compile-file pdir path))
@@ -1778,7 +1778,7 @@ package is not listed in `el-get-sources'"
     ;; loads
     (when loads
       (mapc (lambda (file)
-	      (let ((pfile (concat (file-name-as-directory pdir) file)))
+	      (let ((pfile (concat pdir file)))
 		(unless (file-exists-p pfile)
 		  (error "el-get could not find file '%s'" pfile))
 		(message "el-get: load '%s'" pfile)
