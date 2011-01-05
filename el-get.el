@@ -1611,7 +1611,7 @@ entry."
     package-name-list))
 
 (defun el-get-package-p (package)
-  "Return non-nil unless PACKAGE is the name of a package in
+  "Return nil unless PACKAGE is the name of a package in
 `el-get-sources'."
   ;; don't check for duplicates in this function
   (member package (mapcar 'el-get-source-name el-get-sources)))
