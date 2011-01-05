@@ -1641,7 +1641,8 @@ shouldn't be invoked directly."
     (el-get-save-and-kill el-get-autoload-file)
 
     (message "el-get: byte-compiling autoload file")
-    (el-get-byte-compile-file el-get-autoload-file)
+    (when el-get-byte-compile
+      (el-get-byte-compile-file el-get-autoload-file))
 
     (el-get-eval-autoloads)))
 
