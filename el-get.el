@@ -1818,9 +1818,9 @@ package is not listed in `el-get-sources'"
     ;; post-install is the right place to run install-hook
     (run-hook-with-args hooks package)
 
-    (let ((wrap-up (lambda (package)
+    (let ((wrap-up `(lambda (package)
                      (el-get-invalidate-autoloads package)
-                     (el-get-init package)
+                     (el-get-init package ,noerror)
                      (el-get-save-package-status package "installed"))))
       (if commands
           (el-get-build package commands nil nil wrap-up)
