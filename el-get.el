@@ -1638,7 +1638,8 @@ shouldn't be invoked directly."
     (el-get-save-and-kill el-get-autoload-file)
 
     (message "el-get: byte-compiling autoload file")
-    (el-get-byte-compile-file el-get-autoload-file)
+    (when el-get-byte-compile
+      (el-get-byte-compile-file el-get-autoload-file))
 
     (el-get-eval-autoloads)))
 
@@ -1821,9 +1822,9 @@ package is not listed in `el-get-sources'"
     ;; post-install is the right place to run install-hook
     (run-hook-with-args hooks package)
 
-    (let ((wrap-up (lambda (package)
+    (let ((wrap-up `(lambda (package)
                      (el-get-invalidate-autoloads package)
-                     (el-get-init package)
+                     (el-get-init package ,noerror)
                      (el-get-save-package-status package "installed"))))
       (if commands
           (el-get-build package commands nil nil wrap-up)
