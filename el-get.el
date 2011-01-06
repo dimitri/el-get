@@ -1656,7 +1656,11 @@ with the named PACKAGE"
         (when (file-directory-p dir)
           (dolist (f (directory-files dir t el-get-load-suffix-regexp))
             ;; this will clear out any autoloads associated with the file
-            (autoload-find-destination f))))))
+	    ;; `autoload-find-destination' signature has changed in emacs24.
+	    (if (> emacs-major-version 23)
+		(autoload-find-destination
+		 f (autoload-file-load-name f))
+	      (autoload-find-destination f)))))))
   (el-get-save-and-kill el-get-autoload-file))
 
 (defvar el-get-autoload-timer nil
