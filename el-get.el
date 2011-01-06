@@ -1658,8 +1658,7 @@ with the named PACKAGE"
             ;; this will clear out any autoloads associated with the file
 	    ;; `autoload-find-destination' signature has changed in emacs24.
 	    (if (> emacs-major-version 23)
-		(autoload-find-destination
-		 f (autoload-file-load-name f))
+		(autoload-find-destination f (autoload-file-load-name f))
 	      (autoload-find-destination f)))))))
   (el-get-save-and-kill el-get-autoload-file))
 
