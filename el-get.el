@@ -1107,6 +1107,10 @@ PACKAGE isn't currently installed by ELPA."
   "Ask elpa to install given PACKAGE."
   (let ((elpa-dir (el-get-elpa-package-directory package)))
     (unless (and elpa-dir (file-directory-p elpa-dir))
+      ;; Make sure we have got *some* kind of record of the package archive.
+      ;; TODO: should we refresh and retry once if package-install fails?
+      (unless (package-read-archive-contents)
+        (package-refresh-contents))
       (package-install (intern-soft package)))
     ;; we symlink even when the package already is installed because it's
     ;; not an error to have installed ELPA packages before using el-get, and
@@ -1117,6 +1121,7 @@ PACKAGE isn't currently installed by ELPA."
 (defun el-get-elpa-update (package url post-update-fun)
   "Ask elpa to update given PACKAGE."
   (el-get-elpa-remove package url nil)
+  (package-refresh-contents)
   (package-install (intern-soft package))
   (funcall post-update-fun package))
 
