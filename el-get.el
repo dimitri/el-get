@@ -1122,7 +1122,7 @@ PACKAGE isn't currently installed by ELPA."
 
 (defun el-get-elpa-remove (package url post-remove-fun)
   "Remove the right directory where ELPA did install the package."
-  (el-get-rmdir package url post-remove-fun))
+  (funcall post-remove-fun package))
 
 (defun el-get-elpa-post-remove (package)
   "Do remove the ELPA bits for package, now"
