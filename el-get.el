@@ -1384,7 +1384,7 @@ absolute filename obtained with expand-file-name is executable."
             ;; default-directory once -- using an explicit cd until we
             ;; can run effective tests
             (let ((cmd
-                   (concat "cd"  (shell-quote-argument wdir) " && "
+                   (concat "cd "  (shell-quote-argument wdir) " && "
                            (if (stringp c) c
                              (mapconcat 'shell-quote-argument c " ")))))
               (message "%S" (shell-command-to-string cmd))
