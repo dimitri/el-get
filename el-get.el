@@ -1338,6 +1338,59 @@ the files up."
       (message "el-get could not find package directory \"%s\"" pdir))
     (funcall post-remove-fun package)))
 
+(defun el-get-set-info-path (package infodir-rel)
+  (require 'info)
+  (info-initialize)
+  (el-get-add-path-to-list package 'Info-directory-list infodir-rel))
+
+(defun el-get-install-or-init-info (package build-or-init)
+  "Call `el-get-install-info' to create the necessary \"dir\"
+  file when build-or-init is 'build, or `el-get-set-info-path'
+  when build-or-init is 'init "
+  (let* ((source   (el-get-package-def package))
+	 (method   (plist-get source :type))
+	 (infodir  (plist-get source :info))
+	 (pdir     (el-get-package-directory package)))
+
+    ;; apt-get, pacman and ELPA will take care of Info-directory-list
+    (unless (member method '(elpa apt-get fink pacman))
+      (let* ((infodir-abs-conf (concat pdir infodir))
+	     (infodir-abs (file-name-as-directory
+                           (if (file-directory-p infodir-abs-conf)
+                               infodir-abs-conf
+                             (file-name-directory infodir-abs-conf))))
+	     (infodir-rel (if (file-directory-p infodir-abs-conf)
+			      infodir
+			    (file-name-directory infodir)))
+	     (info-dir    (concat infodir-abs "dir"))
+	     (infofile (if (and (file-exists-p infodir-abs-conf)
+				(not (file-directory-p infodir-abs-conf)))
+			   infodir-abs-conf
+			 (concat infodir-abs package))))
+
+	(cond
+	 ((eq build-or-init 'init)
+	  (when (file-exists-p info-dir)
+	    (el-get-set-info-path package infodir-rel)))
+
+	  ((eq build-or-init 'build)
+	   ;; rebuild each time asked --- e.g. on update
+	   (when (and infodir
+		      (file-directory-p infodir-abs)
+		      (not (file-exists-p info-dir)))
+	     (el-get-set-info-path package infodir-rel)
+	     (el-get-build
+	      package
+	      `(,(format "%s %s dir"
+			 el-get-install-info
+			 (if (string= (substring infofile -5) ".info")
+			     infofile
+			   (concat infofile ".info")))) infodir-rel t)))
+
+	  (t
+	   (error
+	    "el-get-install-or-init-info: %s not supported" build-or-init)))))))
+
 (defun el-get-build-commands (package)
   "Return a list of build commands for the named PACKAGE.
 
@@ -1377,6 +1430,10 @@ absolute filename obtained with expand-file-name is executable."
 	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir))
 	 (buf    (format "*el-get-build: %s*" package))
 	 (default-directory wdir))
+
+    ;; first build the Info dir
+    (el-get-install-or-init-info package 'build)
+
     (if sync
 	(progn
 	  (dolist (c commands)
@@ -1686,11 +1743,6 @@ is nil, marks all installed packages as needing new autoloads."
       (delete-file
        (concat (file-name-sans-extension el-get-autoload-file) ".elc")))))
 
-(defun el-get-set-info-path (package infodir-rel)
-  (require 'info)
-  (info-initialize)
-  (el-get-add-path-to-list package 'Info-directory-list infodir-rel))
-
 (defun el-get-init (package &optional noerror)
   "Make the named PACKAGE available for use.
 
@@ -1711,44 +1763,18 @@ package is not listed in `el-get-sources'"
 	 (el-path  (el-get-load-path package))
 	 (compile  (plist-get source :compile))
 	 (nocomp   (and (plist-member source :compile) (not compile)))
-	 (infodir  (plist-get source :info))
 	 (after    (plist-get source :after))
 	 (before   (plist-get source :before))
 	 (pdir     (el-get-package-directory package)))
 
-    ;; apt-get, pacman and ELPA will take care of load-path, Info-directory-list
+    ;; append entries to load-path and Info-directory-list
     (unless (member method '(elpa apt-get fink pacman))
-      ;; append entries to load-path and Info-directory-list
+      ;; append entries to load-path
       (mapc (lambda (path)
 	      (el-get-add-path-to-list package 'load-path path))
 	    (if (stringp el-path) (list el-path) el-path))
-
-      (let* ((infodir-abs-conf (concat pdir infodir))
-	     (infodir-abs (file-name-as-directory
-                           (if (file-directory-p infodir-abs-conf)
-                               infodir-abs-conf
-                             (file-name-directory infodir-abs-conf))))
-	     (infodir-rel (if (file-directory-p infodir-abs-conf)
-			      infodir
-			    (file-name-directory infodir)))
-	     (info-dir    (concat infodir-abs "dir"))
-	     (infofile (if (and (file-exists-p infodir-abs-conf)
-				(not (file-directory-p infodir-abs-conf)))
-			   infodir-abs-conf
-			 (concat infodir-abs package))))
-        (if (file-exists-p info-dir)
-            (el-get-set-info-path package infodir-rel)
-          (when (and infodir
-                     (file-directory-p infodir-abs)
-                     (not (file-exists-p info-dir)))
-            (el-get-set-info-path package infodir-rel)
-            (el-get-build
-             package
-             `(,(format "%s %s dir"
-			el-get-install-info
-			(if (string= (substring infofile -5) ".info")
-			    infofile
-			  (concat infofile ".info")))) infodir-rel t)))))
+      ;;  and Info-directory-list
+      (el-get-install-or-init-info package 'init))
 
     (when el-get-byte-compile
       ;; byte-compile either :compile entries or anything in load-path
@@ -1825,9 +1851,7 @@ package is not listed in `el-get-sources'"
                      (el-get-invalidate-autoloads package)
                      (el-get-init package ,noerror)
                      (el-get-save-package-status package "installed"))))
-      (if commands
-          (el-get-build package commands nil nil wrap-up)
-        (funcall wrap-up package))))
+      (el-get-build package commands nil nil wrap-up)))
 
   (run-hook-with-args 'el-get-post-install-hooks package))
 
