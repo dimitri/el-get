@@ -1437,15 +1437,10 @@ absolute filename obtained with expand-file-name is executable."
     (if sync
 	(progn
 	  (dolist (c commands)
-            ;; dimitri had some problems with the use of
-            ;; default-directory once -- using an explicit cd until we
-            ;; can run effective tests
             (let ((cmd
-                   (concat "cd "  (shell-quote-argument wdir) " && "
-                           (if (stringp c) c
-                             (mapconcat 'shell-quote-argument c " ")))))
-              (message "%S" (shell-command-to-string cmd))
-			   ))
+                   (if (stringp c) c
+                     (mapconcat 'shell-quote-argument c " "))))
+              (message "%S" (shell-command-to-string cmd))))
 	  (when (and post-build-fun (functionp post-build-fun))
 	    (funcall post-build-fun)))
 
