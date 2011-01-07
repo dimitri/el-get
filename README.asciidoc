@@ -167,11 +167,17 @@ M-x el-get-install::
     you have a recipe for, instead of only proposing packages from
     +el-get-sources+.
 
-
 M-x el-get-update::
 
     Will prompt for a package name, with completion, then update it. This
     will run the +build+ commands and +init+ the package again.
+
+M-x el-get-update-all::
+
+    Will update all packages used in +el-get-sources+. Beware that using
+    this function can lead to hours of settings review: more often than not
+    updating a package requires some adjustments to your setup.  Updating
+    all of them at once will require reviewing almost all your setup.
 
 M-x el-get-remove::
 
