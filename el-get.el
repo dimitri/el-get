@@ -1913,6 +1913,11 @@ from `el-get-sources'.
     (funcall update package url 'el-get-post-update)
     (message "el-get update %s" package)))
 
+(defun el-get-update-all ()
+  (interactive)
+  "Performs update of all installed packages (specified in el-get-sources)"
+  (mapc 'el-get-update (el-get-package-name-list)))
+
 (defun el-get-post-remove (package)
   "Run the post-remove hooks for PACKAGE."
   (let* ((source  (el-get-package-def package))
