@@ -1,8 +1,7 @@
 (:name emacs-jabber
        :type git
-       :url "git://catap.ru/emacs-jabber/emacs-jabber.git"
-       :features jabber
-       :build `("mkdir build-aux" "aclocal -I m4" "autoconf" "automake -a -c" "./configure" "make")
-       )
-
-
+       :url "git://emacs-jabber.git.sourceforge.net/gitroot/emacs-jabber/emacs-jabber"
+       :info "."
+       :load-path (".")
+       :features jabber-autoloads
+       :build ("autoreconf -i" "./configure" "make"))
