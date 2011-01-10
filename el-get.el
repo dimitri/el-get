@@ -23,6 +23,7 @@
 ;;   - fix 'wait support for http (using sync retrieval)
 ;;   - code cleanup per Dave Abrahams, lots of it
 ;;   - add function M-x el-get-update-all
+;;   - Implement M-x el-get-make-recipes
 ;;
 ;;  1.1 - 2010-12-20 - Nobody's testing until the release
 ;;
