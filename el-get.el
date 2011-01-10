@@ -1955,7 +1955,7 @@ from `el-get-sources'."
   (dired (el-get-package-directory package)))
 
 (defun el-get-make-recipes (&optional dir)
-  "Loop over `el-get-source' and write a recipe file for each
+  "Loop over `el-get-sources' and write a recipe file for each
 entry which is not a symbol and is not already a known recipe."
   (interactive "Dsave recipes in directory: ")
   (let* ((all (mapcar 'el-get-source-name (el-get-read-all-recipes)))
