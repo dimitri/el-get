@@ -1,0 +1,1 @@
+(:name smarty-mode :type http :url "http://lisp.morinie.fr/smarty/download/smarty-mode.el")
