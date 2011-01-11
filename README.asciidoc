@@ -191,6 +191,12 @@ M-x el-get-remove::
     you have a recipe for, instead of only proposing packages from
     +el-get-sources+.
 
+M-x el-get-make-recipes::
+
+    Will prompt for an existing directory where to output all your 'new'
+    recipe files: one file for each entry in +el-get-sources+ that is not
+    just a +symbol+ and that is not found anywhere in +el-get-recipe-path+.
+
 The +C-u+ alternatives are not provided for the +el-get-update+ and
 +el-get-init+ command, on the grounds that if you want to use them you
 probably should now have the package into your +el-get-sources+ proper.
