@@ -5,4 +5,4 @@
        :after (lambda ()
 		(dolist (ext '(php php3 php4 php5 phtml))
 		  (add-to-list auto-mode-alist '((format "\\.%s$" ext) .php-mode)))
-		(autoload 'python-mode "python-mode" "Python editing mode." t)))
+		(autoload 'php-mode "php-mode" "PHP improved editing mode." t)))
