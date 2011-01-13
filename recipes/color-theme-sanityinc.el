@@ -1,0 +1,1 @@
+(:name color-theme-sanityinc :type git :url "git://github.com/purcell/color-theme-sanityinc.git")

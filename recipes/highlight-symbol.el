@@ -1,0 +1,1 @@
+(:name highlight-symbol :type elpa)

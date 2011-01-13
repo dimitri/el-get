@@ -1,0 +1,1 @@
+(:name crontab-mode :type http :url "http://www.mahalito.net/~harley/elisp/crontab-mode.el")

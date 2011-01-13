@@ -1,0 +1,1 @@
+(:name js2-mode :type svn :url "http://js2-mode.googlecode.com/svn/trunk/")

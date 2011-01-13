@@ -1,0 +1,1 @@
+(:name mwe-log-commands :type http :url "http://www.foldr.org/~michaelw/emacs/mwe-log-commands.el")

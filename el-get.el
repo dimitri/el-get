@@ -23,6 +23,7 @@
 ;;   - fix 'wait support for http (using sync retrieval)
 ;;   - code cleanup per Dave Abrahams, lots of it
 ;;   - add function M-x el-get-update-all
+;;   - Implement M-x el-get-make-recipes
 ;;
 ;;  1.1 - 2010-12-20 - Nobody's testing until the release
 ;;
@@ -1952,6 +1953,21 @@ from `el-get-sources'."
   (interactive (list (el-get-read-package-name "cd to")))
   (el-get-error-unless-package-p package)
   (dired (el-get-package-directory package)))
+
+(defun el-get-make-recipes (&optional dir)
+  "Loop over `el-get-sources' and write a recipe file for each
+entry which is not a symbol and is not already a known recipe."
+  (interactive "Dsave recipes in directory: ")
+  (let* ((all (mapcar 'el-get-source-name (el-get-read-all-recipes)))
+	 (new (loop for r in el-get-sources
+		    when (and (not (symbolp r))
+			      (not (member (el-get-source-name r) all)))
+		    collect r)))
+    (dolist (r new)
+      (message "el-get: preparing recipe file for %s" (el-get-source-name r))
+      (with-temp-file (format "%s/%s.el" dir (el-get-source-name r))
+	(insert (prin1-to-string r)))))
+  (dired dir))
 
 ;;
 ;; notify user with emacs notifications API (new in 24)
