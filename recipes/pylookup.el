@@ -3,7 +3,7 @@
        :url "git://github.com/tsgates/pylookup.git"
        :feature pylookup
        :after (lambda ()
-                (setq pylookup-dir (concat el-get-dir "pylookup.py"))
+                (setq pylookup-dir (concat el-get-dir "pylookup/"))
                 (setq pylookup-program (concat pylookup-dir "pylookup.py"))
                 (setq pylookup-db (concat pylookup-dir "pylookup.db"))
                 (autoload 'pylookup "pylookup")
