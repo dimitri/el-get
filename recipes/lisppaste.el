@@ -1,4 +1,4 @@
 (:name lisppaste
        :type http
-       :url "http://www2.ph.ed.ac.uk/~s0198183/lisppaste.el"
+       :url "http://www2.epcc.ed.ac.uk/~lmitche4/lisppaste.el"
        :features lisppaste)
