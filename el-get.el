@@ -1444,7 +1444,7 @@ absolute filename obtained with expand-file-name is executable."
                      (mapconcat 'shell-quote-argument c " "))))
               (message "%S" (shell-command-to-string cmd))))
 	  (when (and post-build-fun (functionp post-build-fun))
-	    (funcall post-build-fun)))
+	    (funcall post-build-fun package)))
 
       ;; async
       (let ((process-list
