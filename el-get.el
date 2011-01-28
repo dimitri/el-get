@@ -1848,7 +1848,7 @@ package is not listed in `el-get-sources'"
                      (el-get-invalidate-autoloads package)
                      (el-get-init package ,noerror)
                      (el-get-save-package-status package "installed"))))
-      (el-get-build package commands nil nil wrap-up)))
+      (el-get-build package commands nil el-get-default-process-sync wrap-up)))
 
   (run-hook-with-args 'el-get-post-install-hooks package))
 
@@ -1894,7 +1894,7 @@ from `el-get-sources'.
   "Post update PACKAGE. This will get run by a sentinel."
   (let* ((source   (el-get-package-def package))
 	 (commands (el-get-build-commands package)))
-    (el-get-build package commands nil nil
+    (el-get-build package commands nil el-get-default-process-sync
 		  (lambda (package)
 		    (el-get-init package)
 		    ;; fix trailing failed installs
