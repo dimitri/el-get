@@ -1145,6 +1145,7 @@ PACKAGE isn't currently installed by ELPA."
 	 (dest   (or dest (concat (file-name-as-directory pdir) package ".el")))
 	 (part   (concat dest ".part"))
 	 (el-get-sources (if sources sources el-get-sources))
+	 (buffer-file-coding-system 'no-conversion)
 	 (require-final-newline nil))
     ;; prune HTTP headers before save
     (goto-char (point-min))
