@@ -1423,10 +1423,11 @@ names from `el-get-package-directory'"
 	(dolist (file (directory-files pdir nil path))
 	  (el-get-byte-compile-file (concat pdir file))))))))
 
-(defun el-get-byte-compile (package)
+(defun el-get-byte-compile (&optional package)
   "byte-compile PACKAGE files, unless variable `el-get-byte-compile' is nil"
   (when el-get-byte-compile
-    (let* ((source   (el-get-package-def package))
+    (let* ((package  (or package (car command-line-args-left)))
+	   (source   (el-get-package-def package))
 	   (method   (plist-get source :type))
 	   (pdir     (el-get-package-directory package))
 	   (el-path  (el-get-load-path package))
@@ -1488,16 +1489,20 @@ absolute filename obtained with expand-file-name is executable."
   (let* ((pdir   (el-get-package-directory package))
 	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir))
 	 (buf    (format "*el-get-build: %s*" package))
+	 (bytecmdargs
+	  (format "-Q -batch -l %sel-get/el-get -f el-get-byte-compile %s"
+		  el-get-dir package))
 	 (default-directory wdir))
 
     ;; first build the Info dir
     (el-get-install-or-init-info package 'build)
 
-    ;; and byte-compile the package
-    (el-get-byte-compile package)
-
     (if sync
 	(progn
+	  ;; first byte-compile the package, with another "clean" emacs process
+	  (let ((build-cmd (format "%s %s" el-get-emacs bytecmdargs)))
+	    (message "%S" (shell-command-to-string build-cmd)))
+
 	  (dolist (c commands)
             (let ((cmd
                    (if (stringp c) c
@@ -1507,27 +1512,39 @@ absolute filename obtained with expand-file-name is executable."
 	    (funcall post-build-fun package)))
 
       ;; async
-      (let ((process-list
-	     (mapcar (lambda (c)
-		       (let* ((split    (if (stringp c) 
-                                            (split-string c) 
-                                          (mapcar 'shell-quote-argument c)))
-                              (c        (mapconcat 'identity split " "))
-			      (name     (car split))
-			      (program  (el-get-build-command-program name))
-			      (args     (cdr split)))
+      (let* ((process-list
+	      (mapcar (lambda (c)
+			(let* ((split    (if (stringp c)
+					     (split-string c)
+					   (mapcar 'shell-quote-argument c)))
+			       (c        (mapconcat 'identity split " "))
+			       (name     (car split))
+			       (program  (el-get-build-command-program name))
+			       (args     (cdr split)))
 
-			 `(:command-name ,name
-					 :buffer-name ,buf
-					 :default-directory ,wdir
-					 :shell t
-					 :program ,program
-					 :args (,@args)
-					 :message ,(format "el-get-build %s: %s ok." package c)
-					 :error ,(format
-						  "el-get could not build %s [%s]" package c))))
-		     commands)))
-	(el-get-start-process-list package process-list post-build-fun)))))
+			  `(:command-name ,name
+					  :buffer-name ,buf
+					  :default-directory ,wdir
+					  :shell t
+					  :program ,program
+					  :args (,@args)
+					  :message ,(format "el-get-build %s: %s ok." package c)
+					  :error ,(format
+						   "el-get could not build %s [%s]" package c))))
+		      commands))
+	     (full-process-list ;; includes byte compiling
+	      (append (list
+		       `(:command-name ,name
+				       :buffer-name ,buf
+				       :default-directory ,wdir
+				       :shell t
+				       :program ,el-get-emacs
+				       :args ,(split-string bytecmdargs)
+				       :message ,(format "el-get-build %s: byte-compile ok." package)
+				       :error ,(format
+						  "el-get could not byte-compile %s" package)))
+		      process-list)))
+	(el-get-start-process-list package full-process-list post-build-fun)))))
 
 
 ;;
