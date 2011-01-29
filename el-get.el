@@ -1394,45 +1394,61 @@ the files up."
 	   (error
 	    "el-get-install-or-init-info: %s not supported" build-or-init)))))))
 
-(defun el-get-byte-compile-file (el)
-  "byte-compile the file EL if there's no .elc or the source is newer"
-  (let* ((elc (concat (file-name-sans-extension el) ".elc")))
-    (when (or (not (file-exists-p elc))
-	      (file-newer-than-file-p el elc))
-      (condition-case err
-	  (byte-compile-file el)
-	((debug error) ;; catch-all, allow for debugging
-	 (message "%S" (error-message-string err)))))))
+(defun el-get-byte-compile-files (package &rest files)
+  "byte-compile the files or directories FILES.
+
+FILES files will get byte compiled if there's no .elc or the
+source is newer, FILES directories will be handled by means of
+`byte-recompile-directory' and if any FILES element is neither a
+file nor a directories it's considered as a regexp over file
+names from `el-get-package-directory'"
+  (let ((byte-compile-warnings nil))
+    (dolist (fp files)
+      (cond
+       ((file-directory-p fp)
+	(byte-recompile-directory fp 0))
+
+       ((file-exists-p fp)
+	;; byte-compile-file does that unconditionnaly, here we want to avoid
+	;; doing it all over again
+	(let* ((elc (concat (file-name-sans-extension el) ".elc")))
+	  (when (or (not (file-exists-p elc))
+		    (file-newer-than-file-p el elc))
+	    (condition-case err
+		(byte-compile-file el)
+	      ((debug error) ;; catch-all, allow for debugging
+	       (message "%S" (error-message-string err)))))))
+
+       (t ; regexp case
+	(dolist (file (directory-files pdir nil path))
+	  (el-get-byte-compile-file (concat pdir file))))))))
 
 (defun el-get-byte-compile (package)
   "byte-compile PACKAGE files, unless variable `el-get-byte-compile' is nil"
-  (let* ((source   (el-get-package-def package))
-	 (method   (plist-get source :type))
-	 (pdir     (el-get-package-directory package))
-	 (el-path  (el-get-load-path package))
-	 (compile  (plist-get source :compile))
-	 (nocomp   (and (plist-member source :compile) (not compile))))
-    (when el-get-byte-compile
+  (when el-get-byte-compile
+    (let* ((source   (el-get-package-def package))
+	   (method   (plist-get source :type))
+	   (pdir     (el-get-package-directory package))
+	   (el-path  (el-get-load-path package))
+	   (compile  (plist-get source :compile))
+	   (nocomp   (and (plist-member source :compile) (not compile)))
+	   files)
       ;; byte-compile either :compile entries or anything in load-path
-      (let ((byte-compile-warnings nil))
-        (if compile
-	    ;; only byte-compile what's in the :compile property of the recipe
-            (dolist (path (if (listp compile) compile (list compile)))
-              (let ((fp (concat pdir path)))
-                ;; we accept directories, files and file name regexp
-                (cond ((file-directory-p fp) (byte-recompile-directory fp 0))
-                      ((file-exists-p fp)    (el-get-byte-compile-file fp))
-                      (t ; regexp case
-                       (dolist (file (directory-files pdir nil path))
-                         (el-get-byte-compile-file (concat pdir file)))))))
-          ;; Compile that directory, unless users asked not to (:compile nil)
-	  ;; or unless we have build instructions (then they should care)
-          ;; or unless we have installed pre-compiled package
-          (unless (or nocomp
-                      (el-get-build-commands package)
-                      (member method '(apt-get fink pacman)))
-            (dolist (dir el-path)
-              (byte-recompile-directory dir 0))))))))
+      (if compile
+	  ;; only byte-compile what's in the :compile property of the recipe
+	  (dolist (path (if (listp compile) compile (list compile)))
+	    (push (concat pdir path) files))
+
+	;; Compile that directory, unless users asked not to (:compile nil)
+	;; or unless we have build instructions (then they should care)
+	;; or unless we have installed pre-compiled package
+	(unless (or nocomp
+		    (el-get-build-commands package)
+		    (member method '(apt-get fink pacman)))
+	  (dolist (dir el-path)
+	    (push dir files))))
+      ;; now that we have the list
+      (apply 'el-get-byte-compile-files package files))))
 
 (defun el-get-build-commands (package)
   "Return a list of build commands for the named PACKAGE.
