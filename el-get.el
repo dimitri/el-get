@@ -1337,11 +1337,17 @@ the files up."
 ;;
 (defun el-get-rmdir (package url post-remove-fun)
   "Just rm -rf the package directory. Follow symlinks."
-  (let ((pdir (el-get-package-directory package)))
-    (if (file-exists-p pdir)
-	(dired-delete-file pdir 'always)
-      (message "el-get could not find package directory \"%s\"" pdir))
-    (funcall post-remove-fun package)))
+  (let* ((source   (el-get-package-def package))
+	 (method   (plist-get source :type))
+	 (pdir (el-get-package-directory package)))
+    (if (eq method 'elpa)
+	;; only remove a symlink here
+	(delete-file (directory-file-name pdir))
+      ;; non ELPA packages, remove the directory
+      (if (file-exists-p pdir)
+	  (dired-delete-file pdir 'always)
+	(message "el-get could not find package directory \"%s\"" pdir))
+      (funcall post-remove-fun package))))
 
 (defun el-get-set-info-path (package infodir-rel)
   (require 'info)
