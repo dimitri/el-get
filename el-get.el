@@ -24,6 +24,8 @@
 ;;   - code cleanup per Dave Abrahams, lots of it
 ;;   - add function M-x el-get-update-all
 ;;   - Implement M-x el-get-make-recipes
+;;   - byte-compile at build time rather than at init time
+;;   - and use a "clean room" external emacs -Q for byte compiling
 ;;
 ;;  1.1 - 2010-12-20 - Nobody's testing until the release
 ;;
