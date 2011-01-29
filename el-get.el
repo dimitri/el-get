@@ -1394,6 +1394,43 @@ the files up."
 	   (error
 	    "el-get-install-or-init-info: %s not supported" build-or-init)))))))
 
+(defun el-get-byte-compile-file (el)
+  "byte-compile the file EL if there's no .elc or the source is newer"
+  (let* ((elc (concat (file-name-sans-extension el) ".elc")))
+    (when (or (not (file-exists-p elc))
+	      (file-newer-than-file-p el elc))
+      (byte-compile-file el))))
+
+(defun el-get-byte-compile (package)
+  "byte-compile PACKAGE files, unless variable `el-get-byte-compile' is nil"
+  (let* ((source   (el-get-package-def package))
+	 (method   (plist-get source :type))
+	 (pdir     (el-get-package-directory package))
+	 (el-path  (el-get-load-path package))
+	 (compile  (plist-get source :compile))
+	 (nocomp   (and (plist-member source :compile) (not compile))))
+    (when el-get-byte-compile
+      ;; byte-compile either :compile entries or anything in load-path
+      (let ((byte-compile-warnings nil))
+        (if compile
+	    ;; only byte-compile what's in the :compile property of the recipe
+            (dolist (path (if (listp compile) compile (list compile)))
+              (let ((fp (concat pdir path)))
+                ;; we accept directories, files and file name regexp
+                (cond ((file-directory-p fp) (byte-recompile-directory fp 0))
+                      ((file-exists-p fp)    (el-get-byte-compile-file fp))
+                      (t ; regexp case
+                       (dolist (file (directory-files pdir nil path))
+                         (el-get-byte-compile-file (concat pdir file)))))))
+          ;; Compile that directory, unless users asked not to (:compile nil)
+	  ;; or unless we have build instructions (then they should care)
+          ;; or unless we have installed pre-compiled package
+          (unless (or nocomp
+                      (el-get-build-commands package)
+                      (member method '(apt-get fink pacman)))
+            (dolist (dir el-path)
+              (byte-recompile-directory dir 0))))))))
+
 (defun el-get-build-commands (package)
   "Return a list of build commands for the named PACKAGE.
 
@@ -1436,6 +1473,9 @@ absolute filename obtained with expand-file-name is executable."
 
     ;; first build the Info dir
     (el-get-install-or-init-info package 'build)
+
+    ;; and byte-compile the package
+    (el-get-byte-compile package)
 
     (if sync
 	(progn
@@ -1631,13 +1671,6 @@ entry."
   (completing-read (format "%s package: " action)
                    (el-get-package-name-list merge-recipes) nil t))
 
-(defun el-get-byte-compile-file (el)
-  "byte-compile the file EL if there's no .elc or the source is newer"
-  (let* ((elc (concat (file-name-sans-extension el) ".elc")))
-    (when (or (not (file-exists-p elc))
-	      (file-newer-than-file-p el elc))
-      (byte-compile-file el))))
-
 (defun el-get-save-and-kill (file)
   "Save and kill all buffers visiting the named FILE"
   (let (buf)
@@ -1759,8 +1792,6 @@ package is not listed in `el-get-sources'"
 	 (loads    (plist-get source :load))
 	 (feats    (plist-get source :features))
 	 (el-path  (el-get-load-path package))
-	 (compile  (plist-get source :compile))
-	 (nocomp   (and (plist-member source :compile) (not compile)))
 	 (after    (plist-get source :after))
 	 (before   (plist-get source :before))
 	 (pdir     (el-get-package-directory package)))
@@ -1773,28 +1804,6 @@ package is not listed in `el-get-sources'"
 	    (if (stringp el-path) (list el-path) el-path))
       ;;  and Info-directory-list
       (el-get-install-or-init-info package 'init))
-
-    (when el-get-byte-compile
-      ;; byte-compile either :compile entries or anything in load-path
-      (let ((byte-compile-warnings nil))
-        (if compile
-	    ;; only byte-compile what's in the :compile property of the recipe
-            (dolist (path (if (listp compile) compile (list compile)))
-              (let ((fp (concat pdir path)))
-                ;; we accept directories, files and file name regexp
-                (cond ((file-directory-p fp) (byte-recompile-directory fp 0))
-                      ((file-exists-p fp)    (el-get-byte-compile-file fp))
-                      (t ; regexp case
-                       (dolist (file (directory-files pdir nil path))
-                         (el-get-byte-compile-file (concat pdir file)))))))
-          ;; Compile that directory, unless users asked not to (:compile nil)
-	  ;; or unless we have build instructions (then they should care)
-          ;; or unless we have installed pre-compiled package
-          (unless (or nocomp
-                      (el-get-build-commands package)
-                      (member method '(apt-get fink pacman)))
-            (dolist (dir el-path)
-              (byte-recompile-directory dir 0))))))
 
     ;; call the "before" user function
     (when (and before (functionp before))
