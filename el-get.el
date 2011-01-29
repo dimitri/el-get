@@ -1399,7 +1399,10 @@ the files up."
   (let* ((elc (concat (file-name-sans-extension el) ".elc")))
     (when (or (not (file-exists-p elc))
 	      (file-newer-than-file-p el elc))
-      (byte-compile-file el))))
+      (condition-case err
+	  (byte-compile-file el)
+	((debug error) ;; catch-all, allow for debugging
+	 (message "%S" (error-message-string err)))))))
 
 (defun el-get-byte-compile (package)
   "byte-compile PACKAGE files, unless variable `el-get-byte-compile' is nil"
