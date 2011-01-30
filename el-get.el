@@ -1407,6 +1407,17 @@ the files up."
 	   (error
 	    "el-get-install-or-init-info: %s not supported" build-or-init)))))))
 
+(defun el-get-byte-compile-file (el)
+  "byte-compile-file does that unconditionnaly, here we want to
+avoid doing it all over again"
+  (let ((elc (concat (file-name-sans-extension el) ".elc")))
+    (when (or (not (file-exists-p elc))
+	      (file-newer-than-file-p el elc))
+      (condition-case err
+	  (byte-compile-file el)
+	((debug error) ;; catch-all, allow for debugging
+	 (message "%S" (error-message-string err)))))))
+
 (defun el-get-byte-compile-files (package &rest files)
   "byte-compile the files or directories FILES.
 
@@ -1422,19 +1433,10 @@ names from `el-get-package-directory'"
 	(byte-recompile-directory fp 0))
 
        ((file-exists-p fp)
-	;; byte-compile-file does that unconditionnaly, here we want to avoid
-	;; doing it all over again
-	(let* ((el  fp) ; el/elc make more sense, easier to read
-	       (elc (concat (file-name-sans-extension el) ".elc")))
-	  (when (or (not (file-exists-p elc))
-		    (file-newer-than-file-p el elc))
-	    (condition-case err
-		(byte-compile-file el)
-	      ((debug error) ;; catch-all, allow for debugging
-	       (message "%S" (error-message-string err)))))))
+	(el-get-byte-compile-file fp))
 
        (t ; regexp case
-	(dolist (file (directory-files pdir nil path))
+	(dolist (file (directory-files pdir nil fp))
 	  (el-get-byte-compile-file (concat pdir file))))))))
 
 (defun el-get-byte-compile (&optional package nocomp compile)
@@ -1456,8 +1458,13 @@ names from `el-get-package-directory'"
       ;; byte-compile either :compile entries or anything in load-path
       (if compile
 	  ;; only byte-compile what's in the :compile property of the recipe
-	  (dolist (path (if (listp compile) compile (list compile)))
-	    (push (concat pdir path) files))
+	  ;; gotcha: read-from-string will get back symbolp when there's
+	  ;; only one element in the list
+	  (dolist (path (if (listp compile) compile
+			  (list (symbol-name compile))))
+	    (let ((fullpath (expand-file-name path pdir)))
+	      ;; path could be a file name regexp
+	      (push (if (file-exists-p fullpath) fullpath path) files)))
 
 	;; Compile that directory, unless users asked not to (:compile nil)
 	;; or unless we have build instructions (then they should care)
@@ -1469,7 +1476,7 @@ names from `el-get-package-directory'"
 	    (push dir files))))
       ;; now that we have the list
       (when files
-	(apply 'el-get-byte-compile-files package files)))))
+	(apply 'el-get-byte-compile-files package (nreverse files))))))
 
 (defun el-get-build-commands (package)
   "Return a list of build commands for the named PACKAGE.
@@ -1533,10 +1540,11 @@ recursion.
 	 ;; loaded users preferences, so won't have the right `el-get-sources'.
 	 ;; all it needs actually is the compile and nocomp properties
 	 (comp   (plist-get source :compile))
+	 (clist  (if (listp comp) comp (list comp)))
 	 (nocomp (and (plist-member source :compile) (not comp)))
 	 (bytecmdargs
-	  (format "-Q -batch -l %sel-get/el-get -f el-get-byte-compile %s %s %s"
-		  el-get-dir package nocomp comp))
+	  (format "-Q -batch -l %sel-get/el-get -f el-get-byte-compile %s %s %S"
+		  el-get-dir package nocomp (prin1-to-string clist)))
 	 (default-directory (file-name-as-directory wdir)))
 
     ;; first build the Info dir
@@ -1580,7 +1588,7 @@ recursion.
 		      commands))
 	     (full-process-list ;; includes byte compiling
 	      (append (list
-		       `(:command-name ,name
+		       `(:command-name "byte-compile"
 				       :buffer-name ,buf
 				       :default-directory ,wdir
 				       :shell t
