@@ -1401,7 +1401,7 @@ the files up."
 			 el-get-install-info
 			 (if (string= (substring infofile -5) ".info")
 			     infofile
-			   (concat infofile ".info")))) infodir-rel t)))
+			   (concat infofile ".info")))) infodir-rel t nil t)))
 
 	  (t
 	   (error
@@ -1497,8 +1497,27 @@ absolute filename obtained with expand-file-name is executable."
 	  ((file-executable-p fullname) fullname)
 	  (t (or exe name)))))
 
-(defun el-get-build (package commands &optional subdir sync post-build-fun)
-  "Run each command from the package directory."
+(defun el-get-build
+  (package commands &optional subdir sync post-build-fun installing-info)
+  "Run each command from the package directory.
+
+COMMANDS is a list of commands to run in order to build the
+package.
+
+The commands are run either synchronously or asynchronously
+depending on the SYNC parameter, and can be run from SUBDIR
+directory when given.  By default COMMANDS are run from the
+package directory as obtained by `el-get-package-directory'.
+
+The function POST-BUILD-FUN will get called after the commands
+are all successfully run.  In case of asynchronous building, the
+only way to have code running after the build is using this
+parameter.
+
+INSTALLING-INFO is t when called from
+`el-get-install-or-init-info', as to avoid a nasty infinite
+recursion.
+"
   (let* ((pdir   (el-get-package-directory package))
 	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir))
 	 (buf    (format "*el-get-build: %s*" package))
@@ -1508,7 +1527,8 @@ absolute filename obtained with expand-file-name is executable."
 	 (default-directory wdir))
 
     ;; first build the Info dir
-    (el-get-install-or-init-info package 'build)
+    (unless installing-info
+      (el-get-install-or-init-info package 'build))
 
     (if sync
 	(progn
