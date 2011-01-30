@@ -1524,7 +1524,7 @@ recursion.
 	 (bytecmdargs
 	  (format "-Q -batch -l %sel-get/el-get -f el-get-byte-compile %s"
 		  el-get-dir package))
-	 (default-directory wdir))
+	 (default-directory (file-name-as-directory wdir)))
 
     ;; first build the Info dir
     (unless installing-info
