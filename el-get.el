@@ -1424,7 +1424,8 @@ names from `el-get-package-directory'"
        ((file-exists-p fp)
 	;; byte-compile-file does that unconditionnaly, here we want to avoid
 	;; doing it all over again
-	(let* ((elc (concat (file-name-sans-extension el) ".elc")))
+	(let* ((el  fp) ; el/elc make more sense, easier to read
+	       (elc (concat (file-name-sans-extension el) ".elc")))
 	  (when (or (not (file-exists-p elc))
 		    (file-newer-than-file-p el elc))
 	    (condition-case err
