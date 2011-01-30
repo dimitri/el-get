@@ -1436,7 +1436,7 @@ names from `el-get-package-directory'"
 	(dolist (file (directory-files pdir nil path))
 	  (el-get-byte-compile-file (concat pdir file))))))))
 
-(defun el-get-byte-compile (&optional package)
+(defun el-get-byte-compile (&optional package nocomp compile)
   "byte-compile PACKAGE files, unless variable `el-get-byte-compile' is nil"
   (when el-get-byte-compile
     (let* ((package  (or package (car command-line-args-left)))
@@ -1444,8 +1444,13 @@ names from `el-get-package-directory'"
 	   (method   (plist-get source :type))
 	   (pdir     (el-get-package-directory package))
 	   (el-path  (el-get-load-path package))
-	   (compile  (plist-get source :compile))
-	   (nocomp   (and (plist-member source :compile) (not compile)))
+	   ;; when using command-line-args-left, we did not load the user's
+	   ;; `el-get-sources', so we get :compile from the command line too
+	   (nocomp
+	    (or nocomp (car (read-from-string (cadr command-line-args-left)))))
+	   (compile
+	    (or compile
+		(car (read-from-string (caddr command-line-args-left)))))
 	   files)
       ;; byte-compile either :compile entries or anything in load-path
       (if compile
@@ -1462,7 +1467,8 @@ names from `el-get-package-directory'"
 	  (dolist (dir el-path)
 	    (push dir files))))
       ;; now that we have the list
-      (apply 'el-get-byte-compile-files package files))))
+      (when files
+	(apply 'el-get-byte-compile-files package files)))))
 
 (defun el-get-build-commands (package)
   "Return a list of build commands for the named PACKAGE.
@@ -1521,9 +1527,15 @@ recursion.
   (let* ((pdir   (el-get-package-directory package))
 	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir))
 	 (buf    (format "*el-get-build: %s*" package))
+	 (source (el-get-package-def package))
+	 ;; the subprocess emacs -Q we use for byte-compile will not have
+	 ;; loaded users preferences, so won't have the right `el-get-sources'.
+	 ;; all it needs actually is the compile and nocomp properties
+	 (comp   (plist-get source :compile))
+	 (nocomp (and (plist-member source :compile) (not comp)))
 	 (bytecmdargs
-	  (format "-Q -batch -l %sel-get/el-get -f el-get-byte-compile %s"
-		  el-get-dir package))
+	  (format "-Q -batch -l %sel-get/el-get -f el-get-byte-compile %s %s %s"
+		  el-get-dir package nocomp comp))
 	 (default-directory (file-name-as-directory wdir)))
 
     ;; first build the Info dir
