@@ -1,7 +1,7 @@
 (:name lua-mode
-       :type http
-       :url "http://luaforge.net/plugins/scmcvs/cvsweb.php/lua-mode/lua-mode.el?rev=HEAD;content-type=text%2Fplain;cvsroot=lua-mode"
+       :type git
+       :url "git://github.com/rrthomas/lua-mode.git"
        :features lua-mode
-       :localname "lua-mode.el"
        :after (lambda ()
-                (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))))
+                (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
+		(autoload 'lua-mode "lua-mode" "Lua editing mode." t)))
