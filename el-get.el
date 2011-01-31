@@ -1544,7 +1544,8 @@ recursion.
 	 (clist  (if (listp comp) comp (list comp)))
 	 (nocomp (and (plist-member source :compile) (not comp)))
 	 (bytecmdargs
-	  (format "-Q -batch -l %sel-get/el-get -f el-get-byte-compile %s %s %S"
+	  (format "-Q -batch -l %s -f el-get-byte-compile %s %s %S"
+		  (file-name-sans-extension (symbol-file 'el-get-byte-compile 'defun))
 		  el-get-dir package nocomp (prin1-to-string clist)))
 	 (default-directory (file-name-as-directory wdir)))
 
