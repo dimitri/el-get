@@ -135,7 +135,7 @@ It will get called with the package as first argument."
   :type 'hook)
 
 (defcustom el-get-byte-compile t
-  "Whether or not to byte-compile packages. Can be used to
+  "*Whether or not to byte-compile packages. Can be used to
 disable byte-compilation globally."
   :group 'el-get
   :type 'boolean)
@@ -234,10 +234,10 @@ the named package action in the given method."
   :group 'el-get)
 
 (defvar el-get-dir "~/.emacs.d/el-get/"
-  "Define where to fetch the packages.")
+  "*Define where to fetch the packages.")
 
-(defvar el-get-recipe-path '("~/.emacs.d/el-get/el-get/recipes")
-  "Define where to look for the recipes")
+(defvar el-get-recipe-path (list "~/.emacs.d/el-get/el-get/recipes")
+  "*Define where to look for the recipes")
 
 (defvar el-get-status-file
   (concat (file-name-as-directory el-get-dir) ".status.el")
@@ -254,23 +254,23 @@ the named package action in the given method."
   "Where to find the currently running emacs, a facility for :build commands")
 
 (defvar el-get-apt-get (executable-find "apt-get")
-  "The apt-get executable.")
+  "*The apt-get executable.")
 
 (defvar el-get-apt-get-base "/usr/share/emacs/site-lisp"
   "Where to link the el-get symlink to, /<package> will get appended.")
 
 (defvar el-get-fink (executable-find "fink")
-  "The fink executable.")
+  "*The fink executable.")
 
 (defvar el-get-svn (executable-find "svn")
-  "The svn executable.")
+  "*The svn executable.")
 
 (defvar el-get-fink-base "/sw/share/doc"
-  "Where to link the el-get symlink to, /<package> will get appended.")
+  "*Where to link the el-get symlink to, /<package> will get appended.")
 
 (defvar el-get-emacswiki-base-url
   "http://www.emacswiki.org/emacs/download/%s.el"
-  "The base URL where to fetch :emacswiki packages")
+  "*The base URL where to fetch :emacswiki packages")
 
 (defvar el-get-pacman-base "/usr/share/emacs/site-lisp"
   "Where to link the el-get symlink to, /<package> will get appended.")
@@ -281,10 +281,11 @@ the named package action in the given method."
 				(executable-find "install-info")))
 
 ;; we support notifications on darwin too, thanks to growlnotify
-(defvar el-get-growl-notify "/usr/local/bin/growlnotify")
+(defvar el-get-growl-notify "/usr/local/bin/growlnotify"
+  "*Absolute path of the growlnotify tool")
 
 (defvar el-get-sources nil
-  "List of sources for packages.
+  "*List of sources for packages.
 
 Each source entry is either a symbol, in which case the first
 recipe found in `el-get-recipe-path' directories named after the
