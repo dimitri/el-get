@@ -140,6 +140,12 @@ disable byte-compilation globally."
   :group 'el-get
   :type 'boolean)
 
+(defcustom el-get-generate-autoloads t
+  "Whether or not to generate autoloads for packages. Can be used
+to disable autoloads globally."
+  :group 'el-get
+  :type 'boolean)
+
 (defvar el-get-git-clone-hook        nil "Hook run after git clone.")
 (defvar el-get-git-svn-clone-hook    nil "Hook run after git svn clone.")
 (defvar el-get-bzr-branch-hook       nil "Hook run after bzr branch.")
@@ -375,6 +381,11 @@ definition provided by `el-get' recipes locally.
 :features
 
     List of features el-get will `require' for you.
+
+:disable-autoloads
+
+    When non-nil, prevents el-get from generating autoloads for
+    the package.
 
 :options
 
@@ -1792,8 +1803,9 @@ that has a valid recipe."
 
 (defun el-get-eval-autoloads ()
   "Evaluate the autoloads from the autoload file."
-  (message "el-get: evaluating autoload file")
-  (el-get-load-fast el-get-autoload-file))
+  (when el-get-generate-autoloads
+    (message "el-get: evaluating autoload file")
+    (el-get-load-fast el-get-autoload-file)))
 
 (defun el-get-update-autoloads ()
   "Regenerate, compile, and load any outdated packages' autoloads.
@@ -1833,18 +1845,19 @@ shouldn't be invoked directly."
 (defun el-get-remove-autoloads (package)
   "Remove from `el-get-autoload-file' any autoloads associated
 with the named PACKAGE"
-  (with-temp-buffer ;; empty buffer to trick `autoload-find-destination'
-    (let ((generated-autoload-file el-get-autoload-file)
-          (autoload-modified-buffers (list (current-buffer))))
-      (dolist (dir (el-get-load-path package))
-        (when (file-directory-p dir)
-          (dolist (f (directory-files dir t el-get-load-suffix-regexp))
-            ;; this will clear out any autoloads associated with the file
-	    ;; `autoload-find-destination' signature has changed in emacs24.
-	    (if (> emacs-major-version 23)
-		(autoload-find-destination f (autoload-file-load-name f))
-	      (autoload-find-destination f)))))))
-  (el-get-save-and-kill el-get-autoload-file))
+  (when (file-exists-p el-get-autoload-file)
+    (with-temp-buffer ;; empty buffer to trick `autoload-find-destination'
+      (let ((generated-autoload-file el-get-autoload-file)
+            (autoload-modified-buffers (list (current-buffer))))
+        (dolist (dir (el-get-load-path package))
+          (when (file-directory-p dir)
+            (dolist (f (directory-files dir t el-get-load-suffix-regexp))
+              ;; this will clear out any autoloads associated with the file
+              ;; `autoload-find-destination' signature has changed in emacs24.
+              (if (> emacs-major-version 23)
+                  (autoload-find-destination f (autoload-file-load-name f))
+                (autoload-find-destination f)))))))
+    (el-get-save-and-kill el-get-autoload-file)))
 
 (defvar el-get-autoload-timer nil
   "Where the currently primed autoload timer (if any) is stored")
@@ -1854,12 +1867,15 @@ with the named PACKAGE"
 is nil, marks all installed packages as needing new autoloads."
 
   ;; Trigger autoload recomputation unless it's already been done
-  (unless el-get-autoload-timer
+  (unless (or el-get-autoload-timer
+              (not el-get-generate-autoloads))
     (setq el-get-autoload-timer
           (run-with-idle-timer 0 nil 'el-get-update-autoloads)))
 
   ;; Save the package names for later
-  (mapc (lambda (p) (add-to-list 'el-get-outdated-autoloads p))
+  (mapc (lambda (p)
+          (unless (plist-get (el-get-package-def p) :disable-autoloads)
+            (add-to-list 'el-get-outdated-autoloads p)))
         (if package (list package)
 	  (mapcar 'el-get-source-name el-get-sources)))
 
