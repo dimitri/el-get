@@ -1348,7 +1348,8 @@ the files up."
 	 (pdir (el-get-package-directory package)))
     (if (eq method 'elpa)
 	;; only remove a symlink here
-	(delete-file (directory-file-name pdir))
+	(when (file-exists-p pdir)
+	  (delete-file (directory-file-name pdir)))
       ;; non ELPA packages, remove the directory
       (if (file-exists-p pdir)
 	  (dired-delete-file pdir 'always)
