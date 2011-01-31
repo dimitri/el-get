@@ -17,17 +17,22 @@ Here's the 'lazy installer':
 --------------------------------------
 ;; So the idea is that you copy/paste this code into your *scratch* buffer,
 ;; hit C-j, and you have a working el-get.
-(url-retrieve
- "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
- (lambda (s)
-   (end-of-buffer)
-   (eval-print-last-sexp)))
+(if (require 'el-get nil t)
+    (message "el-get is already installed, try M-x el-get-update")
+  (url-retrieve
+   "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+   (lambda (s)
+     (end-of-buffer)
+     (eval-print-last-sexp))))
 --------------------------------------
 
 You have to type +C-j+ with the cursor at the end of the last line, but
 still on the line. 'C-j runs the command eval-print-last-sexp', so it will
 evaluate the code you're looking at, and that will +git clone el-get+ at the
 'right place'.
+
+Note that the first line conditional allows you to add this elisp code into
+your emacs init file directly.
 
 == What is this?
 
