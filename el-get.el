@@ -1114,8 +1114,11 @@ PACKAGE isn't currently installed by ELPA."
     (unless (and elpa-dir (file-directory-p elpa-dir))
       ;; Make sure we have got *some* kind of record of the package archive.
       ;; TODO: should we refresh and retry once if package-install fails?
-      (unless (package-read-archive-contents)
-        (package-refresh-contents))
+      (let ((p (if (fboundp package-read-all-archive-contents)
+		   (package-read-all-archive-contents) ; version from emacs24
+		 (package-read-archive-contents))))     ; old version
+	(unless p
+	  (package-refresh-contents)))
       (package-install (intern-soft package)))
     ;; we symlink even when the package already is installed because it's
     ;; not an error to have installed ELPA packages before using el-get, and
