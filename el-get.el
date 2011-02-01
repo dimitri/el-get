@@ -1117,7 +1117,7 @@ PACKAGE isn't currently installed by ELPA."
     (unless (and elpa-dir (file-directory-p elpa-dir))
       ;; Make sure we have got *some* kind of record of the package archive.
       ;; TODO: should we refresh and retry once if package-install fails?
-      (let ((p (if (fboundp package-read-all-archive-contents)
+      (let ((p (if (fboundp 'package-read-all-archive-contents)
 		   (package-read-all-archive-contents) ; version from emacs24
 		 (package-read-archive-contents))))     ; old version
 	(unless p
