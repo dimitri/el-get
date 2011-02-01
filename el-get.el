@@ -1793,9 +1793,38 @@ that has a valid recipe."
       (error "el-get: package `%s' has incomplete recipe (no :type)" package))))
 
 (defun el-get-read-package-name (action &optional merge-recipes)
-  "Ask user for a package name in minibuffer, with completion."
+  "Ask user for a package name in minibuffer, with completion.
+
+Completions are offered from the package names in
+`el-get-sources'. If MERGE-RECIPES is true, known recipe files
+are also offered."
   (completing-read (format "%s package: " action)
                    (el-get-package-name-list merge-recipes) nil t))
+
+(defun el-get-read-recipe-name (action &optional require-match)
+  "Ask user for a recipe name, with completion from the list of known recipe files.
+
+This function does not deal with `el-get-sources' at all."
+  (completing-read (format "%s recipe:" action)
+                   (el-get-recipe-name-list) nil require-match))
+
+(defun el-get-find-recipe-file (package &optional dir)
+  "Find recipe file for PACKAGE.
+
+If no recipe file exists for PACKAGE, create a new one in DIR,
+which defaults to the first element in `el-get-recipe-path'."
+  (interactive (list (el-get-read-recipe-name "Find or create")))
+  (when (symbolp package) (setq package (symbol-name package)))
+  (let ((recipe-file (or
+                      ;; If dir was specified, open or create the
+                      ;; recipe file in that directory.
+                      (when dir (expand-file-name (concat package ".el") dir))
+                      ;; Next, try to find an existing recipe file anywhere.
+                      (el-get-recipe-filename package)
+                      ;; Lastly, create a new recipe file in the first
+                      ;; directory in `el-get-recipe-path'
+                      (expand-file-name (concat package ".el") (car el-get-recipe-path)))))
+    (find-file recipe-file)))
 
 (defun el-get-save-and-kill (file)
   "Save and kill all buffers visiting the named FILE"
