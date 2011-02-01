@@ -1616,12 +1616,17 @@ recursion.
     (insert-file-contents-literally filename)
     (read (current-buffer))))
 
+(defun el-get-recipe-filename (package)
+  "Return the name of the file that contains the recipe for PACKAGE, if any."
+  (when (symbolp package) (setq package (symbol-name package)))
+  (loop for dir in el-get-recipe-path
+	for recipe-filename = (expand-file-name (concat package ".el") (file-name-as-directory dir))
+	if (file-exists-p recipe-filename)
+	return recipe-filename))
+
 (defun el-get-read-recipe (package)
   "Return the source definition for PACKAGE, from the recipes."
-  (loop for dir in el-get-recipe-path
-	for recipe = (concat (file-name-as-directory dir) package ".el")
-	if (file-exists-p recipe)
-	return (el-get-read-recipe-file recipe)))
+  (el-get-read-recipe-file (el-get-recipe-filename package)))
 
 (defun el-get-read-all-recipes (&optional merge)
   "Return the list of all the recipes, formatted like `el-get-sources'.
@@ -1642,6 +1647,14 @@ get merged to `el-get-sources'."
 		       unless (member package packages)
 		       do (push package packages)
 		       and collect (el-get-read-recipe-file filename))))))
+
+(defun el-get-all-recipe-names (&optional merge)
+  "Return the list of all known recipe names.
+
+This is useful to use for providing completion candidates for
+package names. Argument MERGE has the same meaning as in
+`el-get-read-all-recipes'."
+  (mapcar 'el-get-source-name (el-get-read-all-recipes)))
 
 (defun el-get-source-name (source)
   "Return the package name (stringp) given an `el-get-sources'
@@ -1733,16 +1746,33 @@ entry."
   (interactive)
   (message "el-get version %s" el-get-version))
 
-(defun el-get-package-name-list (&optional merge-recipes)
-  "Return package a list of all package names from
-`el-get-sources'."
-  (let* ((el-get-sources    (if merge-recipes (el-get-read-all-recipes 'merge)
-			      el-get-sources))
-	 (package-name-list (mapcar 'el-get-source-name el-get-sources))
-	 (duplicates        (el-get-duplicates package-name-list)))
+(defun el-get-recipe-name-list (&optional merge)
+  "Return the list of all known recipe names.
+
+This is useful to use for providing completion candidates for
+package names. Argument MERGE has the same meaning as in
+`el-get-read-all-recipes'."
+  (mapcar 'el-get-source-name (el-get-read-all-recipes merge)))
+
+(defun el-get-source-name-list ()
+  "Return a list of all packages named in `el-get-sources'.
+
+If `el-get-sources' contains duplicate package definitions, an
+error is signaled."
+  (let* ((source-name-list (mapcar 'el-get-source-name el-get-sources))
+         (duplicates (el-get-duplicates source-name-list)))
     (when duplicates
       (error "Please remove duplicates in `el-get-sources': %S." duplicates))
-    package-name-list))
+    source-name-list))
+
+(defun el-get-package-name-list (&optional merge-recipes)
+  "Return package a list of all package names from `el-get-sources'.
+
+With arg MERGE-RECIPES, also include package names from recipe
+files."
+  (if merge-recipes
+      (el-get-recipe-name-list 'merge)
+    (el-get-source-name-list)))
 
 (defun el-get-package-p (package)
   "Return non-nil unless PACKAGE is the name of a package in
