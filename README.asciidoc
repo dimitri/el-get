@@ -46,10 +46,10 @@ run emacs, and I want this documentation to be usable as-is. Enters el-get!
 (setq el-get-sources
       '(cssh el-get switch-window vkill google-maps nxhtml xcscope yasnippet
 
-	(:name magit 
+	(:name magit
 	       :after (lambda () (global-set-key (kbd "C-x C-z") 'magit-status)))
 
-	(:name asciidoc        
+	(:name asciidoc
 	       :type elpa
 	       :after (lambda ()
 			(autoload 'doc-mode "doc-mode" nil t)
@@ -97,7 +97,7 @@ Most often you want +el-get-install+ and +el-get-build+ to stay out of the
 way and be 'asynchronous', so that you can continue using Emacs while your
 new package is getting ready. But imagine you're starting up Emacs after a
 +git pull+ on the other computer (after a commute, say), and there's some
-newer packages for this instance to consider installing. 
+newer packages for this instance to consider installing.
 
 Now you want a synchronous install, right?
 
@@ -118,7 +118,7 @@ See the documentation of the +el-get-sources+ variable for details.
 
 Some sources are contributed to +el-get+ directly, so that you only have to
 put in the +el-get-sources+ the name of the package you want to
-install. 
+install.
 
 Should you need some local specific setup, you can do that by providing a
 partial sources missing the +:type+ property: your local properties will get
@@ -235,5 +235,5 @@ well, the package is known installed.
 
 To reinit the status file you might need to execute the following code:
 
-  (mapc (lambda (p) (el-get-save-package-status p "installed")) 
+  (mapc (lambda (p) (el-get-save-package-status p "installed"))
 	(el-get-package-name-list))
