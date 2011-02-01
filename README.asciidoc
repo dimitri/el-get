@@ -84,7 +84,7 @@ features.
 
 == How to use it?
 
-You see that +el-get-sources+ exemple up there? It finishes with a single
+You see that +el-get-sources+ example up there? It finishes with a single
 +(el-get)+ call. That's it. It will 'install' new +sources+ on the list and
 only 'init' already installed ones.
 
