@@ -382,10 +382,11 @@ definition provided by `el-get' recipes locally.
 
     List of features el-get will `require' for you.
 
-:disable-autoloads
+:autoloads
 
-    When non-nil, prevents el-get from generating autoloads for
-    the package.
+    Control whether el-get should generate autoloads for this
+    package. Setting this to nil prevents el-get from generating
+    autoloads for the package. Default is t.
 
 :options
 
@@ -1862,6 +1863,11 @@ with the named PACKAGE"
 (defvar el-get-autoload-timer nil
   "Where the currently primed autoload timer (if any) is stored")
 
+(defun el-get-want-autoloads-p (package)
+  (let ((source (el-get-package-def package)))
+    (or (not (plist-member source :autoloads))
+        (plist-get source :autoloads))))
+
 (defun el-get-invalidate-autoloads ( &optional package )
   "Mark the named PACKAGE as needing new autoloads.  If PACKAGE
 is nil, marks all installed packages as needing new autoloads."
@@ -1874,7 +1880,7 @@ is nil, marks all installed packages as needing new autoloads."
 
   ;; Save the package names for later
   (mapc (lambda (p)
-          (unless (plist-get (el-get-package-def p) :disable-autoloads)
+          (when (el-get-want-autoloads-p p)
             (add-to-list 'el-get-outdated-autoloads p)))
         (if package (list package)
 	  (mapcar 'el-get-source-name el-get-sources)))
