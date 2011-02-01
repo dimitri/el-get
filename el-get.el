@@ -1636,7 +1636,7 @@ get merged to `el-get-sources'."
     (append
      (when merge el-get-sources)
      (loop for dir in el-get-recipe-path
-	   nconc (loop for recipe in (directory-files dir nil "\.el$")
+	   nconc (loop for recipe in (directory-files dir nil "^[^.].*\\.el$")
 		       for filename = (concat (file-name-as-directory dir) recipe)
 		       and package = (file-name-sans-extension (file-name-nondirectory recipe))
 		       unless (member package packages)
