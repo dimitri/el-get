@@ -1126,7 +1126,11 @@ PACKAGE isn't currently installed by ELPA."
 
 (defun el-get-elpa-install (package url post-install-fun)
   "Ask elpa to install given PACKAGE."
-  (let ((elpa-dir (el-get-elpa-package-directory package)))
+  (let ((elpa-dir (el-get-elpa-package-directory package))
+        (source  (el-get-package-def package))
+        (elpa-repo (plist-get source :repo)))
+    ;; TODO: Add `elpa-repo' as a packge.el repository, if the version
+    ;; of package.el supports multiple repos.
     (unless (and elpa-dir (file-directory-p elpa-dir))
       ;; Make sure we have got *some* kind of record of the package archive.
       ;; TODO: should we refresh and retry once if package-install fails?
