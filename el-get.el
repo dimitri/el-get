@@ -233,11 +233,14 @@ the named package action in the given method."
   :type '(repeat (cons symbol function))
   :group 'el-get)
 
-(defvar el-get-dir "~/.emacs.d/el-get/"
-  "*Define where to fetch the packages.")
+(defconst el-get-script (or load-file-name buffer-file-name))
 
-(defvar el-get-recipe-path (list "~/.emacs.d/el-get/el-get/recipes")
-  "*Define where to look for the recipes")
+(defvar el-get-dir "~/.emacs.d/el-get/"
+  "*Path where to install the packages.")
+
+(defvar el-get-recipe-path
+  (list (concat (file-name-directory el-get-script) "recipes"))
+  "*Define where to look for the recipes, that's a list of directories")
 
 (defvar el-get-status-file
   (concat (file-name-as-directory el-get-dir) ".status.el")
