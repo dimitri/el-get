@@ -1114,6 +1114,28 @@ PACKAGE isn't currently installed by ELPA."
     (if realname (concat (file-name-as-directory package-user-dir) realname)
       realname)))
 
+(defun el-get-elpa-package-repo (package)
+  "Get the ELPA repository cons cell for PACKAGE.
+
+The cons cell has the form (NAME . URL). See `package-archives'.
+If the package source only specifies a URL, the UEL will be used
+for NAME as well.
+
+If PACKAGE's `:type' is not \"elpa\", then return nil."
+  (let* ((source (el-get-package-def package))
+         (type (plist-get source :type))
+         (elpa-repo (plist-get source :repo)))
+    (when (eq type 'elpa)
+      (cond ((stringp elpa-repo)
+             (cons elpa-repo elpa-repo))
+            ((consp elpa-repo)
+             (if (and (stringp (car elpa-repo))
+                      (stringp (cdr elpa-repo)))
+                 elpa-repo
+               (error "Invalid elpa repo spec: %s" elpa-repo)))
+            (t
+             (error "Invalid elpa repo spec: %s" elpa-repo))))))
+
 (defun el-get-elpa-symlink-package (package)
   "ln -s ../elpa/<package> ~/.emacs.d/el-get/<package>"
   (let ((elpa-dir (file-relative-name
@@ -1126,11 +1148,14 @@ PACKAGE isn't currently installed by ELPA."
 
 (defun el-get-elpa-install (package url post-install-fun)
   "Ask elpa to install given PACKAGE."
-  (let ((elpa-dir (el-get-elpa-package-directory package))
-        (source  (el-get-package-def package))
-        (elpa-repo (plist-get source :repo)))
-    ;; TODO: Add `elpa-repo' as a packge.el repository, if the version
-    ;; of package.el supports multiple repos.
+  (let* ((elpa-dir (el-get-elpa-package-directory package))
+         (elpa-repo (el-get-elpa-package-repo package))
+         ;; Set `package-archive-base' to elpa-repo for old package.el
+         (package-archive-base (or (cdr-safe elpa-repo)
+                                   (bound-and-true-p package-archive-base)))
+         ;; Prepend elpa-repo to `package-archives' for new package.el
+         (package-archives (append (when elpa-repo (list elpa-repo))
+                                   package-archives)))
     (unless (and elpa-dir (file-directory-p elpa-dir))
       ;; Make sure we have got *some* kind of record of the package archive.
       ;; TODO: should we refresh and retry once if package-install fails?
