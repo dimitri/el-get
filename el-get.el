@@ -1685,14 +1685,15 @@ get merged to `el-get-sources'."
   (let ((packages (when merge (mapcar 'el-get-source-name el-get-sources))))
     (append
      (when merge el-get-sources)
-     (loop for dir in el-get-recipe-path
-	   nconc (loop for recipe in (directory-files dir nil "\\.el$")
-		       for filename = (concat (file-name-as-directory dir) recipe)
-		       and package = (file-name-sans-extension (file-name-nondirectory recipe))
-                       unless (string-match-p "^\\." package)
-		       unless (member package packages)
-		       do (push package packages)
-		       and collect (el-get-read-recipe-file filename))))))
+     (remove-if
+      'null
+      (loop for dir in el-get-recipe-path
+            nconc (loop for recipe in (directory-files dir nil "\\.el$")
+                        for filename = (concat (file-name-as-directory dir) recipe)
+                        and package = (file-name-sans-extension (file-name-nondirectory recipe))
+                        unless (member package packages)
+                        do (push package packages)
+                        and collect (ignore-errors (el-get-read-recipe-file filename))))))))
 
 (defun el-get-all-recipe-names (&optional merge)
   "Return the list of all known recipe names.
