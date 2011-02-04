@@ -1624,45 +1624,6 @@ takes care of it), thiw function returns nil."
       (when files
         (el-get-construct-external-byte-compile-command files)))))
 
-(defun el-get-byte-compile (&optional package nocomp compile)
-  "byte-compile PACKAGE files, unless variable `el-get-byte-compile' is nil"
-  (when el-get-byte-compile
-    (let* ((package  (or package (car command-line-args-left)))
-	   (source   (el-get-package-def package))
-	   (method   (plist-get source :type))
-	   (pdir     (el-get-package-directory package))
-	   (el-path  (el-get-load-path package))
-	   ;; when using command-line-args-left, we did not load the user's
-	   ;; `el-get-sources', so we get :compile from the command line too
-	   (nocomp
-	    (or nocomp (car (read-from-string (cadr command-line-args-left)))))
-	   (compile
-	    (or compile
-		(car (read-from-string (caddr command-line-args-left)))))
-	   files)
-      ;; byte-compile either :compile entries or anything in load-path
-      (if compile
-	  ;; only byte-compile what's in the :compile property of the recipe
-	  ;; gotcha: read-from-string will get back symbolp when there's
-	  ;; only one element in the list
-	  (dolist (path (if (listp compile) compile
-			  (list (symbol-name compile))))
-	    (let ((fullpath (expand-file-name path pdir)))
-	      ;; path could be a file name regexp
-	      (push (if (file-exists-p fullpath) fullpath path) files)))
-
-	;; Compile that directory, unless users asked not to (:compile nil)
-	;; or unless we have build instructions (then they should care)
-	;; or unless we have installed pre-compiled package
-	(unless (or nocomp
-		    (el-get-build-commands package)
-		    (member method '(apt-get fink pacman)))
-	  (dolist (dir el-path)
-	    (push dir files))))
-      ;; now that we have the list
-      (when files
-	(apply 'el-get-byte-compile-files package (nreverse files))))))
-
 (defun el-get-build-commands (package)
   "Return a list of build commands for the named PACKAGE.
 
