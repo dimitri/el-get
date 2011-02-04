@@ -621,6 +621,47 @@ Any other property will get put into the process object.
     (when (functionp final-func)
       (funcall final-func package))))
 
+;;
+;; get an executable given its command name, with friendly error message
+;;
+(defun el-get-executable-find (name)
+  "Return the absolute path of the command to execute, and errors
+out if that can not be found.
+
+This function will first look for existing function named
+\"el-get-NAME-executable\" and call that. This function, if it
+exists, must handle error cases.
+
+Then, it will look for existing variable named \"el-get-NAME\"
+and error if that's not nil and not an existing file name.
+
+Baring variable named \"el-get-NAME\", it will call
+`executable-find' on NAME and use the output of that, or error
+out if it's nil."
+  (let ((fname (intern (format "el-get-%s-executable" name)))
+	(vname (intern (format "el-get-%s" name))))
+    (cond
+     ((fboundp fname)
+      (funcall fname))
+
+     ((boundp vname)
+      (let ((command (symbol-value vname)))
+	(unless (and (file-exists-p command)
+		     (file-executable-p command))
+	  (error
+	   (concat "The variable `%s' points to \"%s\", "
+		   "which is not an executable file name on your system.")
+	   name command))
+	command))
+
+     (t
+      (let ((command (executable-find name)))
+	(unless command
+	  (error
+	   "The command named '%s' can not be found with `executable-find'"
+	   name))
+	command)))))
+
 
 ;;
 ;; git support
@@ -640,7 +681,7 @@ found."
 
 (defun el-get-git-clone (package url post-install-fun)
   "Clone the given package following the URL."
-  (let* ((git-executable (el-get-git-executable))
+  (let* ((git-executable (el-get-executable-find "git"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*git clone %s*" package))
 	 (ok   (format "Package %s installed." package))
@@ -666,7 +707,7 @@ found."
 
 (defun el-get-git-pull (package url post-update-fun)
   "git pull the package."
-  (let* ((git-executable (el-get-git-executable))
+  (let* ((git-executable (el-get-executable-find "git"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*git pull %s*" package))
 	 (ok   (format "Pulled package %s." package))
@@ -696,7 +737,7 @@ found."
 ;;
 (defun el-get-git-svn-clone (package url post-install-fun)
   "Clone the given svn PACKAGE following the URL using git."
-  (let ((git-executable (el-get-git-executable))
+  (let ((git-executable (el-get-executable-find "git"))
 	(name (format "*git svn clone %s*" package))
 	(ok   (format "Package %s installed." package))
 	(ko   (format "Could not install package %s." package)))
@@ -714,7 +755,7 @@ found."
 
 (defun el-get-git-svn-update (package url post-update-fun)
   "Update PACKAGE using git-svn. URL is given for compatibility reasons."
-  (let ((git-executable (el-get-git-executable))
+  (let ((git-executable (el-get-executable-find "git"))
 	(pdir   (el-get-package-directory package))
 	(f-name (format "*git svn fetch %s*" package))
 	(f-ok   (format "Fetched package %s." package))
@@ -748,7 +789,7 @@ found."
 ;;
 (defun el-get-bzr-branch (package url post-install-fun)
   "Branch a given bzr PACKAGE following the URL using bzr."
-  (let* ((bzr-executable "bzr")
+  (let* ((bzr-executable (el-get-executable-find "bzr"))
 	 (name (format "*bzr branch %s*" package))
 	 (ok   (format "Package %s installed" package))
 	 (ko   (format "Could not install package %s." package)))
@@ -765,7 +806,7 @@ found."
 
 (defun el-get-bzr-pull (package url post-update-fun)
   "bzr pull the package."
-  (let* ((bzr-executable "bzr")
+  (let* ((bzr-executable (el-get-executable-find "bzr"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*bzr pull %s*" package))
 	 (ok   (format "Pulled package %s." package))
@@ -788,7 +829,7 @@ found."
 ;;
 (defun el-get-svn-checkout (package url post-install-fun)
   "svn checkout the package."
-  (let* ((svn-executable el-get-svn)
+  (let* ((svn-executable (el-get-executable-find "svn"))
 	 (source  (el-get-package-def package))
 	 (name    (format "*svn checkout %s*" package))
 	 (ok      (format "Checked out package %s." package))
@@ -807,7 +848,7 @@ found."
 
 (defun el-get-svn-update (package url post-update-fun)
   "update the package using svn."
-  (let* ((svn-executable el-get-svn)
+  (let* ((svn-executable (el-get-executable-find "svn"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*svn update %s*" package))
 	 (ok   (format "Updated package %s." package))
@@ -830,7 +871,7 @@ found."
 ;;
 (defun el-get-cvs-checkout (package url post-install-fun)
   "cvs checkout the package."
-  (let* ((cvs-executable (executable-find "cvs"))
+  (let* ((cvs-executable (el-get-executable-find "cvs"))
 	 (source  (el-get-package-def package))
 	 (module  (plist-get source :module))
 	 (options (plist-get source :options))
@@ -864,7 +905,7 @@ found."
 
 (defun el-get-cvs-update (package url post-update-fun)
   "cvs checkout the package."
-  (let* ((cvs-executable (executable-find "cvs"))
+  (let* ((cvs-executable (el-get-executable-find "cvs"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*cvs update %s*" package))
 	 (ok   (format "Updated package %s." package))
@@ -895,7 +936,7 @@ found."
 
 (defun el-get-darcs-get (package url post-install-fun)
   "Get a given PACKAGE following the URL using darcs."
-  (let* ((darcs-executable (el-get-darcs-executable))
+  (let* ((darcs-executable (el-get-find-executable "darcs"))
 	 (name (format "*darcs get %s*" package))
 	 (ok   (format "Package %s installed" package))
 	 (ko   (format "Could not install package %s." package)))
@@ -912,7 +953,7 @@ found."
 
 (defun el-get-darcs-pull (package url post-update-fun)
   "darcs pull the package."
-  (let* ((darcs-executable (el-get-darcs-executable))
+  (let* ((darcs-executable (el-get-find-executable "darcs"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*darcs pull %s*" package))
 	 (ok   (format "Pulled package %s." package))
@@ -1320,7 +1361,7 @@ the files up."
 ;;
 (defun el-get-hg-clone (package url post-install-fun)
   "Clone the given package following the URL."
-  (let* ((hg-executable "hg")
+  (let* ((hg-executable (el-get-executable-find "hg"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*hg clone %s*" package))
 	 (ok   (format "Package %s installed." package))
@@ -1339,7 +1380,7 @@ the files up."
 
 (defun el-get-hg-pull (package url post-update-fun)
   "hg pull the package."
-  (let* ((hg-executable "hg")
+  (let* ((hg-executable (el-get-executable-find "hg"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*hg pull %s*" package))
 	 (ok   (format "Pulled package %s." package))
