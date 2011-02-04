@@ -1738,7 +1738,7 @@ recursion.
     (if sync
 	(progn
 	  ;; first byte-compile the package, with another "clean" emacs process
-	  (let ((build-cmd (mapconcat 'identity bytecomp-command)))
+	  (let ((build-cmd (mapconcat 'identity bytecomp-command " ")))
             (if build-cmd
                 (message "%S" (shell-command-to-string build-cmd))
               (message "Not byte-compiling anything for %s" package)))
