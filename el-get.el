@@ -1490,22 +1490,18 @@ names from `el-get-package-directory'"
 	(dolist (file (directory-files pdir nil fp))
 	  (el-get-byte-compile-file (concat pdir file))))))))
 
-(defun el-get-byte-compile (&optional package nocomp compile)
-  "byte-compile PACKAGE files, unless variable `el-get-byte-compile' is nil"
+(defun el-get-assemble-files-for-byte-compilation (package nocomp compile)
+  "Given a PACKAGE and a COMPILE specification, assemble a list
+of *absolute* paths to files and directories to be
+byte-compiled."
   (when el-get-byte-compile
-    (let* ((package  (or package (car command-line-args-left)))
-	   (source   (el-get-package-def package))
+    (let* ((source   (el-get-package-def package))
 	   (method   (plist-get source :type))
 	   (pdir     (el-get-package-directory package))
 	   (el-path  (el-get-load-path package))
 	   ;; when using command-line-args-left, we did not load the user's
 	   ;; `el-get-sources', so we get :compile from the command line too
-	   (nocomp
-	    (or nocomp (car (read-from-string (cadr command-line-args-left)))))
-	   (compile
-	    (or compile
-		(car (read-from-string (caddr command-line-args-left)))))
-	   files)
+	   (files '()))
       ;; byte-compile either :compile entries or anything in load-path
       (if compile
 	  ;; only byte-compile what's in the :compile property of the recipe
@@ -1526,9 +1522,20 @@ names from `el-get-package-directory'"
 		    (member method '(apt-get fink pacman)))
 	  (dolist (dir el-path)
 	    (push dir files))))
-      ;; now that we have the list
-      (when files
-	(apply 'el-get-byte-compile-files package (nreverse files))))))
+      ;; now that we have the list, return it
+      files)))
+
+(defun el-get-byte-compile (&optional package nocomp compile)
+  "byte-compile PACKAGE files, unless variable `el-get-byte-compile' is nil"
+  (when el-get-byte-compile
+    (let* ((package  (or package (car command-line-args-left)))
+           (nocomp
+	    (or nocomp (car (read-from-string (cadr command-line-args-left)))))
+	   (compile
+	    (or compile
+		(car (read-from-string (caddr command-line-args-left))))))
+      (apply 'el-get-byte-compile-files package
+             (nreverse (el-get-assemble-files-for-byte-compilation package nocomp compile))))))
 
 (defun el-get-build-commands (package)
   "Return a list of build commands for the named PACKAGE.
