@@ -1614,10 +1614,15 @@ spaces yields the entire command as a single string."
   "Return a shell command to byte-compile PACKAGE in a separate emacs process.
 
 The command is returned as a list of arguments. Joining them with
-spaces yields the entire command as a single string."
-  (let ((files (el-get-assemble-files-for-byte-compilation package)))
-    (when files
-      (el-get-construct-external-byte-compile-command files))))
+spaces yields the entire command as a single string.
+
+If `el-get-byte-compile' is or the package does not require
+byte-compiling (maybe because the installation method already
+takes care of it), thiw function returns nil."
+  (when el-get-byte-compile
+    (let ((files (el-get-assemble-files-for-byte-compilation package)))
+      (when files
+        (el-get-construct-external-byte-compile-command files)))))
 
 (defun el-get-byte-compile (&optional package nocomp compile)
   "byte-compile PACKAGE files, unless variable `el-get-byte-compile' is nil"
@@ -1738,10 +1743,10 @@ recursion.
     (if sync
 	(progn
 	  ;; first byte-compile the package, with another "clean" emacs process
-	  (let ((build-cmd (mapconcat 'identity bytecomp-command " ")))
-            (if build-cmd
-                (message "%S" (shell-command-to-string build-cmd))
-              (message "Not byte-compiling anything for %s" package)))
+          (if bytecomp-command
+              (let ((build-cmd (mapconcat 'identity bytecomp-command " ")))
+                (message "%S" (shell-command-to-string build-cmd)))
+            (message "Not byte-compiling anything for %s" package))
 
 	  (dolist (c commands)
             (let ((cmd
@@ -1773,16 +1778,17 @@ recursion.
 						   "el-get could not build %s [%s]" package c))))
 		      commands))
 	     (full-process-list ;; includes byte compiling
-	      (append (list
-		       `(:command-name "byte-compile"
-				       :buffer-name ,buf
-				       :default-directory ,wdir
-				       :shell t
-				       :program ,(car bytecomp-command)
-				       :args ,(cdr bytecomp-command)x
-				       :message ,(format "el-get-build %s: byte-compile ok." package)
-				       :error ,(format
-						  "el-get could not byte-compile %s" package)))
+	      (append (when bytecomp-command
+                        (list
+                         `(:command-name "byte-compile"
+                                         :buffer-name ,buf
+                                         :default-directory ,wdir
+                                         :shell t
+                                         :program ,(car bytecomp-command)
+                                         :args ,(cdr bytecomp-command)x
+                                         :message ,(format "el-get-build %s: byte-compile ok." package)
+                                         :error ,(format
+						  "el-get could not byte-compile %s" package))))
 		      process-list)))
 	(el-get-start-process-list package full-process-list post-build-fun)))))
 
