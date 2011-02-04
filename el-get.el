@@ -1537,49 +1537,42 @@ names from `el-get-package-directory'"
 	(dolist (file (directory-files pdir nil fp))
 	  (el-get-byte-compile-file (concat pdir file))))))))
 
-(defun el-get-assemble-files-for-byte-compilation (package nocomp compile)
-  "Assemble a list of *absolute* paths to compile.
-
-Arguments are identical to `el-get-byte-compile'."
+(defun el-get-assemble-files-for-byte-compilation (package)
+  "Assemble a list of *absolute* paths to byte-compile for PACKAGE."
   (when el-get-byte-compile
     (let* ((source   (el-get-package-def package))
-	   (method   (plist-get source :type))
+           (comp-prop (plist-get source :compile))
+           (compile (if (listp comp-prop) comp-prop (list comp-prop)))
+           ;; nocomp is true only if :compile is explicitly set to nil.
+           (explicit-nocomp (and (plist-member source :compile)
+                                 (not comp-prop)))
+           (method   (plist-get source :type))
 	   (pdir     (el-get-package-directory package))
 	   (el-path  (el-get-load-path package))
 	   (files '()))
-      ;; byte-compile either :compile entries or anything in load-path
-      (if compile
-	  ;; only byte-compile what's in the :compile property of the recipe
-	  ;; gotcha: read-from-string will get back symbolp when there's
-	  ;; only one element in the list
-	  (dolist (path (if (listp compile) compile
-			  (list (symbol-name compile))))
-	    (let ((fullpath (expand-file-name path pdir)))
-	      ;; path could be a file name regexp
-	      (push (if (file-exists-p fullpath) fullpath path) files)))
+      (cond
+       (compile
+        ;; only byte-compile what's in the :compile property of the recipe
+        (dolist (path (if (listp compile) compile
+                        (list (symbol-name compile))))
+          (let ((fullpath (expand-file-name path pdir)))
+            (if (file-exists-p fullpath)
+                ;; path is a file/dir, so add it literally
+                (add-to-list 'files fullpath)
+              ;; path is a regexp, so add matching file names in package dir
+              (mapc (apply-partially 'add-to-list 'files) (directory-files pdir nil fp))))))
 
-	;; Compile that directory, unless users asked not to (:compile nil)
-	;; or unless we have build instructions (then they should care)
-	;; or unless we have installed pre-compiled package
-	(unless (or nocomp
-		    (el-get-build-commands package)
-                    ;; TODO Refactor this list of methods into a defcustom
-		    (member method '(apt-get fink pacman)))
-	  (dolist (dir el-path)
-	    (push dir files))))
-      ;; Expand regular expressions into lists of files
-      (setq files (mapcan (lambda (fp)
-                            (if (file-exists-p fp)
-                                ;; File exists, so not a regexp
-                                (list fp)
-                              ;; Nonexistent, so interpret as regexp.
-                              (mapcar (lambda (f) (expand-file-name f pdir))
-                                      (directory-files pdir nil fp))))))
-      ;; Now files contains only absolute paths to existent files and
-      ;; directories. Let's assert this for now.
-      (assert (apply 'and (mapcar (lambda (f) (and (file-name-absolute-p f) (file-exists-p f))) files))
-              'show-args
-              "File names are not absolute: %S" files)
+       ;; If package has (:compile nil), or package has its own build
+       ;; instructions, or package is already pre-compiled by the
+       ;; installation method, then don't compile anything.
+       ((or explicit-nocomp
+            (el-get-build-commands package)
+            (member method '(apt-get fink pacman)))
+        nil)
+
+       ;; Default: compile the package's entire load-path
+       (t
+        (mapc (apply-partially 'add-to-list 'files) el-path)))
       files)))
 
 (defun el-get-funcall-from-command-line-args ()
