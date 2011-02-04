@@ -1601,6 +1601,12 @@ names from `el-get-package-directory'"
   "Return a shell command to byte-compile FILES in a separate emacs process."
   (el-get-construct-external-funcall 'mapc 'el-get-byte-compile-file-or-directory files))
 
+(defun el-get-construct-package-byte-compile-command (package)
+  "Return a shell command to byte-compile PACKAGE in a separate emacs process."
+  (let ((files (el-get-assemble-files-for-byte-compilation package)))
+    (when files
+      (el-get-construct-external-byte-compile-command files))))
+
 (defun el-get-byte-compile (&optional package nocomp compile)
   "byte-compile PACKAGE files, unless variable `el-get-byte-compile' is nil"
   (when el-get-byte-compile
