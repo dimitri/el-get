@@ -1522,7 +1522,8 @@ names from `el-get-package-directory'"
 	;; or unless we have installed pre-compiled package
 	(unless (or nocomp
 		    (el-get-build-commands package)
-		    (member method '(apt-get fink pacman elpa)))
+                    ;; TODO Refactor this list of methods into a defcustom
+		    (member method '(apt-get fink pacman)))
 	  (dolist (dir el-path)
 	    (push dir files))))
       ;; now that we have the list
