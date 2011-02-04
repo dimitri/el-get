@@ -1121,11 +1121,12 @@ The cons cell has the form (NAME . URL). See `package-archives'.
 If the package source only specifies a URL, the UEL will be used
 for NAME as well.
 
-If PACKAGE's `:type' is not \"elpa\", then return nil."
+If PACKAGE's `:type' is not \"elpa\", or no repo is specified in
+the recipe, then return nil."
   (let* ((source (el-get-package-def package))
          (type (plist-get source :type))
          (elpa-repo (plist-get source :repo)))
-    (when (eq type 'elpa)
+    (when (and (eq type 'elpa) elpa-repo)
       (cond ((stringp elpa-repo)
              (cons elpa-repo elpa-repo))
             ((consp elpa-repo)
