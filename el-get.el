@@ -1505,7 +1505,8 @@ the files up."
 
 Specifically, if the compiled elc file already exists and is
 newer, then compilation will be skipped."
-  (let ((elc (concat (file-name-sans-extension el) ".elc")))
+  (let ((elc (concat (file-name-sans-extension el) ".elc"))
+        (byte-compile-warnings nil))
     (when (or (not (file-exists-p elc))
 	      (file-newer-than-file-p el elc))
       (condition-case err
@@ -1515,9 +1516,10 @@ newer, then compilation will be skipped."
 
 (defun el-get-byte-compile-file-or-directory (file)
   "Byte-compile FILE or all files within it if it is a directory."
-  (if (file-directory-p file)
-      (byte-recompile-directory file 0)
-    (el-get-byte-compile-file file)))
+  (let ((byte-compile-warnings nil))
+    (if (file-directory-p file)
+        (byte-recompile-directory file 0)
+      (el-get-byte-compile-file file))))
 
 (defun el-get-byte-compile-files (package &rest files)
   "byte-compile the files or directories FILES.
