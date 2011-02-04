@@ -1583,6 +1583,8 @@ INSTALLING-INFO is t when called from
 `el-get-install-or-init-info', as to avoid a nasty infinite
 recursion.
 "
+  ;; TODO: Pre-generate list of files to byte-compile in-process so we
+  ;; don't depend on el-get inside emacs -Q
   (let* ((pdir   (el-get-package-directory package))
 	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir))
 	 (buf    (format "*el-get-build: %s*" package))
