@@ -1469,6 +1469,12 @@ avoid doing it all over again"
 	((debug error) ;; catch-all, allow for debugging
 	 (message "%S" (error-message-string err)))))))
 
+(defun el-get-byte-compile-file-or-directory (file)
+  "Byte-compile FILE or all files within it if it is a directory."
+  (if (file-directory-p file)
+      (byte-recompile-directory file 0)
+    (el-get-byte-compile-file file)))
+
 (defun el-get-byte-compile-files (package &rest files)
   "byte-compile the files or directories FILES.
 
@@ -1480,11 +1486,8 @@ names from `el-get-package-directory'"
   (let ((byte-compile-warnings nil))
     (dolist (fp files)
       (cond
-       ((file-directory-p fp)
-	(byte-recompile-directory fp 0))
-
        ((file-exists-p fp)
-	(el-get-byte-compile-file fp))
+	(el-get-byte-compile-file-or-directory fp))
 
        (t ; regexp case
 	(dolist (file (directory-files pdir nil fp))
