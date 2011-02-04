@@ -2177,6 +2177,14 @@ from `el-get-sources'."
   (el-get-error-unless-package-p package)
   (dired (el-get-package-directory package)))
 
+(defun el-get-write-recipe (source dir &optional filename)
+  "Given an SOURCE entry, write it to FILENAME"
+  (unless filename
+    (setq filename (format "%s.el" (el-get-source-name source))))
+  (let ((filepath (format "%s/%s" dir filename)))
+    (with-temp-file filepath
+      (insert (prin1-to-string source)))))
+
 (defun el-get-make-recipes (&optional dir)
   "Loop over `el-get-sources' and write a recipe file for each
 entry which is not a symbol and is not already a known recipe."
@@ -2188,8 +2196,7 @@ entry which is not a symbol and is not already a known recipe."
 		    collect r)))
     (dolist (r new)
       (message "el-get: preparing recipe file for %s" (el-get-source-name r))
-      (with-temp-file (format "%s/%s.el" dir (el-get-source-name r))
-	(insert (prin1-to-string r)))))
+      (el-get-write-recipe r dir)))
   (dired dir))
 
 ;;
