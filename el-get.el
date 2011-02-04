@@ -1494,16 +1494,14 @@ names from `el-get-package-directory'"
 	  (el-get-byte-compile-file (concat pdir file))))))))
 
 (defun el-get-assemble-files-for-byte-compilation (package nocomp compile)
-  "Given a PACKAGE and a COMPILE specification, assemble a list
-of *absolute* paths to files and directories to be
-byte-compiled."
+  "Assemble a list of *absolute* paths to compile.
+
+Arguments are identical to `el-get-byte-compile'."
   (when el-get-byte-compile
     (let* ((source   (el-get-package-def package))
 	   (method   (plist-get source :type))
 	   (pdir     (el-get-package-directory package))
 	   (el-path  (el-get-load-path package))
-	   ;; when using command-line-args-left, we did not load the user's
-	   ;; `el-get-sources', so we get :compile from the command line too
 	   (files '()))
       ;; byte-compile either :compile entries or anything in load-path
       (if compile
@@ -1525,7 +1523,19 @@ byte-compiled."
 		    (member method '(apt-get fink pacman)))
 	  (dolist (dir el-path)
 	    (push dir files))))
-      ;; now that we have the list, return it
+      ;; Expand regular expressions into lists of files
+      (setq files (mapcan (lambda (fp)
+                            (if (file-exists-p fp)
+                                ;; File exists, so not a regexp
+                                (list fp)
+                              ;; Nonexistent, so interpret as regexp.
+                              (mapcar (lambda (f) (expand-file-name f pdir))
+                                      (directory-files pdir nil fp))))))
+      ;; Now files contains only absolute paths to existent files and
+      ;; directories. Let's assert this for now.
+      (assert (apply 'and (mapcar (lambda (f) (and (file-name-absolute-p f) (file-exists-p f))) files))
+              'show-args
+              "File names are not absolute: %S" files)
       files)))
 
 (defun el-get-byte-compile (&optional package nocomp compile)
