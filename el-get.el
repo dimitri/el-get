@@ -1538,6 +1538,32 @@ Arguments are identical to `el-get-byte-compile'."
               "File names are not absolute: %S" files)
       files)))
 
+(defun el-get-funcall-from-command-line-args ()
+  "Like `funcall', but reads FUNCTION and ARGS from command line"
+  (let ((args (mapcar 'read command-line-args-left)))
+    (apply 'funcall args)))
+
+(defun el-get-construct-external-funcall (function &rest arguments)
+  "Generate a shell command that calls FUNCTION on ARGUMENTS in a separate emacs process."
+  (let ((emacs el-get-emacs)
+        (libs (delete-dups
+               (remove-if 'null
+                          (mapcar (lambda (func) (symbol-file func 'defun))
+                                  (cons 'el-get-funcall-from-command-line-args
+                                        (remove-if-not 'symbolp (cons function arguments))))))))
+    (apply 'concat
+           (nconc
+            (list emacs " -Q -batch -f toggle-debug-on-error ")
+            (mapcar (lambda (lib) (format " -l %s " (file-name-sans-extension lib)))
+                    libs)
+            (list " -f el-get-funcall-from-command-line-args ")
+            (mapcar (lambda (arg) (format " %S " (prin1-to-string arg)))
+                    (cons function arguments))))))
+
+(defun el-get-construct-external-byte-compile-command (files)
+  "Return a shell command to byte-compile FILES in a separate emacs process."
+  (el-get-construct-external-funcall 'mapc 'el-get-byte-compile-file-or-directory files))
+
 (defun el-get-byte-compile (&optional package nocomp compile)
   "byte-compile PACKAGE files, unless variable `el-get-byte-compile' is nil"
   (when el-get-byte-compile
