@@ -27,6 +27,7 @@
 ;;   - byte-compile at build time rather than at init time
 ;;   - and use a "clean room" external emacs -Q for byte compiling
 ;;   - allow to skip autoloads either globally or per-package
+;;   - better checks and errors for commands used when installing packages
 ;;
 ;;  1.1 - 2010-12-20 - Nobody's testing until the release
 ;;
@@ -936,7 +937,7 @@ found."
 
 (defun el-get-darcs-get (package url post-install-fun)
   "Get a given PACKAGE following the URL using darcs."
-  (let* ((darcs-executable (el-get-find-executable "darcs"))
+  (let* ((darcs-executable (el-get-executable-find "darcs"))
 	 (name (format "*darcs get %s*" package))
 	 (ok   (format "Package %s installed" package))
 	 (ko   (format "Could not install package %s." package)))
@@ -953,7 +954,7 @@ found."
 
 (defun el-get-darcs-pull (package url post-update-fun)
   "darcs pull the package."
-  (let* ((darcs-executable (el-get-find-executable "darcs"))
+  (let* ((darcs-executable (el-get-executable-find "darcs"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*darcs pull %s*" package))
 	 (ok   (format "Pulled package %s." package))
