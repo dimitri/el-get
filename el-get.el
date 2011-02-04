@@ -1501,8 +1501,10 @@ the files up."
 	    "el-get-install-or-init-info: %s not supported" build-or-init)))))))
 
 (defun el-get-byte-compile-file (el)
-  "byte-compile-file does that unconditionnaly, here we want to
-avoid doing it all over again"
+  "Same as `byte-compile-file', but skips unnecessary compilation.
+
+Specifically, if the compiled elc file already exists and is
+newer, then compilation will be skipped."
   (let ((elc (concat (file-name-sans-extension el) ".elc")))
     (when (or (not (file-exists-p elc))
 	      (file-newer-than-file-p el elc))
