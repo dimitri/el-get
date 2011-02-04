@@ -1522,7 +1522,7 @@ names from `el-get-package-directory'"
 	;; or unless we have installed pre-compiled package
 	(unless (or nocomp
 		    (el-get-build-commands package)
-		    (member method '(apt-get fink pacman)))
+		    (member method '(apt-get fink pacman elpa)))
 	  (dolist (dir el-path)
 	    (push dir files))))
       ;; now that we have the list
