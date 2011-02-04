@@ -2179,8 +2179,13 @@ from `el-get-sources'."
 
 (defun el-get-write-recipe (source dir &optional filename)
   "Given an SOURCE entry, write it to FILENAME"
+  ;; Replace a package name with its definition
+  (when (symbolp source)
+    (setq source (el-get-read-recipe source)))
+  ;; Autogenerate filename if unspecified
   (unless filename
     (setq filename (format "%s.el" (el-get-source-name source))))
+  ;; Filepath is dir/file
   (let ((filepath (format "%s/%s" dir filename)))
     (with-temp-file filepath
       (insert (prin1-to-string source)))))
