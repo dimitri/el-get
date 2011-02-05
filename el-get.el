@@ -2419,7 +2419,9 @@ welcome to use `autoload' too."
                          (el-get-init package)
                        ((debug error) ;; catch-all, allow for debugging
                         (message "%S" (error-message-string err))))
-                   (message "Package %s failed to install, remove it first." package))
+                   (message "Package %s failed to install, removing it first." package)
+                   (el-get-remove package)
+                   (el-get-install package))
                (el-get-install package))))
          el-get-sources)
 
