@@ -5,7 +5,7 @@
        :build `,(mapcar
                  (lambda (target)
                    (concat "make " target " EMACS=" el-get-emacs))
-                 '("clean" "all" "doc"))
+                 '("clean" "all"))
        :load-path ("lisp" "contrib/lisp")
        :features org-install)
 
