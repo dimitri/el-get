@@ -26,6 +26,8 @@
 ;;   - Implement M-x el-get-make-recipes
 ;;   - byte-compile at build time rather than at init time
 ;;   - and use a "clean room" external emacs -Q for byte compiling
+;;   - allow to skip autoloads either globally or per-package
+;;   - better checks and errors for commands used when installing packages
 ;;
 ;;  1.1 - 2010-12-20 - Nobody's testing until the release
 ;;
@@ -140,6 +142,12 @@ disable byte-compilation globally."
   :group 'el-get
   :type 'boolean)
 
+(defcustom el-get-generate-autoloads t
+  "Whether or not to generate autoloads for packages. Can be used
+to disable autoloads globally."
+  :group 'el-get
+  :type 'boolean)
+
 (defvar el-get-git-clone-hook        nil "Hook run after git clone.")
 (defvar el-get-git-svn-clone-hook    nil "Hook run after git svn clone.")
 (defvar el-get-bzr-branch-hook       nil "Hook run after bzr branch.")
@@ -233,11 +241,14 @@ the named package action in the given method."
   :type '(repeat (cons symbol function))
   :group 'el-get)
 
-(defvar el-get-dir "~/.emacs.d/el-get/"
-  "*Define where to fetch the packages.")
+(defconst el-get-script (or load-file-name buffer-file-name))
 
-(defvar el-get-recipe-path (list "~/.emacs.d/el-get/el-get/recipes")
-  "*Define where to look for the recipes")
+(defvar el-get-dir "~/.emacs.d/el-get/"
+  "*Path where to install the packages.")
+
+(defvar el-get-recipe-path
+  (list (concat (file-name-directory el-get-script) "recipes"))
+  "*Define where to look for the recipes, that's a list of directories")
 
 (defvar el-get-status-file
   (concat (file-name-as-directory el-get-dir) ".status.el")
@@ -375,6 +386,12 @@ definition provided by `el-get' recipes locally.
 :features
 
     List of features el-get will `require' for you.
+
+:autoloads
+
+    Control whether el-get should generate autoloads for this
+    package. Setting this to nil prevents el-get from generating
+    autoloads for the package. Default is t.
 
 :options
 
@@ -605,6 +622,47 @@ Any other property will get put into the process object.
     (when (functionp final-func)
       (funcall final-func package))))
 
+;;
+;; get an executable given its command name, with friendly error message
+;;
+(defun el-get-executable-find (name)
+  "Return the absolute path of the command to execute, and errors
+out if that can not be found.
+
+This function will first look for existing function named
+\"el-get-NAME-executable\" and call that. This function, if it
+exists, must handle error cases.
+
+Then, it will look for existing variable named \"el-get-NAME\"
+and error if that's not nil and not an existing file name.
+
+Baring variable named \"el-get-NAME\", it will call
+`executable-find' on NAME and use the output of that, or error
+out if it's nil."
+  (let ((fname (intern (format "el-get-%s-executable" name)))
+	(vname (intern (format "el-get-%s" name))))
+    (cond
+     ((fboundp fname)
+      (funcall fname))
+
+     ((boundp vname)
+      (let ((command (symbol-value vname)))
+	(unless (and (file-exists-p command)
+		     (file-executable-p command))
+	  (error
+	   (concat "The variable `%s' points to \"%s\", "
+		   "which is not an executable file name on your system.")
+	   name command))
+	command))
+
+     (t
+      (let ((command (executable-find name)))
+	(unless command
+	  (error
+	   "The command named '%s' can not be found with `executable-find'"
+	   name))
+	command)))))
+
 
 ;;
 ;; git support
@@ -624,7 +682,7 @@ found."
 
 (defun el-get-git-clone (package url post-install-fun)
   "Clone the given package following the URL."
-  (let* ((git-executable (el-get-git-executable))
+  (let* ((git-executable (el-get-executable-find "git"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*git clone %s*" package))
 	 (ok   (format "Package %s installed." package))
@@ -650,7 +708,7 @@ found."
 
 (defun el-get-git-pull (package url post-update-fun)
   "git pull the package."
-  (let* ((git-executable (el-get-git-executable))
+  (let* ((git-executable (el-get-executable-find "git"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*git pull %s*" package))
 	 (ok   (format "Pulled package %s." package))
@@ -680,7 +738,7 @@ found."
 ;;
 (defun el-get-git-svn-clone (package url post-install-fun)
   "Clone the given svn PACKAGE following the URL using git."
-  (let ((git-executable (el-get-git-executable))
+  (let ((git-executable (el-get-executable-find "git"))
 	(name (format "*git svn clone %s*" package))
 	(ok   (format "Package %s installed." package))
 	(ko   (format "Could not install package %s." package)))
@@ -698,7 +756,7 @@ found."
 
 (defun el-get-git-svn-update (package url post-update-fun)
   "Update PACKAGE using git-svn. URL is given for compatibility reasons."
-  (let ((git-executable (el-get-git-executable))
+  (let ((git-executable (el-get-executable-find "git"))
 	(pdir   (el-get-package-directory package))
 	(f-name (format "*git svn fetch %s*" package))
 	(f-ok   (format "Fetched package %s." package))
@@ -732,7 +790,7 @@ found."
 ;;
 (defun el-get-bzr-branch (package url post-install-fun)
   "Branch a given bzr PACKAGE following the URL using bzr."
-  (let* ((bzr-executable "bzr")
+  (let* ((bzr-executable (el-get-executable-find "bzr"))
 	 (name (format "*bzr branch %s*" package))
 	 (ok   (format "Package %s installed" package))
 	 (ko   (format "Could not install package %s." package)))
@@ -749,7 +807,7 @@ found."
 
 (defun el-get-bzr-pull (package url post-update-fun)
   "bzr pull the package."
-  (let* ((bzr-executable "bzr")
+  (let* ((bzr-executable (el-get-executable-find "bzr"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*bzr pull %s*" package))
 	 (ok   (format "Pulled package %s." package))
@@ -772,7 +830,7 @@ found."
 ;;
 (defun el-get-svn-checkout (package url post-install-fun)
   "svn checkout the package."
-  (let* ((svn-executable el-get-svn)
+  (let* ((svn-executable (el-get-executable-find "svn"))
 	 (source  (el-get-package-def package))
 	 (name    (format "*svn checkout %s*" package))
 	 (ok      (format "Checked out package %s." package))
@@ -791,7 +849,7 @@ found."
 
 (defun el-get-svn-update (package url post-update-fun)
   "update the package using svn."
-  (let* ((svn-executable el-get-svn)
+  (let* ((svn-executable (el-get-executable-find "svn"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*svn update %s*" package))
 	 (ok   (format "Updated package %s." package))
@@ -814,7 +872,7 @@ found."
 ;;
 (defun el-get-cvs-checkout (package url post-install-fun)
   "cvs checkout the package."
-  (let* ((cvs-executable (executable-find "cvs"))
+  (let* ((cvs-executable (el-get-executable-find "cvs"))
 	 (source  (el-get-package-def package))
 	 (module  (plist-get source :module))
 	 (options (plist-get source :options))
@@ -848,7 +906,7 @@ found."
 
 (defun el-get-cvs-update (package url post-update-fun)
   "cvs checkout the package."
-  (let* ((cvs-executable (executable-find "cvs"))
+  (let* ((cvs-executable (el-get-executable-find "cvs"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*cvs update %s*" package))
 	 (ok   (format "Updated package %s." package))
@@ -879,7 +937,7 @@ found."
 
 (defun el-get-darcs-get (package url post-install-fun)
   "Get a given PACKAGE following the URL using darcs."
-  (let* ((darcs-executable (el-get-darcs-executable))
+  (let* ((darcs-executable (el-get-executable-find "darcs"))
 	 (name (format "*darcs get %s*" package))
 	 (ok   (format "Package %s installed" package))
 	 (ko   (format "Could not install package %s." package)))
@@ -896,7 +954,7 @@ found."
 
 (defun el-get-darcs-pull (package url post-update-fun)
   "darcs pull the package."
-  (let* ((darcs-executable (el-get-darcs-executable))
+  (let* ((darcs-executable (el-get-executable-find "darcs"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*darcs pull %s*" package))
 	 (ok   (format "Pulled package %s." package))
@@ -1114,8 +1172,11 @@ PACKAGE isn't currently installed by ELPA."
     (unless (and elpa-dir (file-directory-p elpa-dir))
       ;; Make sure we have got *some* kind of record of the package archive.
       ;; TODO: should we refresh and retry once if package-install fails?
-      (unless (package-read-archive-contents)
-        (package-refresh-contents))
+      (let ((p (if (fboundp 'package-read-all-archive-contents)
+		   (package-read-all-archive-contents) ; version from emacs24
+		 (package-read-archive-contents))))     ; old version
+	(unless p
+	  (package-refresh-contents)))
       (package-install (intern-soft package)))
     ;; we symlink even when the package already is installed because it's
     ;; not an error to have installed ELPA packages before using el-get, and
@@ -1301,7 +1362,7 @@ the files up."
 ;;
 (defun el-get-hg-clone (package url post-install-fun)
   "Clone the given package following the URL."
-  (let* ((hg-executable "hg")
+  (let* ((hg-executable (el-get-executable-find "hg"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*hg clone %s*" package))
 	 (ok   (format "Package %s installed." package))
@@ -1320,7 +1381,7 @@ the files up."
 
 (defun el-get-hg-pull (package url post-update-fun)
   "hg pull the package."
-  (let* ((hg-executable "hg")
+  (let* ((hg-executable (el-get-executable-find "hg"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*hg pull %s*" package))
 	 (ok   (format "Pulled package %s." package))
@@ -1348,7 +1409,8 @@ the files up."
 	 (pdir (el-get-package-directory package)))
     (if (eq method 'elpa)
 	;; only remove a symlink here
-	(delete-file (directory-file-name pdir))
+	(when (file-exists-p pdir)
+	  (delete-file (directory-file-name pdir)))
       ;; non ELPA packages, remove the directory
       (if (file-exists-p pdir)
 	  (dired-delete-file pdir 'always)
@@ -1544,8 +1606,9 @@ recursion.
 	 (clist  (if (listp comp) comp (list comp)))
 	 (nocomp (and (plist-member source :compile) (not comp)))
 	 (bytecmdargs
-	  (format "-Q -batch -l %sel-get/el-get -f el-get-byte-compile %s %s %S"
-		  el-get-dir package nocomp (prin1-to-string clist)))
+	  (format "-Q -batch -l %s -f el-get-byte-compile %s %s %S"
+		  (file-name-sans-extension (symbol-file 'el-get-byte-compile 'defun))
+		  package nocomp (prin1-to-string clist)))
 	 (default-directory (file-name-as-directory wdir)))
 
     ;; first build the Info dir
@@ -1787,8 +1850,9 @@ that has a valid recipe."
 
 (defun el-get-eval-autoloads ()
   "Evaluate the autoloads from the autoload file."
-  (message "el-get: evaluating autoload file")
-  (el-get-load-fast el-get-autoload-file))
+  (when el-get-generate-autoloads
+    (message "el-get: evaluating autoload file")
+    (el-get-load-fast el-get-autoload-file)))
 
 (defun el-get-update-autoloads ()
   "Regenerate, compile, and load any outdated packages' autoloads.
@@ -1828,33 +1892,42 @@ shouldn't be invoked directly."
 (defun el-get-remove-autoloads (package)
   "Remove from `el-get-autoload-file' any autoloads associated
 with the named PACKAGE"
-  (with-temp-buffer ;; empty buffer to trick `autoload-find-destination'
-    (let ((generated-autoload-file el-get-autoload-file)
-          (autoload-modified-buffers (list (current-buffer))))
-      (dolist (dir (el-get-load-path package))
-        (when (file-directory-p dir)
-          (dolist (f (directory-files dir t el-get-load-suffix-regexp))
-            ;; this will clear out any autoloads associated with the file
-	    ;; `autoload-find-destination' signature has changed in emacs24.
-	    (if (> emacs-major-version 23)
-		(autoload-find-destination f (autoload-file-load-name f))
-	      (autoload-find-destination f)))))))
-  (el-get-save-and-kill el-get-autoload-file))
+  (when (file-exists-p el-get-autoload-file)
+    (with-temp-buffer ;; empty buffer to trick `autoload-find-destination'
+      (let ((generated-autoload-file el-get-autoload-file)
+            (autoload-modified-buffers (list (current-buffer))))
+        (dolist (dir (el-get-load-path package))
+          (when (file-directory-p dir)
+            (dolist (f (directory-files dir t el-get-load-suffix-regexp))
+              ;; this will clear out any autoloads associated with the file
+              ;; `autoload-find-destination' signature has changed in emacs24.
+              (if (> emacs-major-version 23)
+                  (autoload-find-destination f (autoload-file-load-name f))
+                (autoload-find-destination f)))))))
+    (el-get-save-and-kill el-get-autoload-file)))
 
 (defvar el-get-autoload-timer nil
   "Where the currently primed autoload timer (if any) is stored")
+
+(defun el-get-want-autoloads-p (package)
+  (let ((source (el-get-package-def package)))
+    (or (not (plist-member source :autoloads))
+        (plist-get source :autoloads))))
 
 (defun el-get-invalidate-autoloads ( &optional package )
   "Mark the named PACKAGE as needing new autoloads.  If PACKAGE
 is nil, marks all installed packages as needing new autoloads."
 
   ;; Trigger autoload recomputation unless it's already been done
-  (unless el-get-autoload-timer
+  (unless (or el-get-autoload-timer
+              (not el-get-generate-autoloads))
     (setq el-get-autoload-timer
           (run-with-idle-timer 0 nil 'el-get-update-autoloads)))
 
   ;; Save the package names for later
-  (mapc (lambda (p) (add-to-list 'el-get-outdated-autoloads p))
+  (mapc (lambda (p)
+          (when (el-get-want-autoloads-p p)
+            (add-to-list 'el-get-outdated-autoloads p)))
         (if package (list package)
 	  (mapcar 'el-get-source-name el-get-sources)))
 
