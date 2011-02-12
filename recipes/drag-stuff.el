@@ -1,4 +1,5 @@
 (:name drag-stuff
-       :type git
-       :url "git://github.com/rejeep/drag-stuff.git"
-       :features drag-stuff)
+       :type http
+       :url "https://github.com/rejeep/drag-stuff/raw/master/drag-stuff.el"
+       :after (lambda ()
+                (autoload 'drag-stuff-mode "drag-stuff" nil t)))

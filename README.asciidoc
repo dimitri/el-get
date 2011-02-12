@@ -12,48 +12,18 @@ for you to setup the extension. Or call it a package.
 
 == How to Install it?
 
-Here's the 'lazy installer' for everyone to use, except for the early
-adopters, who will have to adapt their +el-get-sources+ to use +github+
-instead.
-
-Easy way first:
+Here's the 'lazy installer':
 
 --------------------------------------
 ;; So the idea is that you copy/paste this code into your *scratch* buffer,
 ;; hit C-j, and you have a working el-get.
-(url-retrieve
- "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
- (lambda (s)
-   (end-of-buffer)
-   (eval-print-last-sexp)))
---------------------------------------
-
-More involved way:
-
---------------------------------------
-;; So the idea is that you copy/paste this code into your *scratch* buffer,
-;; hit C-j, and you have a working el-get.
-
-(let* ((el-get-dir        (expand-file-name "~/.emacs.d/el-get/"))
-       (dummy             (unless (file-directory-p el-get-dir)
-			    (make-directory el-get-dir t)))
-       (package           "el-get")
-       (bname             "*el-get bootstrap*")
-       (pdir              (concat (file-name-as-directory el-get-dir) package))
-       (git               (or (executable-find "git") (error "Unable to find `git'")))
-       (url               "git://github.com/dimitri/el-get.git")
-       (el-get-sources    `((:name ,package :type "git" :url ,url :features el-get :compile "el-get.el")))
-       (default-directory el-get-dir)
-       (process-connection-type nil) ; pipe, no pty (--no-progress)
-       (status            (call-process git nil bname t "--no-pager" "clone" "-v" url package)))
-  (set-window-buffer (selected-window) bname)
-  (when (eq 0 status)
-    (load (concat (file-name-as-directory pdir) package ".el"))
-    ;; (require 'bytecomp)
-    (el-get-init "el-get")
-    (with-current-buffer bname
-      (goto-char (point-max))
-      (insert "\nCongrats, el-get is installed and ready to serve!"))))
+(if (require 'el-get nil t)
+    (message "el-get is already installed, try M-x el-get-update")
+  (url-retrieve
+   "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+   (lambda (s)
+     (end-of-buffer)
+     (eval-print-last-sexp))))
 --------------------------------------
 
 You have to type +C-j+ with the cursor at the end of the last line, but
@@ -61,9 +31,8 @@ still on the line. 'C-j runs the command eval-print-last-sexp', so it will
 evaluate the code you're looking at, and that will +git clone el-get+ at the
 'right place'.
 
-If you disagree with what the right place is, please feel free to edit the
-+el-get-dir+ line above, but remember that you will have to +setq+ the
-variable before to use +el-get+.
+Note that the first line conditional allows you to add this elisp code into
+your emacs init file directly.
 
 == What is this?
 
@@ -203,11 +172,17 @@ M-x el-get-install::
     you have a recipe for, instead of only proposing packages from
     +el-get-sources+.
 
-
 M-x el-get-update::
 
     Will prompt for a package name, with completion, then update it. This
     will run the +build+ commands and +init+ the package again.
+
+M-x el-get-update-all::
+
+    Will update all packages used in +el-get-sources+. Beware that using
+    this function can lead to hours of settings review: more often than not
+    updating a package requires some adjustments to your setup.  Updating
+    all of them at once will require reviewing almost all your setup.
 
 M-x el-get-remove::
 
@@ -220,6 +195,12 @@ M-x el-get-remove::
     When using C-u, +el-get-remove+ will allow for installing any package
     you have a recipe for, instead of only proposing packages from
     +el-get-sources+.
+
+M-x el-get-make-recipes::
+
+    Will prompt for an existing directory where to output all your 'new'
+    recipe files: one file for each entry in +el-get-sources+ that is not
+    just a +symbol+ and that is not found anywhere in +el-get-recipe-path+.
 
 The +C-u+ alternatives are not provided for the +el-get-update+ and
 +el-get-init+ command, on the grounds that if you want to use them you

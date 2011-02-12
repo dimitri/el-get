@@ -1,0 +1,1 @@
+(:name ri-emacs :type git :url "git://github.com/pedz/ri-emacs.git")

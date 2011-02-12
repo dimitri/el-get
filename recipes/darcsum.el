@@ -1,0 +1,1 @@
+(:name darcsum :type http :url "http://joyful.com/repos/darcsum/darcsum.el")

@@ -1,0 +1,1 @@
+(:name ac-dabbrev :type emacswiki)
