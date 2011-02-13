@@ -1,4 +1,4 @@
 (:name mailq
        :type git
-       :url "git://github.com/dimitri/mailq-el.git"
+       :url "https://github.com/dimitri/mailq-el.git"
        :load "mailq.el")

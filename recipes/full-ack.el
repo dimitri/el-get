@@ -1,6 +1,6 @@
 (:name full-ack
        :type git
-       :url "git://github.com/nschum/full-ack.git"
+       :url "https://github.com/nschum/full-ack.git"
        :after (lambda ()
                 (autoload 'ack "full-ack" nil t)
                 (autoload 'ack-find-file "full-ack" nil t)
