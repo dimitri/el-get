@@ -1,1 +1,1 @@
-(:name durendal :type git :url "git://github.com/technomancy/durendal.git")
+(:name durendal :type git :url "https://github.com/technomancy/durendal.git")

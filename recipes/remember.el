@@ -1,6 +1,6 @@
 (:name remember
        :type git
-       :url "git://repo.or.cz/remember-el.git"
+       :url "http://repo.or.cz/r/remember-el.git"
        :build ("make")
        :features remember-autoloads
        )

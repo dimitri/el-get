@@ -1,1 +1,1 @@
-(:name dired-plus :type git :url "git://github.com/emacsmirror/dired-plus.git")
+(:name dired-plus :type git :url "https://github.com/emacsmirror/dired-plus.git")
