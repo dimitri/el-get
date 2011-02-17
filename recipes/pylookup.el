@@ -1,6 +1,6 @@
 (:name pylookup
        :type git
-       :url "git://github.com/tsgates/pylookup.git"
+       :url "https://github.com/tsgates/pylookup.git"
        :after (lambda ()
                 (setq pylookup-dir (expand-file-name "pylookup" el-get-dir)
                       pylookup-program (expand-file-name "pylookup.py" pylookup-dir)

@@ -166,6 +166,11 @@ general purposes hooks facilities: +el-get-post-install-hooks+ and
 
 Yes, ok.
 
+M-x el-get-sync::
+
+    Synchronously make your current el-get status match +el-get-sources+,
+    by installing and initializing all your packages.
+
 M-x el-get-cd::
 
     Will prompt for a package name, with completion, then open its directory
