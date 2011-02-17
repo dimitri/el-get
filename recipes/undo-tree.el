@@ -1,3 +1,4 @@
 (:name undo-tree
        :type http
-       :url "http://www.dr-qubit.org/undo-tree/undo-tree.el")
+       :url "http://www.dr-qubit.org/undo-tree/undo-tree.el"
+       :features undo-tree)
