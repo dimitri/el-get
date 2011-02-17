@@ -2306,6 +2306,11 @@ entry which is not a symbol and is not already a known recipe."
       (el-get-write-recipe r dir)))
   (dired dir))
 
+(defun el-get-sync ()
+  "M-x el-get-sync will synchronously install and init your el-get packages"
+  (interactive)
+  (el-get 'sync))
+
 ;;
 ;; notify user with emacs notifications API (new in 24)
 ;;
