@@ -1,1 +1,1 @@
-(:name ac-slime :type git :url "git://github.com/purcell/ac-slime.git")
+(:name ac-slime :type git :url "https://github.com/purcell/ac-slime.git")

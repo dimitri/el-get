@@ -1,3 +1,3 @@
 (:name gnus-identities
        :type git
-       :url "git://github.com/renard/gnus-identities.git")
+       :url "https://github.com/renard/gnus-identities.git")
