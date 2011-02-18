@@ -1,1 +1,1 @@
-(:name color-theme-zenburn :type git :url "git://github.com/emacsmirror/zenburn.git")
+(:name color-theme-zenburn :type git :url "https://github.com/emacsmirror/zenburn.git")

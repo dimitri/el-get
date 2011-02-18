@@ -1,1 +1,1 @@
-(:name color-theme-tango-2 :type git :url "git://github.com/wfarr/color-theme-tango-2.git")
+(:name color-theme-tango-2 :type git :url "https://github.com/wfarr/color-theme-tango-2.git")
