@@ -453,25 +453,25 @@ definition provided by `el-get' recipes locally.
    \"http://www.example.com/show-as-text?file=path/package.el\"
 
 "
-  
-:type `(repeat 
+
+:type `(repeat
         (choice :tag "Entry"
          (symbol :tag "Name of EL-Get Package")
          (list
           :tag "Full Recipe (or Recipe Override)"
-          (group :inline t :tag "EL-Get Package Name" :format "%t: %v" 
+          (group :inline t :tag "EL-Get Package Name" :format "%t: %v"
                  (const :format "" :name) (symbol :format "%v"))
           (set
            :inline t :format "%v\n"
-           (group :inline t :format "%t: %v%h" 
-                  :tag "Underlying Package Name" 
+           (group :inline t :format "%t: %v%h"
+                  :tag "Underlying Package Name"
                   :doc "When there is an underlying package manager (e.g. `apt')
 this is the name to fetch in that system"
                   (const :format "" :pkgname) (string :format "%v"))
 
-           (group :inline t :tag "Type" :format "%t: %v%h" 
+           (group :inline t :tag "Type" :format "%t: %v%h"
                   :doc "(If omitted, this recipe provides overrides for one in recipes/)"
-                  (const :format "" :type) 
+                  (const :format "" :type)
                   ,(append '(choice :value :emacswiki :format "%[Value Menu%] %v"
                                     )
                            (sort
@@ -482,18 +482,18 @@ this is the name to fetch in that system"
            (group :inline t :format "URL: %v" (const :format "" :url) (string :format "%v"))
            (group :inline t :format "General Build Recipe\n%v" (const :format "" :build)
                   ,el-get-build-recipe-body)
-           (group :inline t :format "Load-Path: %v" (const :format "" :load-path) 
+           (group :inline t :format "Load-Path: %v" (const :format "" :load-path)
                   (choice :format "%[Format%] %v"
                           directory
                           (repeat :tag "Directory list" directory)
                           ))
-           (group :inline t :format "Compile: %v" (const :format "" :compile) 
+           (group :inline t :format "Compile: %v" (const :format "" :compile)
                   (choice :format "%[Format%] %v"
                           (regexp :tag "File/directory regexp")
                           (repeat  :tag "List of file/directory regexps" regexp)
                           ))
            (group :inline t :format "%v" (const :format "" :info) (string :tag "Path to .info file or to its directory"))
-           (group :inline t :format "Load: %v" (const :format "" :load) 
+           (group :inline t :format "Load: %v" (const :format "" :load)
                   (choice :format "%[Format%] %v"
                           (string :tag "Path to file")
                           (repeat :tag "List of paths" string)
@@ -505,12 +505,12 @@ this is the name to fetch in that system"
            (group :inline t :format "`Before' Function: %v" (const :format "" :before) (function :format "%v"))
            (group :inline t :format "`After' Function: %v" (const :format "" :after) (function :format "%v"))
            (group :inline t :format "Localname: %v" (const :format "" :localname) (string :format "%v")))
-          (repeat 
-           :inline t :tag "System-Specific Build Recipes" 
-           (group :inline t 
+          (repeat
+           :inline t :tag "System-Specific Build Recipes"
+           (group :inline t
                   (symbol :value ,(concat ":build/" (prin1-to-string system-type))
                           :format "Build Tag: %v%h"
-                          :doc "Must be of the form `:build/<system-type>', 
+                          :doc "Must be of the form `:build/<system-type>',
 where `<system-type>' is the value of `system-type' on
 platforms where this recipe should apply"
                           )
