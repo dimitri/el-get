@@ -17,13 +17,11 @@ Here's the 'lazy installer':
 --------------------------------------
 ;; So the idea is that you copy/paste this code into your *scratch* buffer,
 ;; hit C-j, and you have a working el-get.
-(if (require 'el-get nil t)
-    (message "el-get is already installed, try M-x el-get-update")
-  (url-retrieve
-   "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
-   (lambda (s)
-     (end-of-buffer)
-     (eval-print-last-sexp))))
+(url-retrieve
+ "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+ (lambda (s)
+   (end-of-buffer)
+   (eval-print-last-sexp)))
 --------------------------------------
 
 You have to type +C-j+ with the cursor at the end of the last line, but
