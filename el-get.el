@@ -28,6 +28,8 @@
 ;;   - and use a "clean room" external emacs -Q for byte compiling
 ;;   - allow to skip autoloads either globally or per-package
 ;;   - better checks and errors for commands used when installing packages
+;;   - register `el-get-sources' against the custom interface
+;;   - unless :features is used, lazily eval :after functions (see :library)
 ;;
 ;;  1.1 - 2010-12-20 - Nobody's testing until the release
 ;;
@@ -410,6 +412,13 @@ definition provided by `el-get' recipes locally.
     Control whether el-get should generate autoloads for this
     package. Setting this to nil prevents el-get from generating
     autoloads for the package. Default is t.
+
+:library
+
+    When using :after but not using :features, :library allows to
+    set the library against which to register the :after function
+    against `eval-after-load'.  It defaults to either :pkgname
+    or :package, in this order.
 
 :options
 
@@ -2039,6 +2048,8 @@ package is not listed in `el-get-sources'"
 	 (feats    (plist-get source :features))
 	 (el-path  (el-get-load-path package))
 	 (after    (plist-get source :after))
+	 (pkgname  (plist-get source :pkgname))
+	 (library  (or (plist-get source :library) pkgname package))
 	 (before   (plist-get source :before))
 	 (pdir     (el-get-package-directory package)))
 
@@ -2077,10 +2088,13 @@ package is not listed in `el-get-sources'"
 		    ((stringp feats) (list (intern feats)))
 		    (t feats)))))
 
-    ;; call the "after" user function
+    ;; call the "after" user function, or register it with `eval-after-load'
+    ;; against :library
     (when (and after (functionp after))
-      (message "el-get: Calling :after function for package %s" package)
-      (funcall after))
+      (if (null feats)
+	  (eval-after-load library after)
+	(message "el-get: Calling :after function for package %s" package)
+	(funcall after)))
 
     ;; and call the global init hooks
     (run-hook-with-args 'el-get-post-init-hooks package)
