@@ -295,8 +295,26 @@ the named package action in the given method."
 (defvar el-get-growl-notify "/usr/local/bin/growlnotify"
   "*Absolute path of the growlnotify tool")
 
-(defvar el-get-sources nil
-  "*List of sources for packages.
+(defconst el-get-build-recipe-body
+  '(choice :tag "Format" 
+           
+           (repeat :tag "List of shell commands" 
+                    (string :doc "Note: arguments will not be shell-quoted.
+Choose `Evaluated expression' format for a more portable recipe" :format "%v%h"))
+           (sexp :tag "Evaluated expression" :format "%t: %v%h"
+                 :value `(("./configure" ,(concat "--with-emacs=" el-get-emacs)) ("make") ("make" ("install")))
+
+                 :doc "Evaluation should yield a list of lists.
+Each sub-list, representing a single shell command, is expected to have
+strings and/or lists as elements, sub-sub-lists can have string and/or
+list elements, and so on.  Each sub-list will be \"flattened\" to produce
+a list of strings, each of which will be `shell-quote-argument'ed before
+being sent to the underlying shell."
+                 )
+           ))
+
+(defcustom el-get-sources nil
+  "List of sources for packages.
 
 Each source entry is either a symbol, in which case the first
 recipe found in `el-get-recipe-path' directories named after the
@@ -434,7 +452,69 @@ definition provided by `el-get' recipes locally.
 
    \"http://www.example.com/show-as-text?file=path/package.el\"
 
-")
+"
+  
+:type `(repeat 
+        (choice :tag "Entry"
+         (symbol :tag "Name of EL-Get Package")
+         (list
+          :tag "Full Recipe (or Recipe Override)"
+          (group :inline t :tag "EL-Get Package Name" :format "%t: %v" 
+                 (const :format "" :name) (symbol :format "%v"))
+          (set
+           :inline t :format "%v\n"
+           (group :inline t :format "%t: %v%h" 
+                  :tag "Underlying Package Name" 
+                  :doc "When there is an underlying package manager (e.g. `apt')
+this is the name to fetch in that system"
+                  (const :format "" :pkgname) (string :format "%v"))
+
+           (group :inline t :tag "Type" :format "%t: %v%h" 
+                  :doc "(If omitted, this recipe provides overrides for one in recipes/)"
+                  (const :format "" :type) 
+                  ,(append '(choice :value :emacswiki :format "%[Value Menu%] %v"
+                                    )
+                           (sort
+                            (reduce (lambda (r e) (if (symbolp e) (cons (list 'const e) r) r))
+                                    el-get-methods
+                                    :initial-value nil) (lambda (x y) (string< (prin1-to-string (cadr x)) (prin1-to-string (cadr y)))))))
+
+           (group :inline t :format "URL: %v" (const :format "" :url) (string :format "%v"))
+           (group :inline t :format "General Build Recipe\n%v" (const :format "" :build)
+                  ,el-get-build-recipe-body)
+           (group :inline t :format "Load-Path: %v" (const :format "" :load-path) 
+                  (choice :format "%[Format%] %v"
+                          directory
+                          (repeat :tag "Directory list" directory)
+                          ))
+           (group :inline t :format "Compile: %v" (const :format "" :compile) 
+                  (choice :format "%[Format%] %v"
+                          (regexp :tag "File/directory regexp")
+                          (repeat  :tag "List of file/directory regexps" regexp)
+                          ))
+           (group :inline t :format "%v" (const :format "" :info) (string :tag "Path to .info file or to its directory"))
+           (group :inline t :format "Load: %v" (const :format "" :load) 
+                  (choice :format "%[Format%] %v"
+                          (string :tag "Path to file")
+                          (repeat :tag "List of paths" string)
+                          ))
+           (group :inline t :format "%v" (const :format "" :features) (repeat :tag "Features to `require'" symbol))
+           (group :inline t :format "Autoloads: %v"  :value (:autoloads t) (const :format "" :autoloads) (boolean :format "%[Toggle%] %v\n"))
+           (group :inline t :format "Options: %v" (const :format "" :options) (string :format "%v"))
+           (group :inline t :format "CVS Module: %v" (const :format "" :module)  (string :format "%v"))
+           (group :inline t :format "`Before' Function: %v" (const :format "" :before) (function :format "%v"))
+           (group :inline t :format "`After' Function: %v" (const :format "" :after) (function :format "%v"))
+           (group :inline t :format "Localname: %v" (const :format "" :localname) (string :format "%v")))
+          (repeat 
+           :inline t :tag "System-Specific Build Recipes" 
+           (group :inline t 
+                  (symbol :value ,(concat ":build/" (prin1-to-string system-type))
+                          :format "Build Tag: %v%h"
+                          :doc "Must be of the form `:build/<system-type>', 
+where `<system-type>' is the value of `system-type' on
+platforms where this recipe should apply"
+                          )
+                  ,el-get-build-recipe-body))))))
 
 
 (defun el-get-flatten (arg)
@@ -1850,7 +1930,8 @@ that has a valid recipe."
 
 (defun el-get-eval-autoloads ()
   "Evaluate the autoloads from the autoload file."
-  (when el-get-generate-autoloads
+  (when (and el-get-generate-autoloads 
+             (file-exists-p el-get-autoload-file))
     (message "el-get: evaluating autoload file")
     (el-get-load-fast el-get-autoload-file)))
 
@@ -1880,11 +1961,12 @@ shouldn't be invoked directly."
 
     (el-get-save-and-kill el-get-autoload-file)
 
-    (message "el-get: byte-compiling autoload file")
-    (when el-get-byte-compile
-      (el-get-byte-compile-file el-get-autoload-file))
+    (when (file-exists-p el-get-autoload-file)
+      (message "el-get: byte-compiling autoload file")
+      (when el-get-byte-compile
+        (el-get-byte-compile-file el-get-autoload-file))
 
-    (el-get-eval-autoloads)))
+      (el-get-eval-autoloads))))
 
 (defconst el-get-load-suffix-regexp
   (concat (mapconcat 'regexp-quote (get-load-suffixes) "\\|") "\\'"))
@@ -2020,7 +2102,7 @@ package is not listed in `el-get-sources'"
 
     (let ((wrap-up `(lambda (package)
                      (el-get-invalidate-autoloads package)
-                     (el-get-init package ,noerror)
+                     (el-get-init package ',noerror)
                      (el-get-save-package-status package "installed"))))
       (el-get-build package commands nil el-get-default-process-sync wrap-up)))
 
@@ -2142,6 +2224,11 @@ entry which is not a symbol and is not already a known recipe."
       (with-temp-file (format "%s/%s.el" dir (el-get-source-name r))
 	(insert (prin1-to-string r)))))
   (dired dir))
+
+(defun el-get-sync ()
+  "M-x el-get-sync will synchronously install and init your el-get packages"
+  (interactive)
+  (el-get 'sync))
 
 ;;
 ;; notify user with emacs notifications API (new in 24)

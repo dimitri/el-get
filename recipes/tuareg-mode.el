@@ -1,6 +1,6 @@
 (:name tuareg-mode
        :type git
-       :url "git://github.com/emacsmirror/tuareg.git"
+       :url "https://github.com/emacsmirror/tuareg.git"
        :load-path (".")
        :build ("make elc")
        :after

@@ -1,6 +1,6 @@
  (:name coffee-mode
   :type git
-  :url "git://github.com/defunkt/coffee-mode.git"
+  :url "https://github.com/defunkt/coffee-mode.git"
   :features coffee-mode
   :after (lambda ()
            (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))

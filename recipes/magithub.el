@@ -1,1 +1,1 @@
-(:name magithub :type git :url "git://github.com/nex3/magithub.git")
+(:name magithub :type git :url "https://github.com/nex3/magithub.git")

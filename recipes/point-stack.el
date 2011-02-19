@@ -1,6 +1,6 @@
 (:name point-stack
        :type git
-       :url "git://github.com/mattharrison/point-stack.git"
+       :url "https://github.com/mattharrison/point-stack.git"
        :features point-stack
        :compile "point-stack.el")
 

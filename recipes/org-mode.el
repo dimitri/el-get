@@ -1,11 +1,11 @@
 (:name org-mode
        :type git
-       :url "git://repo.or.cz/org-mode.git"
+       :url "http://repo.or.cz/r/org-mode.git"
        :info "doc"
        :build `,(mapcar
                  (lambda (target)
                    (concat "make " target " EMACS=" el-get-emacs))
-                 '("clean" "all" "doc"))
+                 '("clean" "all"))
        :load-path ("lisp" "contrib/lisp")
        :features org-install)
 
