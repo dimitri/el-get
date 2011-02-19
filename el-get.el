@@ -298,9 +298,9 @@ the named package action in the given method."
   "*Absolute path of the growlnotify tool")
 
 (defconst el-get-build-recipe-body
-  '(choice :tag "Format" 
-           
-           (repeat :tag "List of shell commands" 
+  '(choice :tag "Format"
+
+           (repeat :tag "List of shell commands"
                     (string :doc "Note: arguments will not be shell-quoted.
 Choose `Evaluated expression' format for a more portable recipe" :format "%v%h"))
            (sexp :tag "Evaluated expression" :format "%t: %v%h"
