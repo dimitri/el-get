@@ -1930,7 +1930,8 @@ that has a valid recipe."
 
 (defun el-get-eval-autoloads ()
   "Evaluate the autoloads from the autoload file."
-  (when el-get-generate-autoloads
+  (when (and el-get-generate-autoloads 
+             (file-exists-p el-get-autoload-file))
     (message "el-get: evaluating autoload file")
     (el-get-load-fast el-get-autoload-file)))
 
@@ -1960,11 +1961,12 @@ shouldn't be invoked directly."
 
     (el-get-save-and-kill el-get-autoload-file)
 
-    (message "el-get: byte-compiling autoload file")
-    (when el-get-byte-compile
-      (el-get-byte-compile-file el-get-autoload-file))
+    (when (file-exists-p el-get-autoload-file)
+      (message "el-get: byte-compiling autoload file")
+      (when el-get-byte-compile
+        (el-get-byte-compile-file el-get-autoload-file))
 
-    (el-get-eval-autoloads)))
+      (el-get-eval-autoloads))))
 
 (defconst el-get-load-suffix-regexp
   (concat (mapconcat 'regexp-quote (get-load-suffixes) "\\|") "\\'"))
