@@ -2102,7 +2102,7 @@ package is not listed in `el-get-sources'"
 
     (let ((wrap-up `(lambda (package)
                      (el-get-invalidate-autoloads package)
-                     (el-get-init package ,noerror)
+                     (el-get-init package ',noerror)
                      (el-get-save-package-status package "installed"))))
       (el-get-build package commands nil el-get-default-process-sync wrap-up)))
 
