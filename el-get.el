@@ -1707,8 +1707,9 @@ recursion.
     (if sync
 	(progn
 	  ;; first byte-compile the package, with another "clean" emacs process
-	  (let ((build-cmd (format "%s %s" el-get-emacs bytecmdargs)))
-	    (message "%S" (shell-command-to-string build-cmd)))
+          (when el-get-byte-compile
+            (let ((build-cmd (format "%s %s" el-get-emacs bytecmdargs)))
+              (message "%S" (shell-command-to-string build-cmd))))
 
 	  (dolist (c commands)
             (let ((cmd
@@ -1740,16 +1741,17 @@ recursion.
 						   "el-get could not build %s [%s]" package c))))
 		      commands))
 	     (full-process-list ;; includes byte compiling
-	      (append (list
-		       `(:command-name "byte-compile"
-				       :buffer-name ,buf
-				       :default-directory ,wdir
-				       :shell t
-				       :program ,el-get-emacs
-				       :args ,(split-string bytecmdargs)
-				       :message ,(format "el-get-build %s: byte-compile ok." package)
-				       :error ,(format
-						  "el-get could not byte-compile %s" package)))
+	      (append (when el-get-byte-compile
+                        (list
+                         `(:command-name "byte-compile"
+                                         :buffer-name ,buf
+                                         :default-directory ,wdir
+                                         :shell t
+                                         :program ,el-get-emacs
+                                         :args ,(split-string bytecmdargs)
+                                         :message ,(format "el-get-build %s: byte-compile ok." package)
+                                         :error ,(format
+                                                  "el-get could not byte-compile %s" package))))
 		      process-list)))
 	(el-get-start-process-list package full-process-list post-build-fun)))))
 
