@@ -112,6 +112,13 @@ You even get a progress report!
 
 See the documentation of the +el-get-sources+ variable for details.
 
+Note that you can also give a mix of +packages+ symbols, +inline recipes+
+and +source lists+ to +el-get+ as arguments, and completely bypass the
++el-get-sources+ variable.  As of +el-get 1.2+, that's the recommanded
+setup.
+
+  (el-get 'sync 'package 'name (:name or :type emacswiki) sources)
+
 === Recipes
 
 Some sources are contributed to +el-get+ directly, so that you only have to
@@ -162,23 +169,19 @@ M-x el-get-sync::
 
 M-x el-get-cd::
 
-    Will prompt for a package name, with completion, then open its directory
-    with dired.
+    Will prompt for an +installed+ package name, with completion, then open
+    its directory with dired.
 
 M-x el-get-install::
 
-    Will prompt for a package name, with completion, then install it
-    following the +source+ you've already setup. Depending on the +type+ of
-    the +package+, this will fail for an already installed package.
-
-    When using C-u, +el-get-install+ will allow for installing any package
-    you have a recipe for, instead of only proposing packages from
-    +el-get-sources+.
+    Will prompt for a package name, with completion, then install it.  It
+    will only propose packages that are not already +installed+.  Any
+    package that you have a recipe for is a candidate.
 
 M-x el-get-update::
 
-    Will prompt for a package name, with completion, then update it. This
-    will run the +build+ commands and +init+ the package again.
+    Will prompt for an installed package name, with completion, then update
+    it. This will run the +build+ commands and +init+ the package again.
 
 M-x el-get-update-all::
 
@@ -189,25 +192,17 @@ M-x el-get-update-all::
 
 M-x el-get-remove::
 
-    Will prompt for a package name, with completion, then remove
-    it. Depending on the +type+ of the package, this often means simply
-    deleting the directory where the source package lies. Sometime we have
-    to use external tools instead (+apt-get+, e.g.). No effort is made to
-    unload the features.
-
-    When using C-u, +el-get-remove+ will allow for installing any package
-    you have a recipe for, instead of only proposing packages from
-    +el-get-sources+.
+    Will prompt for an +installed+ package name, with completion, then
+    remove it. Depending on the +type+ of the package, this often means
+    simply deleting the directory where the source package lies. Sometime we
+    have to use external tools instead (+apt-get+, e.g.). No effort is made
+    to unload the features.
 
 M-x el-get-make-recipes::
 
     Will prompt for an existing directory where to output all your 'new'
     recipe files: one file for each entry in +el-get-sources+ that is not
     just a +symbol+ and that is not found anywhere in +el-get-recipe-path+.
-
-The +C-u+ alternatives are not provided for the +el-get-update+ and
-+el-get-init+ command, on the grounds that if you want to use them you
-probably should now have the package into your +el-get-sources+ proper.
 
 == Internals
 

@@ -17,7 +17,7 @@
 ;;
 ;; Changelog
 ;;
-;;  1.2 - WIP - Still growing
+;;  1.2 - WIP - Still growing, getting lazy
 ;;
 ;;   - Add support for autoloads, per Dave Abrahams
 ;;   - fix 'wait support for http (using sync retrieval)
@@ -31,6 +31,7 @@
 ;;   - register `el-get-sources' against the custom interface
 ;;   - unless :features is used, lazily eval :after functions (see :library)
 ;;   - el-get will now accept a list of sources to install or init
+;;   - open el-get-{install,init,remove,update} from `el-get-sources' only
 ;;
 ;;  1.1 - 2010-12-20 - Nobody's testing until the release
 ;;
@@ -1832,6 +1833,12 @@ entry."
   (if (symbolp package-name) package-name
     (intern (format ":%s" package-name))))
 
+(defun el-get-package-name (package-symbol)
+  "Returns a string package"
+  (if (symbolp package-symbol)
+      (cadr (split-string (format "%s" package-symbol) ":"))
+    package-symbol))
+
 (defun el-get-read-all-packages-status ()
   "Return the current plist of packages status"
   (when (file-exists-p el-get-status-file)
@@ -1852,6 +1859,17 @@ entry."
       (insert
        (format "%S" (if s (plist-put s p status)
 		      `(,p ,status)))))))
+
+(defun el-get-list-package-names-with-status (&rest status)
+  "Return package names that are currently in given status"
+  (loop for (p s) on (el-get-read-all-packages-status) by 'cddr
+	if (member s status) collect (el-get-package-name p)))
+
+(defun el-get-read-package-with-status (action &rest status)
+  "Read a package name in given status"
+  (completing-read (format "%s package: " action)
+		   (el-get-list-package-names-with-status status)))
+
 
 (defun el-get-count-package-with-status (&rest status)
   "Return how many packages are currently in given status"
@@ -1901,21 +1919,21 @@ entry."
   (member package (mapcar 'el-get-source-name el-get-sources)))
 
 (defun el-get-error-unless-package-p (package)
-  "Raise an error if PACKAGE does not name a package in `el-get-sources'
-that has a valid recipe."
-  (unless (el-get-package-p package)
-    (error "el-get: can not find package name `%s' in `el-get-sources'" package))
-  ;; check for recipe too
+  "Raise an error if PACKAGE does not name a package that has a valid recipe."
+  ;; check for recipe
   (let ((recipe (el-get-package-def package)))
     (unless recipe
       (error "el-get: package `%s' has no recipe" package))
     (unless (plist-member recipe :type)
       (error "el-get: package `%s' has incomplete recipe (no :type)" package))))
 
-(defun el-get-read-package-name (action &optional merge-recipes)
+(defun el-get-read-package-name (action &optional merge-recipes filter-installed)
   "Ask user for a package name in minibuffer, with completion."
-  (completing-read (format "%s package: " action)
-                   (el-get-package-name-list merge-recipes) nil t))
+  (let ((sources   (el-get-package-name-list merge-recipes))
+	(installed (when filter-installed
+		     (el-get-list-package-names-with-status "installed"))))
+    (completing-read (format "%s package: " action)
+		     (set-difference sources installed :test 'string=) nil t)))
 
 (defun el-get-save-and-kill (file)
   "Save and kill all buffers visiting the named FILE"
@@ -2126,18 +2144,14 @@ package is not listed in `el-get-sources'"
   (run-hook-with-args 'el-get-post-install-hooks package))
 
 (defun el-get-install (package)
-  "Install PACKAGE.
+  "Install any PACKAGE you have a recipe for.
 
-When using C-u, `el-get-install' will allow for installing any
-package you have a recipe for, instead of only proposing packages
-from `el-get-sources'.
-"
-  (interactive (list (el-get-read-package-name "Install" current-prefix-arg)))
+If you want this install to be permanent, you have to edit your setup."
+  (interactive
+   (list (el-get-read-package-name "Install" 'merge 'filter-installed)))
   ;; use dynamic binding to pretend package is part of `el-get-sources'
   ;; without having to edit the user setup --- that's what C-u is for.
-  (let ((el-get-sources (if current-prefix-arg
-			    (el-get-read-all-recipes 'merge)
-			  el-get-sources)))
+  (let ((el-get-sources (el-get-read-all-recipes 'merge)))
     (el-get-error-unless-package-p package)
 
     (let* ((status   (el-get-read-package-status package))
@@ -2177,7 +2191,8 @@ from `el-get-sources'.
 
 (defun el-get-update (package)
   "Update PACKAGE."
-  (interactive (list (el-get-read-package-name "Update")))
+  (interactive
+   (list (el-get-read-package-with-status "Update" "required" "installed")))
   (el-get-error-unless-package-p package)
   (let* ((source   (el-get-package-def package))
 	 (method   (plist-get source :type))
@@ -2200,12 +2215,9 @@ from `el-get-sources'.
     (run-hook-with-args hooks package)))
 
 (defun el-get-remove (package)
-  "Remove PACKAGE.
-
-When using C-u, `el-get-remove' will allow for removing any
-package you have a recipe for, instead of only proposing packages
-from `el-get-sources'."
-  (interactive (list (el-get-read-package-name "Remove" current-prefix-arg)))
+  "Remove any PACKAGE that is know to be installed or required."
+  (interactive
+   (list (el-get-read-package-with-status "Remove" "required" "installed")))
   ;; see comment in el-get-install
   (let ((el-get-sources (if current-prefix-arg
 			    (el-get-read-all-recipes 'merge)
@@ -2223,7 +2235,8 @@ from `el-get-sources'."
 
 (defun el-get-cd (package)
   "Open dired in the package directory."
-  (interactive (list (el-get-read-package-name "cd to")))
+  (interactive
+   (list (el-get-read-package-with-status "cd to" "required" "installed")))
   (el-get-error-unless-package-p package)
   (dired (el-get-package-directory package)))
 
