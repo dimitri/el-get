@@ -30,6 +30,7 @@
 ;;   - better checks and errors for commands used when installing packages
 ;;   - register `el-get-sources' against the custom interface
 ;;   - unless :features is used, lazily eval :after functions (see :library)
+;;   - el-get will now accept a list of sources to install or init
 ;;
 ;;  1.1 - 2010-12-20 - Nobody's testing until the release
 ;;
@@ -2305,7 +2306,22 @@ entry which is not a symbol and is not already a known recipe."
 ;;
 ;; User Interface, Non Interactive part
 ;;
-(defun el-get (&optional sync)
+(defun el-get-install-or-init (source)
+  "Check if given SOURCE is already installed and proceed either
+to install it or to only initialize it"
+  (let* ((package (el-get-source-name source))
+	 (status  (el-get-package-status package p-status)))
+    ;; check if the package needs to be fetched (and built)
+    (if (el-get-package-exists-p package)
+	(if (and status (string= "installed" status))
+	    (condition-case err
+		(el-get-init package)
+	      ((debug error) ;; catch-all, allow for debugging
+	       (message "%S" (error-message-string err))))
+	  (message "Package %s failed to install, remove it first." package))
+      (el-get-install package))))
+
+(defun el-get (&optional sync &rest source-list)
   "Check that all sources have been downloaded once, and init them as needed.
 
 This will not update the sources by using `apt-get install' or
@@ -2332,7 +2348,12 @@ package in the list gets installed in parallel with this option.
 Please note that the `el-get-init' part of `el-get' is always
 done synchronously, so you will have to wait here. There's
 `byte-compile' support though, and the packages you use are
-welcome to use `autoload' too."
+welcome to use `autoload' too.
+
+SOURCE-LIST is expected to be a list of sources you want to
+install or init.  Each element in this list can be either a
+package name, a package recipe, or a proper source list.  When
+SOURCE-LIST is omited, `el-get-sources' is used."
   (unless (or (null sync)
 	      (member sync '(sync wait)))
     (error "el-get sync parameter should be either nil, sync or wait"))
@@ -2349,20 +2370,18 @@ welcome to use `autoload' too."
          (el-get-default-process-sync sync))
     ;; keep the result of mapcar to return it even in the 'wait case
     (prog1
-        (mapcar
-         (lambda (source)
-           (let* ((package (el-get-source-name source))
-                  (status  (el-get-package-status package p-status)))
-             ;; check if the package needs to be fetched (and built)
-             (if (el-get-package-exists-p package)
-                 (if (and status (string= "installed" status))
-                     (condition-case err
-                         (el-get-init package)
-                       ((debug error) ;; catch-all, allow for debugging
-                        (message "%S" (error-message-string err))))
-                   (message "Package %s failed to install, remove it first." package))
-               (el-get-install package))))
-         el-get-sources)
+	;; build el-get-sources from source-list, flattening only one level
+	;; of embedded lists in there.  That allows users to be as lazy as:
+	;; (el-get 'sync 'package 'name (:name recipe) el-get-sources)
+	(let ((el-get-sources
+	       (if source-list
+		 (loop for sources in source-list
+		       when (and (listp sources)
+				 (not (plist-member sources :name)))
+		       append sources
+		       else collect sources)
+		 el-get-sources)))
+	  (mapcar 'el-get-install-or-init el-get-sources))
 
       ;; el-get-install is async, that's now ongoing.
       (when progress
