@@ -2319,7 +2319,7 @@ entry which is not a symbol and is not already a known recipe."
 ;;
 ;; User Interface, Non Interactive part
 ;;
-(defun el-get-install-or-init (source)
+(defun el-get-install-or-init (source p-status)
   "Check if given SOURCE is already installed and proceed either
 to install it or to only initialize it"
   (let* ((package (el-get-source-name source))
@@ -2394,7 +2394,9 @@ SOURCE-LIST is omited, `el-get-sources' is used."
 		       append sources
 		       else collect sources)
 		 el-get-sources)))
-	  (mapcar 'el-get-install-or-init el-get-sources))
+	  (mapcar (lambda (s)
+		    (el-get-install-or-init s p-status))
+		  el-get-sources))
 
       ;; el-get-install is async, that's now ongoing.
       (when progress
