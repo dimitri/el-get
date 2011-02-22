@@ -251,7 +251,7 @@ the named package action in the given method."
   "*Path where to install the packages.")
 
 (defvar el-get-recipe-path-emacswiki
-  (concat (file-name-directory el-get-script) "recipes/emacswiki/")
+  (concat (file-name-directory el-get-dir) "el-get/recipes/emacswiki/")
   "*Define where to keep a local copy of emacswiki recipes")
 
 (defvar el-get-recipe-path
@@ -1396,10 +1396,12 @@ into a local recipe file set"
 list from emacswiki and build a local recipe directory out of
 that"
   (interactive
-   (list (read-directory-name "emacswiki recipes go to: "
-			      el-get-recipe-path-emacswiki)))
+   (list (let ((dummy (unless (file-directory-p el-get-recipe-path-emacswiki)
+			(make-directory el-get-recipe-path-emacswiki))))
+	   (read-directory-name "emacswiki recipes go to: "
+				el-get-recipe-path-emacswiki))))
   (let* ((name "*el-get-emacswiki*")
-	 (dummy (kill-buffer name))
+	 (dummy (when (get-buffer name) (kill-buffer name)))
 	 (args
 	  (format "-Q -batch -l %s -f el-get-emacswiki-build-local-recipes %s"
 		  (file-name-sans-extension
