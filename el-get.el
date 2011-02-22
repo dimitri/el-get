@@ -152,6 +152,12 @@ to disable autoloads globally."
   :group 'el-get
   :type 'boolean)
 
+(defcustom el-get-eval-after-load nil
+  "Whether or not to defer evaluation of :after functions until
+libraries are required."
+  :group 'el-get
+  :type 'boolean)
+
 (defvar el-get-git-clone-hook        nil "Hook run after git clone.")
 (defvar el-get-git-svn-clone-hook    nil "Hook run after git svn clone.")
 (defvar el-get-bzr-branch-hook       nil "Hook run after bzr branch.")
@@ -433,7 +439,7 @@ definition provided by `el-get' recipes locally.
     When using :after but not using :features, :library allows to
     set the library against which to register the :after function
     against `eval-after-load'.  It defaults to either :pkgname
-    or :package, in this order.
+    or :package, in this order.  See also `el-get-eval-after-load'.
 
 :options
 
@@ -2178,7 +2184,7 @@ package is not listed in `el-get-sources'"
     ;; call the "after" user function, or register it with `eval-after-load'
     ;; against :library
     (when (and after (functionp after))
-      (if (null feats)
+      (if (and el-get-eval-after-load (null feats))
 	  (eval-after-load library after)
 	(message "el-get: Calling :after function for package %s" package)
 	(funcall after)))
