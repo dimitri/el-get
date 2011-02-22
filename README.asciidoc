@@ -204,6 +204,14 @@ M-x el-get-make-recipes::
     recipe files: one file for each entry in +el-get-sources+ that is not
     just a +symbol+ and that is not found anywhere in +el-get-recipe-path+.
 
+M-x el-get-emacswiki-refresh::
+
+    Will launch a subprocess that connects to EmacsWiki and fetch from there
+    the list of elisp scripts hosted.  Then produce a recipe file per
+    script, and store that in the given directory, which default to
+    +~/.emacs.d/el-get/el-get/recipes/emacswiki/+ if you didn't change
+    +el-get-dir+.
+
 == Internals
 
 TODO: explain the symlinks in +~/.emacs.d/el-get+. For now, read the source

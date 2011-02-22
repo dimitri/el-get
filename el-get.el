@@ -250,8 +250,13 @@ the named package action in the given method."
 (defvar el-get-dir "~/.emacs.d/el-get/"
   "*Path where to install the packages.")
 
+(defvar el-get-recipe-path-emacswiki
+  (concat (file-name-directory el-get-script) "recipes/emacswiki/")
+  "*Define where to keep a local copy of emacswiki recipes")
+
 (defvar el-get-recipe-path
-  (list (concat (file-name-directory el-get-script) "recipes"))
+  (list (concat (file-name-directory el-get-script) "recipes")
+	el-get-recipe-path-emacswiki)
   "*Define where to look for the recipes, that's a list of directories")
 
 (defvar el-get-status-file
@@ -286,6 +291,14 @@ the named package action in the given method."
 (defvar el-get-emacswiki-base-url
   "http://www.emacswiki.org/emacs/download/%s.el"
   "*The base URL where to fetch :emacswiki packages")
+
+(defvar el-get-emacswiki-elisp-index-url
+  "http://www.emacswiki.org/cgi-bin/wiki?action=index;match=%5C.(el%7Ctar)(%5C.gz)%3F%24"
+  "*The emacswiki index URL of elisp pages")
+
+(defvar el-get-emacswiki-elisp-index-base-url
+  "http://www.emacswiki.org/emacs/"
+  "*The emacswiki base URL used in the index")
 
 (defvar el-get-pacman-base "/usr/share/emacs/site-lisp"
   "Where to link the el-get symlink to, /<package> will get appended.")
@@ -1351,6 +1364,57 @@ into the package :localname option or its `file-name-nondirectory' part."
   (let ((url (or url (format el-get-emacswiki-base-url package))))
     (el-get-http-install package url post-install-fun)))
 
+(defun el-get-emacswiki-retrieve-package-list ()
+  "retrieve the package list from emacswiki"
+  (with-current-buffer
+      (url-retrieve-synchronously el-get-emacswiki-elisp-index-url)
+    (goto-char (point-min))
+    (remove-if-not
+     (lambda (p) (string-match "el$" p))
+     (loop
+      while (re-search-forward el-get-emacswiki-elisp-index-base-url nil 'move)
+      collect (buffer-substring-no-properties
+	       (point) (1- (re-search-forward "\"" nil 'move)))))))
+
+(defun el-get-emacswiki-build-local-recipes (&optional target-dir)
+  "retrieve the index of elisp pages at emacswiki and turn them
+into a local recipe file set"
+  (let ((target-dir (or target-dir
+			(car command-line-args-left)
+			el-get-recipe-path-emacswiki)))
+    (unless (file-directory-p target-dir) (make-directory target-dir))
+    (loop
+     for package in (el-get-emacswiki-retrieve-package-list)
+     unless (file-exists-p (expand-file-name package target-dir))
+     do (with-temp-file (expand-file-name package target-dir)
+	  (message "%s" package)
+	  (insert (format "(:name %s :type emacswiki)"
+			  (file-name-sans-extension package)))))))
+
+(defun el-get-emacswiki-refresh (&optional target-dir)
+  "run Emacs -Q in an asynchronous subprocess to get the package
+list from emacswiki and build a local recipe directory out of
+that"
+  (interactive
+   (list (read-directory-name "emacswiki recipes go to: "
+			      el-get-recipe-path-emacswiki)))
+  (let* ((name "*el-get-emacswiki*")
+	 (dummy (kill-buffer name))
+	 (args
+	  (format "-Q -batch -l %s -f el-get-emacswiki-build-local-recipes %s"
+		  (file-name-sans-extension
+		   (symbol-file 'el-get-emacswiki-build-local-recipes 'defun))
+		  target-dir))
+	 (process
+	  (apply 'start-process name name el-get-emacs (split-string args))))
+    (message "%s %s" el-get-emacs args)
+    (set-process-sentinel
+     process
+     '(lambda (proc event)
+	(when (eq (process-status proc) 'exit)
+	  (el-get-notify "el-get: EmacsWiki"
+			 "EmacsWiki local recipe list refreshed"))))))
+
 
 ;;
 ;; http-tar support (archive)
@@ -1787,7 +1851,7 @@ get merged to `el-get-sources'."
     (append
      (when merge el-get-sources)
      (loop for dir in el-get-recipe-path
-	   nconc (loop for recipe in (directory-files dir nil "\.el$")
+	   nconc (loop for recipe in (directory-files dir nil "^[^.].*\.el$")
 		       for filename = (concat (file-name-as-directory dir) recipe)
 		       and package = (file-name-sans-extension (file-name-nondirectory recipe))
 		       unless (member package packages)
