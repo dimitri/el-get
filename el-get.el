@@ -265,6 +265,14 @@ the named package action in the given method."
 	el-get-recipe-path-emacswiki)
   "*Define where to look for the recipes, that's a list of directories")
 
+(defun el-get-recipe-dirs ()
+  "Return the elements of el-get-recipe-path that actually exist.
+
+Used to avoid errors when exploring the path for recipes"
+  (reduce (lambda (dir result)
+            (if (file-directory-p dir) (cons dir result) result))
+          el-get-recipe-path :from-end t :initial-value nil))
+
 (defvar el-get-status-file
   (concat (file-name-as-directory el-get-dir) ".status.el")
   "Define where to store and read the package statuses")
@@ -1841,7 +1849,7 @@ recursion.
 
 (defun el-get-read-recipe (package)
   "Return the source definition for PACKAGE, from the recipes."
-  (loop for dir in el-get-recipe-path
+  (loop for dir in (el-get-recipe-dirs)
 	for recipe = (concat (file-name-as-directory dir) package ".el")
 	if (file-exists-p recipe)
 	return (el-get-read-recipe-file recipe)))
@@ -1858,7 +1866,7 @@ get merged to `el-get-sources'."
   (let ((packages (when merge (mapcar 'el-get-source-name el-get-sources))))
     (append
      (when merge el-get-sources)
-     (loop for dir in el-get-recipe-path
+     (loop for dir in (el-get-recipe-dirs)
 	   nconc (loop for recipe in (directory-files dir nil "^[^.].*\.el$")
 		       for filename = (concat (file-name-as-directory dir) recipe)
 		       and package = (file-name-sans-extension (file-name-nondirectory recipe))
