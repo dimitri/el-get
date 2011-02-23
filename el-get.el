@@ -152,6 +152,12 @@ to disable autoloads globally."
   :group 'el-get
   :type 'boolean)
 
+(defcustom el-get-eval-after-load nil
+  "Whether or not to defer evaluation of :after functions until
+libraries are required."
+  :group 'el-get
+  :type 'boolean)
+
 (defvar el-get-git-clone-hook        nil "Hook run after git clone.")
 (defvar el-get-git-svn-clone-hook    nil "Hook run after git svn clone.")
 (defvar el-get-bzr-branch-hook       nil "Hook run after bzr branch.")
@@ -251,7 +257,7 @@ the named package action in the given method."
   "*Path where to install the packages.")
 
 (defvar el-get-recipe-path-emacswiki
-  (concat (file-name-directory el-get-script) "recipes/emacswiki/")
+  (concat (file-name-directory el-get-dir) "el-get/recipes/emacswiki/")
   "*Define where to keep a local copy of emacswiki recipes")
 
 (defvar el-get-recipe-path
@@ -433,7 +439,7 @@ definition provided by `el-get' recipes locally.
     When using :after but not using :features, :library allows to
     set the library against which to register the :after function
     against `eval-after-load'.  It defaults to either :pkgname
-    or :package, in this order.
+    or :package, in this order.  See also `el-get-eval-after-load'.
 
 :options
 
@@ -1396,10 +1402,12 @@ into a local recipe file set"
 list from emacswiki and build a local recipe directory out of
 that"
   (interactive
-   (list (read-directory-name "emacswiki recipes go to: "
-			      el-get-recipe-path-emacswiki)))
+   (list (let ((dummy (unless (file-directory-p el-get-recipe-path-emacswiki)
+			(make-directory el-get-recipe-path-emacswiki))))
+	   (read-directory-name "emacswiki recipes go to: "
+				el-get-recipe-path-emacswiki))))
   (let* ((name "*el-get-emacswiki*")
-	 (dummy (kill-buffer name))
+	 (dummy (when (get-buffer name) (kill-buffer name)))
 	 (args
 	  (format "-Q -batch -l %s -f el-get-emacswiki-build-local-recipes %s"
 		  (file-name-sans-extension
@@ -2176,7 +2184,7 @@ package is not listed in `el-get-sources'"
     ;; call the "after" user function, or register it with `eval-after-load'
     ;; against :library
     (when (and after (functionp after))
-      (if (null feats)
+      (if (and el-get-eval-after-load (null feats))
 	  (eval-after-load library after)
 	(message "el-get: Calling :after function for package %s" package)
 	(funcall after)))
