@@ -5,4 +5,5 @@
        :build/darwin `(,(concat "./configure --with-emacs=" el-get-emacs) "make")
        :info "texi"
        :load-path ("lisp")
+       :autoloads nil
        :features gnus-load)
