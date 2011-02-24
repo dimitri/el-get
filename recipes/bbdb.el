@@ -6,6 +6,6 @@
        :build/darwin `(,(concat "./configure --with-emacs=" el-get-emacs) "make autoloads" "make")
        :features bbdb
        :autoloads nil
-       :after (lambda () (bbdb-initialize))
+       :post-init (lambda () (bbdb-initialize))
        :info "texinfo")
 

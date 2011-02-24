@@ -2,4 +2,4 @@
        :type git
        :url "https://github.com/ramblex/emacs-textmate.git"
        :features textmate
-       :after 'tm/initialize)
+       :post-init 'tm/initialize)

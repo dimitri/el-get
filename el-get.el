@@ -29,9 +29,9 @@
 ;;   - allow to skip autoloads either globally or per-package
 ;;   - better checks and errors for commands used when installing packages
 ;;   - register `el-get-sources' against the custom interface
-;;   - unless :features is used, lazily eval :after functions (see :library)
 ;;   - el-get will now accept a list of sources to install or init
 ;;   - open el-get-{install,init,remove,update} from `el-get-sources' only
+;;   - add :prepare and :post-init and :lazy, and `el-get-is-lazy'
 ;;
 ;;  1.1 - 2010-12-20 - Nobody's testing until the release
 ;;
@@ -152,9 +152,11 @@ to disable autoloads globally."
   :group 'el-get
   :type 'boolean)
 
-(defcustom el-get-eval-after-load nil
-  "Whether or not to defer evaluation of :after functions until
-libraries are required."
+(defcustom el-get-is-lazy nil
+  "Whether or not to defer evaluation of :post-init and :after
+functions until libraries are required.  Will also have el-get
+skip the :load and :features properties when set.  See :lazy to
+force their evaluation on some packages only."
   :group 'el-get
   :type 'boolean)
 
@@ -467,15 +469,36 @@ definition provided by `el-get' recipes locally.
     Currently only used by the `cvs' support, allow you to
     configure the module you want to checkout in the given URL.
 
+:prepare
+
+    Intended for use from recipes, it will run once both the
+    `Info-directory-list' and the `load-path' variables have been
+    taken care of, but before any further action from
+    `el-get-init'.
+
 :before
 
     A pre-init function to run once before `el-get-init' calls
-    `load' and `require'.
+    `load' and `require'.  It gets to run with `load-path'
+    already set, and after :prepare has been called.  It's not
+    intended for use from recipes.
+
+:post-init
+
+    Intended for use from recipes.  This function is registered
+    for `eval-after-load' against the recipe library by
+    `el-get-init' once the :load and :features have been setup.
 
 :after
 
-    A function to run once `el-get' is done with `el-get-init',
-    can be a lambda.
+    A function to register for `eval-after-load' against the
+    recipe library, after :post-init.  That's not intended for
+    recipe use.
+
+:lazy
+
+    Default to nil.  Allows to override `el-get-is-lazy' per
+    package.
 
 :localname
 
@@ -2148,10 +2171,13 @@ package is not listed in `el-get-sources'"
 	 (loads    (plist-get source :load))
 	 (feats    (plist-get source :features))
 	 (el-path  (el-get-load-path package))
+	 (lazy     (plist-get source :lazy))
+	 (prepare  (plist-get source :prepare))
+	 (before   (plist-get source :before))
+	 (postinit (plist-get source :post-init))
 	 (after    (plist-get source :after))
 	 (pkgname  (plist-get source :pkgname))
 	 (library  (or (plist-get source :library) pkgname package))
-	 (before   (plist-get source :before))
 	 (pdir     (el-get-package-directory package)))
 
     ;; append entries to load-path and Info-directory-list
@@ -2163,38 +2189,51 @@ package is not listed in `el-get-sources'"
       ;;  and Info-directory-list
       (el-get-install-or-init-info package 'init))
 
-    ;; call the "before" user function
+    ;; first, the :prepare function, usually defined in the recipe
+    (when (and prepare (functionp prepare))
+      (message "el-get: Calling :prepare function for package %s" package)
+      (funcall prepare))
+
+    ;; now call the :before user function
     (when (and before (functionp before))
       (message "el-get: Calling :before function for package %s" package)
       (funcall before))
 
-    ;; loads
-    (when loads
-      (mapc (lambda (file)
-	      (let ((pfile (concat pdir file)))
-		(unless (file-exists-p pfile)
-		  (error "el-get could not find file '%s'" pfile))
-		(message "el-get: load '%s'" pfile)
-		(el-get-load-fast pfile)))
-	    (if (stringp loads) (list loads) loads)))
+    ;; loads and feature are skipped when el-get-is-lazy
+    (unless (or lazy el-get-is-lazy)
+      ;; loads
+      (when loads
+	(mapc (lambda (file)
+		(let ((pfile (concat pdir file)))
+		  (unless (file-exists-p pfile)
+		    (error "el-get could not find file '%s'" pfile))
+		  (message "el-get: load '%s'" pfile)
+		  (el-get-load-fast pfile)))
+	      (if (stringp loads) (list loads) loads)))
 
-    ;; features, only ELPA will handle them on its own
-    (unless (eq method 'elpa)
-      ;; if a feature is provided, require it now
-      (when feats
-	(mapc (lambda (feat)
-		(let ((feature (if (stringp feat) (intern feat) feat)))
-		  (message "require '%s" (require feature))))
-	      (cond ((symbolp feats) (list feats))
-		    ((stringp feats) (list (intern feats)))
-		    (t feats)))))
+      ;; features, only ELPA will handle them on its own
+      (unless (eq method 'elpa)
+	;; if a feature is provided, require it now
+	(when feats
+	  (mapc (lambda (feat)
+		  (let ((feature (if (stringp feat) (intern feat) feat)))
+		    (message "require '%s" (require feature))))
+		(cond ((symbolp feats) (list feats))
+		      ((stringp feats) (list (intern feats)))
+		      (t feats))))))
 
-    ;; call the "after" user function, or register it with `eval-after-load'
-    ;; against :library
-    (when (and after (functionp after))
-      (if (and el-get-eval-after-load (null feats))
-	  (eval-after-load library after)
-	(message "el-get: Calling :after function for package %s" package)
+    ;; now care about the :post-init and :after functions
+    (if (or lazy el-get-is-lazy)
+	(let ((lazy-form `(progn (funcall ,postinit) (funcall ,after))))
+	  (eval-after-load library lazy-form))
+
+      ;; el-get is not lazy here
+      (message "el-get: Calling :post-init function for package %s" package)
+      (when (and postinit (functionp postinit))
+	(funcall postinit))
+
+      (message "el-get: Calling :after function for package %s" package)
+      (when (and after (functionp after))
 	(funcall after)))
 
     ;; and call the global init hooks
