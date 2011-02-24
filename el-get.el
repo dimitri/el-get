@@ -2493,6 +2493,9 @@ SOURCE-LIST is omited, `el-get-sources' is used."
   ;; If there's no autoload file, everything needs to be regenerated.
   (if (not (file-exists-p el-get-autoload-file)) (el-get-invalidate-autoloads))
 
+  ;; Autoloads path are relative to el-get-dir, so add it to load-path
+  (add-to-list 'load-path (file-name-as-directory el-get-dir))
+
   (let* ((p-status    (el-get-read-all-packages-status))
          (total       (length (el-get-package-name-list)))
          (installed   (el-get-count-package-with-status "installed"))
