@@ -152,6 +152,12 @@ to disable autoloads globally."
   :group 'el-get
   :type 'boolean)
 
+(defcustom el-get-eval-after-load nil
+  "Whether or not to defer evaluation of :after functions until
+libraries are required."
+  :group 'el-get
+  :type 'boolean)
+
 (defvar el-get-git-clone-hook        nil "Hook run after git clone.")
 (defvar el-get-git-svn-clone-hook    nil "Hook run after git svn clone.")
 (defvar el-get-bzr-branch-hook       nil "Hook run after bzr branch.")
@@ -258,6 +264,14 @@ the named package action in the given method."
   (list (concat (file-name-directory el-get-script) "recipes")
 	el-get-recipe-path-emacswiki)
   "*Define where to look for the recipes, that's a list of directories")
+
+(defun el-get-recipe-dirs ()
+  "Return the elements of el-get-recipe-path that actually exist.
+
+Used to avoid errors when exploring the path for recipes"
+  (reduce (lambda (dir result)
+            (if (file-directory-p dir) (cons dir result) result))
+          el-get-recipe-path :from-end t :initial-value nil))
 
 (defvar el-get-status-file
   (concat (file-name-as-directory el-get-dir) ".status.el")
@@ -433,7 +447,7 @@ definition provided by `el-get' recipes locally.
     When using :after but not using :features, :library allows to
     set the library against which to register the :after function
     against `eval-after-load'.  It defaults to either :pkgname
-    or :package, in this order.
+    or :package, in this order.  See also `el-get-eval-after-load'.
 
 :options
 
@@ -561,7 +575,7 @@ platforms where this recipe should apply"
 (defun el-get-method (method-name action)
   "Return the function to call for doing action (e.g. install) in
 given method."
-  (let* ((method  (intern-soft (concat ":" (format "%s" method-name))))
+  (let* ((method  (intern (concat ":" (format "%s" method-name))))
 	 (actions (plist-get el-get-methods method)))
     (plist-get actions action)))
 
@@ -1281,7 +1295,7 @@ PACKAGE isn't currently installed by ELPA."
 		 (package-read-archive-contents))))     ; old version
 	(unless p
 	  (package-refresh-contents)))
-      (package-install (intern-soft package)))
+      (package-install (intern package)))
     ;; we symlink even when the package already is installed because it's
     ;; not an error to have installed ELPA packages before using el-get, and
     ;; that will register them
@@ -1292,7 +1306,7 @@ PACKAGE isn't currently installed by ELPA."
   "Ask elpa to update given PACKAGE."
   (el-get-elpa-remove package url nil)
   (package-refresh-contents)
-  (package-install (intern-soft package))
+  (package-install (intern package))
   (funcall post-update-fun package))
 
 (defun el-get-elpa-remove (package url post-remove-fun)
@@ -1835,7 +1849,7 @@ recursion.
 
 (defun el-get-read-recipe (package)
   "Return the source definition for PACKAGE, from the recipes."
-  (loop for dir in el-get-recipe-path
+  (loop for dir in (el-get-recipe-dirs)
 	for recipe = (concat (file-name-as-directory dir) package ".el")
 	if (file-exists-p recipe)
 	return (el-get-read-recipe-file recipe)))
@@ -1852,7 +1866,7 @@ get merged to `el-get-sources'."
   (let ((packages (when merge (mapcar 'el-get-source-name el-get-sources))))
     (append
      (when merge el-get-sources)
-     (loop for dir in el-get-recipe-path
+     (loop for dir in (el-get-recipe-dirs)
 	   nconc (loop for recipe in (directory-files dir nil "^[^.].*\.el$")
 		       for filename = (concat (file-name-as-directory dir) recipe)
 		       and package = (file-name-sans-extension (file-name-nondirectory recipe))
@@ -2178,7 +2192,7 @@ package is not listed in `el-get-sources'"
     ;; call the "after" user function, or register it with `eval-after-load'
     ;; against :library
     (when (and after (functionp after))
-      (if (null feats)
+      (if (and el-get-eval-after-load (null feats))
 	  (eval-after-load library after)
 	(message "el-get: Calling :after function for package %s" package)
 	(funcall after)))
