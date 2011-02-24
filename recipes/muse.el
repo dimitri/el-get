@@ -3,6 +3,6 @@
        :url "https://github.com/alexott/muse.git"
        :load-path ("./lisp")
        :build ("make")
-       :features muse-autoloads
-       )
+       :autoloads nil
+       :features muse-autoloads)
 
