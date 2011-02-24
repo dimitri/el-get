@@ -575,7 +575,7 @@ platforms where this recipe should apply"
 (defun el-get-method (method-name action)
   "Return the function to call for doing action (e.g. install) in
 given method."
-  (let* ((method  (intern-soft (concat ":" (format "%s" method-name))))
+  (let* ((method  (intern (concat ":" (format "%s" method-name))))
 	 (actions (plist-get el-get-methods method)))
     (plist-get actions action)))
 
@@ -1295,7 +1295,7 @@ PACKAGE isn't currently installed by ELPA."
 		 (package-read-archive-contents))))     ; old version
 	(unless p
 	  (package-refresh-contents)))
-      (package-install (intern-soft package)))
+      (package-install (intern package)))
     ;; we symlink even when the package already is installed because it's
     ;; not an error to have installed ELPA packages before using el-get, and
     ;; that will register them
@@ -1306,7 +1306,7 @@ PACKAGE isn't currently installed by ELPA."
   "Ask elpa to update given PACKAGE."
   (el-get-elpa-remove package url nil)
   (package-refresh-contents)
-  (package-install (intern-soft package))
+  (package-install (intern package))
   (funcall post-update-fun package))
 
 (defun el-get-elpa-remove (package url post-remove-fun)
