@@ -2224,7 +2224,8 @@ package is not listed in `el-get-sources'"
 
     ;; now care about the :post-init and :after functions
     (if (or lazy el-get-is-lazy)
-	(let ((lazy-form `(progn (funcall ,postinit) (funcall ,after))))
+	(let ((lazy-form `(progn ,(when postnit (list 'funcall postinit))
+				 ,(when after (list 'funcall after)))))
 	  (eval-after-load library lazy-form))
 
       ;; el-get is not lazy here
