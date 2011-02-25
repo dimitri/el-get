@@ -1666,18 +1666,23 @@ the files up."
 	   (error
 	    "el-get-install-or-init-info: %s not supported" build-or-init)))))))
 
-(defun el-get-byte-compile-file (el)
-  "byte-compile-file does that unconditionnaly, here we want to
+;; Emacs < 24
+(eval-and-compile
+  (if (fboundp 'byte-recompile-file)
+      (defsubst el-get-byte-compile-file (el)
+        (byte-recompile-file el))
+    (defun el-get-byte-compile-file (el)
+      "byte-compile-file does that unconditionnaly, here we want to
 avoid doing it all over again"
-  (let ((elc (concat (file-name-sans-extension el) ".elc")))
-    (when (or (not (file-exists-p elc))
-	      (file-newer-than-file-p el elc))
-      (condition-case err
-	  (byte-compile-file el)
-	((debug error) ;; catch-all, allow for debugging
-	 (message "%S" (error-message-string err)))))))
+      (let ((elc (concat (file-name-sans-extension el) ".elc")))
+        (when (or (not (file-exists-p elc))
+                  (file-newer-than-file-p el elc))
+          (condition-case err
+              (byte-compile-file el)
+            ((debug error) ;; catch-all, allow for debugging
+             (message "%S" (error-message-string err)))))))))
 
-(defun el-get-byte-compile-files (package &rest files)
+(defun el-get-byte-compile-files (&rest files)
   "byte-compile the files or directories FILES.
 
 FILES files will get byte compiled if there's no .elc or the
@@ -1735,7 +1740,7 @@ names from `el-get-package-directory'"
 	    (push dir files))))
       ;; now that we have the list
       (when files
-	(apply 'el-get-byte-compile-files package (nreverse files))))))
+	(apply 'el-get-byte-compile-files (nreverse files))))))
 
 (defun el-get-build-commands (package)
   "Return a list of build commands for the named PACKAGE.
