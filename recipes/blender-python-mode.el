@@ -5,5 +5,5 @@
        :info "Edit blender python code in Emacs - blender must be patched"
        :prepare (lambda ()
 		  (setq blender-python-mode-installation-dir
-			(el-get-package-directory "blender-python-mode"))
+			(el-get-package-directory "blender-python-mode")))
        :features 'blender-python-mode)
