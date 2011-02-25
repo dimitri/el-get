@@ -1703,21 +1703,27 @@ names from `el-get-package-directory'"
 	(dolist (file (directory-files pdir nil fp))
 	  (el-get-byte-compile-file (concat pdir file))))))))
 
-(defun el-get-byte-compile (&optional package nocomp compile)
-  "byte-compile PACKAGE files, unless variable `el-get-byte-compile' is nil"
+(defun el-get-byte-compile-batch ()
+  ;; when using command-line-args-left, we did not load the user's
+  ;; `el-get-sources', so we get :compile from the command line too
+  (el-get-byte-byte-compile (car command-line-args-left)
+                            (cadr command-line-args-left)
+                            (car (read-from-string (caddr command-line-args-left)))))
+
+(defun el-get-byte-compile (package &optional nocomp compile)
+  "Byte-compile PACKAGE files, unless variable `el-get-byte-compile' is nil.
+If NOCOMP is t, do not compile anything. COMPILE is the list of
+files to compile, or nil to compile the package load-path
+directories."
   (when el-get-byte-compile
-    (let* ((package  (or package (car command-line-args-left)))
-	   (source   (el-get-package-def package))
+    (let* ((source   (el-get-package-def package))
 	   (method   (plist-get source :type))
 	   (pdir     (el-get-package-directory package))
 	   (el-path  (el-get-load-path package))
-	   ;; when using command-line-args-left, we did not load the user's
-	   ;; `el-get-sources', so we get :compile from the command line too
-	   (nocomp
-	    (or nocomp (car (read-from-string (cadr command-line-args-left)))))
-	   (compile
-	    (or compile
-		(car (read-from-string (caddr command-line-args-left)))))
+           (compile  (or compile
+                         (plist-get source :compile)))
+           (nocomp   (or nocomp
+                         (and (plist-member source :compile) (not compile))))
 	   files)
       ;; byte-compile either :compile entries or anything in load-path
       (if compile
@@ -1807,7 +1813,7 @@ recursion.
 	 (clist  (if (listp comp) comp (list comp)))
 	 (nocomp (and (plist-member source :compile) (not comp)))
 	 (bytecmdargs
-	  (format "-Q -batch -l %s -f el-get-byte-compile %s %s %S"
+	  (format "-Q -batch -l %s -f el-get-byte-compile-batch %s %s %S"
 		  (file-name-sans-extension (symbol-file 'el-get-byte-compile 'defun))
 		  package nocomp (prin1-to-string clist)))
 	 (default-directory (file-name-as-directory wdir)))
@@ -2187,6 +2193,11 @@ package is not listed in `el-get-sources'"
 	 (pkgname  (plist-get source :pkgname))
 	 (library  (or (plist-get source :library) pkgname package))
 	 (pdir     (el-get-package-directory package)))
+
+    ;; If the package has been updated outside el-get, the .el files will be
+    ;; out of date, so just check if we need to recompile them.
+    (when el-get-byte-compile
+      (el-get-byte-compile package))
 
     ;; load any autoloads file if needed
     (loop for file in
