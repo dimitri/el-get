@@ -442,7 +442,9 @@ definition provided by `el-get' recipes locally.
 
     Control whether el-get should generate autoloads for this
     package. Setting this to nil prevents el-get from generating
-    autoloads for the package. Default is t.
+    autoloads for the package. Default is t. Setting this to a
+    string or a list of string will load the named autoload
+    files.
 
 :library
 
@@ -2127,7 +2129,7 @@ with the named PACKAGE"
 (defun el-get-want-autoloads-p (package)
   (let ((source (el-get-package-def package)))
     (or (not (plist-member source :autoloads))
-        (plist-get source :autoloads))))
+        (eq (plist-get source :autoloads) t))))
 
 (defun el-get-invalidate-autoloads ( &optional package )
   "Mark the named PACKAGE as needing new autoloads.  If PACKAGE
@@ -2169,6 +2171,7 @@ package is not listed in `el-get-sources'"
   (let* ((source   (el-get-package-def package))
 	 (method   (plist-get source :type))
 	 (loads    (plist-get source :load))
+         (autoloads (plist-get source :autoloads))
 	 (feats    (plist-get source :features))
 	 (el-path  (el-get-load-path package))
 	 (lazy     (plist-get source :lazy))
@@ -2179,6 +2182,15 @@ package is not listed in `el-get-sources'"
 	 (pkgname  (plist-get source :pkgname))
 	 (library  (or (plist-get source :library) pkgname package))
 	 (pdir     (el-get-package-directory package)))
+
+    ;; load any autoloads file if needed
+    (loop for file in
+          (cond ((stringp autoloads)
+                 (list autoloads))
+                ((listp autoloads)
+                 autoloads)
+                (t nil))
+          do (el-get-load-fast file))
 
     ;; append entries to load-path and Info-directory-list
     (unless (member method '(elpa apt-get fink pacman))
