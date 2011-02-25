@@ -1706,9 +1706,9 @@ names from `el-get-package-directory'"
 (defun el-get-byte-compile-batch ()
   ;; when using command-line-args-left, we did not load the user's
   ;; `el-get-sources', so we get :compile from the command line too
-  (el-get-byte-byte-compile (car command-line-args-left)
-                            (cadr command-line-args-left)
-                            (car (read-from-string (caddr command-line-args-left)))))
+  (el-get-byte-compile (car command-line-args-left)
+		       (cadr command-line-args-left)
+		       (car (read-from-string (caddr command-line-args-left)))))
 
 (defun el-get-byte-compile (package &optional nocomp compile)
   "Byte-compile PACKAGE files, unless variable `el-get-byte-compile' is nil.
