@@ -1730,8 +1730,9 @@ directories."
 	  ;; only byte-compile what's in the :compile property of the recipe
 	  ;; gotcha: read-from-string will get back symbolp when there's
 	  ;; only one element in the list
-	  (dolist (path (if (listp compile) compile
-			  (list (symbol-name compile))))
+	  (dolist (path (cond ((stringp compile) (list compile))
+			      ((listp compile)   compile)
+			      (t                 (list (symbol-name compile)))))
 	    (let ((fullpath (expand-file-name path pdir)))
 	      ;; path could be a file name regexp
 	      (push (if (file-exists-p fullpath) fullpath path) files)))
