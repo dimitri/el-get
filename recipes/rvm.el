@@ -3,4 +3,4 @@
        :features rvm
        :url "https://github.com/senny/rvm.el.git"
        :compile "rvm.el"
-       :after (lambda () (rvm-use-default)))
+       :post-init (lambda () (rvm-use-default)))
