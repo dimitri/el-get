@@ -27,7 +27,9 @@
 ;; When el-get is installed, we're done
 (run-with-idle-timer 
  1 t (lambda () (message "waiting for el-get...")
-       (when (and (featurep 'el-get) (null el-get-outdated-autoloads))
+       (when (and (featurep 'el-get)
+                  (null el-get-outdated-autoloads)
+                  (file-exists-p (concat (el-get-package-directory "el-get") "el-get.elc")))
          (dwa:test-result 0)
          )))
 
