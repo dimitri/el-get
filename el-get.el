@@ -1985,8 +1985,7 @@ entry."
 (defun el-get-read-package-with-status (action &rest status)
   "Read a package name in given status"
   (completing-read (format "%s package: " action)
-		   (el-get-list-package-names-with-status status)))
-
+                   (apply 'el-get-list-package-names-with-status status)))
 
 (defun el-get-count-package-with-status (&rest status)
   "Return how many packages are currently in given status"
