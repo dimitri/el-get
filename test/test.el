@@ -1,5 +1,6 @@
 (setq debug-on-error t)
 (setq message-log-max t)
+(setq eval-expression-debug-on-error t)
 
 (defconst dwa:test-log
   (find-file-noselect "test.log" 'nowarn))
