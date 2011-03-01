@@ -16,6 +16,7 @@
   (kill-emacs exit-status))
   
 (defadvice debugger-setup-buffer (after dwa:debug-exit 0 (debugger-args) activate preactivate)
+  (message "Entering debugger...")
   (let ((backtrace-buffer (current-buffer)))
     (with-current-buffer dwa:test-log
       (insert "\n\n=================== Backtrace =====================\n\n")
