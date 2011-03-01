@@ -1814,9 +1814,10 @@ recursion.
 	 (clist  (if (listp comp) comp (list comp)))
 	 (nocomp (and (plist-member source :compile) (not comp)))
 	 (bytecmdargs
-	  (format "-Q -batch -l %s -f el-get-byte-compile-batch %s %s %S"
-		  (file-name-sans-extension (symbol-file 'el-get-byte-compile 'defun))
-		  package nocomp (prin1-to-string clist)))
+	  (list "-Q" "-batch" "-l" 
+            (file-name-sans-extension (symbol-file 'el-get-byte-compile 'defun))
+            "-f" "el-get-byte-compile-batch" package 
+            (prin1-to-string nocomp) (prin1-to-string clist)))
 	 (default-directory (file-name-as-directory wdir)))
 
     ;; first build the Info dir
@@ -1827,8 +1828,7 @@ recursion.
 	(progn
 	  ;; first byte-compile the package, with another "clean" emacs process
           (when el-get-byte-compile
-            (let ((build-cmd (format "%s %s" el-get-emacs bytecmdargs)))
-              (message "%S" (shell-command-to-string build-cmd))))
+            (apply call-process-shell-command el-get-emacs nil buf t bytecmdargs))
 
 	  (dolist (c commands)
             (let ((cmd
@@ -1867,7 +1867,7 @@ recursion.
                                          :default-directory ,wdir
                                          :shell t
                                          :program ,el-get-emacs
-                                         :args ,(split-string bytecmdargs)
+                                         :args ,bytecmdargs
                                          :message ,(format "el-get-build %s: byte-compile ok." package)
                                          :error ,(format
                                                   "el-get could not byte-compile %s" package))))
