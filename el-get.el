@@ -2197,8 +2197,7 @@ called by `el-get' (usually at startup) for each package in
 
     ;; If the package has been updated outside el-get, the .el files will be
     ;; out of date, so just check if we need to recompile them.
-    (when el-get-byte-compile
-      (el-get-byte-compile package))
+    (el-get-byte-compile package)
 
     ;; load any autoloads file if needed
     (loop for file in
