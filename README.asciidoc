@@ -182,11 +182,11 @@ M-x el-get-cd::
     its directory with dired.
 
 M-x el-get-install::
-+
+
     Will prompt for a package name, with completion, then install it.  It
     will only propose packages that are not already +installed+.  Any
     package that you have a recipe for is a candidate.
-+
+
     Please note that when installing a package that is not in your
     +el-get-sources+ or your +el-get+ call means that it will not be
     initialized for you automatically at emacs startup.  You get a +WARNING+
