@@ -1985,8 +1985,7 @@ entry."
 (defun el-get-read-package-with-status (action &rest status)
   "Read a package name in given status"
   (completing-read (format "%s package: " action)
-		   (el-get-list-package-names-with-status status)))
-
+                   (apply 'el-get-list-package-names-with-status status)))
 
 (defun el-get-count-package-with-status (&rest status)
   "Return how many packages are currently in given status"
@@ -2044,6 +2043,11 @@ entry."
     (unless (plist-member recipe :type)
       (error "el-get: package `%s' has incomplete recipe (no :type)" package))))
 
+(defun el-get-warn-unregistered-package (package)
+  "Add a message unless PACKAGE is known in `el-get-source'"
+  (unless (el-get-package-p package)
+    (message "WARNING: el-get package \"%s\" is not in `el-get-sources'." package)))
+
 (defun el-get-read-package-name (action &optional merge-recipes filter-installed)
   "Ask user for a package name in minibuffer, with completion."
   (let ((sources   (el-get-package-name-list merge-recipes))
@@ -2077,7 +2081,7 @@ entry."
 
 (defun el-get-eval-autoloads ()
   "Evaluate the autoloads from the autoload file."
-  (when (and el-get-generate-autoloads 
+  (when (and el-get-generate-autoloads
              (file-exists-p el-get-autoload-file))
     (message "el-get: evaluating autoload file")
     (el-get-load-fast el-get-autoload-file)))
@@ -2167,19 +2171,15 @@ is nil, marks all installed packages as needing new autoloads."
       (delete-file
        (concat (file-name-sans-extension el-get-autoload-file) ".elc")))))
 
-(defun el-get-init (package &optional noerror)
+(defun el-get-init (package)
   "Make the named PACKAGE available for use.
 
 Add PACKAGE's directory (or `:load-path' if specified) to the
 `load-path', add any its `:info' directory to
 `Info-directory-list', and `require' its `:features'.  Will be
 called by `el-get' (usually at startup) for each package in
-`el-get-sources'.
-
-Optional parameter NOERROR, if non-nil, suppresses errors in case
-package is not listed in `el-get-sources'"
+`el-get-sources'."
   (interactive (list (el-get-read-package-name "Init")))
-  (unless noerror (el-get-error-unless-package-p package))
   (let* ((source   (el-get-package-def package))
 	 (method   (plist-get source :type))
 	 (loads    (plist-get source :load))
@@ -2197,8 +2197,7 @@ package is not listed in `el-get-sources'"
 
     ;; If the package has been updated outside el-get, the .el files will be
     ;; out of date, so just check if we need to recompile them.
-    (when el-get-byte-compile
-      (el-get-byte-compile package))
+    (el-get-byte-compile package)
 
     ;; load any autoloads file if needed
     (loop for file in
@@ -2272,11 +2271,8 @@ package is not listed in `el-get-sources'"
     ;; return the package
     package))
 
-(defun el-get-post-install (package &optional noerror)
-  "Post install PACKAGE. This will get run by a sentinel.
-
-Optional parameter NOERROR, if non-nil, suppresses errors in case
-package is not listed in `el-get-sources'"
+(defun el-get-post-install (package)
+  "Post install PACKAGE. This will get run by a sentinel."
   (let* ((source   (el-get-package-def package))
 	 (hooks    (el-get-method (plist-get source :type) :install-hook))
 	 (commands (el-get-build-commands package)))
@@ -2286,7 +2282,7 @@ package is not listed in `el-get-sources'"
 
     (let ((wrap-up `(lambda (package)
                      (el-get-invalidate-autoloads package)
-                     (el-get-init package ',noerror)
+                     (el-get-init package)
                      (el-get-save-package-status package "installed"))))
       (el-get-build package commands nil el-get-default-process-sync wrap-up)))
 
@@ -2460,7 +2456,8 @@ entry which is not a symbol and is not already a known recipe."
 
 (defun el-get-post-init-message (package)
   "After PACKAGE init is done, just message about it"
-  (message "el-get initialized package %s" package))
+  (message "el-get initialized package %s" package)
+  (el-get-warn-unregistered-package package))
 
 (add-hook 'el-get-post-init-hooks 'el-get-post-init-message)
 
