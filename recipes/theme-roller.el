@@ -2,4 +2,4 @@
        :type git
        :features theme-roller
        :url "https://github.com/senny/theme-roller.el.git"
-       :after (lambda () (theme-roller-activate)))
+       :post-init (lambda () (theme-roller-activate)))

@@ -41,7 +41,7 @@
       (error "Couldn't get el-get from the Git repository"))
 
     (load (concat pdir package ".el"))
-    (el-get-post-install "el-get" 'noerror)
+    (el-get-post-install "el-get")
     (with-current-buffer buf
       (goto-char (point-max))
       (insert "\nCongrats, el-get is installed and ready to serve!"))))
