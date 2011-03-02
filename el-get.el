@@ -1829,7 +1829,7 @@ recursion.
 	(progn
 	  ;; first byte-compile the package, with another "clean" emacs process
           (when el-get-byte-compile
-            (apply call-process-shell-command el-get-emacs nil buf t bytecmdargs))
+            (apply #'call-process-shell-command el-get-emacs nil buf t bytecmdargs))
 
 	  (dolist (c commands)
             (let ((cmd
