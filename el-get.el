@@ -1813,11 +1813,12 @@ recursion.
 	 (comp   (plist-get source :compile))
 	 (clist  (if (listp comp) comp (list comp)))
 	 (nocomp (and (plist-member source :compile) (not comp)))
+         (el-get-code (symbol-file 'el-get-byte-compile 'defun))
 	 (bytecmdargs
-	  (list "-Q" "-batch" "-l" 
-            (file-name-sans-extension (symbol-file 'el-get-byte-compile 'defun))
-            "-f" "el-get-byte-compile-batch" package 
-            (prin1-to-string nocomp) (prin1-to-string clist)))
+          (mapcar 'shell-quote-argument
+                  (list "-Q" "-batch" "-l" (concat (file-name-sans-extension el-get-code) ".el")
+                        "-f" "el-get-byte-compile-batch" package 
+                        (prin1-to-string nocomp) (prin1-to-string clist))))
 	 (default-directory (file-name-as-directory wdir)))
 
     ;; first build the Info dir
