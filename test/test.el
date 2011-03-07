@@ -10,8 +10,12 @@
   (erase-buffer))
 
 (defun el-get-compiled ()
-  (file-exists-p (concat (el-get-package-directory "el-get") "el-get.elc")))
-
+  (file-exists-p 
+   (concat
+    (mapconcat
+     'file-name-as-directory `(,user-emacs-directory "el-get" "el-get") 
+     "") "el-get.elc")))
+   
 (defun dwa:test-result (exit-status)
   (with-current-buffer dwa:test-log
     (insert (format"Testing %s
@@ -37,23 +41,6 @@ autoloads updated: %s"
       (insert-buffer backtrace-buffer)))
   (dwa:test-result 666))
 
-;; When el-get is installed and compiled, and autoloads are generated,
-;; we're done.  Check for it every half second.
-(run-at-time 0.5 0.5
-    (lambda () (message "waiting for el-get installation...")
-       (when (and (featurep 'el-get)
-                  (null el-get-outdated-autoloads)
-                  (el-get-compiled))
-         (dwa:test-result 0)
-         )))
-
-;; But if it takes more than 15 seconds, time out
-(run-at-time 15 nil 
- (lambda () 
-        (with-current-buffer dwa:test-log
-          (insert "\n\n** Timeout Reached **\n\n"))
-        (dwa:test-result 111)))
-
 ;;
 ;; Test bootstrapping initially
 ;;
@@ -70,3 +57,26 @@ autoloads updated: %s"
 \\)+?\\)-\\{9,\\}")
   (message "evaluating %s" (match-string 1))
   (eval (read (match-string 1))))
+
+;; if this takes more than 15 seconds, time out
+(run-at-time 15 nil 
+ (lambda () 
+      (condition-case err
+          (with-current-buffer dwa:test-log
+            (insert "\n\n** Timeout Reached **\n\n"))
+        (dwa:test-result 111)
+        ((debug error)
+         (dwa:test-result 888)))))
+
+;; When el-get is installed and compiled, and autoloads are generated,
+;; we're done.  Check for it every half second.
+(run-at-time 0.5 0.5
+    (lambda () (message "waiting for el-get installation...")
+      (condition-case err
+       (when (and (featurep 'el-get)
+                  (null el-get-outdated-autoloads)
+                  (el-get-compiled))
+         (dwa:test-result 0))
+       ((debug error)
+        (dwa:test-result 777)))))
+
