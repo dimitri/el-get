@@ -2,4 +2,4 @@
        :type git
        :url "http://github.com/crafterm/twilight-emacs.git"
        :load "color-theme-twilight.el"
-       :after (lambda () (color-theme-twilight)))
+       :post-init (lambda () (color-theme-twilight)))

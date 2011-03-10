@@ -7,5 +7,6 @@
                    (concat "make " target " EMACS=" el-get-emacs))
                  '("clean" "all"))
        :load-path ("lisp" "contrib/lisp")
+       :autoloads nil
        :features org-install)
 
