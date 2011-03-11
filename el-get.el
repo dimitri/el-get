@@ -4,7 +4,7 @@
 ;;
 ;; Author: Dimitri Fontaine <dim@tapoueh.org>
 ;; URL: http://www.emacswiki.org/emacs/el-get.el
-;; Version: 1.2~dev
+;; Version: 2.0
 ;; Created: 2010-06-17
 ;; Keywords: emacs package elisp install elpa git git-svn bzr cvs svn darcs hg
 ;;           apt-get fink pacman http http-tar emacswiki
@@ -14,10 +14,22 @@
 ;;
 ;; Install
 ;;     Please see the README.asciidoc file from the same distribution
+
+;;; Commentary:
 ;;
-;; Changelog
+;; Version String are now inspired by how Emacs itself numbers its version.
+;; First is the major version number, then a dot, then the minor version
+;; number.  The minor version number is 0 when still developping the next
+;; major version.
 ;;
-;;  1.2 - WIP - Still growing, getting lazy
+;; So 2.0 is a developer release while 2.1 will be the next stable release.
+;;
+;; Please not that this versioning policy has been picked while backing
+;; 1.2~dev, so 1.0 was a "stable" release in fact.  Ah, history.
+
+;;; Change Log:
+;;
+;;  2.0 - WIP - Still growing, getting lazy
 ;;
 ;;   - Add support for autoloads, per Dave Abrahams
 ;;   - fix 'wait support for http (using sync retrieval)
@@ -109,8 +121,8 @@
 ;;   - fix fink support
 ;;   - ELPA support is an option so that you can install ELPA from el-get
 ;;   - implement el-get-rmdir
-;;
 
+;;; Code:
 (require 'dired)
 (require 'package nil t) ; that's ELPA, but you can use el-get to install it
 (require 'cl)            ; needed for `remove-duplicates'
@@ -1236,7 +1248,8 @@ password prompt."
 (defun el-get-fink-install (package url post-install-fun)
   "sudo -S fink install PACKAGE"
   (let* ((name (format "*fink install %s*" package))
-         (pkgname (or (plist-get source :pkgname) package))
+	 (source  (el-get-package-def package))
+	 (pkgname (or (plist-get source :pkgname) package))
 	 (ok   (format "Package %s installed." package))
 	 (ko   (format "Could not install package %s." package)))
 
@@ -1256,6 +1269,7 @@ password prompt."
 (defun el-get-fink-remove (package url post-remove-fun)
   "apt-get remove PACKAGE. URL is there for API compliance."
   (let* ((name (format "*fink remove %s*" package))
+	 (source  (el-get-package-def package))
          (pkgname (or (plist-get source :pkgname) package))
 	 (ok   (format "Package %s removed." package))
 	 (ko   (format "Could not remove package %s." package)))
@@ -1682,7 +1696,7 @@ avoid doing it all over again"
             ((debug error) ;; catch-all, allow for debugging
              (message "%S" (error-message-string err)))))))))
 
-(defun el-get-byte-compile-files (&rest files)
+(defun el-get-byte-compile-files (pdir &rest files)
   "byte-compile the files or directories FILES.
 
 FILES files will get byte compiled if there's no .elc or the
@@ -1747,7 +1761,7 @@ directories."
 	    (push dir files))))
       ;; now that we have the list
       (when files
-	(apply 'el-get-byte-compile-files (nreverse files))))))
+	(apply 'el-get-byte-compile-files pdir (nreverse files))))))
 
 (defun el-get-build-commands (package)
   "Return a list of build commands for the named PACKAGE.
@@ -2562,3 +2576,5 @@ SOURCE-LIST is omited, `el-get-sources' is used."
     (el-get-eval-autoloads)))
 
 (provide 'el-get)
+
+;;; el-get.el ends here
