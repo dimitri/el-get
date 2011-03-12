@@ -1,4 +1,4 @@
 (:name color-theme-tango
        :type emacswiki
        :load "color-theme-tango.el"
-       :after (lambda () (color-theme-tango)))
+       :post-init (lambda () (color-theme-tango)))

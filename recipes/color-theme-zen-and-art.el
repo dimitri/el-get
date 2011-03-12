@@ -2,4 +2,4 @@
        :type git
        :url "https://github.com/irfn/zen-and-art.git"
        :load "zen-and-art.el"
-       :after (lambda () (color-theme-zen-and-art)))
+       :post-init (lambda () (color-theme-zen-and-art)))
