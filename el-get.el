@@ -555,12 +555,21 @@ this is the name to fetch in that system"
            (group :inline t :tag "Type" :format "%t: %v%h"
                   :doc "(If omitted, this recipe provides overrides for one in recipes/)"
                   (const :format "" :type)
-                  ,(append '(choice :value :emacswiki :format "%[Value Menu%] %v"
+                  ,(append '(choice :value emacswiki :format "%[Value Menu%] %v"
                                     )
                            (sort
-                            (reduce (lambda (r e) (if (symbolp e) (cons (list 'const e) r) r))
+                            (reduce (lambda (r e) 
+                                      (if (symbolp e) 
+                                          (cons 
+                                           (list 'const 
+                                                 (intern (substring (prin1-to-string e) 1)))
+                                           r) 
+                                        r))
                                     el-get-methods
-                                    :initial-value nil) (lambda (x y) (string< (prin1-to-string (cadr x)) (prin1-to-string (cadr y)))))))
+                                    :initial-value nil)
+                            (lambda (x y) 
+                              (string< (prin1-to-string (cadr x)) 
+                                       (prin1-to-string (cadr y)))))))
 
            (group :inline t :format "URL: %v" (const :format "" :url) (string :format "%v"))
            (group :inline t :format "General Build Recipe\n%v" (const :format "" :build)
