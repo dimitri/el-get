@@ -2210,6 +2210,15 @@ called by `el-get' (usually at startup) for each package in
 	 (library  (or (plist-get source :library) pkgname package))
 	 (pdir     (el-get-package-directory package)))
 
+    ;; append entries to load-path and Info-directory-list
+    (unless (member method '(elpa apt-get fink pacman))
+      ;; append entries to load-path
+      (mapc (lambda (path)
+	      (el-get-add-path-to-list package 'load-path path))
+	    (if (stringp el-path) (list el-path) el-path))
+      ;;  and Info-directory-list
+      (el-get-install-or-init-info package 'init))
+
     ;; If the package has been updated outside el-get, the .el files will be
     ;; out of date, so just check if we need to recompile them.
     (el-get-byte-compile package)
@@ -2222,15 +2231,6 @@ called by `el-get' (usually at startup) for each package in
                  autoloads)
                 (t nil))
           do (el-get-load-fast file))
-
-    ;; append entries to load-path and Info-directory-list
-    (unless (member method '(elpa apt-get fink pacman))
-      ;; append entries to load-path
-      (mapc (lambda (path)
-	      (el-get-add-path-to-list package 'load-path path))
-	    (if (stringp el-path) (list el-path) el-path))
-      ;;  and Info-directory-list
-      (el-get-install-or-init-info package 'init))
 
     ;; first, the :prepare function, usually defined in the recipe
     (when (and prepare (functionp prepare))
