@@ -44,6 +44,7 @@
 ;;   - el-get will now accept a list of sources to install or init
 ;;   - open el-get-{install,init,remove,update} from `el-get-sources' only
 ;;   - add :prepare and :post-init and :lazy, and `el-get-is-lazy'
+;;   - add support for :repo for ELPA packages
 ;;
 ;;  1.1 - 2010-12-20 - Nobody's testing until the release
 ;;
