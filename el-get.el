@@ -1766,7 +1766,8 @@ newer, then compilation will be skipped."
                 ;; path is a file/dir, so add it literally
                 (add-to-list 'files fullpath)
               ;; path is a regexp, so add matching file names in package dir
-              (mapc (apply-partially 'add-to-list 'files) (directory-files pdir nil fullpath))))))
+              (mapc (apply-partially 'add-to-list 'files)
+		    (directory-files pdir nil fullpath))))))
 
        ;; If package has (:compile nil), or package has its own build
        ;; instructions, or package is already pre-compiled by the
@@ -1787,7 +1788,8 @@ newer, then compilation will be skipped."
     (apply 'funcall args)))
 
 (defun el-get-construct-external-funcall (function &rest arguments)
-  "Generate a shell command that calls FUNCTION on ARGUMENTS in a separate emacs process.
+  "Generate a shell command that calls FUNCTION on ARGUMENTS in a
+separate emacs process.
 
 The command is returned as a list of arguments. Joining them with
 spaces yields the entire command as a single string."
@@ -1812,7 +1814,9 @@ spaces yields the entire command as a single string."
 
 The command is returned as a list of arguments. Joining them with
 spaces yields the entire command as a single string."
-  (el-get-construct-external-funcall 'mapc 'el-get-byte-compile-file-or-directory files))
+  (el-get-construct-external-funcall 'mapc
+				     'el-get-byte-compile-file-or-directory
+				     files))
 
 (defun el-get-construct-package-byte-compile-command (package)
   "Return a shell command to byte-compile PACKAGE in a separate emacs process.
@@ -1830,7 +1834,8 @@ takes care of it), thiw function returns nil."
 
 ;; Retained for compatibility
 (defun el-get-byte-compile (package &optional IGNORED)
-  (let ((bytecomp-command (el-get-construct-package-byte-compile-command package)))
+  (let ((bytecomp-command
+	 (el-get-construct-package-byte-compile-command package)))
     (shell-command-to-string (mapconcat 'identity bytecomp-command " "))))
 
 (defun el-get-build-commands (package)
