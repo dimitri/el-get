@@ -483,6 +483,13 @@ definition provided by `el-get' recipes locally.
     Currently only used by the `cvs' support, allow you to
     configure the module you want to checkout in the given URL.
 
+:repo
+
+    Only used by the `elpa' support, a cons cell with the
+    form (NAME . URL), as in `package-archives'.  If the package
+    source only specifies a URL, the URL will be used for NAME as
+    well.
+
 :prepare
 
     Intended for use from recipes, it will run once both the
@@ -1313,6 +1320,29 @@ PACKAGE isn't currently installed by ELPA."
     (if realname (concat (file-name-as-directory package-user-dir) realname)
       realname)))
 
+(defun el-get-elpa-package-repo (package)
+  "Get the ELPA repository cons cell for PACKAGE.
+
+The cons cell has the form (NAME . URL). See `package-archives'.
+If the package source only specifies a URL, the URL will be used
+for NAME as well.
+
+If PACKAGE's `:type' is not \"elpa\", or no repo is specified in
+the recipe, then return nil."
+  (let* ((source (el-get-package-def package))
+         (type (plist-get source :type))
+         (elpa-repo (plist-get source :repo)))
+    (when (and (eq type 'elpa) elpa-repo)
+      (cond ((stringp elpa-repo)
+             (cons elpa-repo elpa-repo))
+            ((consp elpa-repo)
+             (if (and (stringp (car elpa-repo))
+                      (stringp (cdr elpa-repo)))
+                 elpa-repo
+               (error "Invalid elpa repo spec: %s" elpa-repo)))
+            (t
+             (error "Invalid elpa repo spec: %s" elpa-repo))))))
+
 (defun el-get-elpa-symlink-package (package)
   "ln -s ../elpa/<package> ~/.emacs.d/el-get/<package>"
   (let ((elpa-dir (file-relative-name
@@ -1325,7 +1355,14 @@ PACKAGE isn't currently installed by ELPA."
 
 (defun el-get-elpa-install (package url post-install-fun)
   "Ask elpa to install given PACKAGE."
-  (let ((elpa-dir (el-get-elpa-package-directory package)))
+  (let* ((elpa-dir (el-get-elpa-package-directory package))
+         (elpa-repo (el-get-elpa-package-repo package))
+         ;; Set `package-archive-base' to elpa-repo for old package.el
+         (package-archive-base (or (cdr-safe elpa-repo)
+                                   (bound-and-true-p package-archive-base)))
+         ;; Prepend elpa-repo to `package-archives' for new package.el
+         (package-archives (append (when elpa-repo (list elpa-repo))
+                                   package-archives)))
     (unless (and elpa-dir (file-directory-p elpa-dir))
       ;; Make sure we have got *some* kind of record of the package archive.
       ;; TODO: should we refresh and retry once if package-install fails?
@@ -1619,7 +1656,8 @@ the files up."
 	 (pdir (el-get-package-directory package)))
     (if (eq method 'elpa)
 	;; only remove a symlink here
-	(when (file-exists-p pdir)
+	(when (or (file-symlink-p (directory-file-name pdir))
+                  (file-exists-p pdir))
 	  (delete-file (directory-file-name pdir)))
       ;; non ELPA packages, remove the directory
       (if (file-exists-p pdir)
