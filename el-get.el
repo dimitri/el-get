@@ -1937,12 +1937,18 @@ recursion.
     (insert-file-contents-literally filename)
     (read (current-buffer))))
 
+(defun el-get-recipe-filename (package)
+  "Return the name of the file that contains the recipe for PACKAGE, if any."
+  (let ((package (if (symbolp package) (symbol-name package) package)))
+    (loop for dir in el-get-recipe-path
+	  for recipe-filename = (expand-file-name (concat package ".el")
+						  (file-name-as-directory dir))
+	  if (file-exists-p recipe-filename)
+	  return recipe-filename)))
+
 (defun el-get-read-recipe (package)
   "Return the source definition for PACKAGE, from the recipes."
-  (loop for dir in (el-get-recipe-dirs)
-	for recipe = (concat (file-name-as-directory dir) package ".el")
-	if (file-exists-p recipe)
-	return (el-get-read-recipe-file recipe)))
+  (el-get-read-recipe-file (el-get-recipe-filename package)))
 
 (defun el-get-read-all-recipes (&optional merge)
   "Return the list of all the recipes, formatted like `el-get-sources'.
@@ -1962,7 +1968,15 @@ get merged to `el-get-sources'."
 		       and package = (file-name-sans-extension (file-name-nondirectory recipe))
 		       unless (member package packages)
 		       do (push package packages)
-		       and collect (el-get-read-recipe-file filename))))))
+                       and collect (ignore-errors (el-get-read-recipe-file filename)))))))
+
+(defun el-get-all-recipe-names (&optional merge)
+  "Return the list of all known recipe names.
+
+This is useful to use for providing completion candidates for
+package names. Argument MERGE has the same meaning as in
+`el-get-read-all-recipes'."
+  (mapcar 'el-get-source-name (el-get-read-all-recipes)))
 
 (defun el-get-source-name (source)
   "Return the package name (stringp) given an `el-get-sources'
@@ -2070,16 +2084,33 @@ entry."
   (interactive)
   (message "el-get version %s" el-get-version))
 
-(defun el-get-package-name-list (&optional merge-recipes)
-  "Return package a list of all package names from
-`el-get-sources'."
-  (let* ((el-get-sources    (if merge-recipes (el-get-read-all-recipes 'merge)
-			      el-get-sources))
-	 (package-name-list (mapcar 'el-get-source-name el-get-sources))
-	 (duplicates        (el-get-duplicates package-name-list)))
+(defun el-get-recipe-name-list (&optional merge)
+  "Return the list of all known recipe names.
+
+This is useful to use for providing completion candidates for
+package names. Argument MERGE has the same meaning as in
+`el-get-read-all-recipes'."
+  (mapcar 'el-get-source-name (el-get-read-all-recipes merge)))
+
+(defun el-get-source-name-list ()
+  "Return a list of all packages named in `el-get-sources'.
+
+If `el-get-sources' contains duplicate package definitions, an
+error is signaled."
+  (let* ((source-name-list (mapcar 'el-get-source-name el-get-sources))
+         (duplicates (el-get-duplicates source-name-list)))
     (when duplicates
       (error "Please remove duplicates in `el-get-sources': %S." duplicates))
-    package-name-list))
+    source-name-list))
+
+(defun el-get-package-name-list (&optional merge-recipes)
+  "Return package a list of all package names from `el-get-sources'.
+
+With arg MERGE-RECIPES, also include package names from recipe
+files."
+  (if merge-recipes
+      (el-get-recipe-name-list 'merge)
+    (el-get-source-name-list)))
 
 (defun el-get-package-p (package)
   "Return non-nil unless PACKAGE is the name of a package in
@@ -2102,12 +2133,43 @@ entry."
     (message "WARNING: el-get package \"%s\" is not in `el-get-sources'." package)))
 
 (defun el-get-read-package-name (action &optional merge-recipes filter-installed)
-  "Ask user for a package name in minibuffer, with completion."
+  "Ask user for a package name in minibuffer, with completion.
+
+Completions are offered from the package names in
+`el-get-sources'. If MERGE-RECIPES is true, known recipe files
+are also offered. If FILTER-INSTALLED is true, do not offer names
+of installed packages."
   (let ((sources   (el-get-package-name-list merge-recipes))
 	(installed (when filter-installed
 		     (el-get-list-package-names-with-status "installed"))))
     (completing-read (format "%s package: " action)
 		     (set-difference sources installed :test 'string=) nil t)))
+
+(defun el-get-read-recipe-name (action &optional require-match)
+  "Ask user for a recipe name, with completion from the list of known recipe files.
+
+This function does not deal with `el-get-sources' at all."
+  (completing-read (format "%s recipe: " action)
+                   (el-get-recipe-name-list) nil require-match))
+
+(defun el-get-find-recipe-file (package &optional dir)
+  "Find recipe file for PACKAGE.
+
+If no recipe file exists for PACKAGE, create a new one in DIR,
+which defaults to the first element in `el-get-recipe-path'."
+  (interactive (list (el-get-read-recipe-name "Find or create")))
+  (let* ((package (if (symbolp package) (symbol-name package) package))
+	 (recipe-file (or
+		       ;; If dir was specified, open or create the
+		       ;; recipe file in that directory.
+		       (when dir (expand-file-name (concat package ".el") dir))
+		       ;; Next, try to find an existing recipe file anywhere.
+		       (el-get-recipe-filename package)
+		       ;; Lastly, create a new recipe file in the first
+		       ;; directory in `el-get-recipe-path'
+		       (expand-file-name (concat package ".el")
+					 (car el-get-recipe-path)))))
+    (find-file recipe-file)))
 
 (defun el-get-save-and-kill (file)
   "Save and kill all buffers visiting the named FILE"
@@ -2438,6 +2500,17 @@ If you want this install to be permanent, you have to edit your setup."
   (el-get-error-unless-package-p package)
   (dired (el-get-package-directory package)))
 
+(defun el-get-write-recipe (source dir &optional filename)
+  "Given an SOURCE entry, write it to FILENAME"
+  (let* (;; Replace a package name with its definition
+	 (source (if (symbolp source) (el-get-read-recipe source) source))
+	 ;; Autogenerate filename if unspecified
+	 (filename (or filename (format "%s.el" (el-get-source-name source)))))
+    ;; Filepath is dir/file
+    (let ((filepath (format "%s/%s" dir filename)))
+      (with-temp-file filepath
+	(insert (prin1-to-string source))))))
+
 (defun el-get-make-recipes (&optional dir)
   "Loop over `el-get-sources' and write a recipe file for each
 entry which is not a symbol and is not already a known recipe."
@@ -2449,8 +2522,7 @@ entry which is not a symbol and is not already a known recipe."
 		    collect r)))
     (dolist (r new)
       (message "el-get: preparing recipe file for %s" (el-get-source-name r))
-      (with-temp-file (format "%s/%s.el" dir (el-get-source-name r))
-	(insert (prin1-to-string r)))))
+      (el-get-write-recipe r dir)))
   (dired dir))
 
 (defun el-get-sync ()

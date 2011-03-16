@@ -214,6 +214,11 @@ M-x el-get-remove::
     have to use external tools instead (+apt-get+, e.g.). No effort is made
     to unload the features.
 
+M-x el-get-find-recipe-file::
+
+    Will prompt for the name of a package, with completion, then +find-file+
+    its +recipe+ file.
+
 M-x el-get-make-recipes::
 
     Will prompt for an existing directory where to output all your 'new'
