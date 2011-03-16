@@ -1724,8 +1724,10 @@ the files up."
       (defsubst el-get-byte-compile-file (el)
         (byte-recompile-file el))
     (defun el-get-byte-compile-file (el)
-      "byte-compile-file does that unconditionnaly, here we want to
-avoid doing it all over again"
+      "Same as `byte-compile-file', but skips unnecessary compilation.
+
+Specifically, if the compiled elc file already exists and is
+newer, then compilation will be skipped."
       (let ((elc (concat (file-name-sans-extension el) ".elc")))
         (when (or (not (file-exists-p elc))
                   (file-newer-than-file-p el elc))
@@ -1734,72 +1736,102 @@ avoid doing it all over again"
             ((debug error) ;; catch-all, allow for debugging
              (message "%S" (error-message-string err)))))))))
 
-(defun el-get-byte-compile-files (pdir &rest files)
-  "byte-compile the files or directories FILES.
-
-FILES files will get byte compiled if there's no .elc or the
-source is newer, FILES directories will be handled by means of
-`byte-recompile-directory' and if any FILES element is neither a
-file nor a directories it's considered as a regexp over file
-names from `el-get-package-directory'"
+(defun el-get-byte-compile-file-or-directory (file)
+  "Byte-compile FILE or all files within it if it is a directory."
   (let ((byte-compile-warnings nil))
-    (dolist (fp files)
-      (cond
-       ((file-directory-p fp)
-	(byte-recompile-directory fp 0))
+    (if (file-directory-p file)
+        (byte-recompile-directory file 0)
+      (el-get-byte-compile-file file))))
 
-       ((file-exists-p fp)
-	(el-get-byte-compile-file fp))
-
-       (t ; regexp case
-	(dolist (file (directory-files pdir nil fp))
-	  (el-get-byte-compile-file (concat pdir file))))))))
-
-(defun el-get-byte-compile-batch ()
-  ;; when using command-line-args-left, we did not load the user's
-  ;; `el-get-sources', so we get :compile from the command line too
-  (el-get-byte-compile (car command-line-args-left)
-		       (cadr command-line-args-left)
-		       (car (read-from-string (caddr command-line-args-left)))))
-
-(defun el-get-byte-compile (package &optional nocomp compile)
-  "Byte-compile PACKAGE files, unless variable `el-get-byte-compile' is nil.
-If NOCOMP is t, do not compile anything. COMPILE is the list of
-files to compile, or nil to compile the package load-path
-directories."
+(defun el-get-assemble-files-for-byte-compilation (package)
+  "Assemble a list of *absolute* paths to byte-compile for PACKAGE."
   (when el-get-byte-compile
     (let* ((source   (el-get-package-def package))
-	   (method   (plist-get source :type))
+           (comp-prop (plist-get source :compile))
+           (compile (if (listp comp-prop) comp-prop (list comp-prop)))
+           ;; nocomp is true only if :compile is explicitly set to nil.
+           (explicit-nocomp (and (plist-member source :compile)
+                                 (not comp-prop)))
+           (method   (plist-get source :type))
 	   (pdir     (el-get-package-directory package))
 	   (el-path  (el-get-load-path package))
-           (compile  (or compile
-                         (plist-get source :compile)))
-           (nocomp   (or nocomp
-                         (and (plist-member source :compile) (not compile))))
-	   files)
-      ;; byte-compile either :compile entries or anything in load-path
-      (if compile
-	  ;; only byte-compile what's in the :compile property of the recipe
-	  ;; gotcha: read-from-string will get back symbolp when there's
-	  ;; only one element in the list
-	  (dolist (path (cond ((stringp compile) (list compile))
-			      ((listp compile)   compile)
-			      (t                 (list (symbol-name compile)))))
-	    (let ((fullpath (expand-file-name path pdir)))
-	      ;; path could be a file name regexp
-	      (push (if (file-exists-p fullpath) fullpath path) files)))
+	   (files '()))
+      (cond
+       (compile
+        ;; only byte-compile what's in the :compile property of the recipe
+        (dolist (path (if (listp compile) compile
+                        (list (symbol-name compile))))
+          (let ((fullpath (expand-file-name path pdir)))
+            (if (file-exists-p fullpath)
+                ;; path is a file/dir, so add it literally
+                (add-to-list 'files fullpath)
+              ;; path is a regexp, so add matching file names in package dir
+              (mapc (apply-partially 'add-to-list 'files) (directory-files pdir nil fullpath))))))
 
-	;; Compile that directory, unless users asked not to (:compile nil)
-	;; or unless we have build instructions (then they should care)
-	;; or unless we have installed pre-compiled package
-	(unless (or nocomp
-		    (el-get-build-commands package)
-		    (member method '(apt-get fink pacman)))
-	  (dolist (dir el-path)
-	    (push dir files))))
-      ;; now that we have the list
+       ;; If package has (:compile nil), or package has its own build
+       ;; instructions, or package is already pre-compiled by the
+       ;; installation method, then don't compile anything.
+       ((or explicit-nocomp
+            (el-get-build-commands package)
+            (member method '(apt-get fink pacman)))
+        nil)
+
+       ;; Default: compile the package's entire load-path
+       (t
+        (mapc (apply-partially 'add-to-list 'files) el-path)))
+      files)))
+
+(defun el-get-funcall-from-command-line-args ()
+  "Like `funcall', but reads FUNCTION and ARGS from command line"
+  (let ((args (mapcar 'read command-line-args-left)))
+    (apply 'funcall args)))
+
+(defun el-get-construct-external-funcall (function &rest arguments)
+  "Generate a shell command that calls FUNCTION on ARGUMENTS in a separate emacs process.
+
+The command is returned as a list of arguments. Joining them with
+spaces yields the entire command as a single string."
+  (let ((emacs el-get-emacs)
+        (libs (delete-dups
+               (remove nil
+                       (mapcar (lambda (func) (symbol-file func 'defun))
+                               (cons 'el-get-funcall-from-command-line-args
+                                     (remove-if-not 'symbolp (cons function arguments))))))))
+    (mapcar
+     'shell-quote-argument
+     (nconc
+      (list emacs)
+      (split-string "-Q -batch -f toggle-debug-on-error")
+      (mapcan (lambda (lib) (list "-l" (file-name-sans-extension lib)))
+              libs)
+      (split-string "-f el-get-funcall-from-command-line-args")
+      (mapcar 'prin1-to-string (cons function arguments))))))
+
+(defun el-get-construct-external-byte-compile-command (files)
+  "Return a shell command to byte-compile FILES in a separate emacs process.
+
+The command is returned as a list of arguments. Joining them with
+spaces yields the entire command as a single string."
+  (el-get-construct-external-funcall 'mapc 'el-get-byte-compile-file-or-directory files))
+
+(defun el-get-construct-package-byte-compile-command (package)
+  "Return a shell command to byte-compile PACKAGE in a separate emacs process.
+
+The command is returned as a list of arguments. Joining them with
+spaces yields the entire command as a single string.
+
+If `el-get-byte-compile' is or the package does not require
+byte-compiling (maybe because the installation method already
+takes care of it), thiw function returns nil."
+  (when el-get-byte-compile
+    (let ((files (el-get-assemble-files-for-byte-compilation package)))
       (when files
-	(apply 'el-get-byte-compile-files pdir (nreverse files))))))
+        (el-get-construct-external-byte-compile-command files)))))
+
+;; Retained for compatibility
+(defun el-get-byte-compile (package &optional IGNORED)
+  (let ((bytecomp-command (el-get-construct-package-byte-compile-command package)))
+    (shell-command-to-string (mapconcat 'identity bytecomp-command " "))))
 
 (defun el-get-build-commands (package)
   "Return a list of build commands for the named PACKAGE.
@@ -1855,22 +1887,13 @@ INSTALLING-INFO is t when called from
 `el-get-install-or-init-info', as to avoid a nasty infinite
 recursion.
 "
+  ;; TODO: Pre-generate list of files to byte-compile in-process so we
+  ;; don't depend on el-get inside emacs -Q
   (let* ((pdir   (el-get-package-directory package))
 	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir))
 	 (buf    (format "*el-get-build: %s*" package))
 	 (source (el-get-package-def package))
-	 ;; the subprocess emacs -Q we use for byte-compile will not have
-	 ;; loaded users preferences, so won't have the right `el-get-sources'.
-	 ;; all it needs actually is the compile and nocomp properties
-	 (comp   (plist-get source :compile))
-	 (clist  (if (listp comp) comp (list comp)))
-	 (nocomp (and (plist-member source :compile) (not comp)))
-         (el-get-code (symbol-file 'el-get-byte-compile 'defun))
-	 (bytecmdargs
-          (mapcar 'shell-quote-argument
-                  (list "-Q" "-batch" "-l" (concat (file-name-sans-extension el-get-code) ".el")
-                        "-f" "el-get-byte-compile-batch" package 
-                        (prin1-to-string nocomp) (prin1-to-string clist))))
+         (bytecomp-command (el-get-construct-package-byte-compile-command package))
 	 (default-directory (file-name-as-directory wdir)))
 
     ;; first build the Info dir
@@ -1880,8 +1903,10 @@ recursion.
     (if sync
 	(progn
 	  ;; first byte-compile the package, with another "clean" emacs process
-          (when el-get-byte-compile
-            (apply #'call-process-shell-command el-get-emacs nil buf t bytecmdargs))
+          (if bytecomp-command
+              (let ((build-cmd (mapconcat 'identity bytecomp-command " ")))
+                (message "%S" (shell-command-to-string build-cmd)))
+            (message "el-get: byte-compiling skipped for %s" package))
 
 	  (dolist (c commands)
             (let ((cmd
@@ -1913,17 +1938,17 @@ recursion.
 						   "el-get could not build %s [%s]" package c))))
 		      commands))
 	     (full-process-list ;; includes byte compiling
-	      (append (when el-get-byte-compile
+	      (append (when bytecomp-command
                         (list
                          `(:command-name "byte-compile"
                                          :buffer-name ,buf
                                          :default-directory ,wdir
                                          :shell t
-                                         :program ,el-get-emacs
-                                         :args ,bytecmdargs
+                                         :program ,(car bytecomp-command)
+                                         :args ,(cdr bytecomp-command)x
                                          :message ,(format "el-get-build %s: byte-compile ok." package)
                                          :error ,(format
-                                                  "el-get could not byte-compile %s" package))))
+						  "el-get could not byte-compile %s" package))))
 		      process-list)))
 	(el-get-start-process-list package full-process-list post-build-fun)))))
 
