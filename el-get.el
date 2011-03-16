@@ -2693,7 +2693,7 @@ SOURCE-LIST is omited, `el-get-sources' is used."
 		       append sources
 		       else collect sources)
 		 el-get-sources)))
-	  (mapcar (lambda (s)
+	  (mapc (lambda (s)
 		    (el-get-install-or-init s p-status))
 		  el-get-sources))
 
