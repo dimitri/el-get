@@ -31,10 +31,10 @@
 				(error "Unable to find `git'")))
          (url               (if (bound-and-true-p el-get-git-install-url)
                                 el-get-git-install-url
-                              "git://github.com/dimitri/el-get.git"))
+                              "http://github.com/dimitri/el-get.git"))
          (default-directory el-get-root)
 	 (process-connection-type nil) ; pipe, no pty (--no-progress)
-
+         
 	 ;; First clone el-get
 	 (status
 	  (call-process git nil `(,buf t) t "--no-pager" "clone" "-v" url package)))
