@@ -31,7 +31,7 @@
 				(error "Unable to find `git'")))
          (url               (if (bound-and-true-p el-get-git-install-url)
                                 el-get-git-install-url
-                              "http://github.com/dimitri/el-get.git")
+                              "http://github.com/dimitri/el-get.git"))
 	 (default-directory el-get-root)
 	 (process-connection-type nil) ; pipe, no pty (--no-progress)
 
