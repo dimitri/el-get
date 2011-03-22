@@ -1902,10 +1902,6 @@ recursion.
          (bytecomp-command (el-get-construct-package-byte-compile-command package))
 	 (default-directory (file-name-as-directory wdir)))
 
-    ;; first build the Info dir
-    (unless installing-info
-      (el-get-install-or-init-info package 'build))
-
     (if sync
 	(progn
 	  ;; first byte-compile the package, with another "clean" emacs process
@@ -1919,6 +1915,13 @@ recursion.
                    (if (stringp c) c
                      (mapconcat 'shell-quote-argument c " "))))
               (message "%S" (shell-command-to-string cmd))))
+
+	  ;; now build the Info dir --- some packages will build the info file
+	  ;; in the previous step
+	  (unless installing-info
+	    (el-get-install-or-init-info package 'build))
+
+	  ;; finally call the post-build fin
 	  (when (and post-build-fun (functionp post-build-fun))
 	    (funcall post-build-fun package)))
 
@@ -1955,7 +1958,15 @@ recursion.
                                          :message ,(format "el-get-build %s: byte-compile ok." package)
                                          :error ,(format
 						  "el-get could not byte-compile %s" package))))
-		      process-list)))
+		      process-list))
+	     ;; unless installing-info, post-build-fun should take care of
+	     ;; building info too
+	     (build-info-then-post-build-fun
+	      (if installing-info post-build-fun
+		(lambda (package)
+		  (el-get-install-or-init-info package 'build)
+		  (funcall post-build-fun package)))))
+
 	(el-get-start-process-list package full-process-list post-build-fun)))))
 
 
