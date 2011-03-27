@@ -808,7 +808,7 @@ out if it's nil."
      ((fboundp fname)
       (funcall fname))
 
-     ((boundp vname)
+     ((bound-and-true-p vname)
       (let ((command (symbol-value vname)))
 	(unless (and (file-exists-p command)
 		     (file-executable-p command))
