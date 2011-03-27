@@ -817,7 +817,9 @@ out if it's nil."
      ((fboundp fname)
       (funcall fname))
 
-     ((bound-and-true-p vname)
+     ;; vname is bound here, we want to check for the variable named vname
+     ;; (bound-and-true-p vname) won't cut it
+     ((ignore-errors (symbol-value vname))
       (let ((command (symbol-value vname)))
 	(unless (and (file-exists-p command)
 		     (file-executable-p command))
