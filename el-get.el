@@ -564,12 +564,21 @@ this is the name to fetch in that system"
            (group :inline t :tag "Type" :format "%t: %v%h"
                   :doc "(If omitted, this recipe provides overrides for one in recipes/)"
                   (const :format "" :type)
-                  ,(append '(choice :value :emacswiki :format "%[Value Menu%] %v"
+                  ,(append '(choice :value emacswiki :format "%[Value Menu%] %v"
                                     )
                            (sort
-                            (reduce (lambda (r e) (if (symbolp e) (cons (list 'const e) r) r))
+                            (reduce (lambda (r e) 
+                                      (if (symbolp e) 
+                                          (cons 
+                                           (list 'const 
+                                                 (intern (substring (prin1-to-string e) 1)))
+                                           r) 
+                                        r))
                                     el-get-methods
-                                    :initial-value nil) (lambda (x y) (string< (prin1-to-string (cadr x)) (prin1-to-string (cadr y)))))))
+                                    :initial-value nil)
+                            (lambda (x y) 
+                              (string< (prin1-to-string (cadr x)) 
+                                       (prin1-to-string (cadr y)))))))
 
            (group :inline t :format "URL: %v" (const :format "" :url) (string :format "%v"))
            (group :inline t :format "General Build Recipe\n%v" (const :format "" :build)
@@ -817,7 +826,9 @@ out if it's nil."
      ((fboundp fname)
       (funcall fname))
 
-     ((boundp vname)
+     ;; vname is bound here, we want to check for the variable named vname
+     ;; (bound-and-true-p vname) won't cut it
+     ((ignore-errors (symbol-value vname))
       (let ((command (symbol-value vname)))
 	(unless (and (file-exists-p command)
 		     (file-executable-p command))
@@ -1911,10 +1922,6 @@ recursion.
          (bytecomp-command (el-get-construct-package-byte-compile-command package))
 	 (default-directory (file-name-as-directory wdir)))
 
-    ;; first build the Info dir
-    (unless installing-info
-      (el-get-install-or-init-info package 'build))
-
     (if sync
 	(progn
 	  ;; first byte-compile the package, with another "clean" emacs process
@@ -1928,6 +1935,13 @@ recursion.
                    (if (stringp c) c
                      (mapconcat 'shell-quote-argument c " "))))
               (message "%S" (shell-command-to-string cmd))))
+
+	  ;; now build the Info dir --- some packages will build the info file
+	  ;; in the previous step
+	  (unless installing-info
+	    (el-get-install-or-init-info package 'build))
+
+	  ;; finally call the post-build fin
 	  (when (and post-build-fun (functionp post-build-fun))
 	    (funcall post-build-fun package)))
 
@@ -1964,7 +1978,15 @@ recursion.
                                          :message ,(format "el-get-build %s: byte-compile ok." package)
                                          :error ,(format
 						  "el-get could not byte-compile %s" package))))
-		      process-list)))
+		      process-list))
+	     ;; unless installing-info, post-build-fun should take care of
+	     ;; building info too
+	     (build-info-then-post-build-fun
+	      (if installing-info post-build-fun
+		(lambda (package)
+		  (el-get-install-or-init-info package 'build)
+		  (funcall post-build-fun package)))))
+
 	(el-get-start-process-list package full-process-list post-build-fun)))))
 
 
