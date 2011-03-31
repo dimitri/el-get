@@ -50,10 +50,10 @@ run emacs, and I want this documentation to be usable as-is. Enters el-get!
 (setq el-get-sources
       '(cssh el-get switch-window vkill google-maps nxhtml xcscope yasnippet
 
-	(:name magit 
+	(:name magit
 	       :after (lambda () (global-set-key (kbd "C-x C-z") 'magit-status)))
 
-	(:name asciidoc        
+	(:name asciidoc
 	       :type elpa
 	       :after (lambda ()
 			(autoload 'doc-mode "doc-mode" nil t)
@@ -88,7 +88,7 @@ features.
 
 == How to use it?
 
-You see that +el-get-sources+ exemple up there? It finishes with a single
+You see that +el-get-sources+ example up there? It finishes with a single
 +(el-get)+ call. That's it. It will 'install' new +sources+ on the list and
 only 'init' already installed ones.
 
@@ -101,7 +101,7 @@ Most often you want +el-get-install+ and +el-get-build+ to stay out of the
 way and be 'asynchronous', so that you can continue using Emacs while your
 new package is getting ready. But imagine you're starting up Emacs after a
 +git pull+ on the other computer (after a commute, say), and there's some
-newer packages for this instance to consider installing. 
+newer packages for this instance to consider installing.
 
 Now you want a synchronous install, right?
 
@@ -132,7 +132,7 @@ packages to update.
 
 Some sources are contributed to +el-get+ directly, so that you only have to
 put in the +el-get-sources+ the name of the package you want to
-install. 
+install.
 
 Should you need some local specific setup, you can do that by providing a
 partial sources missing the +:type+ property: your local properties will get
@@ -214,6 +214,11 @@ M-x el-get-remove::
     have to use external tools instead (+apt-get+, e.g.). No effort is made
     to unload the features.
 
+M-x el-get-find-recipe-file::
+
+    Will prompt for the name of a package, with completion, then +find-file+
+    its +recipe+ file.
+
 M-x el-get-make-recipes::
 
     Will prompt for an existing directory where to output all your 'new'
@@ -257,5 +262,5 @@ well, the package is known installed.
 
 To reinit the status file you might need to execute the following code:
 
-  (mapc (lambda (p) (el-get-save-package-status p "installed")) 
+  (mapc (lambda (p) (el-get-save-package-status p "installed"))
 	(el-get-package-name-list))
