@@ -243,7 +243,7 @@ and try it out.
 Please see the documentation for the +el-get-methods+ and provide a patch!
 
 Adding +bzr+ support for example was only about writing 2 functions, mostly
-using copy paste. Here's the patch: http://github.com/dimitri/el-get/commit/494551a9e75ebeb9ad043da175e6b2140d0d87d3
+using copy paste. Here's the patch: https://github.com/dimitri/el-get/commit/63e9018102bdeb7b6d9136db231adcd983087217#L0R437
 
 == Gotchas
 
