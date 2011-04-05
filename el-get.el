@@ -154,8 +154,17 @@ It will get called with the package as first argument."
   :type 'hook)
 
 (defcustom el-get-byte-compile t
-  "*Whether or not to byte-compile packages. Can be used to
+  "Whether or not to byte-compile packages. Can be used to
 disable byte-compilation globally."
+  :group 'el-get
+  :type 'boolean)
+
+(defcustom el-get-byte-compile-at-init nil
+  "Whether or not to byte-compile packages at init.
+
+Turn this to t if you happen to update your packages from under
+`el-get', e.g. doing `cd el-get-dir/package && git pull`
+directly."
   :group 'el-get
   :type 'boolean)
 
@@ -2372,9 +2381,13 @@ called by `el-get' (usually at startup) for each package in
       ;;  and Info-directory-list
       (el-get-install-or-init-info package 'init))
 
-    ;; If the package has been updated outside el-get, the .el files will be
-    ;; out of date, so just check if we need to recompile them.
-    (el-get-byte-compile package)
+    (when el-get-byte-compile-at-init
+      ;; If the package has been updated outside el-get, the .el files will be
+      ;; out of date, so just check if we need to recompile them.
+      ;;
+      ;; when using el-get-update to update packages, though, there's no
+      ;; need to byte compile at init.
+      (el-get-byte-compile package))
 
     ;; load any autoloads file if needed
     (loop for file in
