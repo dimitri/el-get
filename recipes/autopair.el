@@ -1,4 +1,4 @@
 (:name autopair
- :type git-svn
- :url "http://autopair.googlecode.com/svn/trunk/"
- :features autopair)
+       :type http
+       :url "http://autopair.googlecode.com/svn/trunk/autopair.el"
+       :features autopair)
