@@ -1,4 +1,4 @@
 (:name nav
-       :type svn
-       :url "http://emacs-nav.googlecode.com/svn/trunk/"
+       :type hg
+       :url "https://emacs-nav.googlecode.com/hg"
        :features nav)
