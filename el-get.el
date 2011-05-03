@@ -1110,14 +1110,6 @@ found."
 ;;
 ;; darcs support
 ;;
-(defun el-get-darcs-executable ()
-  "Return darcs executable to use, or signal an error when not
-found."
-  (let ((darcs-executable (executable-find "darcs")))
-    (unless (and darcs-executable (file-executable-p darcs-executable))
-      (error "The  `darcs' binary can not be found in your PATH"))
-    darcs-executable))
-
 (defun el-get-darcs-get (package url post-install-fun)
   "Get a given PACKAGE following the URL using darcs."
   (let* ((darcs-executable (el-get-executable-find "darcs"))
