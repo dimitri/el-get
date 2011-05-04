@@ -14,4 +14,17 @@
 			  (list (file-name-as-directory package-user-dir)
 				"/usr/share/emacs/site-lisp/elpa/"))
 		    (make-directory package-user-dir t)
-		    (package-initialize)))
+		    (unless (boundp 'package-subdirectory-regexp)
+		      (defconst package-subdirectory-regexp
+			"^\\([^.].*\\)-\\([0-9]+\\(?:[.][0-9]+\\)*\\)$"
+			"Regular expression matching the name of
+ a package subdirectory. The first subexpression is the package
+ name. The second subexpression is the version string."))
+		    (setq
+		     package-archives
+		     '(("ELPA" . "http://tromey.com/elpa/")
+		       ("gnu" . "http://elpa.gnu.org/packages/")
+		       ("marmalade" . "http://marmalade-repo.org/packages")))))
+
+		    ;; Don't init, elpa packages installed by el-get is
+		    ;; initialized from loaddefs (package-initialize)

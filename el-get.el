@@ -1735,13 +1735,17 @@ the files up."
 (eval-and-compile
   (if (fboundp 'byte-recompile-file)
       (defsubst el-get-byte-compile-file (el)
-        (byte-recompile-file el))
+        ;; Byte-compile runs emacs-lisp-mode-hook; disable it
+        (let (emacs-lisp-mode-hook)
+          (byte-recompile-file el)))
     (defun el-get-byte-compile-file (el)
       "Same as `byte-compile-file', but skips unnecessary compilation.
 
 Specifically, if the compiled elc file already exists and is
 newer, then compilation will be skipped."
-      (let ((elc (concat (file-name-sans-extension el) ".elc")))
+      (let ((elc (concat (file-name-sans-extension el) ".elc"))
+            ;; Byte-compile runs emacs-lisp-mode-hook; disable it
+            emacs-lisp-mode-hook)
         (when (or (not (file-exists-p elc))
                   (file-newer-than-file-p el elc))
           (condition-case err
@@ -1751,7 +1755,9 @@ newer, then compilation will be skipped."
 
 (defun el-get-byte-compile-file-or-directory (file)
   "Byte-compile FILE or all files within it if it is a directory."
-  (let ((byte-compile-warnings nil))
+  (let ((byte-compile-warnings nil)
+        ;; Byte-compile runs emacs-lisp-mode-hook; disable it
+        emacs-lisp-mode-hook)
     (if (file-directory-p file)
         (byte-recompile-directory file 0)
       (el-get-byte-compile-file file))))
@@ -2265,6 +2271,8 @@ shouldn't be invoked directly."
   (setq el-get-autoload-timer nil) ;; Allow a new update to be primed
 
   (let ((outdated el-get-outdated-autoloads)
+        ;; Generating autoloads runs emacs-lisp-mode-hook; disable it
+        emacs-lisp-mode-hook
         ;; use dynamic scoping to set up our loaddefs file for
         ;; update-directory-autoloads
         (generated-autoload-file el-get-autoload-file))
@@ -2297,6 +2305,8 @@ with the named PACKAGE"
   (when (file-exists-p el-get-autoload-file)
     (with-temp-buffer ;; empty buffer to trick `autoload-find-destination'
       (let ((generated-autoload-file el-get-autoload-file)
+            ;; Generating autoloads runs emacs-lisp-mode-hook; disable it
+            emacs-lisp-mode-hook
             (autoload-modified-buffers (list (current-buffer))))
         (dolist (dir (el-get-load-path package))
           (when (file-directory-p dir)
