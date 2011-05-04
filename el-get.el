@@ -2271,6 +2271,8 @@ shouldn't be invoked directly."
   (setq el-get-autoload-timer nil) ;; Allow a new update to be primed
 
   (let ((outdated el-get-outdated-autoloads)
+        ;; Generating autoloads runs emacs-lisp-mode-hook; disable it
+        emacs-lisp-mode-hook
         ;; use dynamic scoping to set up our loaddefs file for
         ;; update-directory-autoloads
         (generated-autoload-file el-get-autoload-file))
@@ -2303,6 +2305,8 @@ with the named PACKAGE"
   (when (file-exists-p el-get-autoload-file)
     (with-temp-buffer ;; empty buffer to trick `autoload-find-destination'
       (let ((generated-autoload-file el-get-autoload-file)
+            ;; Generating autoloads runs emacs-lisp-mode-hook; disable it
+            emacs-lisp-mode-hook
             (autoload-modified-buffers (list (current-buffer))))
         (dolist (dir (el-get-load-path package))
           (when (file-directory-p dir)
