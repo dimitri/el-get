@@ -17,33 +17,39 @@
 ;; So the idea is that you copy/paste this code into your *scratch* buffer,
 ;; hit C-j, and you have a working el-get.
 
-(if (require 'el-get nil t)
-    (message "el-get is already installed, try M-x el-get-update")
-  (let* ((el-get-root
-	  (file-name-as-directory
-	   (concat (file-name-as-directory user-emacs-directory) "el-get")))
-	 (dummy             (unless (file-directory-p el-get-root)
-			      (make-directory el-get-root t)))
-	 (package           "el-get")
-	 (buf               (switch-to-buffer "*el-get bootstrap*"))
-	 (pdir              (file-name-as-directory (concat el-get-root package)))
-	 (git               (or (executable-find "git")
-				(error "Unable to find `git'")))
-         (url               (if (bound-and-true-p el-get-git-install-url)
-                                el-get-git-install-url
-                              "http://github.com/dimitri/el-get.git"))
-	 (default-directory el-get-root)
-	 (process-connection-type nil) ; pipe, no pty (--no-progress)
+(let ((el-get-root
+       (file-name-as-directory
+	(concat (file-name-as-directory user-emacs-directory) "el-get"))))
 
-	 ;; First clone el-get
-	 (status
-	  (call-process git nil `(,buf t) t "--no-pager" "clone" "-v" url package)))
+  (when (file-directory-p el-get-root)
+    (add-to-list 'load-path el-get-root))
 
-    (unless (zerop status)
-      (error "Couldn't get el-get from the Git repository"))
+  ;; try to require el-get, failure means we have to install it
+  (unless (require 'el-get nil t)
+    (unless (file-directory-p el-get-root)
+      (make-directory el-get-root t))
 
-    (load (concat pdir package ".el"))
-    (el-get-post-install "el-get")
-    (with-current-buffer buf
-      (goto-char (point-max))
-      (insert "\nCongrats, el-get is installed and ready to serve!"))))
+    (let* ((package   "el-get")
+	   (buf       (switch-to-buffer "*el-get bootstrap*"))
+	   (pdir      (file-name-as-directory (concat el-get-root package)))
+	   (git       (or (executable-find "git")
+			  (error "Unable to find `git'")))
+	   (url       (if (bound-and-true-p el-get-git-install-url)
+			  el-get-git-install-url
+			"http://github.com/dimitri/el-get.git"))
+	   (default-directory el-get-root)
+	   (process-connection-type nil) ; pipe, no pty (--no-progress)
+
+	   ;; First clone el-get
+	   (status
+	    (call-process git nil `(,buf t) t "--no-pager" "clone" "-v" url package)))
+
+      (unless (zerop status)
+	(error "Couldn't get el-get from the Git repository"))
+
+      (load (concat pdir package ".el"))
+      (el-get-post-install "el-get")
+      (with-current-buffer buf
+	(goto-char (point-max))
+	(insert "\nCongrats, el-get is installed and ready to serve!")))))
+

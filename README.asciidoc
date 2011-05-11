@@ -30,7 +30,20 @@ evaluate the code you're looking at, and that will +git clone el-get+ at the
 'right place'.
 
 Note that you can add this elisp code into your emacs init file directly, as
-the installer code will detect if el-get is already installed.
+the installer code will detect if +el-get+ is already installed.  Notice
+that doing so directly will require internet access to start emacs.  You can
+avoid this with the following snippet instead:
+
+--------------------------------------
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+
+(unless (require 'el-get nil t)
+  (url-retrieve
+   "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+   (lambda (s)
+     (end-of-buffer)
+     (eval-print-last-sexp))))
+--------------------------------------
 
 See next section for details about how to setup you emacs so that it's able
 to benefit from +el-get+ automatically.
@@ -243,7 +256,7 @@ and try it out.
 Please see the documentation for the +el-get-methods+ and provide a patch!
 
 Adding +bzr+ support for example was only about writing 2 functions, mostly
-using copy paste. Here's the patch: http://github.com/dimitri/el-get/commit/494551a9e75ebeb9ad043da175e6b2140d0d87d3
+using copy paste. Here's the patch: https://github.com/dimitri/el-get/commit/63e9018102bdeb7b6d9136db231adcd983087217#L0R437
 
 == Gotchas
 
