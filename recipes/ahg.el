@@ -1,4 +1,4 @@
 (:name ahg
        :type hg
-       :url "http://bitbucket.org/agriggio/ahg"
+       :url "https://bitbucket.org/agriggio/ahg"
        :features ahg)
