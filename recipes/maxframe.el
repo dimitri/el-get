@@ -1,5 +1,9 @@
 (:name maxframe
        :type git
        :url "http://github.com/rmm5t/maxframe.el.git"
-       :features maxframe
-       :post-init (lambda () (add-hook 'window-setup-hook 'maximize-frame)))
+       :post-init (lambda () 
+                    (autoload 'maximize-frame "maxframe" 
+                      "Maximizes the frame to fit the display if under a windowing
+system." t)
+                    (autoload 'restore-frame "maxframe" 
+                      "Restores a maximized frame.  See `maximize-frame'." t)))
