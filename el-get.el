@@ -2264,7 +2264,7 @@ which defaults to the first element in `el-get-recipe-path'."
 (defun el-get-update-autoloads ()
   "Regenerate, compile, and load any outdated packages' autoloads.
 
-This function will run from `post-command-hook', and usually
+This function will run from a timer, and usually
 shouldn't be invoked directly."
 
   (message "el-get: updating outdated autoloads")
