@@ -377,6 +377,7 @@ being sent to the underlying shell."
            ))
 
 
+;;
 (defun el-get-repeat-value-to-internal (widget list-or-element)
   (if (listp list-or-element) list-or-element (list list-or-element)))
 
@@ -387,6 +388,17 @@ being sent to the underlying shell."
   "A variable length list of non-lists that can also be represented as a single element"
   :value-to-internal 'el-get-repeat-value-to-internal
   :match 'el-get-repeat-match)
+
+(defun el-get-symbol-value-to-internal (widget symbol-or-string)
+  (if (symbolp symbol-or-string) symbol-or-string (intern symbol-or-string)))
+
+(defun el-get-symbol-match (widget value)
+  (or (symbolp value) (stringp value)))
+
+(define-widget 'el-get-symbol 'symbol
+  "A string or a symbol, rendered as a symbol"
+  :value-to-internal 'el-get-symbol-value-to-internal
+  :match 'el-get-symbol-match)
 
 (defcustom el-get-sources nil
   "List of sources for packages.
@@ -568,11 +580,11 @@ definition provided by `el-get' recipes locally.
 
 :type `(repeat
         (choice :tag "Entry"
-         (symbol :tag "Name of EL-Get Package")
+         (el-get-symbol :tag "Name of EL-Get Package")
          (list
           :tag "Full Recipe (or Recipe Override)"
           (group :inline t :tag "EL-Get Package Name" :format "%t: %v"
-                 (const :format "" :name) (symbol :format "%v"))
+                 (const :format "" :name) (el-get-symbol :format "%v"))
           (set
            :inline t :format "%v\n"
            (group :inline t :format "%t: %v%h"
@@ -586,6 +598,7 @@ this is the name to fetch in that system"
                   (const :format "" :type)
                   ,(append '(choice :value emacswiki :format "%[Value Menu%] %v"
                                     )
+                           ;; A sorted list of method names
                            (sort
                             (reduce (lambda (r e) 
                                       (if (symbolp e) 
@@ -610,13 +623,15 @@ this is the name to fetch in that system"
            (group :inline t :format "%v" (const :format "" :info) (string :tag "Path to .info file or to its directory"))
            (group :inline t (const :format "" :load)
                   (el-get-repeat :tag "Relative paths to force-load" string))
-           (group :inline t :format "%v" (const :format "" :features) (repeat :tag "Features to `require'" symbol))
+           (group :inline t :format "%v" (const :format "" :features) (repeat :tag "Features to `require'" el-get-symbol))
            (group :inline t :format "Autoloads: %v"  :value (:autoloads t) (const :format "" :autoloads) (boolean :format "%[Toggle%] %v\n"))
-           (group :inline t :format "Options: %v" (const :format "" :options) (string :format "%v"))
+           (group :inline t :format "Options (`http-tar' and `cvs' only): %v" (const :format "" :options) (string :format "%v"))
            (group :inline t :format "CVS Module: %v" (const :format "" :module)  (string :format "%v"))
            (group :inline t :format "`Before' Function: %v" (const :format "" :before) (function :format "%v"))
-           (group :inline t :format "`After' Function: %v" (const :format "" :after) (function :format "%v"))
-           (group :inline t :format "Localname: %v" (const :format "" :localname) (string :format "%v")))
+           (group :inline t :format "`After' Function (post-init recommended instead): %v" 
+                  (const :format "" :after) (function :format "%v"))
+           (group :inline t :format "Name of downloaded file (`http' and `ftp' only): %v" 
+                  (const :format "" :localname) (string :format "%v")))
           (repeat
            :inline t :tag "System-Specific Build Recipes"
            (group :inline t
