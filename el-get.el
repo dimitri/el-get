@@ -1178,9 +1178,9 @@ found."
   "rm -f ~/.emacs.d/el-get/package"
   (let* ((pdir    (el-get-package-directory package)))
     (when (file-symlink-p pdir)
-      (message (concat "cd " el-get-dir " && rm -f " package))
-      (shell-command
-       (concat "cd " el-get-dir " && rm -f " package)))))
+      (let ((command (concat "cd " el-get-dir " && rm -f " package)))
+        (message command)
+        (shell-command command)))))
 
 
 ;;
