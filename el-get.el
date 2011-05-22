@@ -376,6 +376,18 @@ being sent to the underlying shell."
                  )
            ))
 
+
+(defun el-get-repeat-value-to-internal (widget list-or-element)
+  (if (listp list-or-element) list-or-element (list list-or-element)))
+
+(defun el-get-repeat-match (widget value)
+  (widget-editable-list-match widget (el-get-repeat-value-to-internal widget value)))
+
+(define-widget 'el-get-repeat 'repeat
+  "A variable length list of non-lists that can also be represented as a single element"
+  :value-to-internal 'el-get-repeat-value-to-internal
+  :match 'el-get-repeat-match)
+
 (defcustom el-get-sources nil
   "List of sources for packages.
 
@@ -591,22 +603,13 @@ this is the name to fetch in that system"
            (group :inline t :format "URL: %v" (const :format "" :url) (string :format "%v"))
            (group :inline t :format "General Build Recipe\n%v" (const :format "" :build)
                   ,el-get-build-recipe-body)
-           (group :inline t :format "Load-Path: %v" (const :format "" :load-path)
-                  (choice :format "%[Format%] %v"
-                          directory
-                          (repeat :tag "Directory list" directory)
-                          ))
-           (group :inline t :format "Compile: %v" (const :format "" :compile)
-                  (choice :format "%[Format%] %v"
-                          (regexp :tag "File/directory regexp")
-                          (repeat  :tag "List of file/directory regexps" regexp)
-                          ))
+           (group :inline t  (const :format "" :load-path)
+                  (el-get-repeat :tag "Subdirectories to add to load-path" directory))
+           (group :inline t  (const :format "" :compile)
+                  (el-get-repeat  :tag "File/directory regexps to compile" regexp))
            (group :inline t :format "%v" (const :format "" :info) (string :tag "Path to .info file or to its directory"))
-           (group :inline t :format "Load: %v" (const :format "" :load)
-                  (choice :format "%[Format%] %v"
-                          (string :tag "Path to file")
-                          (repeat :tag "List of paths" string)
-                          ))
+           (group :inline t (const :format "" :load)
+                  (el-get-repeat :tag "Relative paths to force-load" string))
            (group :inline t :format "%v" (const :format "" :features) (repeat :tag "Features to `require'" symbol))
            (group :inline t :format "Autoloads: %v"  :value (:autoloads t) (const :format "" :autoloads) (boolean :format "%[Toggle%] %v\n"))
            (group :inline t :format "Options: %v" (const :format "" :options) (string :format "%v"))
