@@ -2440,12 +2440,12 @@ called by `el-get' (usually at startup) for each package in
 	  (eval-after-load library lazy-form))
 
       ;; el-get is not lazy here
-      (message "el-get: Calling :post-init function for package %s" package)
       (when (and postinit (functionp postinit))
+        (message "el-get: Calling :post-init function for package %s" package)
 	(funcall postinit))
 
-      (message "el-get: Calling :after function for package %s" package)
       (when (and after (functionp after))
+        (message "el-get: Calling :after function for package %s" package)
 	(funcall after)))
 
     ;; and call the global init hooks
