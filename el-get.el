@@ -376,6 +376,15 @@ being sent to the underlying shell."
                  )
            ))
 
+;;
+;; "Fuzzy" data structure handling
+;;
+;; In el-get-sources, single elements are often allowed instead of a
+;; list, and strings and symbols are often interchangeable.
+;; Presumably it's easier for users who don't use the customization
+;; interface to write such structures as raw elisp.
+;;
+;;;  "Fuzzy" data structure conversion utilities
 (defun el-get-as-string (symbol-or-string)
   "If STRING-OR-SYMBOL is already a string, return it.  Otherwise
 convert it to a string and return that."
@@ -394,12 +403,7 @@ returning a list that contains it (and only it)."
   (if (listp element-or-list) element-or-list
       (list element-or-list)))
 
-;;
-;; Customization widgets for "fuzzy" datastructures that in various
-;; places allow lists or single elements and strings or symbols.
-;; Presumably it's easier for users to write such structures as raw
-;; elisp.
-;;
+;;; "Fuzzy" data structure customization widgets
 (defun el-get-repeat-value-to-internal (widget element-or-list)
   (el-get-as-list element-or-list))
 
@@ -421,6 +425,8 @@ returning a list that contains it (and only it)."
   "A string or a symbol, rendered as a symbol"
   :value-to-internal 'el-get-symbol-value-to-internal
   :match 'el-get-symbol-match)
+;;; END "Fuzzy" data structure support
+
 
 (defcustom el-get-sources nil
   "List of sources for packages.
