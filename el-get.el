@@ -2109,7 +2109,6 @@ entry."
 		 finally return def))
 
 	  ;; none of the previous, must be a full definition
-	  ;; definition
 	  (t source))))
 
 
