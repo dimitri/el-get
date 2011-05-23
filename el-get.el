@@ -1820,8 +1820,7 @@ newer, then compilation will be skipped."
       (cond
        (compile
         ;; only byte-compile what's in the :compile property of the recipe
-        (dolist (path (if (listp compile) compile
-                        (list (symbol-name compile))))
+        (dolist (path compile)
           (let ((fullpath (expand-file-name path pdir)))
             (if (file-exists-p fullpath)
                 ;; path is a file/dir, so add it literally
