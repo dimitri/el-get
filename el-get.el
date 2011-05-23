@@ -1746,7 +1746,7 @@ the files up."
 	 (infodir  (plist-get source :info))
 	 (pdir     (el-get-package-directory package)))
 
-    ;; apt-get, pacman and ELPA will take care of Info-directory-list
+    ;; apt-get, pacman and ELPA will set up Info-directory-list
     (unless (member method '(elpa apt-get fink pacman))
       (let* ((infodir-abs-conf (concat pdir infodir))
 	     (infodir-abs (file-name-as-directory
@@ -2478,7 +2478,7 @@ called by `el-get' (usually at startup) for each package in
             (el-get-verbose-message "require '%s" feature)
             (require feature)))))
 
-    ;; now care about the :post-init and :after functions
+    ;; now handle the :post-init and :after functions
     (if (or lazy el-get-is-lazy)
 	(let ((lazy-form `(progn ,(when postinit (list 'funcall postinit))
 				 ,(when after (list 'funcall after)))))
