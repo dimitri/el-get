@@ -376,7 +376,11 @@ being sent to the underlying shell."
                  )
            ))
 
-
+;;
+;; Customization widgets for "fuzzy" datastructures that in various
+;; places allow lists or single elements and strings or symbols.
+;; Presumably it's easier for users to write such structures as raw
+;; elisp.
 ;;
 (defun el-get-repeat-value-to-internal (widget list-or-element)
   (if (listp list-or-element) list-or-element (list list-or-element)))
