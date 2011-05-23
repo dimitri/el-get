@@ -2282,7 +2282,9 @@ shouldn't be invoked directly."
   (setq el-get-autoload-timer nil) ;; Allow a new update to be primed
 
   (let ((outdated el-get-outdated-autoloads)
-        ;; Generating autoloads runs emacs-lisp-mode-hook; disable it
+        ;; Generating autoloads runs theses hooks; disable then
+        fundamental-mode-hook
+        prog-mode-hook
         emacs-lisp-mode-hook
         ;; use dynamic scoping to set up our loaddefs file for
         ;; update-directory-autoloads
