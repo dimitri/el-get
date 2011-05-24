@@ -1,5 +1,3 @@
-(setq el-get-sources '(maxframe markdown-mode php-mode psvn nognus org-mode apel elscreen yasnippet gravatar wl-gravatar filladapt emacs-w3m elhome byte-code-cache el-get browse-kill-ring magit semi flim wanderlust el-get initsplit))
-(setq el-get-verbose t)
 ;;; el-get.el --- Manage the external elisp bits and pieces you depend upon
 ;;
 ;; Copyright (C) 2010 Dimitri Fontaine
