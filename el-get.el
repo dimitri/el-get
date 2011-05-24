@@ -159,6 +159,14 @@ disable byte-compilation globally."
   :group 'el-get
   :type 'boolean)
 
+(defcustom el-get-verbose nil
+  "Non-nil means print messages describing progress of el-get even for fast operations."
+  :group 'el-get
+  :type 'boolean)
+
+(defun el-get-verbose-message (format &rest arguments)
+  (when el-get-verbose (apply 'message format arguments)))
+
 (defcustom el-get-byte-compile-at-init nil
   "Whether or not to byte-compile packages at init.
 
@@ -367,6 +375,18 @@ a list of strings, each of which will be `shell-quote-argument'ed before
 being sent to the underlying shell."
                  )
            ))
+
+
+(defun el-get-repeat-value-to-internal (widget list-or-element)
+  (if (listp list-or-element) list-or-element (list list-or-element)))
+
+(defun el-get-repeat-match (widget value)
+  (widget-editable-list-match widget (el-get-repeat-value-to-internal widget value)))
+
+(define-widget 'el-get-repeat 'repeat
+  "A variable length list of non-lists that can also be represented as a single element"
+  :value-to-internal 'el-get-repeat-value-to-internal
+  :match 'el-get-repeat-match)
 
 (defcustom el-get-sources nil
   "List of sources for packages.
@@ -583,22 +603,13 @@ this is the name to fetch in that system"
            (group :inline t :format "URL: %v" (const :format "" :url) (string :format "%v"))
            (group :inline t :format "General Build Recipe\n%v" (const :format "" :build)
                   ,el-get-build-recipe-body)
-           (group :inline t :format "Load-Path: %v" (const :format "" :load-path)
-                  (choice :format "%[Format%] %v"
-                          directory
-                          (repeat :tag "Directory list" directory)
-                          ))
-           (group :inline t :format "Compile: %v" (const :format "" :compile)
-                  (choice :format "%[Format%] %v"
-                          (regexp :tag "File/directory regexp")
-                          (repeat  :tag "List of file/directory regexps" regexp)
-                          ))
+           (group :inline t  (const :format "" :load-path)
+                  (el-get-repeat :tag "Subdirectories to add to load-path" directory))
+           (group :inline t  (const :format "" :compile)
+                  (el-get-repeat  :tag "File/directory regexps to compile" regexp))
            (group :inline t :format "%v" (const :format "" :info) (string :tag "Path to .info file or to its directory"))
-           (group :inline t :format "Load: %v" (const :format "" :load)
-                  (choice :format "%[Format%] %v"
-                          (string :tag "Path to file")
-                          (repeat :tag "List of paths" string)
-                          ))
+           (group :inline t (const :format "" :load)
+                  (el-get-repeat :tag "Relative paths to force-load" string))
            (group :inline t :format "%v" (const :format "" :features) (repeat :tag "Features to `require'" symbol))
            (group :inline t :format "Autoloads: %v"  :value (:autoloads t) (const :format "" :autoloads) (boolean :format "%[Toggle%] %v\n"))
            (group :inline t :format "Options: %v" (const :format "" :options) (string :format "%v"))
@@ -1178,9 +1189,9 @@ found."
   "rm -f ~/.emacs.d/el-get/package"
   (let* ((pdir    (el-get-package-directory package)))
     (when (file-symlink-p pdir)
-      (message (concat "cd " el-get-dir " && rm -f " package))
-      (shell-command
-       (concat "cd " el-get-dir " && rm -f " package)))))
+      (let ((command (concat "cd " el-get-dir " && rm -f " package)))
+        (message command)
+        (shell-command command)))))
 
 
 ;;
@@ -2252,26 +2263,28 @@ which defaults to the first element in `el-get-recipe-path'."
 
 (defun el-get-load-fast (file)
   "Load the compiled version of FILE if it exists; else load FILE verbatim"
-  (load (file-name-sans-extension file)))
+  (load (file-name-sans-extension file) nil (not el-get-verbose)))
 
 (defun el-get-eval-autoloads ()
   "Evaluate the autoloads from the autoload file."
   (when (and el-get-generate-autoloads
              (file-exists-p el-get-autoload-file))
-    (message "el-get: evaluating autoload file")
+    (el-get-verbose-message "el-get: evaluating autoload file")
     (el-get-load-fast el-get-autoload-file)))
 
 (defun el-get-update-autoloads ()
   "Regenerate, compile, and load any outdated packages' autoloads.
 
-This function will run from `post-command-hook', and usually
+This function will run from a timer, and usually
 shouldn't be invoked directly."
 
   (message "el-get: updating outdated autoloads")
   (setq el-get-autoload-timer nil) ;; Allow a new update to be primed
 
   (let ((outdated el-get-outdated-autoloads)
-        ;; Generating autoloads runs emacs-lisp-mode-hook; disable it
+        ;; Generating autoloads runs theses hooks; disable then
+        fundamental-mode-hook
+        prog-mode-hook
         emacs-lisp-mode-hook
         ;; use dynamic scoping to set up our loaddefs file for
         ;; update-directory-autoloads
@@ -2350,6 +2363,11 @@ is nil, marks all installed packages as needing new autoloads."
       (delete-file
        (concat (file-name-sans-extension el-get-autoload-file) ".elc")))))
 
+(defun el-get-funcall (func fname package)
+  (when (and func (functionp func))
+      (el-get-verbose-message "el-get: Calling :%s function for package %s" fname package)
+      (funcall func)))
+
 (defun el-get-init (package)
   "Make the named PACKAGE available for use.
 
@@ -2401,14 +2419,10 @@ called by `el-get' (usually at startup) for each package in
           do (el-get-load-fast file))
 
     ;; first, the :prepare function, usually defined in the recipe
-    (when (and prepare (functionp prepare))
-      (message "el-get: Calling :prepare function for package %s" package)
-      (funcall prepare))
+    (el-get-funcall prepare "prepare" package)
 
     ;; now call the :before user function
-    (when (and before (functionp before))
-      (message "el-get: Calling :before function for package %s" package)
-      (funcall before))
+    (el-get-funcall before "before" package)
 
     ;; loads and feature are skipped when el-get-is-lazy
     (unless (or lazy el-get-is-lazy)
@@ -2418,7 +2432,7 @@ called by `el-get' (usually at startup) for each package in
 		(let ((pfile (concat pdir file)))
 		  (unless (file-exists-p pfile)
 		    (error "el-get could not find file '%s'" pfile))
-		  (message "el-get: load '%s'" pfile)
+		  (el-get-verbose-message "el-get: load '%s'" pfile)
 		  (el-get-load-fast pfile)))
 	      (if (stringp loads) (list loads) loads)))
 
@@ -2428,7 +2442,7 @@ called by `el-get' (usually at startup) for each package in
 	(when feats
 	  (mapc (lambda (feat)
 		  (let ((feature (if (stringp feat) (intern feat) feat)))
-		    (message "require '%s" (require feature))))
+		    (el-get-verbose-message "require '%s" (require feature))))
 		(cond ((symbolp feats) (list feats))
 		      ((stringp feats) (list (intern feats)))
 		      (t feats))))))
@@ -2440,13 +2454,8 @@ called by `el-get' (usually at startup) for each package in
 	  (eval-after-load library lazy-form))
 
       ;; el-get is not lazy here
-      (message "el-get: Calling :post-init function for package %s" package)
-      (when (and postinit (functionp postinit))
-	(funcall postinit))
-
-      (message "el-get: Calling :after function for package %s" package)
-      (when (and after (functionp after))
-	(funcall after)))
+      (el-get-funcall postinit "post-init" package)
+      (el-get-funcall after "after" package))
 
     ;; and call the global init hooks
     (run-hook-with-args 'el-get-post-init-hooks package)
@@ -2649,7 +2658,7 @@ entry which is not a symbol and is not already a known recipe."
 
 (defun el-get-post-init-message (package)
   "After PACKAGE init is done, just message about it"
-  (message "el-get initialized package %s" package)
+  (el-get-verbose-message "el-get initialized package %s" package)
   (el-get-warn-unregistered-package package))
 
 (add-hook 'el-get-post-init-hooks 'el-get-post-init-message)
