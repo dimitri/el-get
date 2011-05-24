@@ -2451,26 +2451,6 @@ package names. Argument MERGE has the same meaning as in
 `el-get-read-all-recipes'."
   (mapcar 'el-get-source-name (el-get-read-all-recipes merge)))
 
-(defun el-get-source-name-list ()
-  "Return a list of all packages named in `el-get-sources'.
-
-If `el-get-sources' contains duplicate package definitions, an
-error is signaled."
-  (let* ((source-name-list (mapcar 'el-get-source-name el-get-sources))
-         (duplicates (el-get-duplicates source-name-list)))
-    (when duplicates
-      (error "Please remove duplicates in `el-get-sources': %S." duplicates))
-    source-name-list))
-
-(defun el-get-package-name-list (&optional merge-recipes)
-  "Return a list of all package names from `el-get-sources'.
-
-With arg MERGE-RECIPES, also include package names from recipe
-files."
-  (if merge-recipes
-      (el-get-recipe-name-list 'merge)
-    (el-get-source-name-list)))
-
 (defun el-get-package-p (package)
   "Return non-nil unless PACKAGE is the name of a package in
 `el-get-sources'."
@@ -2491,25 +2471,24 @@ files."
   (unless (el-get-package-p package)
     (el-get-verbose-message "WARNING: el-get package \"%s\" is not in `el-get-sources'." package)))
 
-(defun el-get-read-package-name (action &optional merge-recipes filter-installed)
+(defun el-get-read-package-name (action &optional filter-installed)
   "Ask user for a package name in minibuffer, with completion.
 
 Completions are offered from the package names in
-`el-get-sources'. If MERGE-RECIPES is true, known recipe files
-are also offered. If FILTER-INSTALLED is true, do not offer names
-of installed packages."
-  (let ((sources   (el-get-package-name-list merge-recipes))
-	(installed (when filter-installed
+`el-get-sources'. If FILTER-INSTALLED is true, do not offer names
+of already-installed packages."
+  (let ((packages   (el-get-recipe-name-list 'merge))
+	(filtered (when filter-installed
 		     (el-get-list-package-names-with-status "installed"))))
     (completing-read (format "%s package: " action)
-		     (set-difference sources installed :test 'string=) nil t)))
+		     (set-difference packages filtered :test 'string=) nil t)))
 
-(defun el-get-read-recipe-name (action &optional require-match)
+(defun el-get-read-recipe-name (action)
   "Ask user for a recipe name, with completion from the list of known recipe files.
 
 This function does not deal with `el-get-sources' at all."
   (completing-read (format "%s recipe: " action)
-                   (el-get-recipe-name-list) nil require-match))
+                   (el-get-recipe-name-list) nil))
 
 (defun el-get-find-recipe-file (package &optional dir)
   "Find recipe file for PACKAGE.
@@ -2766,7 +2745,7 @@ called by `el-get' (usually at startup) for each package in
 
 If you want this install to be permanent, you have to edit your setup."
   (interactive
-   (list (el-get-read-package-name "Install" 'merge 'filter-installed)))
+   (list (el-get-read-package-name "Install" 'filter-installed)))
   ;; use dynamic binding to pretend package is part of `el-get-sources'
   ;; without having to edit the user setup --- that's what C-u is for.
   (let ((el-get-sources (el-get-read-all-recipes 'merge)))
@@ -2823,8 +2802,8 @@ If you want this install to be permanent, you have to edit your setup."
 
 (defun el-get-update-all ()
   (interactive)
-  "Performs update of all installed packages (specified in el-get-sources)"
-  (mapc 'el-get-update (el-get-package-name-list)))
+  "Performs update of all installed packages (specified in el-get-standard-packages)"
+  (mapc 'el-get-update el-get-standard-packages))
 
 (defun el-get-post-remove (package)
   "Run the post-remove hooks for PACKAGE."
