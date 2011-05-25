@@ -376,21 +376,6 @@ being sent to the underlying shell."
                  )
            ))
 
-;;
-;; "Fuzzy" data structure handling
-;;
-;; In el-get-sources, single elements are often allowed instead of a
-;; list, and strings and symbols are often interchangeable.
-;; Presumably it's easier for users who don't use the customization
-;; interface to write such structures as raw elisp.
-;;
-;;;  "Fuzzy" data structure conversion utilities
-(defun el-get-as-string (symbol-or-string)
-  "If STRING-OR-SYMBOL is already a string, return it.  Otherwise
-convert it to a string and return that."
-  (if (stringp symbol-or-string) symbol-or-string
-    (symbol-name symbol-or-string)))
-
 (defun el-get-as-symbol (string-or-symbol)
   "If STRING-OR-SYMBOL is already a symbol, return it.  Otherwise
 convert it to a symbol and return that."
@@ -2052,9 +2037,9 @@ recursion.
 
 (defun el-get-recipe-filename (package)
   "Return the name of the file that contains the recipe for PACKAGE, if any."
-  (let ((package-el (concat (el-get-as-string package)) ".el"))
+  (let ((package (if (symbolp package) (symbol-name package) package)))
     (loop for dir in el-get-recipe-path
-	  for recipe-filename = (expand-file-name package-el
+	  for recipe-filename = (expand-file-name (concat package ".el")
 						  (file-name-as-directory dir))
 	  if (file-exists-p recipe-filename)
 	  return recipe-filename)))
@@ -2270,17 +2255,17 @@ This function does not deal with `el-get-sources' at all."
 If no recipe file exists for PACKAGE, create a new one in DIR,
 which defaults to the first element in `el-get-recipe-path'."
   (interactive (list (el-get-read-recipe-name "Find or create")))
-  (let* ((package-el (concat (el-get-as-string package) ".el"))
+  (let* ((package (if (symbolp package) (symbol-name package) package))
 	 (recipe-file (or
 		       ;; If dir was specified, open or create the
 		       ;; recipe file in that directory.
-		       (when dir (expand-file-name package-el dir))
+		       (when dir (expand-file-name (concat package ".el") dir))
 		       ;; Next, try to find an existing recipe file anywhere.
 		       (el-get-recipe-filename package)
 		       ;; Lastly, create a new recipe file in the first
 		       ;; directory in `el-get-recipe-path'
-		       (expand-file-name package-el 
-                                         (car el-get-recipe-path)))))
+		       (expand-file-name (concat package ".el")
+					 (car el-get-recipe-path)))))
     (find-file recipe-file)))
 
 (defun el-get-save-and-kill (file)
