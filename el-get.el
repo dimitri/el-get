@@ -29,6 +29,10 @@
 
 ;;; Change Log:
 ;;
+;;  3.0 - WIP - Get a fix
+;;
+;;   -  dependencies should be the first feature in
+;;
 ;;  2.1 - 2010-05-25 - Still growing, getting lazy
 ;;
 ;;   - Add support for autoloads, per Dave Abrahams
@@ -133,7 +137,7 @@
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
 
-(defconst el-get-version "2.1" "el-get version number")
+(defconst el-get-version "3.0" "el-get version number")
 
 (defcustom el-get-post-init-hooks nil
   "Hooks to run after a package init.
