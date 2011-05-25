@@ -1,4 +1,5 @@
 (:name flim
+       :depends apel
        :type cvs
        :module "flim"
        :url ":pserver:anonymous@cvs.m17n.org:/cvs/root"
