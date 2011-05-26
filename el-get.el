@@ -736,7 +736,7 @@ directory or a symlink in el-get-dir."
   (signal (car signal-data) (cdr signal-data)))
 
 ;;
-;; call-process-list utility, to do same as bash && feature
+;; call-process-list utility
 ;;
 (defun el-get-start-process-list-sentinel (proc change)
   "When proc has exited and was successful, chain next command."
@@ -2233,7 +2233,7 @@ error is signaled."
     source-name-list))
 
 (defun el-get-package-name-list (&optional merge-recipes)
-  "Return package a list of all package names from `el-get-sources'.
+  "Return a list of all package names from `el-get-sources'.
 
 With arg MERGE-RECIPES, also include package names from recipe
 files."
@@ -2734,23 +2734,22 @@ to install it or to only initialize it"
       (el-get-install package))))
 
 (defun el-get (&optional sync &rest source-list)
-  "Check that all sources have been downloaded once, and init them as needed.
+  "Ensure that packages have been downloaded once and init them as needed.
 
 This will not update the sources by using `apt-get install' or
-`git pull', but it will ensure the sources have been installed
-and will set the load-path and Info-directory-list depending on
-the el-get-sources setup.
+`git pull', but it will ensure that:
 
-el-get is also responsible for doing (require 'feature) for each
-and every feature declared in `el-get-sources', so that it's
-suitable for use in your emacs init script.
+* the packages have been installed
+* load-path is set so their elisp files can be found
+* Info-directory-list is set so their info files can be found
+* Autoloads have been prepared and evaluated for each package
+* Any post-installation setup (e.g. `(require 'feature)') happens
 
-By default (SYNC is nil), `el-get' will run all the installs
-concurrently so that you can still use Emacs to do your normal
-work.
+When SYNC is nil (the default), all installations run
+concurrently, in the background.
 
-When SYNC is 'sync, each package will get installed one after the
-other, and any error will stop it all.
+When SYNC is 'sync, each package will be installed synchronously,
+and any error will stop it all.
 
 When SYNC is 'wait, then `el-get' will enter a wait-loop and only
 let you use Emacs once it has finished with its job. That's
@@ -2765,7 +2764,7 @@ welcome to use `autoload' too.
 SOURCE-LIST is expected to be a list of sources you want to
 install or init.  Each element in this list can be either a
 package name, a package recipe, or a proper source list.  When
-SOURCE-LIST is omited, `el-get-sources' is used."
+SOURCE-LIST is omitted, `el-get-sources' is used."
   (unless (or (null sync)
 	      (member sync '(sync wait)))
     (error "el-get sync parameter should be either nil, sync or wait"))
