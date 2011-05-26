@@ -151,13 +151,15 @@ Each hook is a unary function accepting a package"
 
 (defcustom el-get-post-install-hooks nil
   "Hooks to run after installing a package.
-Each hook will get called with the package as first argument."
+Each hook is a unary function accepting a package"
   :group 'el-get
   :type 'hook)
 
 (defcustom el-get-post-update-hooks nil
   "Hooks to run after updating a package.
-Each hook will get called with the package as first argument."
+Each hook is a unary function accepting a package"
+  :group 'el-get
+  :type 'hook)
   :group 'el-get
   :type 'hook)
 
