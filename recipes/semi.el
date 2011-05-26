@@ -1,4 +1,5 @@
 (:name semi
+       :depends (apel flim)
        :type cvs
        :module "semi"
        :url ":pserver:anonymous@cvs.m17n.org:/cvs/root"

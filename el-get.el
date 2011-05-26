@@ -390,6 +390,57 @@ being sent to the underlying shell."
                  )
            ))
 
+;;
+;; Support for tracking package states
+;;
+(defvar el-get-pkg-state
+  (make-hash-table)
+  "A hash mapping el-get package name symbols to their installation states")
+
+(defun el-get-package-state (package)
+  "Return the installation state of PACKAGE.
+
+- nil indicates that installation of the package has not been requested
+- 'installing indicates that the package's installation is in progress
+- 'init indicates that the package has been initialized
+- ('error . <data>) indicates that there was an installation error"
+  (gethash (el-get-as-symbol package) el-get-pkg-state))
+
+(defun el-get-currently-installing-p (package)
+  (eq (el-get-package-state package) 'installing))
+
+(defun el-get-currently-installing-packages ()
+  "Return the packages that are currently installing"
+  (loop 
+   for pkg being the hash-keys of el-get-pkg-state
+   if (el-get-currently-installing-p pkg)
+   collect pkg))
+
+(defun el-get-set-package-state (package state)
+  "Set the installation state of PACKAGE to STATE"
+  (puthash (el-get-as-symbol package) state el-get-pkg-state))
+
+(defun el-get-mark-initialized (package)
+  "Record the fact that the given PACKAGE has been initialized."
+  (el-get-set-package-state package 'init))
+(add-hook 'el-get-post-init-hooks 'el-get-mark-initialized)
+
+(defun el-get-mark-failed (package info)
+  "Record the fact that the given PACKAGE has failed to install
+for reasons described in INFO."
+  (el-get-verbose-message "el-get-mark-failed: %s %s" package info)
+  (el-get-set-package-state package ('error info)))
+(add-hook 'el-get-post-error-hooks 'el-get-mark-failed)
+
+;;
+;; "Fuzzy" data structure handling
+;;
+;; In el-get-sources, single elements are often allowed instead of a
+;; list, and strings and symbols are often interchangeable.
+;; Presumably it's easier for users who don't use the customization
+;; interface to write such structures as raw elisp.
+;;
+;;;  "Fuzzy" data structure conversion utilities
 (defun el-get-as-string (symbol-or-string)
   "If STRING-OR-SYMBOL is already a string, return it.  Otherwise
 convert it to a string and return that."
@@ -447,6 +498,12 @@ definition provided by `el-get' recipes locally.
     The name of the package. It can be different from the name of
     the directory where the package is stored (after a `git
     clone' for example, in which case a symlink will be created.
+
+:depends
+
+    A single package name, or a list of package names, on which
+    the package depends.  All of a packages dependencies will be
+    installed before the package is installed.
 
 :pkgname
 
@@ -617,6 +674,8 @@ definition provided by `el-get' recipes locally.
                  (const :format "" :name) (el-get-symbol :format "%v"))
           (set
            :inline t :format "%v\n"
+           (group :inline t  (const :format "" :depends)
+                  (el-get-repeat :tag "Names of packages on which this one depends" el-get-symbol))
            (group :inline t :format "%t: %v%h"
                   :tag "Underlying Package Name"
                   :doc "When there is an underlying package manager (e.g. `apt')
@@ -725,6 +784,141 @@ directory or a symlink in el-get-dir."
     ;; seems overkill as file-directory-p will always be true
     (or (file-directory-p pdir)
 	(file-symlink-p   pdir))))
+
+;;
+;; generic one-shot event support
+;;
+(defvar el-get-generic-event-tasks (make-hash-table :test 'equal)
+  "A hash mapping event triggers to lists of functions to be called")
+
+(defun el-get-generic-event-occurred (event &optional data)
+  "Fire all tasks added for the given EVENT (a hash key), passing DATA."
+  (let (tasks)
+    (while (setq tasks (gethash event el-get-generic-event-tasks))
+      (puthash event (cdr tasks) el-get-generic-event-tasks)
+      (ignore-errors (funcall (car tasks) data)))))
+
+(defun el-get-add-generic-event-task (event task)
+  "Set up TASK to be called when EVENT (a hash key) occurs."
+  (puthash event (cons task (gethash event el-get-generic-event-tasks)) 
+           el-get-generic-event-tasks))
+
+(defun el-get-clear-generic-event-tasks (event)
+  "Clear all tasks waiting on EVENT (a hash key)"
+  (remhash event el-get-generic-event-tasks))
+
+
+;;
+;; fire events for completion of el-get's init, install, and update
+;; phases (and for errors).
+;;
+(defun el-get-event-id (package action)
+  (list (el-get-as-symbol package) (intern (format "el-get-%s" action))))
+
+(defun el-get-event-occurred (package action &optional data)
+  "Handle the completion of ACTION on PACKAGE (both symbols),
+passing DATA"
+  ;; If this action finalizes the package state, first cancel other
+  ;; final actions
+  (let* ((final-actions '(init error))
+         (found (position action final-actions)))
+    (when found
+      (el-get-clear-generic-event-tasks 
+       (el-get-event-id package (elt final-actions (- 1 found))))))
+  ;; Now fire off the generic event
+  (el-get-generic-event-occurred (el-get-event-id package action) data))
+
+;; Install hooks that generate events
+(dolist (action '(init install update error))
+  (add-hook (intern (format "el-get-post-%s-hooks" action))
+            `(lambda (p &optional data) (el-get-event-occurred p ',action data))))
+
+(defun el-get-dependencies (package)
+  "Return the list of packages (as symbols) on which PACKAGE (a
+symbol) depends"
+  (let* ((source (el-get-package-def (symbol-name package)))
+         (deps (el-get-as-list (plist-get source :depends))))
+    ;; Make sure all elpa packages depend on the package `package'.
+    ;; The package `package' is an elpa package, though, so exclude
+    ;; it to avoid a circular dependency.
+    (if (and (not (eq package 'package))
+             (eq 'elpa
+                 (plist-get 
+                  (el-get-package-def (symbol-name package)) 
+                  :type)))
+        (cons 'package deps)
+      deps)))
+
+(defun el-get-package-initialized-p (package)
+  (eq (el-get-package-state package) 'init))
+
+(defun el-get-demand1 (package)
+  "Install, if necessary, and init the el-get package given by
+PACKAGE, a symbol"
+  (let ((p (symbol-name package)))
+    (if (string= (el-get-package-status p) "installed")
+        (el-get-init p)
+      (el-get-install p))))
+
+(defun el-get-dependency-installed (package dependency)
+  "Install the given PACKAGE (a symbol) iff all its dependencies
+are now installed"
+  (when (every 'el-get-package-initialized-p
+               (el-get-dependencies package))
+    (el-get-demand1 package)))
+
+(defun el-get-dependency-error (package dependency data)
+  "Mark PACKAGE as having failed installation due to a failure to
+  install DEPENDENCY, with error information DATA"
+  (el-get-mark-failed package (list dependency data)))
+
+(defun el-get-demand (package)
+  "Cause the named PACKAGE to be installed asynchronously, after
+all of its dependencies (if any).
+
+PACKAGE may be either a string or the corresponding symbol"
+  (interactive (list (el-get-read-package-name "Install" t)))
+  (condition-case err
+      (let* ((psym (el-get-as-symbol package))
+             (pname (symbol-name psym)))
+
+        ;; don't do anything if it's already installed or in progress
+        (unless (memq (el-get-package-state psym) '(init installing))
+
+          ;; Remember that we're working on it
+          (el-get-set-package-state psym 'installing)
+
+          (let ((non-installed-dependencies
+                 (remove-if 'el-get-package-initialized-p
+                            (el-get-dependencies psym))))
+
+            ;;
+            ;; demand all non-installed dependencies with appropriate
+            ;; handlers in place to trigger installation of this package
+            ;;
+            (dolist (dep non-installed-dependencies)
+              ;; set up a handler that will install `package' when all 
+              ;; its dependencies are installed
+              (el-get-add-generic-event-task 
+               (el-get-event-id dep 'init)
+               `(lambda (data) 
+                  (el-get-mark-initialized ',dep)
+                  (el-get-dependency-installed ',psym ',dep)))
+
+              ;; set up a handler that will cancel installation of
+              ;; `package' if installing the dependency fails
+              (el-get-add-generic-event-task 
+               (el-get-event-id dep 'error)
+               `(lambda (data)
+                  (el-get-set-package-state ',dep (list 'error data))
+                  (el-get-dependency-error ',psym ',dep data)))
+              
+              (el-get-demand dep))
+
+            (unless non-installed-dependencies
+              (el-get-demand1 psym)))))
+    ((debug error)
+     (el-get-installation-failed package err))))
 
 
 (defun el-get-installation-failed (package signal-data)
@@ -869,7 +1063,6 @@ Any other property will get put into the process object.
       (funcall final-func package)))
     ((debug error)
      (el-get-installation-failed package err))))
-
 
 ;;
 ;; get an executable given its command name, with friendly error message
@@ -2803,14 +2996,13 @@ SOURCE-LIST is omitted, `el-get-sources' is used."
   ;; Autoloads path are relative to el-get-dir, so add it to load-path
   (add-to-list 'load-path (file-name-as-directory el-get-dir))
 
-  (let* ((p-status    (el-get-read-all-packages-status))
-         (total       (length (el-get-package-name-list)))
-         (installed   (el-get-count-package-with-status "installed"))
-         (progress (and (eq sync 'wait)
+  (let ((previously-installing (el-get-currently-installing-packages))
+        (progress (and (eq sync 'wait)
                         (make-progress-reporter
 			 "Waiting for `el-get' to complete… "
-			 0 (- total installed) 0)))
+			 0 100 0)))
          (el-get-default-process-sync sync))
+
     ;; keep the result of mapcar to return it even in the 'wait case
     (prog1
 	;; build el-get-sources from source-list, flattening only one level
@@ -2822,20 +3014,25 @@ SOURCE-LIST is omitted, `el-get-sources' is used."
 		       when (and (listp sources)
 				 (not (plist-member sources :name)))
 		       append sources
-		       else collect sources)
-		 el-get-sources)))
-	  (mapc (lambda (s)
-		    (el-get-install-or-init s p-status))
-		  el-get-sources))
+		       else collect sources))))
+
+          (dolist (s (el-get-source-name-list))
+            (el-get-demand s)))
 
       ;; el-get-install is async, that's now ongoing.
       (when progress
-        (while (> (- total installed) 0)
-          (sleep-for 0.2)
-          ;; don't forget to account for installation failure
-          (setq installed (el-get-count-package-with-status "installed" "required"))
-          (progress-reporter-update progress (- total installed)))
-        (progress-reporter-done progress))))
+        (let* ((newly-installing 
+               (set-difference (el-get-currently-installing-packages) 
+                               previously-installing))
+              (still-installing newly-installing))
+
+          (while (> (length still-installing) 0)
+            (sleep-for 0.2)
+            (setq still-installing (delete-if-not 'el-get-currently-installing-p still-installing))
+            (progress-reporter-update 
+             progress 
+             (/ (* 100.0 (- newly-installing still-installing)) newly-installing)))
+        (progress-reporter-done progress)))))
 
   ;; unless we have autoloads to update, just load them now
   (unless el-get-outdated-autoloads
