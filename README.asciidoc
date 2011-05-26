@@ -11,6 +11,30 @@ documentation you now depend on, and finally call your own
 +:post-init+ function for you to setup the extension. Or call it a
 package.
 
+== Status and Version Numbers
+
+Current +el-get+ status is stable, ready for daily use and packed with extra
+features that make life easier.  There are some more things we could do, as
+always, but they will be about smoothing things further.
+
+=== Latest released version
+
++el-get+ version 2.1 is available, with a boatload of features, including
+autoloads support, byte-compiling in an external "clean room" Emacs
+instance, custom support, lazy initialisation support (defering all init
+functions to +eval-after-load+), and multi repositories +ELPA+ support.
+
+=== Version numbering
+
+Version String are now inspired by how Emacs itself numbers its versions.
+First is the major version number, then a dot, then the minor version
+number.  The minor version number is 0 when still developping the next major
+version.  So 3.0 is a developer release while 3.1 will be the next stable
+release.
+
+Please note that this versioning policy has been picked while backing
+1.2~dev, so 1.0 was a "stable" release in fact.  Ah, history.
+
 == How to Install it?
 
 Here's the 'lazy installer':
@@ -268,9 +292,11 @@ Please see the documentation for the +el-get-methods+ and provide a patch!
 Adding +bzr+ support for example was only about writing 2 functions, mostly
 using copy paste. Here's the patch: https://github.com/dimitri/el-get/commit/63e9018102bdeb7b6d9136db231adcd983087217#L0R437
 
-== Gotchas
+== Upgrade Notes
 
-=== Package Status
+=== Upgrading to 1.1
+
+==== Package Status
 
 +el-get+ will now save some package status information into the file
 +el-get-status-file+, it's a property list of the package symbol and its
