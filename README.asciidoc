@@ -5,10 +5,35 @@ Emacs. It supports lots of differents types of sources and is able to
 'install' them, 'update' them and 'remove' them, but more importantly it
 will 'init' them for you.
 
-That means it will care about +require+ ing the 'features' you need, +load+
-ing the files, setting the 'Info' paths so that +C-h i+ shows the new
-documentation you now depend on, and finally call your own +:after+ function
-for you to setup the extension. Or call it a package.
+That means it will +require+ the 'features' you need, +load+ the
+necessary files, set the 'Info' paths so that +C-h i+ shows the new
+documentation you now depend on, and finally call your own
++:post-init+ function for you to setup the extension. Or call it a
+package.
+
+== Status and Version Numbers
+
+Current +el-get+ status is stable, ready for daily use and packed with extra
+features that make life easier.  There are some more things we could do, as
+always, but they will be about smoothing things further.
+
+=== Last released version
+
++el-get+ version 2.1 is available, with a boatload of features, including
+autoloads support, byte-compiling in an external "clean room" Emacs
+instance, custom support, lazy initialisation support (defering all init
+functions to +eval-after-load+), and multi repositories +ELPA+ support.
+
+=== Version numbering
+
+Version String are now inspired by how Emacs itself numbers its version.
+First is the major version number, then a dot, then the minor version
+number.  The minor version number is 0 when still developping the next major
+version.  So 2.0 is a developer release while 2.1 will be the next stable
+release.
+
+Please not that this versioning policy has been picked while backing
+1.2~dev, so 1.0 was a "stable" release in fact.  Ah, history.
 
 == How to Install it?
 
@@ -162,10 +187,10 @@ would take too much time.
 
 === Build Commands
 
-Avoid +make install+ that will move files into a proper destination place,
-that's for distributors to care, like +debian+ for example. In our case, you
-probably just want your package +foo+ to be all installed into
-+~/.emacs.d/el-get/foo+, right? So, no +make install+.
+Avoid using +make install+, which will usually move files into a
+"system location."  In our case, you probably just want your package
++foo+ to be all installed into +~/.emacs.d/el-get/foo+, right? So, no
++make install+.
 
 === Byte Compiling
 
@@ -258,9 +283,11 @@ Please see the documentation for the +el-get-methods+ and provide a patch!
 Adding +bzr+ support for example was only about writing 2 functions, mostly
 using copy paste. Here's the patch: https://github.com/dimitri/el-get/commit/63e9018102bdeb7b6d9136db231adcd983087217#L0R437
 
-== Gotchas
+== Upgrade Notes
 
-=== Package Status
+=== Upgrading to 1.1
+
+==== Package Status
 
 +el-get+ will now save some package status information into the file
 +el-get-status-file+, it's a property list of the package symbol and its
