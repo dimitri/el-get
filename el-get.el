@@ -2716,14 +2716,32 @@ entry which is not a symbol and is not already a known recipe."
     "Notify the PACKAGE has been updated."
     (el-get-notify (format "%s updated" package)
 		   "This package has been updated successfully by el-get."))
-  (add-hook 'el-get-post-update-hooks 'el-get-post-update-notification))
+  (add-hook 'el-get-post-update-hooks 'el-get-post-update-notification)
 
+  (defun el-get-post-error-notification (package info)
+    "Notify the PACKAGE has failed to install."
+    (el-get-notify (format "%s failed to install" package)
+		   (format "%s" info)))
+  (add-hook 'el-get-post-error-hooks 'el-get-post-error-notification))
+
+;;
+;; Emacs `message' notifications
+;;
 (defun el-get-post-init-message (package)
   "After PACKAGE init is done, just message about it"
   (el-get-verbose-message "el-get initialized package %s" package)
   (el-get-warn-unregistered-package package))
-
 (add-hook 'el-get-post-init-hooks 'el-get-post-init-message)
+
+(defun el-get-post-update-message (package)
+  "After PACKAGE update is done, message about it"
+  (el-get-verbose-message "el-get updated package %s" package))
+(add-hook 'el-get-post-update-hooks 'el-get-post-update-message)
+
+(defun el-get-post-error-message (package info)
+  "After PACKAGE fails to install, just message about it"
+  (el-get-verbose-message "el-get failed to initialize package %s" package))
+(add-hook 'el-get-post-error-hooks 'el-get-post-error-message)
 
 
 ;;
