@@ -483,14 +483,51 @@ returning a list that contains it (and only it)."
   :match 'el-get-symbol-match)
 ;;; END "Fuzzy" data structure support
 
+(defun el-get-source-name (source)
+  "Return the package name (stringp) given an `el-get-sources'
+entry."
+  (if (symbolp source) (symbol-name source)
+    (format "%s" (plist-get source :name))))
+
+;;
+;; The installed package list
+;;
+(defcustom el-get-standard-packages
+  ;; For backward compatibility, assume el-get-sources defines the
+  ;; standard set.
+  (delete-dups 
+   (cons "el-get"
+         (when (boundp 'el-get-sources)
+           (mapcar 'el-get-source-name el-get-sources))))
+  "A list of package names that are part of your
+standard package requirements.  These will be installed and/or
+initialized automatically at startup, as required."
+  :type '(repeat string))
+
+;; Give the user a chance to remember installed packages before exiting.
+(defun el-get-can-exit-p ()
+  (or (not (get 'el-get-standard-packages 'customized-value))
+      (let (char)
+        (while 
+            (progn
+              (message "Remember packages installed with el-get? (y)es (n)o (c)ustomize")
+              (setq char (read-event))
+              (and (numberp char) 
+                   (memq (downcase char) '(?y ?n ?c)))))
+
+        (if (= char ?c) 
+            (progn (customize-variable 'el-get-standard-packages) nil) ; customize, don't exit
+          (if (= char ?y)
+              (customize-save-variable 'el-get-standard-packages el-get-standard-packages)) ; save
+          ;; exit regardless
+          t)))) 
+(add-to-list 'kill-emacs-query-functions 'el-get-can-exit-p)
 
 (defcustom el-get-sources nil
-  "List of sources for packages.
+  "Additional package recipes
 
-Each source entry is either a symbol, in which case the first
-recipe found in `el-get-recipe-path' directories named after the
-symbol with a \".el\" extension will get used, or a PLIST where
-the following properties are supported.
+Each entry is a PLIST where the following properties are
+supported.
 
 If your property list is missing the :type property, then it's
 merged with the recipe one, so that you can override any
@@ -884,6 +921,12 @@ PACKAGE may be either a string or the corresponding symbol"
   (condition-case err
       (let* ((psym (el-get-as-symbol package))
              (pname (symbol-name psym)))
+
+        ;; Add the package to our list and make sure customize knows it
+        (unless (member pname el-get-standard-packages)
+          (add-to-list 'el-get-standard-packages pname)
+          (put 'el-get-standard-packages
+               'customized-value (list (custom-quote el-get-standard-packages))))
 
         ;; don't do anything if it's already installed or in progress
         (unless (memq (el-get-package-state psym) '(init installing))
@@ -2301,12 +2344,6 @@ package names. Argument MERGE has the same meaning as in
 `el-get-read-all-recipes'."
   (mapcar 'el-get-source-name (el-get-read-all-recipes)))
 
-(defun el-get-source-name (source)
-  "Return the package name (stringp) given an `el-get-sources'
-entry."
-  (if (symbolp source) (symbol-name source)
-    (format "%s" (plist-get source :name))))
-
 (defun el-get-package-def (package)
   "Return a single `el-get-sources' entry for PACKAGE."
   (let ((source (loop for src in el-get-sources
@@ -2452,7 +2489,7 @@ files."
 (defun el-get-warn-unregistered-package (package)
   "Add a message unless PACKAGE is known in `el-get-source'"
   (unless (el-get-package-p package)
-    (message "WARNING: el-get package \"%s\" is not in `el-get-sources'." package)))
+    (el-get-verbose-message "WARNING: el-get package \"%s\" is not in `el-get-sources'." package)))
 
 (defun el-get-read-package-name (action &optional merge-recipes filter-installed)
   "Ask user for a package name in minibuffer, with completion.
@@ -2911,8 +2948,7 @@ entry which is not a symbol and is not already a known recipe."
 ;;
 (defun el-get-post-init-message (package)
   "After PACKAGE init is done, just message about it"
-  (el-get-verbose-message "el-get initialized package %s" package)
-  (el-get-warn-unregistered-package package))
+  (el-get-verbose-message "el-get initialized package %s" package))
 (add-hook 'el-get-post-init-hooks 'el-get-post-init-message)
 
 (defun el-get-post-update-message (package)
@@ -2929,21 +2965,6 @@ entry which is not a symbol and is not already a known recipe."
 ;;
 ;; User Interface, Non Interactive part
 ;;
-(defun el-get-install-or-init (source p-status)
-  "Check if given SOURCE is already installed and proceed either
-to install it or to only initialize it"
-  (let* ((package (el-get-source-name source))
-	 (status  (el-get-package-status package p-status)))
-    ;; check if the package needs to be fetched (and built)
-    (if (el-get-package-exists-p package)
-	(if (and status (string= "installed" status))
-	    (condition-case err
-		(el-get-init package)
-	      ((debug error) ;; catch-all, allow for debugging
-	       (message "%S" (error-message-string err))))
-	  (message "Package %s failed to install, remove it first." package))
-      (el-get-install package))))
-
 (defun el-get (&optional sync &rest source-list)
   "Ensure that packages have been downloaded once and init them as needed.
 
@@ -2975,7 +2996,7 @@ welcome to use `autoload' too.
 SOURCE-LIST is expected to be a list of sources you want to
 install or init.  Each element in this list can be either a
 package name, a package recipe, or a proper source list.  When
-SOURCE-LIST is omitted, `el-get-sources' is used."
+SOURCE-LIST is omitted, `el-get-standard-packages' is used."
   (unless (or (null sync)
 	      (member sync '(sync wait)))
     (error "el-get sync parameter should be either nil, sync or wait"))
@@ -3005,7 +3026,7 @@ SOURCE-LIST is omitted, `el-get-sources' is used."
 		       append sources
 		       else collect sources))))
 
-          (dolist (s (el-get-source-name-list))
+          (dolist (s el-get-standard-packages)
             (el-get-demand s)))
 
       ;; el-get-install is async, that's now ongoing.
