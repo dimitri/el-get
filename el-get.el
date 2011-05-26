@@ -160,6 +160,10 @@ Each hook is a unary function accepting a package"
 Each hook is a unary function accepting a package"
   :group 'el-get
   :type 'hook)
+
+(defcustom el-get-post-error-hooks nil
+  "Hooks to run after package installation fails.
+Each hook is a binay function accepting a package and error data"
   :group 'el-get
   :type 'hook)
 
@@ -726,33 +730,41 @@ directory or a symlink in el-get-dir."
 	(file-symlink-p   pdir))))
 
 
+(defun el-get-installation-failed (package signal-data)
+  "Run all the failure hooks for PACKAGE and `signal' the car and cdr of SIGNAL-DATA."
+  (run-hook-with-args 'el-get-post-error-hooks package signal-data)
+  (signal (car signal-data) (cdr signal-data)))
+
 ;;
 ;; call-process-list utility, to do same as bash && feature
 ;;
 (defun el-get-start-process-list-sentinel (proc change)
   "When proc has exited and was successful, chain next command."
   (when (eq (process-status proc) 'exit)
-    (let ((status  (process-exit-status proc))
-	  (cname   (process-get proc :command-name))
-	  (cbuf    (process-get proc :buffer-name))
-	  (message (process-get proc :message))
-	  (errorm  (process-get proc :error))
-	  (package (process-get proc :el-get-package))
-	  (final-f (process-get proc :el-get-final-func))
-	  (next    (process-get proc :el-get-start-process-list))
-	  (el-get-sources (process-get proc :el-get-sources)))
-      (if (not (eq 0 status))
-	  (progn
-	    (when (process-buffer proc)
-	      (set-window-buffer (selected-window) cbuf))
-	    (error "el-get: %s %s" cname errorm))
-	(message "el-get: %s" message))
+    (condition-case err
+        (let ((status  (process-exit-status proc))
+              (cname   (process-get proc :command-name))
+              (cbuf    (process-get proc :buffer-name))
+              (message (process-get proc :message))
+              (errorm  (process-get proc :error))
+              (package (process-get proc :el-get-package))
+              (final-f (process-get proc :el-get-final-func))
+              (next    (process-get proc :el-get-start-process-list))
+              (el-get-sources (process-get proc :el-get-sources)))
+          (if (not (eq 0 status))
+              (progn
+                (when (process-buffer proc)
+                  (set-window-buffer (selected-window) cbuf))
+                (error "el-get: %s %s" cname errorm))
+            (message "el-get: %s" message))
 
-      (when cbuf (kill-buffer cbuf))
-      (if next
-	  (el-get-start-process-list package next final-f)
-	(when (functionp final-f)
-	  (funcall final-f package))))))
+          (when cbuf (kill-buffer cbuf))
+          (if next
+              (el-get-start-process-list package next final-f)
+            (when (functionp final-f)
+              (funcall final-f package))))
+      ((debug error)
+       (el-get-installation-failed package err)))))
 
 (defvar el-get-default-process-sync nil
   "Non-nil value asks `el-get-start-process-list' to run current
@@ -809,54 +821,58 @@ properties:
 
 Any other property will get put into the process object.
 "
-  (when commands
-    (let* ((c       (car commands))
-	   (cdir    (plist-get c :default-directory))
-	   (cname   (plist-get c :command-name))
-	   (cbuf    (plist-get c :buffer-name))
-	   (killed  (when (get-buffer cbuf) (kill-buffer cbuf)))
-	   (filter  (plist-get c :process-filter))
-	   (program (plist-get c :program))
-	   (args    (plist-get c :args))
-	   (shell   (plist-get c :shell))
-	   (sync    (if (plist-member c :sync) (plist-get c :sync)
-                      el-get-default-process-sync))
-	   (default-directory (if cdir
-				  (file-name-as-directory
-				   (expand-file-name cdir))
-				default-directory)))
-      (if sync
-          (let* ((startf (if shell #'call-process-shell-command #'call-process))
-                 (dummy  (message "el-get is waiting for %S to complete" cname))
-                 (status (apply startf program nil cbuf t args))
-                 (message (plist-get c :message))
-                 (errorm  (plist-get c :error))
-                 (next    (cdr commands)))
-            (if (eq 0 status)
-		(message "el-get: %s" message)
-              (set-window-buffer (selected-window) cbuf)
-              (error "el-get: %s %s" cname errorm))
-            (when cbuf (kill-buffer cbuf))
-            (if next
-		(el-get-start-process-list package next final-func)
-              (when (functionp final-func)
-                (funcall final-func package))))
-	;; async case
-        (let* ((startf (if shell #'start-process-shell-command #'start-process))
-               (process-connection-type nil) ; pipe, don't pretend we're a pty
-               (proc (apply startf cname cbuf program args)))
-          ;; add the properties to the process, then set the sentinel
-          (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
-          (process-put proc :el-get-sources el-get-sources)
-          (process-put proc :el-get-package package)
-          (process-put proc :el-get-final-func final-func)
-          (process-put proc :el-get-start-process-list (cdr commands))
-          (set-process-sentinel proc 'el-get-start-process-list-sentinel)
-          (when filter (set-process-filter proc filter))))))
-  ;; no commands, still run the final-func
-  (unless commands
-    (when (functionp final-func)
-      (funcall final-func package))))
+  (condition-case err
+      (when commands
+        (let* ((c       (car commands))
+               (cdir    (plist-get c :default-directory))
+               (cname   (plist-get c :command-name))
+               (cbuf    (plist-get c :buffer-name))
+               (killed  (when (get-buffer cbuf) (kill-buffer cbuf)))
+               (filter  (plist-get c :process-filter))
+               (program (plist-get c :program))
+               (args    (plist-get c :args))
+               (shell   (plist-get c :shell))
+               (sync    (if (plist-member c :sync) (plist-get c :sync)
+                          el-get-default-process-sync))
+               (default-directory (if cdir
+                                      (file-name-as-directory
+                                       (expand-file-name cdir))
+                                    default-directory)))
+          (if sync
+              (let* ((startf (if shell #'call-process-shell-command #'call-process))
+                     (dummy  (message "el-get is waiting for %S to complete" cname))
+                     (status (apply startf program nil cbuf t args))
+                     (message (plist-get c :message))
+                     (errorm  (plist-get c :error))
+                     (next    (cdr commands)))
+                (if (eq 0 status)
+                    (message "el-get: %s" message)
+                  (set-window-buffer (selected-window) cbuf)
+                  (error "el-get: %s %s" cname errorm))
+                (when cbuf (kill-buffer cbuf))
+                (if next
+                    (el-get-start-process-list package next final-func)
+                  (when (functionp final-func)
+                    (funcall final-func package))))
+            ;; async case
+            (let* ((startf (if shell #'start-process-shell-command #'start-process))
+                   (process-connection-type nil) ; pipe, don't pretend we're a pty
+                   (proc (apply startf cname cbuf program args)))
+              ;; add the properties to the process, then set the sentinel
+              (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
+              (process-put proc :el-get-sources el-get-sources)
+              (process-put proc :el-get-package package)
+              (process-put proc :el-get-final-func final-func)
+              (process-put proc :el-get-start-process-list (cdr commands))
+              (set-process-sentinel proc 'el-get-start-process-list-sentinel)
+              (when filter (set-process-filter proc filter))))))
+    ;; no commands, still run the final-func
+    (unless commands
+      (when (functionp final-func)
+      (funcall final-func package)))
+    ((debug error)
+     (el-get-installation-failed package err))))
+
 
 ;;
 ;; get an executable given its command name, with friendly error message
@@ -2419,81 +2435,84 @@ Add PACKAGE's directory (or `:load-path' if specified) to the
 called by `el-get' (usually at startup) for each package in
 `el-get-sources'."
   (interactive (list (el-get-read-package-name "Init")))
-  (let* ((source   (el-get-package-def package))
-	 (method   (plist-get source :type))
-	 (loads    (el-get-as-list (plist-get source :load)))
-         (autoloads (plist-get source :autoloads))
-	 (feats    (el-get-as-list (plist-get source :features)))
-	 (el-path  (el-get-as-list (el-get-load-path package)))
-	 (lazy     (plist-get source :lazy))
-	 (prepare  (plist-get source :prepare))
-	 (before   (plist-get source :before))
-	 (postinit (plist-get source :post-init))
-	 (after    (plist-get source :after))
-	 (pkgname  (plist-get source :pkgname))
-	 (library  (or (plist-get source :library) pkgname package))
-	 (pdir     (el-get-package-directory package)))
+  (condition-case err
+      (let* ((source   (el-get-package-def package))
+             (method   (plist-get source :type))
+             (loads    (el-get-as-list (plist-get source :load)))
+             (autoloads (plist-get source :autoloads))
+             (feats    (el-get-as-list (plist-get source :features)))
+             (el-path  (el-get-as-list (el-get-load-path package)))
+             (lazy     (plist-get source :lazy))
+             (prepare  (plist-get source :prepare))
+             (before   (plist-get source :before))
+             (postinit (plist-get source :post-init))
+             (after    (plist-get source :after))
+             (pkgname  (plist-get source :pkgname))
+             (library  (or (plist-get source :library) pkgname package))
+             (pdir     (el-get-package-directory package)))
 
-    ;; append entries to load-path and Info-directory-list
-    (unless (member method '(elpa apt-get fink pacman))
-      ;; append entries to load-path
-      (dolist (path el-path)
-        (el-get-add-path-to-list package 'load-path path))
-      ;;  and Info-directory-list
-      (el-get-install-or-init-info package 'init))
+        ;; append entries to load-path and Info-directory-list
+        (unless (member method '(elpa apt-get fink pacman))
+          ;; append entries to load-path
+          (dolist (path el-path)
+            (el-get-add-path-to-list package 'load-path path))
+          ;;  and Info-directory-list
+          (el-get-install-or-init-info package 'init))
 
-    (when el-get-byte-compile-at-init
-      ;; If the package has been updated outside el-get, the .el files will be
-      ;; out of date, so just check if we need to recompile them.
-      ;;
-      ;; when using el-get-update to update packages, though, there's no
-      ;; need to byte compile at init.
-      (el-get-byte-compile package))
+        (when el-get-byte-compile-at-init
+          ;; If the package has been updated outside el-get, the .el files will be
+          ;; out of date, so just check if we need to recompile them.
+          ;;
+          ;; when using el-get-update to update packages, though, there's no
+          ;; need to byte compile at init.
+          (el-get-byte-compile package))
 
-    ;; load any autoloads file if needed
-    (unless (eq autoloads t)
-      (dolist (file (el-get-as-list autoloads))
-        (el-get-load-fast file)))
+        ;; load any autoloads file if needed
+        (unless (eq autoloads t)
+          (dolist (file (el-get-as-list autoloads))
+            (el-get-load-fast file)))
 
-    ;; first, the :prepare function, usually defined in the recipe
-    (el-get-funcall prepare "prepare" package)
+        ;; first, the :prepare function, usually defined in the recipe
+        (el-get-funcall prepare "prepare" package)
 
-    ;; now call the :before user function
-    (el-get-funcall before "before" package)
+        ;; now call the :before user function
+        (el-get-funcall before "before" package)
 
-    ;; loads and feature are skipped when el-get-is-lazy
-    (unless (or lazy el-get-is-lazy)
-      ;; loads
-      (dolist (file loads)
-        (let ((pfile (concat pdir file)))
-          (unless (file-exists-p pfile)
-            (error "el-get could not find file '%s'" pfile))
-          (el-get-verbose-message "el-get: load '%s'" pfile)
-          (el-get-load-fast pfile)))
+        ;; loads and feature are skipped when el-get-is-lazy
+        (unless (or lazy el-get-is-lazy)
+          ;; loads
+          (dolist (file loads)
+            (let ((pfile (concat pdir file)))
+              (unless (file-exists-p pfile)
+                (error "el-get could not find file '%s'" pfile))
+              (el-get-verbose-message "el-get: load '%s'" pfile)
+              (el-get-load-fast pfile)))
 
-      ;; features, only ELPA will handle them on its own
-      (unless (eq method 'elpa)
-	;; if a feature is provided, require it now
-        (dolist (feat feats)
-          (let ((feature (el-get-as-symbol feat)))
-            (el-get-verbose-message "require '%s" feature)
-            (require feature)))))
+          ;; features, only ELPA will handle them on its own
+          (unless (eq method 'elpa)
+            ;; if a feature is provided, require it now
+            (dolist (feat feats)
+              (let ((feature (el-get-as-symbol feat)))
+                (el-get-verbose-message "require '%s" feature)
+                (require feature)))))
 
-    ;; now handle the :post-init and :after functions
-    (if (or lazy el-get-is-lazy)
-	(let ((lazy-form `(progn ,(when postinit (list 'funcall postinit))
-				 ,(when after (list 'funcall after)))))
-	  (eval-after-load library lazy-form))
+        ;; now handle the :post-init and :after functions
+        (if (or lazy el-get-is-lazy)
+            (let ((lazy-form `(progn ,(when postinit (list 'funcall postinit))
+                                     ,(when after (list 'funcall after)))))
+              (eval-after-load library lazy-form))
 
-      ;; el-get is not lazy here
-      (el-get-funcall postinit "post-init" package)
-      (el-get-funcall after "after" package))
+          ;; el-get is not lazy here
+          (el-get-funcall postinit "post-init" package)
+          (el-get-funcall after "after" package))
 
-    ;; and call the global init hooks
-    (run-hook-with-args 'el-get-post-init-hooks package)
+        ;; and call the global init hooks
+        (run-hook-with-args 'el-get-post-init-hooks package)
 
-    ;; return the package
-    package))
+        ;; return the package
+        package)
+    (error
+     (el-get-installation-failed package err))))
 
 (defun el-get-post-install (package)
   "Post install PACKAGE. This will get run by a sentinel."
