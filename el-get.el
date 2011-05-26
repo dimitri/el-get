@@ -4,7 +4,7 @@
 ;;
 ;; Author: Dimitri Fontaine <dim@tapoueh.org>
 ;; URL: http://www.emacswiki.org/emacs/el-get.el
-;; Version: 2.1
+;; Version: 2.2
 ;; Created: 2010-06-17
 ;; Keywords: emacs package elisp install elpa git git-svn bzr cvs svn darcs hg
 ;;           apt-get fink pacman http http-tar emacswiki
@@ -29,7 +29,11 @@
 
 ;;; Change Log:
 ;;
-;;  2.1 - 2010-05-25 - Still growing, getting lazy
+;;  2.2 - 2011-05-26 - Fix the merge
+;;
+;;   - Revert changes introduced by a merge done by mistake
+;;
+;;  2.1 - 2011-05-25 - Still growing, getting lazy
 ;;
 ;;   - Add support for autoloads, per Dave Abrahams
 ;;   - fix 'wait support for http (using sync retrieval)
@@ -133,7 +137,7 @@
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
 
-(defconst el-get-version "2.1" "el-get version number")
+(defconst el-get-version "2.2" "el-get version number")
 
 (defcustom el-get-post-init-hooks nil
   "Hooks to run after a package init.
