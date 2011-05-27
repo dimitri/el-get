@@ -410,16 +410,13 @@ returning a list that contains it (and only it)."
   :value-to-internal 'el-get-repeat-value-to-internal
   :match 'el-get-repeat-match)
 
-(defun el-get-symbol-value-to-internal (widget string-or-symbol)
-  (el-get-as-symbol string-or-symbol))
-
 (defun el-get-symbol-match (widget value)
   (or (symbolp value) (stringp value)))
 
 (define-widget 'el-get-symbol 'symbol
   "A string or a symbol, rendered as a symbol"
-  :value-to-internal 'el-get-symbol-value-to-internal
-  :match 'el-get-symbol-match)
+  :match 'el-get-symbol-match
+)
 ;;; END "Fuzzy" data structure support
 
 
