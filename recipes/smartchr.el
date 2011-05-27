@@ -1,4 +1,3 @@
 (:name smartchr
-       :type git
-       :url "https://github.com/emacsmirror/smartchr.git"
+       :type emacsmirror
        :features smartchr)

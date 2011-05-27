@@ -1,4 +1,3 @@
 (:name sunrise-x-popviewer
-       :type git
-       :url "git://github.com/emacsmirror/sunrise-x-popviewer.git"
+       :type emacsmirror
        :features sunrise-x-popviewer)

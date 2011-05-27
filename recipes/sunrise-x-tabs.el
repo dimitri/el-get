@@ -1,4 +1,3 @@
 (:name sunrise-x-tabs
-       :type git
-       :url "git://github.com/emacsmirror/sunrise-x-tabs.git"
+       :type emacsmirror
        :features sunrise-x-tabs)
