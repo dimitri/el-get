@@ -1428,13 +1428,15 @@ the recipe, then return nil."
                                    (bound-and-true-p package-archive-base)))
          ;; Prepend elpa-repo to `package-archives' for new package.el
          (package-archives (append (when elpa-repo (list elpa-repo))
-                                   package-archives)))
+                                   (when (boundp 'package-archives) package-archives))))
     (unless (and elpa-dir (file-directory-p elpa-dir))
       ;; Make sure we have got *some* kind of record of the package archive.
       ;; TODO: should we refresh and retry once if package-install fails?
       (let ((p (if (fboundp 'package-read-all-archive-contents)
 		   (package-read-all-archive-contents) ; version from emacs24
-		 (package-read-archive-contents))))     ; old version
+		 (package-read-archive-contents)))     ; old version
+            ;; package-install generates autoloads, byte compiles
+            emacs-lisp-mode-hook fundamental-mode-hook prog-mode-hook)
 	(unless p
 	  (package-refresh-contents)))
       (package-install (intern package)))
