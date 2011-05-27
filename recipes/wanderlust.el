@@ -1,4 +1,5 @@
 (:name wanderlust
+       :depends (apel flim semi)
        :type cvs 
        :module "wanderlust" 
        :url ":pserver:anonymous@cvs.m17n.org:/cvs/root" 
