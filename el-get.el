@@ -2733,7 +2733,7 @@ called by `el-get' (usually at startup) for each package in
 
         ;; return the package
         package)
-    (error
+    (debug error 
      (el-get-installation-failed package err))))
 
 (defun el-get-post-install (package)
