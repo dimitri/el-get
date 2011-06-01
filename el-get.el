@@ -429,7 +429,7 @@ being sent to the underlying shell."
   "Record the fact that the given PACKAGE has failed to install
 for reasons described in INFO."
   (el-get-verbose-message "el-get-mark-failed: %s %s" package info)
-  (el-get-set-package-state package ('error info)))
+  (el-get-set-package-state package `(error ,info)))
 (add-hook 'el-get-post-error-hooks 'el-get-mark-failed)
 
 ;;
