@@ -5,10 +5,35 @@ Emacs. It supports lots of differents types of sources and is able to
 'install' them, 'update' them and 'remove' them, but more importantly it
 will 'init' them for you.
 
-That means it will care about +require+ ing the 'features' you need, +load+
-ing the files, setting the 'Info' paths so that +C-h i+ shows the new
-documentation you now depend on, and finally call your own +:after+ function
-for you to setup the extension. Or call it a package.
+That means it will +require+ the 'features' you need, +load+ the
+necessary files, set the 'Info' paths so that +C-h i+ shows the new
+documentation you now depend on, and finally call your own
++:post-init+ function for you to setup the extension. Or call it a
+package.
+
+== Status and Version Numbers
+
+Current +el-get+ status is stable, ready for daily use and packed with extra
+features that make life easier.  There are some more things we could do, as
+always, but they will be about smoothing things further.
+
+=== Latest released version
+
++el-get+ version 2.1 is available, with a boatload of features, including
+autoloads support, byte-compiling in an external "clean room" Emacs
+instance, custom support, lazy initialisation support (defering all init
+functions to +eval-after-load+), and multi repositories +ELPA+ support.
+
+=== Version numbering
+
+Version String are now inspired by how Emacs itself numbers its versions.
+First is the major version number, then a dot, then the minor version
+number.  The minor version number is 0 when still developping the next major
+version.  So 3.0 is a developer release while 3.1 will be the next stable
+release.
+
+Please note that this versioning policy has been picked while backing
+1.2~dev, so 1.0 was a "stable" release in fact.  Ah, history.
 
 == How to Install it?
 
@@ -30,7 +55,20 @@ evaluate the code you're looking at, and that will +git clone el-get+ at the
 'right place'.
 
 Note that you can add this elisp code into your emacs init file directly, as
-the installer code will detect if el-get is already installed.
+the installer code will detect if +el-get+ is already installed.  Notice
+that doing so directly will require internet access to start emacs.  You can
+avoid this with the following snippet instead:
+
+--------------------------------------
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+
+(unless (require 'el-get nil t)
+  (url-retrieve
+   "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+   (lambda (s)
+     (end-of-buffer)
+     (eval-print-last-sexp))))
+--------------------------------------
 
 See next section for details about how to setup you emacs so that it's able
 to benefit from +el-get+ automatically.
@@ -149,10 +187,10 @@ would take too much time.
 
 === Build Commands
 
-Avoid +make install+ that will move files into a proper destination place,
-that's for distributors to care, like +debian+ for example. In our case, you
-probably just want your package +foo+ to be all installed into
-+~/.emacs.d/el-get/foo+, right? So, no +make install+.
+Avoid using +make install+, which will usually move files into a
+"system location."  In our case, you probably just want your package
++foo+ to be all installed into +~/.emacs.d/el-get/foo+, right? So, no
++make install+.
 
 === Byte Compiling
 
@@ -243,11 +281,13 @@ and try it out.
 Please see the documentation for the +el-get-methods+ and provide a patch!
 
 Adding +bzr+ support for example was only about writing 2 functions, mostly
-using copy paste. Here's the patch: http://github.com/dimitri/el-get/commit/494551a9e75ebeb9ad043da175e6b2140d0d87d3
+using copy paste. Here's the patch: https://github.com/dimitri/el-get/commit/63e9018102bdeb7b6d9136db231adcd983087217#L0R437
 
-== Gotchas
+== Upgrade Notes
 
-=== Package Status
+=== Upgrading to 1.1
+
+==== Package Status
 
 +el-get+ will now save some package status information into the file
 +el-get-status-file+, it's a property list of the package symbol and its
