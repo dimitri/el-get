@@ -1,4 +1,4 @@
 (:name sunrise-x-mirror
-       :type git
-       :url "git://github.com/emacsmirror/sunrise-x-mirror.git"
+       :type emacswiki
+       :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-mirror.el"
        :features sunrise-x-mirror)
