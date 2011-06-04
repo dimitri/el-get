@@ -425,6 +425,11 @@ being sent to the underlying shell."
   (el-get-set-package-state package 'init))
 (add-hook 'el-get-post-init-hooks 'el-get-mark-initialized)
 
+(defun el-get-mark-removed (package)
+  "Record the fact that the given PACKAGE has been initialized."
+  (el-get-set-package-state package nil))
+(add-hook 'el-get-post-remove-hooks 'el-get-mark-removed)
+
 (defun el-get-mark-failed (package info)
   "Record the fact that the given PACKAGE has failed to install
 for reasons described in INFO."
@@ -909,6 +914,17 @@ are now installed"
   install DEPENDENCY, with error information DATA"
   (el-get-mark-failed package (list dependency data)))
 
+(defun el-get-standard-packages-updated ()
+  "Record the state of el-get-standard-packages for customize"
+  (put 'el-get-standard-packages
+       'customized-value (list (custom-quote el-get-standard-packages))))
+
+(defun el-get-set-standard-packages (new-value)
+  "Set the new value of `el-get-standard-packages' to NEW-VALUE
+such that customize will know about it"
+  (setq el-get-standard-packages new-value)
+  (el-get-standard-packages-updated))
+
 (defun el-get-demand (package)
   "Cause the named PACKAGE to be installed asynchronously, after
 all of its dependencies (if any).
@@ -922,8 +938,7 @@ PACKAGE may be either a string or the corresponding symbol"
         ;; Add the package to our list and make sure customize knows it
         (unless (member pname el-get-standard-packages)
           (add-to-list 'el-get-standard-packages pname)
-          (put 'el-get-standard-packages
-               'customized-value (list (custom-quote el-get-standard-packages))))
+          (el-get-standard-packages-updated))
 
         ;; don't do anything if it's already installed or in progress
         (unless (memq (el-get-package-state psym) '(init installing))
@@ -2831,6 +2846,10 @@ If you want this install to be permanent, you have to edit your setup."
 			    (el-get-read-all-recipes 'merge)
 			  el-get-sources)))
     (el-get-error-unless-package-p package)
+    
+    (el-get-set-standard-packages 
+     (delete (el-get-as-string package) el-get-standard-packages))
+
     (let* ((source   (el-get-package-def package))
 	   (method   (plist-get source :type))
 	   (remove   (el-get-method method :remove))
