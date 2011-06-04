@@ -2769,13 +2769,12 @@ called by `el-get' (usually at startup) for each package in
   (run-hook-with-args 'el-get-post-install-hooks package))
 
 (defun el-get-install (package)
-  "Install any PACKAGE you have a recipe for.
+  "Install any PACKAGE for which you have a recipe."
 
-If you want this install to be permanent, you have to edit your setup."
   (interactive
    (list (el-get-read-package-name "Install" 'filter-installed)))
+
   ;; use dynamic binding to pretend package is part of `el-get-sources'
-  ;; without having to edit the user setup --- that's what C-u is for.
   (let ((el-get-sources (el-get-read-all-recipes 'merge)))
     (el-get-error-unless-package-p package)
 
