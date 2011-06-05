@@ -899,7 +899,7 @@ PACKAGE, a symbol"
   (let ((p (symbol-name package)))
     (if (string= (el-get-package-status p) "installed")
         (el-get-init p)
-      (el-get-install p))))
+      (el-get-do-install p))))
 
 (defun el-get-dependency-installed (package dependency)
   "Install the given PACKAGE (a symbol) iff all its dependencies
@@ -924,12 +924,20 @@ such that customize will know about it"
   (setq el-get-standard-packages new-value)
   (el-get-standard-packages-updated))
 
-(defun el-get-demand (package)
-  "Cause the named PACKAGE to be installed asynchronously, after
-all of its dependencies (if any).
+(defun el-get-install (package)
+  "Cause the named PACKAGE to be installed after all of its
+dependencies (if any).
 
-PACKAGE may be either a string or the corresponding symbol"
-  (interactive (list (el-get-read-package-name "Install" t)))
+PACKAGE may be either a string or the corresponding symbol.
+
+Interactively, offers all known packages not in
+el-get-standard-packages, unless an optional PREFIX argument is
+supplied, in which case it offers all known packages."
+  (interactive 
+   (list 
+    (el-get-read-package-name 
+     "Install" (if current-prefix-arg nil el-get-standard-packages))))
+
   (condition-case err
       (let* ((psym (el-get-as-symbol package))
              (pname (symbol-name psym)))
@@ -970,7 +978,7 @@ PACKAGE may be either a string or the corresponding symbol"
                   (el-get-set-package-state ',dep (list 'error data))
                   (el-get-dependency-error ',psym ',dep data)))
               
-              (el-get-demand dep))
+              (el-get-install dep))
 
             (unless non-installed-dependencies
               (el-get-demand1 psym)))))
@@ -2482,15 +2490,12 @@ package names. Argument MERGE has the same meaning as in
   (unless (el-get-package-p package)
     (el-get-verbose-message "WARNING: el-get package \"%s\" is not in `el-get-sources'." package)))
 
-(defun el-get-read-package-name (action &optional filter-installed)
+(defun el-get-read-package-name (action &optional filtered)
   "Ask user for a package name in minibuffer, with completion.
 
-Completions are offered from the package names in
-`el-get-sources'. If FILTER-INSTALLED is true, do not offer names
-of already-installed packages."
-  (let ((packages   (el-get-recipe-name-list 'merge))
-	(filtered (when filter-installed
-		     (el-get-list-package-names-with-status "installed"))))
+Completions are offered from all known package names, after
+removing any packages in FILTERED."
+  (let ((packages   (el-get-recipe-name-list 'merge)))
     (completing-read (format "%s package: " action)
 		     (set-difference packages filtered :test 'string=) nil t)))
 
@@ -2767,11 +2772,8 @@ called by `el-get' (usually at startup) for each package in
 
   (run-hook-with-args 'el-get-post-install-hooks package))
 
-(defun el-get-install (package)
+(defun el-get-do-install (package)
   "Install any PACKAGE for which you have a recipe."
-
-  (interactive
-   (list (el-get-read-package-name "Install" 'filter-installed)))
 
   ;; use dynamic binding to pretend package is part of `el-get-sources'
   (let ((el-get-sources (el-get-read-all-recipes 'merge)))
@@ -2839,7 +2841,7 @@ called by `el-get' (usually at startup) for each package in
   "Remove any PACKAGE that is know to be installed or required."
   (interactive
    (list (el-get-read-package-with-status "Remove" "required" "installed")))
-  ;; see comment in el-get-install
+  ;; see comment in el-get-do-install
   (let ((el-get-sources (if current-prefix-arg
 			    (el-get-read-all-recipes 'merge)
 			  el-get-sources)))
@@ -3034,9 +3036,9 @@ SOURCE-LIST is omitted, `el-get-standard-packages' is used."
 		       else collect sources))))
 
           (dolist (s el-get-standard-packages)
-            (el-get-demand s)))
+            (el-get-install s)))
 
-      ;; el-get-install is async, that's now ongoing.
+      ;; el-get-do-install is async, that's now ongoing.
       (when progress
         (let* ((newly-installing 
                (set-difference (el-get-currently-installing-packages) 
