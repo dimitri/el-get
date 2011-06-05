@@ -510,14 +510,13 @@ initialized automatically at startup, as required."
 (defun el-get-can-exit-p ()
   (or (not (get 'el-get-standard-packages 'customized-value))
       (let (char)
-        (while 
-            (progn
-              (message "Remember packages installed with el-get? (y)es (n)o (c)ustomize")
-              (setq char (read-event))
-              (and (numberp char) 
-                   (memq (downcase char) '(?y ?n ?c)))))
+        (loop 
+         do (message "Remember packages installed with el-get? (y)es (n)o (c)ustomize")
+            (setq char (read-event))
+         until (and (numberp char)
+                    (memq (downcase char) '(?y ?n ?c))))
 
-        (if (= char ?c) 
+        (if (= char ?c)
             (progn (customize-variable 'el-get-standard-packages) nil) ; customize, don't exit
           (if (= char ?y)
               (customize-save-variable 'el-get-standard-packages el-get-standard-packages)) ; save
