@@ -2535,8 +2535,6 @@ If you want this install to be permanent, you have to edit your setup."
       (el-get-check-init)
       (el-get-save-package-status package "required")
 
-      (el-get-invalidate-autoloads package)
-
       ;; and install the package now, *then* message about it
       (funcall install package url 'el-get-post-install)
       (message "el-get install %s" package))))
