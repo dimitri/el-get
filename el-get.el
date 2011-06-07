@@ -3054,7 +3054,8 @@ SOURCE-LIST is omitted, `el-get-standard-packages' is used."
 		       when (and (listp sources)
 				 (not (plist-member sources :name)))
 		       append sources
-		       else collect sources))))
+		       else collect sources)
+                 el-get-sources)))
 
           (dolist (s (el-get-standard-package-list))
             (el-get-install s)))
