@@ -1,5 +1,5 @@
-
 (:name flymake-fringe-icons
+       :depends fringe-helper
        :type http
-       :url "https://gist . github.com/raw/759130/a85ebbc6bfc5fbab54677f4236e902b2da7bf41f/flymake-fringe-icons.el"
+       :url "https://gist.github.com/raw/759130/a85ebbc6bfc5fbab54677f4236e902b2da7bf41f/flymake-fringe-icons.el"
        :features flymake-fringe-icons)
