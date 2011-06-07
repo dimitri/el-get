@@ -491,20 +491,41 @@ entry."
   (if (symbolp source) (symbol-name source)
     (format "%s" (plist-get source :name))))
 
+(defun el-get-source-names ()
+  "A list of the names of all packages in
+el-get-sources (plus \"el-get\" itself).  Used for backward
+compatibility with older user setups that didn't use
+el-get-standard-packages."
+  (delete-dups
+   (cons "el-get"
+         (when (boundp 'el-get-sources)
+           (mapcar 'el-get-source-name el-get-sources)))))
 ;;
 ;; The installed package list
 ;;
 (defcustom el-get-standard-packages
   ;; For backward compatibility, assume el-get-sources defines the
   ;; standard set.
-  (delete-dups 
-   (cons "el-get"
-         (when (boundp 'el-get-sources)
-           (mapcar 'el-get-source-name el-get-sources))))
+  (el-get-source-names)
   "A list of package names that are part of your
 standard package requirements.  These will be installed and/or
 initialized automatically at startup, as required."
   :type '(repeat string))
+
+(defun el-get-standard-package-list ()
+  "Return the list of packages we think the user expects to have
+installed and set up"
+  (if (or 
+       ;; once the user has modified or saved a customization of
+       ;; el-get-standard-packages, we can assume he's no longer using
+       ;; el-get-sources as a list of what el-get should init by
+       ;; default.
+       (get 'el-get-standard-packages 'saved-value)
+       (get 'el-get-standard-packages 'customized-value))
+      el-get-standard-packages
+    ;; Otherwise, for backward compatibility, use the list of packages
+    ;; named in el-get-sources
+    (el-get-source-names)))
 
 ;; Give the user a chance to remember installed packages before exiting.
 (defun el-get-can-exit-p ()
@@ -936,16 +957,16 @@ supplied, in which case it offers all known packages."
   (interactive 
    (list 
     (el-get-read-package-name 
-     "Install" (if current-prefix-arg nil el-get-standard-packages))))
+     "Install" (if current-prefix-arg nil (el-get-standard-package-list)))))
 
   (condition-case err
       (let* ((psym (el-get-as-symbol package))
              (pname (symbol-name psym)))
 
         ;; Add the package to our list and make sure customize knows it
-        (unless (member pname el-get-standard-packages)
-          (add-to-list 'el-get-standard-packages pname)
-          (el-get-standard-packages-updated))
+        (unless (member pname (el-get-standard-package-list))
+          (el-get-set-standard-packages
+           (cons pname (el-get-standard-package-list))))
 
         ;; don't do anything if it's already installed or in progress
         (unless (memq (el-get-package-state psym) '(init installing))
@@ -2829,7 +2850,7 @@ called by `el-get' (usually at startup) for each package in
 (defun el-get-update-all ()
   (interactive)
   "Performs update of all installed packages (specified in el-get-standard-packages)"
-  (mapc 'el-get-update el-get-standard-packages))
+  (mapc 'el-get-update (el-get-standard-package-list)))
 
 (defun el-get-post-remove (package)
   "Run the post-remove hooks for PACKAGE."
@@ -2848,7 +2869,7 @@ called by `el-get' (usually at startup) for each package in
     (el-get-error-unless-package-p package)
     
     (el-get-set-standard-packages 
-     (delete (el-get-as-string package) el-get-standard-packages))
+     (remove (el-get-as-string package) (el-get-standard-package-list)))
 
     (let* ((source   (el-get-package-def package))
 	   (method   (plist-get source :type))
@@ -3035,7 +3056,7 @@ SOURCE-LIST is omitted, `el-get-standard-packages' is used."
 		       append sources
 		       else collect sources))))
 
-          (dolist (s el-get-standard-packages)
+          (dolist (s (el-get-standard-package-list))
             (el-get-install s)))
 
       ;; el-get-do-install is async, that's now ongoing.
