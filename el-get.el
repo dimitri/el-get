@@ -2354,7 +2354,10 @@ recursion.
 
 (defun el-get-read-recipe (package)
   "Return the source definition for PACKAGE, from the recipes."
-  (el-get-read-recipe-file (el-get-recipe-filename package)))
+  (let ((filename (el-get-recipe-filename package)))
+    (if filename
+	(el-get-read-recipe-file filename)
+      (error "el-get can not find a recipe for package \"%s\"." package))))
 
 (defun el-get-read-all-recipes (&optional merge)
   "Return the list of all the recipes, formatted like `el-get-sources'.
