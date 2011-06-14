@@ -3085,3 +3085,13 @@ SOURCE-LIST is omitted, `el-get-standard-packages' is used."
 (provide 'el-get)
 
 ;;; el-get.el ends here
+
+
+;; Local Variables:
+;; eval: (require 'whitespace)
+;; whitespace-line-column:80
+;; whitespace-style:(face trailing lines-tail)
+;; eval: (set-face-attribute 'whitespace-tab nil :background "red1" :foreground "yellow" :weight 'bold)
+;; eval: (set-face-attribute 'whitespace-line nil :background "red1" :foreground "yellow" :weight 'bold)
+;; eval: (whitespace-mode)
+;; End:
