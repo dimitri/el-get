@@ -204,23 +204,90 @@ force their evaluation on some packages only."
   :group 'el-get
   :type 'boolean)
 
-(defvar el-get-git-clone-hook        nil "Hook run after git clone.")
-(defvar el-get-git-svn-clone-hook    nil "Hook run after git svn clone.")
-(defvar el-get-bzr-branch-hook       nil "Hook run after bzr branch.")
-(defvar el-get-cvs-checkout-hook     nil "Hook run after cvs checkout.")
-(defvar el-get-svn-checkout-hook     nil "Hook run after svn checkout.")
-(defvar el-get-darcs-get-hook        nil "Hook run after darcs get.")
-(defvar el-get-apt-get-install-hook  nil "Hook run after apt-get install.")
-(defvar el-get-apt-get-remove-hook   nil "Hook run after apt-get remove.")
-(defvar el-get-fink-install-hook     nil "Hook run after fink install.")
-(defvar el-get-fink-remove-hook      nil "Hook run after fink remove.")
-(defvar el-get-elpa-install-hook     nil "Hook run after ELPA package install.")
-(defvar el-get-elpa-remove-hook      nil "Hook run after ELPA package remove.")
-(defvar el-get-http-install-hook     nil "Hook run after http retrieve.")
-(defvar el-get-http-tar-install-hook nil "Hook run after http-tar package install.")
-(defvar el-get-pacman-install-hook   nil "Hook run after pacman install.")
-(defvar el-get-pacman-remove-hook    nil "Hook run after pacman remove.")
-(defvar el-get-hg-clone-hook         nil "Hook run after hg clone.")
+(defcustom el-get-git-clone-hook nil
+  "Hook run after git clone."
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-git-svn-clone-hook nil
+  "Hook run after git svn clone."
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-bzr-branch-hook nil
+  "Hook run after bzr branch."
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-cvs-checkout-hook nil
+  "Hook run after cvs checkout."
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-svn-checkout-hook nil
+  "Hook run after svn checkout."
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-darcs-get-hook nil
+  "Hook run after darcs get."
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-apt-get-install-hook nil
+  "Hook run after apt-get install."
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-apt-get-remove-hook nil
+  "Hook run after apt-get remove."
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-fink-install-hook nil
+  "Hook run after fink install."
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-fink-remove-hook nil
+  "Hook run after fink remove."
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-elpa-install-hook nil
+  "Hook run after ELPA package install."
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-elpa-remove-hook nil
+  "Hook run after ELPA package remove."
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-http-install-hook nil
+  "Hook run after http retrieve."
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-http-tar-install-hook nil
+  "Hook run after http-tar package install."
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-pacman-install-hook nil
+  "Hook run after pacman install."
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-pacman-remove-hook nil
+  "Hook run after pacman remove."
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-hg-clone-hook nil
+  "Hook run after hg clone."
+  :group 'el-get
+  :type 'hook)
 
 (defcustom el-get-methods
   '(:git     (:install el-get-git-clone
@@ -299,17 +366,23 @@ the named package action in the given method."
 
 (defconst el-get-script (or load-file-name buffer-file-name))
 
-(defvar el-get-dir "~/.emacs.d/el-get/"
-  "*Path where to install the packages.")
+(defcustom el-get-dir "~/.emacs.d/el-get/"
+  "Path where to install the packages."
+  :group 'el-get
+  :type 'directory)
 
-(defvar el-get-recipe-path-emacswiki
+(defcustom el-get-recipe-path-emacswiki
   (concat (file-name-directory el-get-dir) "el-get/recipes/emacswiki/")
-  "*Define where to keep a local copy of emacswiki recipes")
+  "Define where to keep a local copy of emacswiki recipes"
+  :group 'el-get
+  :type 'directory)
 
-(defvar el-get-recipe-path
+(defcustom el-get-recipe-path
   (list (concat (file-name-directory el-get-script) "recipes")
 	el-get-recipe-path-emacswiki)
-  "*Define where to look for the recipes, that's a list of directories")
+  "Define where to look for the recipes, that's a list of directories"
+  :group 'el-get
+  :type '(repeat (directory)))
 
 (defun el-get-recipe-dirs ()
   "Return the elements of el-get-recipe-path that actually exist.
@@ -333,35 +406,53 @@ Used to avoid errors when exploring the path for recipes"
 (defvar el-get-emacs (concat invocation-directory invocation-name)
   "Where to find the currently running emacs, a facility for :build commands")
 
-(defvar el-get-apt-get (executable-find "apt-get")
-  "*The apt-get executable.")
+(defcustom el-get-apt-get (executable-find "apt-get")
+  "The apt-get executable."
+  :group 'el-get
+  :type 'file)
 
-(defvar el-get-apt-get-base "/usr/share/emacs/site-lisp"
-  "Where to link the el-get symlink to, /<package> will get appended.")
+(defcustom el-get-apt-get-base "/usr/share/emacs/site-lisp"
+  "Where to link the el-get symlink to, /<package> will get appended."
+  :group 'el-get
+  :type 'directory)
 
-(defvar el-get-fink (executable-find "fink")
-  "*The fink executable.")
+(defcustom el-get-fink (executable-find "fink")
+  "The fink executable."
+  :group 'el-get
+  :type 'directory)
 
-(defvar el-get-svn (executable-find "svn")
-  "*The svn executable.")
+(defcustom el-get-svn (executable-find "svn")
+  "The svn executable."
+  :group 'el-get
+  :type 'file)
 
-(defvar el-get-fink-base "/sw/share/doc"
-  "*Where to link the el-get symlink to, /<package> will get appended.")
+(defcustom el-get-fink-base "/sw/share/doc"
+  "Where to link the el-get symlink to, /<package> will get appended."
+  :group 'el-get
+  :type 'file)
 
-(defvar el-get-emacswiki-base-url
+(defcustom el-get-emacswiki-base-url
   "http://www.emacswiki.org/emacs/download/%s.el"
-  "*The base URL where to fetch :emacswiki packages")
+  "The base URL where to fetch :emacswiki packages"
+  :group 'el-get
+  :type 'string)
 
-(defvar el-get-emacswiki-elisp-index-url
+(defcustom el-get-emacswiki-elisp-index-url
   "http://www.emacswiki.org/cgi-bin/wiki?action=index;match=%5C.(el%7Ctar)(%5C.gz)%3F%24"
-  "*The emacswiki index URL of elisp pages")
+  "The emacswiki index URL of elisp pages"
+  :group 'el-get
+  :type 'string)
 
-(defvar el-get-emacswiki-elisp-index-base-url
+(defcustom el-get-emacswiki-elisp-index-base-url
   "http://www.emacswiki.org/emacs/"
-  "*The emacswiki base URL used in the index")
+  "The emacswiki base URL used in the index"
+  :group 'el-get
+  :type 'string)
 
-(defvar el-get-pacman-base "/usr/share/emacs/site-lisp"
-  "Where to link the el-get symlink to, /<package> will get appended.")
+(defcustom el-get-pacman-base "/usr/share/emacs/site-lisp"
+  "Where to link the el-get symlink to, /<package> will get appended."
+  :group 'el-get
+  :type 'directory)
 
 ;; debian uses ginstall-info and it's compatible to fink's install-info on
 ;; MacOSX, so:
@@ -369,8 +460,10 @@ Used to avoid errors when exploring the path for recipes"
 				(executable-find "install-info")))
 
 ;; we support notifications on darwin too, thanks to growlnotify
-(defvar el-get-growl-notify "/usr/local/bin/growlnotify"
-  "*Absolute path of the growlnotify tool")
+(defcustom el-get-growl-notify "/usr/local/bin/growlnotify"
+  "Absolute path of the growlnotify tool"
+  :group 'el-get
+  :type 'file)
 
 (defconst el-get-build-recipe-body
   '(choice :tag "Format"
