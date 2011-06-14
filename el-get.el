@@ -2500,6 +2500,14 @@ package names. Argument MERGE has the same meaning as in
 	  ;; none of the previous, must be a full definition
 	  (t source))))
 
+(defun el-get-package-types-alist (&rest types)
+  "Return an alist of package names that are of given types"
+  (loop for src in el-get-sources
+	for name = (el-get-source-name src)
+	for type = (plist-get (el-get-package-def name) :type)
+	when (or (null types) (memq 'all types) (memq type types))
+	collect (cons name type)))
+
 
 ;;
 ;; package status --- a plist saved on a file, using symbols
