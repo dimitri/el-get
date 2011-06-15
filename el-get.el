@@ -2952,9 +2952,14 @@ called by `el-get' (usually at startup) for each package in
     (message "el-get update %s" package)))
 
 (defun el-get-update-all ()
-  (interactive)
   "Performs update of all installed packages (specified in el-get-standard-packages)"
+  (interactive)
   (mapc 'el-get-update (el-get-standard-package-list)))
+
+(defun el-get-self-update ()
+  "Update el-get itself.  The standard recipe takes care of reloading the code."
+  (interactive)
+  (el-get-update "el-get"))
 
 (defun el-get-post-remove (package)
   "Run the post-remove hooks for PACKAGE."

@@ -246,6 +246,10 @@ M-x el-get-update::
     Will prompt for an installed package name, with completion, then update
     it. This will run the +build+ commands and +init+ the package again.
 
+M-x el-get-self-update::
+
+    Update only one package, +el-get+ itself.
+
 M-x el-get-update-all::
 
     Will update all packages used in +el-get-sources+. Beware that using
