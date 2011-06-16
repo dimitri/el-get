@@ -174,7 +174,8 @@ disable byte-compilation globally."
   :type 'boolean)
 
 (defcustom el-get-verbose nil
-  "Non-nil means print messages describing progress of el-get even for fast operations."
+  "Non-nil means print messages describing progress of el-get even for fast
+operations."
   :group 'el-get
   :type 'boolean)
 
@@ -2466,11 +2467,14 @@ get merged to `el-get-sources'."
      (when merge el-get-sources)
      (loop for dir in (el-get-recipe-dirs)
 	   nconc (loop for recipe in (directory-files dir nil "^[^.].*\.el$")
-		       for filename = (concat (file-name-as-directory dir) recipe)
-		       and package = (file-name-sans-extension (file-name-nondirectory recipe))
+		       for filename = (concat (file-name-as-directory dir)
+                                              recipe)
+		       and package = (file-name-sans-extension
+                                      (file-name-nondirectory recipe))
 		       unless (member package packages)
 		       do (push package packages)
-                       and collect (ignore-errors (el-get-read-recipe-file filename)))))))
+                       and collect (ignore-errors
+                                     (el-get-read-recipe-file filename)))))))
 
 (defun el-get-all-recipe-names (&optional merge)
   "Return the list of all known recipe names.
@@ -2564,7 +2568,8 @@ package names. Argument MERGE has the same meaning as in
 
 (defun el-get-package-status (package &optional package-status-plist)
   "Return current status of package from given list"
-  (let ((status-plist (or package-status-plist (el-get-read-all-packages-status))))
+  (let ((status-plist (or package-status-plist
+                          (el-get-read-all-packages-status))))
     (plist-get status-plist (el-get-package-symbol package))))
 
 ;;
@@ -2613,7 +2618,8 @@ package names. Argument MERGE has the same meaning as in
 (defun el-get-warn-unregistered-package (package)
   "Add a message unless PACKAGE is known in `el-get-source'"
   (unless (el-get-package-p package)
-    (el-get-verbose-message "WARNING: el-get package \"%s\" is not in `el-get-sources'." package)))
+    (el-get-verbose-message
+     "WARNING: el-get package \"%s\" is not in `el-get-sources'." package)))
 
 (defun el-get-read-package-name (action &optional filtered)
   "Ask user for a package name in minibuffer, with completion.
@@ -2625,7 +2631,8 @@ removing any packages in FILTERED."
 		     (set-difference packages filtered :test 'string=) nil t)))
 
 (defun el-get-read-recipe-name (action)
-  "Ask user for a recipe name, with completion from the list of known recipe files.
+  "Ask user for a recipe name, with completion from the list of known recipe
+files.
 
 This function does not deal with `el-get-sources' at all."
   (completing-read (format "%s recipe: " action)
@@ -2646,7 +2653,7 @@ which defaults to the first element in `el-get-recipe-path'."
 		       (el-get-recipe-filename package)
 		       ;; Lastly, create a new recipe file in the first
 		       ;; directory in `el-get-recipe-path'
-		       (expand-file-name package-el 
+		       (expand-file-name package-el
                                          (car el-get-recipe-path)))))
     (find-file recipe-file)))
 
@@ -2789,7 +2796,8 @@ is nil, marks all installed packages as needing new autoloads."
 
 (defun el-get-funcall (func fname package)
   (when (and func (functionp func))
-      (el-get-verbose-message "el-get: Calling :%s function for package %s" fname package)
+      (el-get-verbose-message
+       "el-get: Calling :%s function for package %s" fname package)
       (funcall func)))
 
 (defun el-get-init (package)
@@ -2826,8 +2834,9 @@ called by `el-get' (usually at startup) for each package in
           (el-get-install-or-init-info package 'init))
 
         (when el-get-byte-compile-at-init
-          ;; If the package has been updated outside el-get, the .el files will be
-          ;; out of date, so just check if we need to recompile them.
+          ;; If the package has been updated outside el-get, the .el
+          ;; files will be out of date, so just check if we need to
+          ;; recompile them.
           ;;
           ;; when using el-get-update to update packages, though, there's no
           ;; need to byte compile at init.
@@ -2877,7 +2886,7 @@ called by `el-get' (usually at startup) for each package in
 
         ;; return the package
         package)
-    (debug error 
+    (debug error
      (el-get-installation-failed package err))))
 
 (defun el-get-post-install (package)
@@ -2933,7 +2942,8 @@ called by `el-get' (usually at startup) for each package in
 		  (lambda (package)
 		    (el-get-init package)
 		    ;; fix trailing failed installs
-		    (when (string= (el-get-read-package-status package) "required")
+		    (when (string= (el-get-read-package-status package)
+                                   "required")
 		      (el-get-save-package-status package "installed"))
                     (run-hook-with-args 'el-get-post-update-hooks package)))))
 
@@ -2952,7 +2962,8 @@ called by `el-get' (usually at startup) for each package in
     (message "el-get update %s" package)))
 
 (defun el-get-update-all ()
-  "Performs update of all installed packages (specified in el-get-standard-packages)"
+  "Performs update of all installed packages (specified in
+`el-get-standard-packages')"
   (interactive)
   (mapc 'el-get-update (el-get-standard-package-list)))
 
@@ -2976,8 +2987,8 @@ called by `el-get' (usually at startup) for each package in
 			    (el-get-read-all-recipes 'merge)
 			  el-get-sources)))
     (el-get-error-unless-package-p package)
-    
-    (el-get-set-standard-packages 
+
+    (el-get-set-standard-packages
      (remove (el-get-as-string package) (el-get-standard-package-list)))
 
     (let* ((source   (el-get-package-def package))
@@ -2989,6 +3000,7 @@ called by `el-get' (usually at startup) for each package in
       (funcall remove package url 'el-get-post-remove)
       (el-get-save-package-status package "removed")
       (message "el-get remove %s" package))))
+
 
 (defun el-get-cd (package)
   "Open dired in the package directory."
@@ -3171,17 +3183,20 @@ SOURCE-LIST is omitted, `el-get-standard-packages' is used."
 
       ;; el-get-do-install is async, that's now ongoing.
       (when progress
-        (let* ((newly-installing 
-               (set-difference (el-get-currently-installing-packages) 
+        (let* ((newly-installing
+               (set-difference (el-get-currently-installing-packages)
                                previously-installing))
               (still-installing newly-installing))
 
           (while (> (length still-installing) 0)
             (sleep-for 0.2)
-            (setq still-installing (delete-if-not 'el-get-currently-installing-p still-installing))
-            (progress-reporter-update 
-             progress 
-             (/ (* 100.0 (- newly-installing still-installing)) newly-installing)))
+            (setq still-installing
+                  (delete-if-not
+                   'el-get-currently-installing-p still-installing))
+            (progress-reporter-update
+             progress
+             (/ (* 100.0 (- newly-installing still-installing))
+                newly-installing)))
         (progress-reporter-done progress)))))
 
   ;; unless we have autoloads to update, just load them now
