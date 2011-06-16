@@ -1581,7 +1581,7 @@ found."
 		      :buffer-name ,name
 		      :default-directory ,pdir
 		      :program ,darcs-executable
-		      :args ( "pull" )
+		      :args ( "pull" "--all")
 		      :message ,ok
 		      :error ,ko))
      post-update-fun)))
