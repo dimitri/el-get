@@ -135,6 +135,7 @@
 (require 'dired)
 (require 'package nil t) ; that's ELPA, but you can use el-get to install it
 (require 'cl)            ; needed for `remove-duplicates'
+(require 'simple)        ; needed for `apply-partially'
 (require 'bytecomp)
 (require 'autoload)
 
@@ -3139,6 +3140,19 @@ SOURCE-LIST is omitted, `el-get-standard-packages' is used."
   (unless (or (null sync)
 	      (member sync '(sync wait)))
     (error "el-get sync parameter should be either nil, sync or wait"))
+
+  ;; Customizations are written to the end of the user's init file, so
+  ;; if el-get is being called from the init file, the desired value
+  ;; of `el-get-standard-packages' won't be known yet.
+  ;;
+  ;; Unless a specific set of packages was requested, the user expects
+  ;; all the standard packages to be initialized, so unless the
+  ;; customizations have been seen, remember to invoke el-get one more
+  ;; time after initial customizations have been read in.
+  (unless (or source-list
+              (get 'el-get-standard-packages 'saved-value))
+    (add-hook 'after-init-hook (apply-partially 'el-get sync)))
+
   ;; If there's no autoload file, everything needs to be regenerated.
   (if (not (file-exists-p el-get-autoload-file)) (el-get-invalidate-autoloads))
 
