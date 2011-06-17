@@ -2965,7 +2965,8 @@ called by `el-get' (usually at startup) for each package in
   "Run the post-remove hooks for PACKAGE."
   (let* ((source  (el-get-package-def package))
 	 (hooks   (el-get-method (plist-get source :type) :remove-hook)))
-    (run-hook-with-args hooks package)))
+    (run-hook-with-args hooks package)
+    (run-hook-with-args 'el-get-post-remove-hooks package)))
 
 (defun el-get-remove (package)
   "Remove any PACKAGE that is know to be installed or required."
@@ -3076,6 +3077,12 @@ entry which is not a symbol and is not already a known recipe."
 		   "This package has been updated successfully by el-get."))
   (add-hook 'el-get-post-update-hooks 'el-get-post-update-notification)
 
+  (defun el-get-post-remove-notification (package)
+    "Notify the PACKAGE has been removed."
+    (el-get-notify (format "%s removed" package)
+		   "This package has been removed successfully by el-get."))
+  (add-hook 'el-get-post-remove-hooks 'el-get-post-remove-notification)
+
   (defun el-get-post-error-notification (package info)
     "Notify the PACKAGE has failed to install."
     (el-get-notify (format "%s failed to install" package)
@@ -3094,6 +3101,11 @@ entry which is not a symbol and is not already a known recipe."
   "After PACKAGE update is done, message about it"
   (el-get-verbose-message "el-get updated package %s" package))
 (add-hook 'el-get-post-update-hooks 'el-get-post-update-message)
+
+(defun el-get-post-remove-message (package)
+  "After PACKAGE remove is done, message about it"
+  (el-get-verbose-message "el-get removed package %s" package))
+(add-hook 'el-get-post-remove-hooks 'el-get-post-remove-message)
 
 (defun el-get-post-error-message (package info)
   "After PACKAGE fails to install, just message about it"
