@@ -3211,7 +3211,7 @@ SOURCE-LIST is omitted, `el-get-standard-packages' is used."
 ;; Local Variables:
 ;; eval: (require 'whitespace)
 ;; whitespace-line-column:80
-;; whitespace-style:(face trailing lines-tail)
+;; whitespace-style:(face lines-tail)
 ;; eval: (set-face-attribute 'whitespace-tab nil :background "red1" :foreground "yellow" :weight 'bold)
 ;; eval: (set-face-attribute 'whitespace-line nil :background "red1" :foreground "yellow" :weight 'bold)
 ;; eval: (whitespace-mode)
