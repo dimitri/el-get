@@ -505,7 +505,7 @@ being sent to the underlying shell."
 
 (defun el-get-currently-installing-packages ()
   "Return the packages that are currently installing"
-  (loop 
+  (loop
    for pkg being the hash-keys of el-get-pkg-state
    if (el-get-currently-installing-p pkg)
    collect pkg))
@@ -609,7 +609,7 @@ initialized automatically at startup, as required."
 (defun el-get-standard-package-list ()
   "Return the list of packages we think the user expects to have
 installed and set up"
-  (if (or 
+  (if (or
        ;; once the user has modified or saved a customization of
        ;; el-get-standard-packages, we can assume he's no longer using
        ;; el-get-sources as a list of what el-get should init by
@@ -625,7 +625,7 @@ installed and set up"
 (defun el-get-can-exit-p ()
   (or (not (get 'el-get-standard-packages 'customized-value))
       (let (char)
-        (loop 
+        (loop
          do (message "Remember packages installed with el-get? (y)es (n)o (c)ustomize")
             (setq char (read-event))
          until (and (numberp char)
@@ -636,7 +636,7 @@ installed and set up"
           (if (= char ?y)
               (customize-save-variable 'el-get-standard-packages el-get-standard-packages)) ; save
           ;; exit regardless
-          t)))) 
+          t))))
 (add-to-list 'kill-emacs-query-functions 'el-get-can-exit-p)
 
 (defcustom el-get-sources nil
@@ -845,17 +845,17 @@ this is the name to fetch in that system"
                                     )
                            ;; A sorted list of method names
                            (sort
-                            (reduce (lambda (r e) 
-                                      (if (symbolp e) 
-                                          (cons 
-                                           (list 'const 
+                            (reduce (lambda (r e)
+                                      (if (symbolp e)
+                                          (cons
+                                           (list 'const
                                                  (intern (substring (prin1-to-string e) 1)))
-                                           r) 
+                                           r)
                                         r))
                                     el-get-methods
                                     :initial-value nil)
-                            (lambda (x y) 
-                              (string< (prin1-to-string (cadr x)) 
+                            (lambda (x y)
+                              (string< (prin1-to-string (cadr x))
                                        (prin1-to-string (cadr y)))))))
 
            (group :inline t :format "URL: %v" (const :format "" :url) (string :format "%v"))
@@ -873,9 +873,9 @@ this is the name to fetch in that system"
            (group :inline t :format "Options (`http-tar' and `cvs' only): %v" (const :format "" :options) (string :format "%v"))
            (group :inline t :format "CVS Module: %v" (const :format "" :module)  (string :format "%v"))
            (group :inline t :format "`Before' Function: %v" (const :format "" :before) (function :format "%v"))
-           (group :inline t :format "`After' Function (post-init recommended instead): %v" 
+           (group :inline t :format "`After' Function (post-init recommended instead): %v"
                   (const :format "" :after) (function :format "%v"))
-           (group :inline t :format "Name of downloaded file (`http' and `ftp' only): %v" 
+           (group :inline t :format "Name of downloaded file (`http' and `ftp' only): %v"
                   (const :format "" :localname) (string :format "%v")))
           (repeat
            :inline t :tag "System-Specific Build Recipes"
@@ -956,7 +956,7 @@ directory or a symlink in el-get-dir."
 
 (defun el-get-add-generic-event-task (event task)
   "Set up TASK to be called when EVENT (a hash key) occurs."
-  (puthash event (cons task (gethash event el-get-generic-event-tasks)) 
+  (puthash event (cons task (gethash event el-get-generic-event-tasks))
            el-get-generic-event-tasks))
 
 (defun el-get-clear-generic-event-tasks (event)
@@ -979,7 +979,7 @@ passing DATA"
   (let* ((final-actions '(init error))
          (found (position action final-actions)))
     (when found
-      (el-get-clear-generic-event-tasks 
+      (el-get-clear-generic-event-tasks
        (el-get-event-id package (elt final-actions (- 1 found))))))
   ;; Now fire off the generic event
   (el-get-generic-event-occurred (el-get-event-id package action) data))
@@ -999,8 +999,8 @@ symbol) depends"
     ;; it to avoid a circular dependency.
     (if (and (not (eq package 'package))
              (eq 'elpa
-                 (plist-get 
-                  (el-get-package-def (symbol-name package)) 
+                 (plist-get
+                  (el-get-package-def (symbol-name package))
                   :type)))
         (cons 'package deps)
       deps)))
@@ -1048,9 +1048,9 @@ PACKAGE may be either a string or the corresponding symbol.
 Interactively, offers all known packages not in
 el-get-standard-packages, unless an optional PREFIX argument is
 supplied, in which case it offers all known packages."
-  (interactive 
-   (list 
-    (el-get-read-package-name 
+  (interactive
+   (list
+    (el-get-read-package-name
      "Install" (if current-prefix-arg nil (el-get-standard-package-list)))))
 
   (condition-case err
@@ -1077,22 +1077,22 @@ supplied, in which case it offers all known packages."
             ;; handlers in place to trigger installation of this package
             ;;
             (dolist (dep non-installed-dependencies)
-              ;; set up a handler that will install `package' when all 
+              ;; set up a handler that will install `package' when all
               ;; its dependencies are installed
-              (el-get-add-generic-event-task 
+              (el-get-add-generic-event-task
                (el-get-event-id dep 'init)
-               `(lambda (data) 
+               `(lambda (data)
                   (el-get-mark-initialized ',dep)
                   (el-get-dependency-installed ',psym ',dep)))
 
               ;; set up a handler that will cancel installation of
               ;; `package' if installing the dependency fails
-              (el-get-add-generic-event-task 
+              (el-get-add-generic-event-task
                (el-get-event-id dep 'error)
                `(lambda (data)
                   (el-get-set-package-state ',dep (list 'error data))
                   (el-get-dependency-error ',psym ',dep data)))
-              
+
               (el-get-install dep))
 
             (unless non-installed-dependencies
