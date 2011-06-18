@@ -3215,4 +3215,5 @@ SOURCE-LIST is omitted, `el-get-standard-packages' is used."
 ;; eval: (set-face-attribute 'whitespace-tab nil :background "red1" :foreground "yellow" :weight 'bold)
 ;; eval: (set-face-attribute 'whitespace-line nil :background "red1" :foreground "yellow" :weight 'bold)
 ;; eval: (whitespace-mode)
+;; eval: (add-hook 'local-write-file-hooks (lambda() (save-excursion (delete-trailing-whitespace))))
 ;; End:
