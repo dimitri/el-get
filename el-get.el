@@ -2372,30 +2372,6 @@ recursion.
          (bytecomp-command (el-get-construct-package-byte-compile-command package))
 	 (default-directory (file-name-as-directory wdir)))
 
-    (if sync
-	(progn
-	  ;; first byte-compile the package, with another "clean" emacs process
-          (if bytecomp-command
-              (let ((build-cmd (mapconcat 'identity bytecomp-command " ")))
-                (message "%S" (shell-command-to-string build-cmd)))
-            (message "el-get: byte-compiling skipped for %s" package))
-
-	  (dolist (c commands)
-            (let ((cmd
-                   (if (stringp c) c
-                     (mapconcat 'shell-quote-argument c " "))))
-              (message "%S" (shell-command-to-string cmd))))
-
-	  ;; now build the Info dir --- some packages will build the info file
-	  ;; in the previous step
-	  (unless installing-info
-	    (el-get-install-or-init-info package 'build))
-
-	  ;; finally call the post-build fin
-	  (when (and post-build-fun (functionp post-build-fun))
-	    (funcall post-build-fun package)))
-
-      ;; async
       (let* ((process-list
 	      (mapcar (lambda (c)
 			(let* ((split    (if (stringp c)
@@ -2407,6 +2383,7 @@ recursion.
 			       (args     (cdr split)))
 
 			  `(:command-name ,name
+                                          :sync sync
 					  :buffer-name ,buf
 					  :default-directory ,wdir
 					  :shell t
@@ -2420,6 +2397,7 @@ recursion.
 	      (append (when bytecomp-command
                         (list
                          `(:command-name "byte-compile"
+                                         :sync sync
                                          :buffer-name ,buf
                                          :default-directory ,wdir
                                          :shell t
@@ -2437,7 +2415,7 @@ recursion.
 		  (el-get-install-or-init-info package 'build)
 		  (funcall post-build-fun package)))))
 
-	(el-get-start-process-list package full-process-list post-build-fun)))))
+	(el-get-start-process-list package full-process-list post-build-fun))))
 
 
 ;;
