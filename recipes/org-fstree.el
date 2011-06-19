@@ -1,0 +1,1 @@
+(:name org-fstree :type git :url "http://repo.or.cz/r/org-fstree.git")

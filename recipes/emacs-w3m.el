@@ -1,8 +1,7 @@
-(name :emacs-w3m
+(:name emacs-w3m
       :type cvs
       :module "emacs-w3m"
-      :options "login"
       :url ":pserver:anonymous@cvs.namazu.org:/storage/cvsroot"
-      :build ("autoconf" "./configure" "make")
-      :info "doc"
-      :features "w3m-load")
+      :build `("autoconf" ("./configure" ,(concat "--with-emacs=" el-get-emacs)) "make")
+      :build/windows-nt ("sh /usr/bin/autoconf" "sh ./configure" "make")
+      :info "doc")

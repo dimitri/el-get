@@ -1,0 +1,1 @@
+(:name erc :type elpa)

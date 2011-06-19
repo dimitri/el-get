@@ -1,5 +1,5 @@
 (:name nterm
        :type git
-       :url "git@github.com:cbbrowne/nterm.git"
+       :url "http://github.com/cbbrowne/nterm.git"
        :info "."
        :build ("make"))

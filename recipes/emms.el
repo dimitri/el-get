@@ -4,4 +4,6 @@
        :info "doc"
        :load-path ("./lisp")
        :features emms-setup
-       :build ("make autoloads" "make"))
+       :build ("make autoloads" "make")
+       :build/darwin `(,(concat "make EMACS=" el-get-emacs " autoloads all")))
+
