@@ -1801,10 +1801,16 @@ the recipe, then return nil."
   (let ((elpa-dir (file-relative-name
 		   (el-get-elpa-package-directory package) el-get-dir)))
     (unless (el-get-package-exists-p package)
-      (message "%s"
-       (shell-command
-	(concat "cd " el-get-dir
-		" && ln -s \"" elpa-dir "\" \"" package "\""))))))
+      ;; better style would be to check for (fboundp 'make-symbolic-link) but
+      ;; that would be true on Vista, where by default only administrator is
+      ;; granted to use the feature --- so hardcode those systems out
+      (if (memq system-type '(ms-dos windows-nt))
+	  ;; the symlink is a docs/debug feature, mkdir is ok enough
+	  (make-directory (el-get-package-directory package))
+	(message "%s"
+		 (shell-command
+		  (concat "cd " el-get-dir
+			  " && ln -s \"" elpa-dir "\" \"" package "\"")))))))
 
 (defun el-get-elpa-install (package url post-install-fun)
   "Ask elpa to install given PACKAGE."
