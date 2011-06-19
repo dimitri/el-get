@@ -1135,7 +1135,7 @@ supplied, in which case it offers all known packages."
             (when (functionp final-f)
               (funcall final-f package))))
       ((debug error)
-       (el-get-installation-failed package err)))))
+       (el-get-installation-failed (process-get proc :el-get-package) err)))))
 
 (defvar el-get-default-process-sync nil
   "Non-nil value asks `el-get-start-process-list' to run current
