@@ -1,3 +1,4 @@
 *.elc
 *~
+.lock
 recipes/emacswiki/*
