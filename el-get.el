@@ -1916,16 +1916,20 @@ into the package :localname option or its `file-name-nondirectory' part."
     (el-get-http-install package url post-install-fun)))
 
 (defun el-get-emacswiki-retrieve-package-list ()
-  "retrieve the package list from emacswiki"
+  "returns a list of PACKAGE names from emacswiki listing page"
   (with-current-buffer
       (url-retrieve-synchronously el-get-emacswiki-elisp-index-url)
     (goto-char (point-min))
+    (re-search-forward "pages found.</h2>" nil 'move)
     (remove-if-not
      (lambda (p) (string-match "el$" p))
      (loop
+      ;; <a class="local" href="http://www.emacswiki.org/emacs/thingatpt%2b.el">thingatpt+.el</a>
       while (re-search-forward el-get-emacswiki-elisp-index-base-url nil 'move)
+      do (re-search-forward "\"" nil 'move)
       collect (buffer-substring-no-properties
-	       (point) (1- (re-search-forward "\"" nil 'move)))))))
+	       (re-search-forward ">" nil 'move)
+	       (1- (re-search-forward "<" nil 'move)))))))
 
 (defun el-get-emacswiki-build-local-recipes (&optional target-dir)
   "retrieve the index of elisp pages at emacswiki and turn them
