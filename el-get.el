@@ -2424,7 +2424,7 @@ recursion.
                                          :default-directory ,wdir
                                          :shell t
                                          :program ,(car bytecomp-command)
-                                         :args ,(cdr bytecomp-command)x
+                                         :args ,(cdr bytecomp-command)
                                          :message ,(format "el-get-build %s: byte-compile ok." package)
                                          :error ,(format
 						  "el-get could not byte-compile %s" package))))
