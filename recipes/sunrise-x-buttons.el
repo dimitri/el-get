@@ -1,4 +1,3 @@
 (:name sunrise-x-buttons
-       :type git
-       :url "git://github.com/emacsmirror/sunrise-x-buttons.git"
+       :type emacsmirror
        :features sunrise-x-buttons)

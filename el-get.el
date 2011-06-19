@@ -294,6 +294,10 @@ force their evaluation on some packages only."
 		       :install-hook el-get-git-clone-hook
 		       :update el-get-git-pull
 		       :remove el-get-rmdir)
+    :emacsmirror (:install el-get-emacsmirror-clone
+		       :install-hook el-get-git-clone-hook
+		       :update el-get-git-pull
+		       :remove el-get-rmdir)
     :git-svn (:install el-get-git-svn-clone
 		       :install-hook el-get-git-svn-clone-hook
 		       :update el-get-git-svn-update
@@ -1354,7 +1358,13 @@ found."
 		      :message "git submodule update ok"
 		      :error "Could not update git submodules"))
      post-update-fun)))
-
+
+;;
+;; emacsmirror support
+;;
+(defun el-get-emacsmirror-clone (package url post-install-fun)
+  (let ((url (or url (concat "https://github.com/emacsmirror/" package ".git"))))
+    (el-get-git-clone package url post-install-fun)))
 
 ;;
 ;; git-svn support
