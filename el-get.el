@@ -2790,9 +2790,13 @@ is nil, marks all installed packages as needing new autoloads."
        (concat (file-name-sans-extension el-get-autoload-file) ".elc")))))
 
 (defun el-get-funcall (func fname package)
+  "`funcal' FUNC for PACKAGE and report about FNAME when `el-get-verbose'"
   (when (and func (functionp func))
-      (el-get-verbose-message "el-get: Calling :%s function for package %s" fname package)
-      (funcall func)))
+      (el-get-verbose-message "el-get: Calling :%s function for package %s"
+			      fname package)
+      ;; don't forget to make some variables available
+      (let (pdir (el-get-package-directory package))
+	(funcall func))))
 
 (defun el-get-init (package)
   "Make the named PACKAGE available for use.
