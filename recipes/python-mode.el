@@ -1,6 +1,6 @@
 (:name python-mode
-       :type bzr
-       :url "lp:python-mode"
+       :type git
+       :url "https://github.com/emacsmirror/python-mode.git"
        :features (python-mode doctest-mode)
        :compile nil
        :post-init (lambda ()
