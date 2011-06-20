@@ -358,6 +358,11 @@ Used to avoid errors when exploring the path for recipes"
   "http://www.emacswiki.org/emacs/"
   "*The emacswiki base URL used in the index")
 
+(defvar el-get-emacsmirror-base-url
+  "https://github.com/emacsmirror/%s.git"
+  "*The base URL where to fetch :emacsmirror packages.  Consider using
+\"git://github.com/emacsmirror/%s.git\"")
+
 (defvar el-get-pacman-base "/usr/share/emacs/site-lisp"
   "Where to link the el-get symlink to, /<package> will get appended.")
 
@@ -976,7 +981,7 @@ found."
 ;; emacsmirror support
 ;;
 (defun el-get-emacsmirror-clone (package url post-install-fun)
-  (let ((url (or url (concat "https://github.com/emacsmirror/" package ".git"))))
+  (let ((url (or url (format el-get-emacsmirror-base-url package))))
     (el-get-git-clone package url post-install-fun)))
 
 ;;
