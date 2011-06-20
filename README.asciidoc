@@ -160,7 +160,7 @@ Note that you can also give a mix of +packages+ symbols, +inline recipes+
 and +source lists+ to +el-get+ as arguments, and completely bypass the
 +el-get-sources+ variable.
 
-  (el-get 'sync 'package 'name (:name or :type emacswiki) sources)
+  (el-get 'sync 'package 'name '(:name foo :type emacswiki) other-list-of-sources)
 
 It is still recommended to +(setq el-get-sources '(list of packages))+ then
 use +(el-get 'sync)+, so that commands such as +el-get-update+ know which
