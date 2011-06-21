@@ -2438,18 +2438,16 @@ recursion.
 	(el-get-read-recipe-file filename)
       (error "el-get can not find a recipe for package \"%s\"." package))))
 
-(defun el-get-read-all-recipes (&optional merge)
+(defun el-get-read-all-recipes ()
   "Return the list of all the recipes, formatted like `el-get-sources'.
 
 Only consider any given recipe only once even if present in
 multiple dirs from `el-get-recipe-path'. The first recipe found
-is the one considered.
-
-When MERGE is non-nil, the recipes from `el-get-recipe-path' will
-get merged to `el-get-sources'."
-  (let ((packages (when merge (mapcar 'el-get-source-name el-get-sources))))
+is the one considered.  We first look in `el-get-sources' then in
+each directory listed in `el-get-recipe-path' in order."
+  (let ((packages (mapcar 'el-get-source-name el-get-sources)))
     (append
-     (when merge el-get-sources)
+     el-get-sources
      (loop for dir in (el-get-recipe-dirs)
 	   nconc (loop for recipe in (directory-files dir nil "^[^.].*\.el$")
 		       for filename = (concat (file-name-as-directory dir) recipe)
@@ -2457,14 +2455,6 @@ get merged to `el-get-sources'."
 		       unless (member package packages)
 		       do (push package packages)
                        and collect (ignore-errors (el-get-read-recipe-file filename)))))))
-
-(defun el-get-all-recipe-names (&optional merge)
-  "Return the list of all known recipe names.
-
-This is useful to use for providing completion candidates for
-package names. Argument MERGE has the same meaning as in
-`el-get-read-all-recipes'."
-  (mapcar 'el-get-source-name (el-get-read-all-recipes)))
 
 (defun el-get-package-def (package)
   "Return a single `el-get-sources' entry for PACKAGE."
@@ -2591,13 +2581,12 @@ which defaults to installed, required and removed.  Example:
   (interactive)
   (message "el-get version %s" el-get-version))
 
-(defun el-get-recipe-name-list (&optional merge)
+(defun el-get-read-all-recipe-names ()
   "Return the list of all known recipe names.
 
 This is useful to use for providing completion candidates for
-package names. Argument MERGE has the same meaning as in
-`el-get-read-all-recipes'."
-  (mapcar 'el-get-source-name (el-get-read-all-recipes merge)))
+package names."
+  (mapcar 'el-get-source-name (el-get-read-all-recipes)))
 
 (defun el-get-error-unless-package-p (package)
   "Raise an error if PACKAGE does not name a package that has a valid recipe."
@@ -2613,7 +2602,7 @@ package names. Argument MERGE has the same meaning as in
 
 Completions are offered from all known package names, after
 removing any packages in FILTERED."
-  (let ((packages   (el-get-recipe-name-list 'merge)))
+  (let ((packages   (el-get-read-all-recipe-names)))
     (completing-read (format "%s package: " action)
 		     (set-difference packages filtered :test 'string=) nil t)))
 
@@ -2622,7 +2611,7 @@ removing any packages in FILTERED."
 
 This function does not deal with `el-get-sources' at all."
   (completing-read (format "%s recipe: " action)
-                   (el-get-recipe-name-list) nil))
+                   (el-get-read-all-recipe-names) nil))
 
 (defun el-get-find-recipe-file (package &optional dir)
   "Find recipe file for PACKAGE.
@@ -2897,7 +2886,7 @@ called by `el-get' (usually at startup) for each package in
   "Install any PACKAGE for which you have a recipe."
 
   ;; use dynamic binding to pretend package is part of `el-get-sources'
-  (let ((el-get-sources (el-get-read-all-recipes 'merge)))
+  (let ((el-get-sources (el-get-read-all-recipes)))
     (el-get-error-unless-package-p package)
 
     (let* ((status   (el-get-read-package-status package))
@@ -2970,7 +2959,7 @@ called by `el-get' (usually at startup) for each package in
    (list (el-get-read-package-with-status "Remove" "required" "installed")))
   ;; see comment in el-get-do-install
   (let ((el-get-sources (if current-prefix-arg
-			    (el-get-read-all-recipes 'merge)
+			    (el-get-read-all-recipes)
 			  el-get-sources)))
     (el-get-error-unless-package-p package)
 
