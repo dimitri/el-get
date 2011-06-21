@@ -993,15 +993,12 @@ passing DATA"
   "Return the list of packages (as symbols) on which PACKAGE (a
 symbol) depends"
   (let* ((source (el-get-package-def (symbol-name package)))
+	 (method (el-get-package-method source))
          (deps (el-get-as-list (plist-get source :depends))))
     ;; Make sure all elpa packages depend on the package `package'.
     ;; The package `package' is an elpa package, though, so exclude
     ;; it to avoid a circular dependency.
-    (if (and (not (eq package 'package))
-             (eq 'elpa
-                 (plist-get
-                  (el-get-package-def (symbol-name package))
-                  :type)))
+    (if (and (not (eq package 'package)) (eq type 'elpa))
         (cons 'package deps)
       deps)))
 
@@ -1606,7 +1603,7 @@ found."
 (defun el-get-dpkg-symlink (package)
   "ln -s /usr/share/emacs/site-lisp/package ~/.emacs.d/el-get/package"
   (let* ((pdir    (el-get-package-directory package))
-	 (method  (plist-get (el-get-package-def package) :type))
+	 (method  (el-get-package-method package))
 	 (basedir (cond ((eq method 'apt-get) el-get-apt-get-base)
 			((eq method 'fink)    el-get-fink-base)
 			((eq method 'pacman)  el-get-pacman-base)))
@@ -1784,7 +1781,7 @@ for NAME as well.
 If PACKAGE's `:type' is not \"elpa\", or no repo is specified in
 the recipe, then return nil."
   (let* ((source (el-get-package-def package))
-         (type (plist-get source :type))
+         (type   (el-get-package-type source))
          (elpa-repo (plist-get source :repo)))
     (when (and (eq type 'elpa) elpa-repo)
       (cond ((stringp elpa-repo)
@@ -2118,7 +2115,7 @@ the files up."
 (defun el-get-rmdir (package url post-remove-fun)
   "Just rm -rf the package directory. Follow symlinks."
   (let* ((source   (el-get-package-def package))
-	 (method   (plist-get source :type))
+	 (method   (el-get-package-method source))
 	 (pdir (el-get-package-directory package)))
     (if (eq method 'elpa)
 	;; only remove a symlink here
@@ -2141,7 +2138,7 @@ the files up."
   file when build-or-init is 'build, or `el-get-set-info-path'
   when build-or-init is 'init "
   (let* ((source   (el-get-package-def package))
-	 (method   (plist-get source :type))
+	 (method   (el-get-package-method source))
 	 (infodir  (plist-get source :info))
 	 (pdir     (el-get-package-directory package)))
 
@@ -2224,7 +2221,7 @@ newer, then compilation will be skipped."
            ;; nocomp is true only if :compile is explicitly set to nil.
            (explicit-nocomp (and (plist-member source :compile)
                                  (not comp-prop)))
-           (method   (plist-get source :type))
+	   (method   (el-get-package-method source))
 	   (pdir     (el-get-package-directory package))
 	   (el-path  (el-get-load-path package))
 	   (files '()))
@@ -2489,11 +2486,20 @@ package names. Argument MERGE has the same meaning as in
 	  ;; none of the previous, must be a full definition
 	  (t source))))
 
+(defun el-get-package-method (package-or-source)
+  "Return the :type property (called method) of PACKAGE-OR-SOURCE"
+  (cond ((symbolp package-or-source)
+	 (plist-get (el-get-package-def package-or-source) :type))
+
+	(t (plist-get package-or-source :type))))
+
+(defalias 'el-get-package-type #'el-get-package-method)
+
 (defun el-get-package-types-alist (&rest types)
   "Return an alist of package names that are of given types"
   (loop for src in el-get-sources
 	for name = (el-get-source-name src)
-	for type = (plist-get (el-get-package-def name) :type)
+	for type = (el-get-package-type src)
 	when (or (null types) (memq 'all types) (memq type types))
 	collect (cons name type)))
 
@@ -2785,7 +2791,7 @@ called by `el-get' (usually at startup) for each package in
   (interactive (list (el-get-read-package-name "Init")))
   (condition-case err
       (let* ((source   (el-get-package-def package))
-             (method   (plist-get source :type))
+             (method   (el-get-package-method source))
              (loads    (el-get-as-list (plist-get source :load)))
              (autoloads (plist-get source :autoloads))
              (feats    (el-get-as-list (plist-get source :features)))
@@ -2864,8 +2870,7 @@ called by `el-get' (usually at startup) for each package in
 
 (defun el-get-post-install (package)
   "Post install PACKAGE. This will get run by a sentinel."
-  (let* ((source   (el-get-package-def package))
-	 (hooks    (el-get-method (plist-get source :type) :install-hook))
+  (let* ((hooks    (el-get-method (el-get-package-type package) :install-hook))
 	 (commands (el-get-build-commands package)))
 
     ;; post-install is the right place to run install-hook
@@ -2888,7 +2893,7 @@ called by `el-get' (usually at startup) for each package in
 
     (let* ((status   (el-get-read-package-status package))
 	   (source   (el-get-package-def package))
-	   (method   (plist-get source :type))
+	   (method   (el-get-package-method source))
 	   (install  (el-get-method method :install))
 	   (url      (plist-get source :url)))
 
@@ -2925,7 +2930,7 @@ called by `el-get' (usually at startup) for each package in
    (list (el-get-read-package-with-status "Update" "required" "installed")))
   (el-get-error-unless-package-p package)
   (let* ((source   (el-get-package-def package))
-	 (method   (plist-get source :type))
+	 (method   (el-get-package-method source))
 	 (update   (el-get-method method :update))
 	 (url      (plist-get source :url))
 	 (commands (plist-get source :build)))
@@ -2946,8 +2951,7 @@ called by `el-get' (usually at startup) for each package in
 
 (defun el-get-post-remove (package)
   "Run the post-remove hooks for PACKAGE."
-  (let* ((source  (el-get-package-def package))
-	 (hooks   (el-get-method (plist-get source :type) :remove-hook)))
+  (let* ((hooks   (el-get-method (el-get-package-method package) :remove-hook)))
     (run-hook-with-args hooks package)
     (run-hook-with-args 'el-get-post-remove-hooks package)))
 
@@ -2965,7 +2969,7 @@ called by `el-get' (usually at startup) for each package in
      (remove (el-get-as-string package) (el-get-standard-package-list)))
 
     (let* ((source   (el-get-package-def package))
-	   (method   (plist-get source :type))
+	   (method   (el-get-package-method source))
 	   (remove   (el-get-method method :remove))
 	   (url      (plist-get source :url)))
       ;; remove the package now
