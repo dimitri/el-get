@@ -2955,7 +2955,8 @@ called by `el-get' (usually at startup) for each package in
 (defun el-get-self-update ()
   "Update el-get itself.  The standard recipe takes care of reloading the code."
   (interactive)
-  (el-get-update "el-get"))
+  (let ((el-get-default-process-sync t))
+    (el-get-update "el-get")))
 
 (defun el-get-post-remove (package)
   "Run the post-remove hooks for PACKAGE."
