@@ -2495,11 +2495,20 @@ package names. Argument MERGE has the same meaning as in
 
 (defalias 'el-get-package-type #'el-get-package-method)
 
-(defun el-get-package-types-alist (&rest types)
-  "Return an alist of package names that are of given types"
-  (loop for src in el-get-sources
-	for name = (el-get-source-name src)
-	for type = (el-get-package-type src)
+(defun el-get-package-types-alist (statuses &rest types)
+  "Return an alist of package names that are of given types.
+
+Only consider packages whose status is `member' of STATUSES,
+which defaults to installed, required and removed.  Example:
+
+  (el-get-package-types-alist \"installed\" 'http 'cvs)
+"
+  (loop for src in (apply 'el-get-list-package-names-with-status
+			  (cond ((stringp statuses) (list statuses))
+				((null statuses) '("installed" "required" "removed"))
+				(t statuses)))
+	for name = (el-get-as-symbol src)
+	for type = (el-get-package-type name)
 	when (or (null types) (memq 'all types) (memq type types))
 	collect (cons name type)))
 
