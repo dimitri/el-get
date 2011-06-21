@@ -1040,15 +1040,9 @@ such that customize will know about it"
   "Cause the named PACKAGE to be installed after all of its
 dependencies (if any).
 
-PACKAGE may be either a string or the corresponding symbol.
-
-Interactively, offers all known packages not in
-el-get-standard-packages, unless an optional PREFIX argument is
-supplied, in which case it offers all known packages."
-  (interactive
-   (list
-    (el-get-read-package-name
-     "Install" (if current-prefix-arg nil (el-get-standard-package-list)))))
+PACKAGE may be either a string or the corresponding symbol."
+  (interactive (list (el-get-read-package-name "Install")))
+  (el-get-error-if-installed package)
 
   (condition-case err
       (let* ((psym (el-get-as-symbol package))
@@ -2598,6 +2592,11 @@ package names."
     (unless (plist-member recipe :type)
       (error "el-get: package `%s' has incomplete recipe (no :type)" package))))
 
+(defun el-get-error-if-installed (package)
+  "Raise an error if PACKAGE is already installed"
+  (when (string= "installed" (el-get-package-status (el-get-as-string package)))
+    (error "el-get: `%s' is already installed" package)))
+
 (defun el-get-read-package-name (action &optional filtered)
   "Ask user for a package name in minibuffer, with completion.
 
@@ -2761,7 +2760,7 @@ is nil, marks all installed packages as needing new autoloads."
           (when (el-get-want-autoloads-p p)
             (add-to-list 'el-get-outdated-autoloads p)))
         (if package (list package)
-	  (mapcar 'el-get-source-name el-get-sources)))
+	  (el-get-list-package-names-with-status "installed")))
 
   ;; If we're invalidating everything, try to start from a clean slate
   (unless package
@@ -2785,8 +2784,7 @@ is nil, marks all installed packages as needing new autoloads."
 Add PACKAGE's directory (or `:load-path' if specified) to the
 `load-path', add any its `:info' directory to
 `Info-directory-list', and `require' its `:features'.  Will be
-called by `el-get' (usually at startup) for each package in
-`el-get-sources'."
+called by `el-get' (usually at startup) for each installed package."
   (interactive (list (el-get-read-package-name "Init")))
   (condition-case err
       (let* ((source   (el-get-package-def package))
@@ -2885,31 +2883,27 @@ called by `el-get' (usually at startup) for each package in
 
 (defun el-get-do-install (package)
   "Install any PACKAGE for which you have a recipe."
+  (el-get-error-unless-package-p package)
+  (let* ((status   (el-get-read-package-status package))
+	 (source   (el-get-package-def package))
+	 (method   (el-get-package-method source))
+	 (install  (el-get-method method :install))
+	 (url      (plist-get source :url)))
 
-  ;; use dynamic binding to pretend package is part of `el-get-sources'
-  (let ((el-get-sources (el-get-read-all-recipes)))
-    (el-get-error-unless-package-p package)
+    (when (string= "installed" status)
+      (error "Package %s is already installed." package))
 
-    (let* ((status   (el-get-read-package-status package))
-	   (source   (el-get-package-def package))
-	   (method   (el-get-package-method source))
-	   (install  (el-get-method method :install))
-	   (url      (plist-get source :url)))
+    (when (string= "required" status)
+      (message "Package %s failed to install, removing it first." package)
+      (el-get-remove package))
 
-      (when (string= "installed" status)
-	(error "Package %s is already installed." package))
+    ;; check we can install the package and save to "required" status
+    (el-get-check-init)
+    (el-get-save-package-status package "required")
 
-      (when (string= "required" status)
-	(message "Package %s failed to install, removing it first." package)
-	(el-get-remove package))
-
-      ;; check we can install the package and save to "required" status
-      (el-get-check-init)
-      (el-get-save-package-status package "required")
-
-      ;; and install the package now, *then* message about it
-      (funcall install package url 'el-get-post-install)
-      (message "el-get install %s" package))))
+    ;; and install the package now, *then* message about it
+    (funcall install package url 'el-get-post-install)
+    (message "el-get install %s" package)))
 
 (defun el-get-post-update (package)
   "Post update PACKAGE. This will get run by a sentinel."
@@ -2958,24 +2952,20 @@ called by `el-get' (usually at startup) for each package in
   "Remove any PACKAGE that is know to be installed or required."
   (interactive
    (list (el-get-read-package-with-status "Remove" "required" "installed")))
-  ;; see comment in el-get-do-install
-  (let ((el-get-sources (if current-prefix-arg
-			    (el-get-read-all-recipes)
-			  el-get-sources)))
-    (el-get-error-unless-package-p package)
+  (el-get-error-unless-package-p package)
 
-    (el-get-set-standard-packages
-     (remove (el-get-as-string package) (el-get-standard-package-list)))
+  (el-get-set-standard-packages
+   (remove (el-get-as-string package) (el-get-standard-package-list)))
 
-    (let* ((source   (el-get-package-def package))
-	   (method   (el-get-package-method source))
-	   (remove   (el-get-method method :remove))
-	   (url      (plist-get source :url)))
-      ;; remove the package now
-      (el-get-remove-autoloads package)
-      (funcall remove package url 'el-get-post-remove)
-      (el-get-save-package-status package "removed")
-      (message "el-get remove %s" package))))
+  (let* ((source   (el-get-package-def package))
+	 (method   (el-get-package-method source))
+	 (remove   (el-get-method method :remove))
+	 (url      (plist-get source :url)))
+    ;; remove the package now
+    (el-get-remove-autoloads package)
+    (funcall remove package url 'el-get-post-remove)
+    (el-get-save-package-status package "removed")
+    (message "el-get remove %s" package)))
 
 (defun el-get-cd (package)
   "Open dired in the package directory."
