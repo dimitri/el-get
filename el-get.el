@@ -1042,54 +1042,55 @@ dependencies (if any).
 
 PACKAGE may be either a string or the corresponding symbol."
   (interactive (list (el-get-read-package-name "Install")))
-  (el-get-error-if-installed package)
+  (if (el-get-package-is-installed package)
+      (message "el-get: `%s' package is already installed" package)
 
-  (condition-case err
-      (let* ((psym (el-get-as-symbol package))
-             (pname (symbol-name psym)))
+    (condition-case err
+	(let* ((psym (el-get-as-symbol package))
+	       (pname (symbol-name psym)))
 
-        ;; Add the package to our list and make sure customize knows it
-        (unless (member pname (el-get-standard-package-list))
-          (el-get-set-standard-packages
-           (cons pname (el-get-standard-package-list))))
+	  ;; Add the package to our list and make sure customize knows it
+	  (unless (member pname (el-get-standard-package-list))
+	    (el-get-set-standard-packages
+	     (cons pname (el-get-standard-package-list))))
 
-        ;; don't do anything if it's already installed or in progress
-        (unless (memq (el-get-package-state psym) '(init installing))
+	  ;; don't do anything if it's already installed or in progress
+	  (unless (memq (el-get-package-state psym) '(init installing))
 
-          ;; Remember that we're working on it
-          (el-get-set-package-state psym 'installing)
+	    ;; Remember that we're working on it
+	    (el-get-set-package-state psym 'installing)
 
-          (let ((non-installed-dependencies
-                 (remove-if 'el-get-package-initialized-p
-                            (el-get-dependencies psym))))
+	    (let ((non-installed-dependencies
+		   (remove-if 'el-get-package-initialized-p
+			      (el-get-dependencies psym))))
 
-            ;;
-            ;; demand all non-installed dependencies with appropriate
-            ;; handlers in place to trigger installation of this package
-            ;;
-            (dolist (dep non-installed-dependencies)
-              ;; set up a handler that will install `package' when all
-              ;; its dependencies are installed
-              (el-get-add-generic-event-task
-               (el-get-event-id dep 'init)
-               `(lambda (data)
-                  (el-get-mark-initialized ',dep)
-                  (el-get-dependency-installed ',psym ',dep)))
+	      ;;
+	      ;; demand all non-installed dependencies with appropriate
+	      ;; handlers in place to trigger installation of this package
+	      ;;
+	      (dolist (dep non-installed-dependencies)
+		;; set up a handler that will install `package' when all
+		;; its dependencies are installed
+		(el-get-add-generic-event-task
+		 (el-get-event-id dep 'init)
+		 `(lambda (data)
+		    (el-get-mark-initialized ',dep)
+		    (el-get-dependency-installed ',psym ',dep)))
 
-              ;; set up a handler that will cancel installation of
-              ;; `package' if installing the dependency fails
-              (el-get-add-generic-event-task
-               (el-get-event-id dep 'error)
-               `(lambda (data)
-                  (el-get-set-package-state ',dep (list 'error data))
-                  (el-get-dependency-error ',psym ',dep data)))
+		;; set up a handler that will cancel installation of
+		;; `package' if installing the dependency fails
+		(el-get-add-generic-event-task
+		 (el-get-event-id dep 'error)
+		 `(lambda (data)
+		    (el-get-set-package-state ',dep (list 'error data))
+		    (el-get-dependency-error ',psym ',dep data)))
 
-              (el-get-install dep))
+		(el-get-install dep))
 
-            (unless non-installed-dependencies
-              (el-get-demand1 psym)))))
-    ((debug error)
-     (el-get-installation-failed package err))))
+	      (unless non-installed-dependencies
+		(el-get-demand1 psym)))))
+      ((debug error)
+       (el-get-installation-failed package err)))))
 
 
 (defun el-get-installation-failed (package signal-data)
@@ -2592,10 +2593,9 @@ package names."
     (unless (plist-member recipe :type)
       (error "el-get: package `%s' has incomplete recipe (no :type)" package))))
 
-(defun el-get-error-if-installed (package)
+(defun el-get-package-is-installed (package)
   "Raise an error if PACKAGE is already installed"
-  (when (string= "installed" (el-get-package-status (el-get-as-string package)))
-    (error "el-get: `%s' is already installed" package)))
+  (string= "installed" (el-get-package-status (el-get-as-string package))))
 
 (defun el-get-read-package-name (action &optional filtered)
   "Ask user for a package name in minibuffer, with completion.
