@@ -998,7 +998,7 @@ symbol) depends"
     ;; Make sure all elpa packages depend on the package `package'.
     ;; The package `package' is an elpa package, though, so exclude
     ;; it to avoid a circular dependency.
-    (if (and (not (eq package 'package)) (eq type 'elpa))
+    (if (and (not (eq package 'package)) (eq method 'elpa))
         (cons 'package deps)
       deps)))
 
