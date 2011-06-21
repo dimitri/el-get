@@ -2462,8 +2462,9 @@ each directory listed in `el-get-recipe-path' in order."
 		      when (string= package (el-get-source-name src))
 		      return src)))
 
-    (cond ((symbolp source)
-	   ;; we did find only its name, load its definition in the recipes
+    (cond ((or (null source) (symbolp source))
+	   ;; not in `el-get-sources', or only mentioned by name
+	   ;; (compatibility from pre 3.1 era)
 	   (el-get-read-recipe package))
 
 	  ((null (plist-get source :type))
