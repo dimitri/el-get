@@ -2363,12 +2363,9 @@ INSTALLING-INFO is t when called from
 `el-get-install-or-init-info', as to avoid a nasty infinite
 recursion.
 "
-  ;; TODO: Pre-generate list of files to byte-compile in-process so we
-  ;; don't depend on el-get inside emacs -Q
   (let* ((pdir   (el-get-package-directory package))
 	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir))
 	 (buf    (format "*el-get-build: %s*" package))
-	 (source (el-get-package-def package))
 	 (default-directory (file-name-as-directory wdir))
          (bytecomp-command
 	  (el-get-construct-package-byte-compile-command package))
@@ -2587,12 +2584,6 @@ package names. Argument MERGE has the same meaning as in
 `el-get-read-all-recipes'."
   (mapcar 'el-get-source-name (el-get-read-all-recipes merge)))
 
-(defun el-get-package-p (package)
-  "Return non-nil unless PACKAGE is the name of a package in
-`el-get-sources'."
-  ;; don't check for duplicates in this function
-  (member package (mapcar 'el-get-source-name el-get-sources)))
-
 (defun el-get-error-unless-package-p (package)
   "Raise an error if PACKAGE does not name a package that has a valid recipe."
   ;; check for recipe
@@ -2601,11 +2592,6 @@ package names. Argument MERGE has the same meaning as in
       (error "el-get: package `%s' has no recipe" package))
     (unless (plist-member recipe :type)
       (error "el-get: package `%s' has incomplete recipe (no :type)" package))))
-
-(defun el-get-warn-unregistered-package (package)
-  "Add a message unless PACKAGE is known in `el-get-source'"
-  (unless (el-get-package-p package)
-    (el-get-verbose-message "WARNING: el-get package \"%s\" is not in `el-get-sources'." package)))
 
 (defun el-get-read-package-name (action &optional filtered)
   "Ask user for a package name in minibuffer, with completion.
