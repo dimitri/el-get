@@ -31,7 +31,8 @@
 ;;
 ;;  3.0 - WIP - Get a fix
 ;;
-;;   -  dependencies should be the first feature in
+;;   - support fo package dependencies
+;;   - rely on package status for `el-get' to install and init them
 ;;
 ;;  2.2 - 2011-05-26 - Fix the merge
 ;;
