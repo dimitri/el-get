@@ -73,7 +73,29 @@ avoid this with the following snippet instead:
 See next section for details about how to setup you emacs so that it's able
 to benefit from +el-get+ automatically.
 
-== What is this?
+== Basic usage
+
+Now that +el-get+ is installed, simply use +M-x el-get-install+ and pick
+whatever package you need.  Arrange to have +el-get+ part of your setup, so
+that at next emacs startup the installed packages are initialized.  Here's
+how to:
+
+--------------------------------------
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+
+(unless (require 'el-get nil t)
+  (url-retrieve
+   "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+   (lambda (s)
+     (end-of-buffer)
+     (eval-print-last-sexp))))
+
+(el-get 'sync)
+--------------------------------------
+
+That's the basic setup.
+
+== Advanced setup with local recipes
 
 Of course, my emacs setup is managed in a private git repository. Some
 people on +#emacs+ are using +git submodules+ (or was it straight import)
@@ -85,10 +107,9 @@ run emacs, and I want this documentation to be usable as-is. Enters el-get!
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 (require 'el-get)
 
+;; local sources
 (setq el-get-sources
-      '(cssh el-get switch-window vkill google-maps nxhtml xcscope yasnippet
-
-	(:name magit
+      '((:name magit
 	       :after (lambda () (global-set-key (kbd "C-x C-z") 'magit-status)))
 
 	(:name asciidoc
@@ -104,7 +125,12 @@ run emacs, and I want this documentation to be usable as-is. Enters el-get!
         (:name dictionary-el    :type apt-get)
         (:name emacs-goodies-el :type apt-get)))
 
-(el-get)
+(setq 'my-packages
+      (append
+       '(cssh el-get switch-window vkill google-maps nxhtml xcscope yasnippet)
+       (loop for src in el-get-sources collect (el-get-source-name src))))
+
+(el-get 'sync my-packages)
 --------------------------------------
 
 So now you have a pretty good documentation of the packages you want
@@ -154,13 +180,14 @@ You even get a progress report!
 
 === Sources
 
-See the documentation of the +el-get-sources+ variable for details.
+See the documentation of the +el-get-sources+ variable for details.  Please
+note that +el-get-sources+ is a 
 
 Note that you can also give a mix of +packages+ symbols, +inline recipes+
 and +source lists+ to +el-get+ as arguments, and completely bypass the
 +el-get-sources+ variable.
 
-  (el-get 'sync 'package 'name '(:name foo :type emacswiki) other-list-of-sources)
+  (el-get 'sync 'package 'name 'list-of-packages-names-or-symbol)
 
 It is still recommended to +(setq el-get-sources '(list of packages))+ then
 use +(el-get 'sync)+, so that commands such as +el-get-update+ know which
@@ -211,8 +238,7 @@ Yes, ok.
 
 M-x el-get-sync::
 
-    Synchronously make your current el-get status match +el-get-sources+,
-    by installing and initializing all your packages.
+    Synchronously install any "required" package and init any "installed" one.
 
 M-x el-get-cd::
 

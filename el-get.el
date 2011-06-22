@@ -3092,7 +3092,34 @@ entry which is not a symbol and is not already a known recipe."
 ;;
 ;; User Interface, Non Interactive part
 ;;
-(defun el-get (&optional sync &rest source-list)
+(defun el-get-init-and-install (&optional packages)
+  "Install \"required\" packages, init \"installed\" packages.
+
+When PACKAGES is non-nil, only process entries from this list.
+Those packages from the list we don't know the status of are
+considered \"required\"."
+  (message "PHOQUE %S" packages)
+  (let* ((required    (el-get-list-package-names-with-status "required"))
+	 (installed   (el-get-list-package-names-with-status "installed"))
+	 (to-init     (if packages
+			  (loop for p in packages
+				when (member (el-get-as-string p) installed)
+				collect (el-get-as-string p))
+			installed))
+	 (to-install  (if packages
+			  (loop for p in packages
+				unless (member (el-get-as-symbol p) to-init)
+				collect (el-get-as-string p))
+			required)))
+    (el-get-verbose-message "el-get-init-and-install: init %S" to-init)
+    (el-get-verbose-message "el-get-init-and-install: install %S" to-install)
+    (loop for p in
+	  (append
+	   (loop for p in to-install do (el-get-install p) collect p)
+	   (loop for p in to-init    do (el-get-init p)    collect p))
+	  collect p)))
+
+(defun el-get (&optional sync &rest packages)
   "Ensure that packages have been downloaded once and init them as needed.
 
 This will not update the sources by using `apt-get install' or
@@ -3120,25 +3147,12 @@ done synchronously, so you will have to wait here. There's
 `byte-compile' support though, and the packages you use are
 welcome to use `autoload' too.
 
-SOURCE-LIST is expected to be a list of sources you want to
-install or init.  Each element in this list can be either a
-package name, a package recipe, or a proper source list.  When
-SOURCE-LIST is omitted, `el-get-standard-packages' is used."
+PACKAGES is expected to be a list of packages you want to install
+or init.  When PACKAGES is omited (the default), the list of
+already installed packages is considered."
   (unless (or (null sync)
 	      (member sync '(sync wait)))
     (error "el-get sync parameter should be either nil, sync or wait"))
-
-  ;; Customizations are written to the end of the user's init file, so
-  ;; if el-get is being called from the init file, the desired value
-  ;; of `el-get-standard-packages' won't be known yet.
-  ;;
-  ;; Unless a specific set of packages was requested, the user expects
-  ;; all the standard packages to be initialized, so unless the
-  ;; customizations have been seen, remember to invoke el-get one more
-  ;; time after initial customizations have been read in.
-  (unless (or source-list
-              (get 'el-get-standard-packages 'saved-value))
-    (add-hook 'after-init-hook (apply-partially 'el-get sync)))
 
   ;; If there's no autoload file, everything needs to be regenerated.
   (if (not (file-exists-p el-get-autoload-file)) (el-get-invalidate-autoloads))
@@ -3153,22 +3167,10 @@ SOURCE-LIST is omitted, `el-get-standard-packages' is used."
 			 0 100 0)))
          (el-get-default-process-sync sync))
 
-    ;; keep the result of mapcar to return it even in the 'wait case
+    ;; keep the result of `el-get-init-and-install' to return it even in the
+    ;; 'wait case
     (prog1
-	;; build el-get-sources from source-list, flattening only one level
-	;; of embedded lists in there.  That allows users to be as lazy as:
-	;; (el-get 'sync 'package 'name (:name recipe) el-get-sources)
-	(let ((el-get-sources
-	       (if source-list
-		 (loop for sources in source-list
-		       when (and (listp sources)
-				 (not (plist-member sources :name)))
-		       append sources
-		       else collect sources)
-                 el-get-sources)))
-
-          (dolist (s (el-get-standard-package-list))
-            (el-get-install s)))
+	(apply 'el-get-init-and-install packages)
 
       ;; el-get-do-install is async, that's now ongoing.
       (when progress
@@ -3183,11 +3185,11 @@ SOURCE-LIST is omitted, `el-get-standard-packages' is used."
             (progress-reporter-update
              progress
              (/ (* 100.0 (- newly-installing still-installing)) newly-installing)))
-        (progress-reporter-done progress)))))
+        (progress-reporter-done progress)))
 
-  ;; unless we have autoloads to update, just load them now
-  (unless el-get-outdated-autoloads
-    (el-get-eval-autoloads)))
+      ;; unless we have autoloads to update, just load them now
+      (unless el-get-outdated-autoloads
+	(el-get-eval-autoloads)))))
 
 (provide 'el-get)
 
