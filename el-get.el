@@ -585,60 +585,6 @@ entry."
   (if (symbolp source) (symbol-name source)
     (format "%s" (plist-get source :name))))
 
-(defun el-get-source-names ()
-  "A list of the names of all packages in
-el-get-sources (plus \"el-get\" itself).  Used for backward
-compatibility with older user setups that didn't use
-el-get-standard-packages."
-  (delete-dups
-   (cons "el-get"
-         (when (boundp 'el-get-sources)
-           (mapcar 'el-get-source-name el-get-sources)))))
-;;
-;; The installed package list
-;;
-(defcustom el-get-standard-packages
-  ;; For backward compatibility, assume el-get-sources defines the
-  ;; standard set.
-  (el-get-source-names)
-  "A list of package names that are part of your
-standard package requirements.  These will be installed and/or
-initialized automatically at startup, as required."
-  :type '(repeat string))
-
-(defun el-get-standard-package-list ()
-  "Return the list of packages we think the user expects to have
-installed and set up"
-  (if (or
-       ;; once the user has modified or saved a customization of
-       ;; el-get-standard-packages, we can assume he's no longer using
-       ;; el-get-sources as a list of what el-get should init by
-       ;; default.
-       (get 'el-get-standard-packages 'saved-value)
-       (get 'el-get-standard-packages 'customized-value))
-      el-get-standard-packages
-    ;; Otherwise, for backward compatibility, use the list of packages
-    ;; named in el-get-sources
-    (el-get-source-names)))
-
-;; Give the user a chance to remember installed packages before exiting.
-(defun el-get-can-exit-p ()
-  (or (not (get 'el-get-standard-packages 'customized-value))
-      (let (char)
-        (loop
-         do (message "Remember packages installed with el-get? (y)es (n)o (c)ustomize")
-            (setq char (read-event))
-         until (and (numberp char)
-                    (memq (downcase char) '(?y ?n ?c))))
-
-        (if (= char ?c)
-            (progn (customize-variable 'el-get-standard-packages) nil) ; customize, don't exit
-          (if (= char ?y)
-              (customize-save-variable 'el-get-standard-packages el-get-standard-packages)) ; save
-          ;; exit regardless
-          t))))
-(add-to-list 'kill-emacs-query-functions 'el-get-can-exit-p)
-
 (defcustom el-get-sources nil
   "Additional package recipes
 
@@ -1025,17 +971,6 @@ are now installed"
   install DEPENDENCY, with error information DATA"
   (el-get-mark-failed package (list dependency data)))
 
-(defun el-get-standard-packages-updated ()
-  "Record the state of el-get-standard-packages for customize"
-  (put 'el-get-standard-packages
-       'customized-value (list (custom-quote el-get-standard-packages))))
-
-(defun el-get-set-standard-packages (new-value)
-  "Set the new value of `el-get-standard-packages' to NEW-VALUE
-such that customize will know about it"
-  (setq el-get-standard-packages new-value)
-  (el-get-standard-packages-updated))
-
 (defun el-get-install (package)
   "Cause the named PACKAGE to be installed after all of its
 dependencies (if any).
@@ -1048,11 +983,6 @@ PACKAGE may be either a string or the corresponding symbol."
     (condition-case err
 	(let* ((psym (el-get-as-symbol package))
 	       (pname (symbol-name psym)))
-
-	  ;; Add the package to our list and make sure customize knows it
-	  (unless (member pname (el-get-standard-package-list))
-	    (el-get-set-standard-packages
-	     (cons pname (el-get-standard-package-list))))
 
 	  ;; don't do anything if it's already installed or in progress
 	  (unless (memq (el-get-package-state psym) '(init installing))
@@ -2932,9 +2862,9 @@ called by `el-get' (usually at startup) for each installed package."
     (message "el-get update %s" package)))
 
 (defun el-get-update-all ()
-  "Performs update of all installed packages (specified in el-get-standard-packages)"
+  "Performs update of all installed packages."
   (interactive)
-  (mapc 'el-get-update (el-get-standard-package-list)))
+  (mapc 'el-get-update (el-get-list-package-names-with-status "installed")))
 
 (defun el-get-self-update ()
   "Update el-get itself.  The standard recipe takes care of reloading the code."
@@ -2953,9 +2883,6 @@ called by `el-get' (usually at startup) for each installed package."
   (interactive
    (list (el-get-read-package-with-status "Remove" "required" "installed")))
   (el-get-error-unless-package-p package)
-
-  (el-get-set-standard-packages
-   (remove (el-get-as-string package) (el-get-standard-package-list)))
 
   (let* ((source   (el-get-package-def package))
 	 (method   (el-get-package-method source))
