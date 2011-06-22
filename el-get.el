@@ -393,7 +393,7 @@ Used to avoid errors when exploring the path for recipes"
             (if (file-directory-p dir) (cons dir result) result))
           el-get-recipe-path :from-end t :initial-value nil))
 
-(defvar el-get-status-file
+(defcustom el-get-status-file
   (concat (file-name-as-directory el-get-dir) ".status.el")
   "Define where to store and read the package statuses")
 
