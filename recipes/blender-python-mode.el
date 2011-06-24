@@ -1,8 +1,8 @@
-;; http://formgames.org/emacs/blender-python-mode/
 (:name blender-python-mode
+       :website "http://formgames.org/emacs/blender-python-mode/"
+       :description "The Blender Python Mode makes it easy to use Emacs for Blender Python development."
        :type bzr
        :url "http://bazaar.launchpad.net/~diresu/blender-python-mode/blender-python-mode/"
-       :info "Edit blender python code in Emacs - blender must be patched"
        :prepare (lambda ()
 		  (setq blender-python-mode-installation-dir
 			(el-get-package-directory "blender-python-mode")))
