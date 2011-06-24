@@ -1848,20 +1848,26 @@ into the package :localname option or its `file-name-nondirectory' part."
     (el-get-http-install package url post-install-fun)))
 
 (defun el-get-emacswiki-retrieve-package-list ()
-  "returns a list of PACKAGE names from emacswiki listing page"
+  "returns a list of (URL . PACKAGE) from emacswiki listing page"
   (with-current-buffer
       (url-retrieve-synchronously el-get-emacswiki-elisp-index-url)
     (goto-char (point-min))
     (re-search-forward "pages found.</h2>" nil 'move)
     (remove-if-not
-     (lambda (p) (string-match "el$" p))
+     (lambda (p) (string-match "el$" (cdr p)))
      (loop
+      with offset = (length el-get-emacswiki-elisp-index-base-url)
       ;; <a class="local" href="http://www.emacswiki.org/emacs/thingatpt%2b.el">thingatpt+.el</a>
       while (re-search-forward el-get-emacswiki-elisp-index-base-url nil 'move)
-      do (re-search-forward "\"" nil 'move)
-      collect (buffer-substring-no-properties
-	       (re-search-forward ">" nil 'move)
-	       (1- (re-search-forward "<" nil 'move)))))))
+      collect (cons
+	       ;; URL
+	       (buffer-substring-no-properties
+		(- (point) offset)
+		(1- (re-search-forward "\"" nil 'move)))
+	       ;; PACKAGE name
+	       (buffer-substring-no-properties
+		(re-search-forward ">" nil 'move)
+		(1- (re-search-forward "<" nil 'move))))))))
 
 (defun el-get-emacswiki-build-local-recipes (&optional target-dir)
   "retrieve the index of elisp pages at emacswiki and turn them
@@ -1871,12 +1877,12 @@ into a local recipe file set"
 			el-get-recipe-path-emacswiki)))
     (unless (file-directory-p target-dir) (make-directory target-dir))
     (loop
-     for package in (el-get-emacswiki-retrieve-package-list)
+     for (url . package) in (el-get-emacswiki-retrieve-package-list)
      unless (file-exists-p (expand-file-name package target-dir))
      do (with-temp-file (expand-file-name package target-dir)
 	  (message "%s" package)
-	  (insert (format "(:name %s :type emacswiki)"
-			  (file-name-sans-extension package)))))))
+	  (insert (format "(:name %s :type emacswiki :website %s)"
+			  (file-name-sans-extension package) url))))))
 
 (defun el-get-emacswiki-refresh (&optional target-dir)
   "run Emacs -Q in an asynchronous subprocess to get the package
