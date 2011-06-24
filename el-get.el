@@ -3104,11 +3104,8 @@ matching REGEX with TYPE and ARGS as parameter."
     (princ ".\n\n")
 
     (when website
-      (princ (format "Website: %s\n" website))
-      (with-current-buffer standard-output
-        (save-excursion
-          (re-search-backward ": \\(.+\\)" nil t)
-          (help-xref-button 1 'help-url website))))
+      (el-get-describe-princ-button (format "Website: %s\n" website)
+                                    ": \\(.+\\)" 'help-url website))
     (when descr
       (princ (format "Description: %s\n" descr)))
     (princ (format "The default installation method is %s %s\n\n" type
@@ -3117,11 +3114,9 @@ matching REGEX with TYPE and ARGS as parameter."
     (let ((file (el-get-recipe-filename package)))
       (if (not file)
           (princ ":\n")
-        (princ (format " in `%s':\n" file))
-        (with-current-buffer standard-output
-          (save-excursion
-            (re-search-backward "`\\([^`']+\\)" nil t)
-            (help-xref-button 1 'el-get-help-package-def package)))))
+        (el-get-describe-princ-button (format " in `%s':\n" file)
+                                      "`\\([^`']+\\)"
+                                      'el-get-help-package-def package)))
     (prin1 def)))
 
 (defun el-get-describe (package)
