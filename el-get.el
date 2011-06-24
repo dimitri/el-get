@@ -3033,6 +3033,11 @@ entry which is not a symbol and is not already a known recipe."
 ;;
 ;; Description of packages.  (Code based on `describe-function').
 ;;
+(define-button-type 'el-get-help-package-def
+  :supertype 'help-xref
+  'help-function (lambda (package) (find-file (el-get-recipe-filename package)))
+  'help-echo (purecopy "mouse-2, RET: find package's recipe"))
+
 (defun el-get-describe-1 (package)
   (let* ((psym (el-get-as-symbol package))
          (pname (symbol-name psym))
@@ -3055,7 +3060,15 @@ entry which is not a symbol and is not already a known recipe."
       (princ (format "Description: %s\n" descr)))
     (princ (format "The default installation method is %s %s\n\n" type
                    (if url (format "from %s" url) "")))
-    (princ "Full definition: ")
+    (princ "Full definition")
+    (let ((file (el-get-recipe-filename package)))
+      (if (not file)
+          (princ ":\n")
+        (princ (format " in `%s':\n" file))
+        (with-current-buffer standard-output
+          (save-excursion
+            (re-search-backward "`\\([^`']+\\)" nil t)
+            (help-xref-button 1 'el-get-help-package-def package)))))
     (prin1 def)))
 
 (defun el-get-describe (package)
