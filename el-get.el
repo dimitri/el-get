@@ -3065,6 +3065,11 @@ entry which is not a symbol and is not already a known recipe."
                        (el-get-update package)))
   'help-echo (purecopy "mouse-2, RET: update package"))
 
+(define-button-type 'el-get-help-describe-package
+  :supertype 'help-xref
+  'help-function #'el-get-describe
+  'help-echo (purecopy "mouse-2, RET: describe package"))
+
 (defun el-get-describe-princ-button (label regex type &rest args)
   "Princ a new button with label LABEL.
 
@@ -3085,7 +3090,8 @@ matching REGEX with TYPE and ARGS as parameter."
          (website (plist-get def :website))
          (descr (plist-get def :description))
          (type (plist-get def :type))
-         (url (plist-get def :url)))
+         (url (plist-get def :url))
+         (depends (plist-get def :depends)))
     (princ (format "%s is an `el-get' package. It is currently %s " name
                    (if status status "not installed")))
 
@@ -3108,6 +3114,19 @@ matching REGEX with TYPE and ARGS as parameter."
                                     ": \\(.+\\)" 'help-url website))
     (when descr
       (princ (format "Description: %s\n" descr)))
+    (when depends
+      (if (listp depends)
+          (progn
+            (princ "Dependencies: ")
+            (loop for i in depends
+                  do (el-get-describe-princ-button
+                      (format "`%s'" i) "`\\([^`']+\\)"
+                      'el-get-help-describe-package i)))
+        (princ "Dependency: ")
+        (el-get-describe-princ-button
+         (format "`%s'" depends) "`\\([^`']+\\)"
+         'el-get-help-describe-package depends))
+      (princ ".\n"))
     (princ (format "The default installation method is %s %s\n\n" type
                    (if url (format "from %s" url) "")))
     (princ "Full definition")
