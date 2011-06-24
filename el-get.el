@@ -3046,7 +3046,11 @@ entry which is not a symbol and is not already a known recipe."
     (princ (format "%s is an `el-get' package.\n\nIt is currently %s.\n\n" name
                    (if status status "not installed")))
     (when website
-      (princ (format "Website: %s\n" website)))
+      (princ (format "Website: %s\n" website))
+      (with-current-buffer standard-output
+        (save-excursion
+          (re-search-backward ": \\(.+\\)" nil t)
+          (help-xref-button 1 'help-url website))))
     (when descr
       (princ (format "Description: %s\n" descr)))
     (princ (format "The default installation method is %s %s\n\n" type
