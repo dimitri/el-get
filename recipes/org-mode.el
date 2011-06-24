@@ -8,5 +8,6 @@
                  '("clean" "all"))
        :load-path ("." "lisp" "contrib/lisp")
        :autoloads nil
-       :features org-install)
+       :features org-install
+       :website "http://www.orgmode.org")
 
