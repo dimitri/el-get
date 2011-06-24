@@ -766,6 +766,14 @@ definition provided by `el-get' recipes locally.
 
    \"http://www.example.com/show-as-text?file=path/package.el\"
 
+:website
+
+    The website of the project.
+
+:description
+
+    A short description of the project.
+
 "
 
 :type `(repeat
@@ -3015,6 +3023,46 @@ entry which is not a symbol and is not already a known recipe."
   "After PACKAGE fails to install, just message about it"
   (el-get-verbose-message "el-get failed to initialize package %s" package))
 (add-hook 'el-get-post-error-hooks 'el-get-post-error-message)
+
+;;
+;; Description of packages.  (Code based on `describe-function').
+;;
+(defun el-get-describe-1 (package)
+  (let* ((psym (el-get-as-symbol package))
+         (pname (symbol-name psym))
+         (status (el-get-read-package-status package))
+         (def (el-get-package-def pname))
+         (name (plist-get def :name))
+         (website (plist-get def :website))
+         (descr (plist-get def :description))
+         (type (plist-get def :type))
+         (url (plist-get def :url)))
+    (princ (format "%s is an `el-get' package.\n\nIt is currently %s.\n\n" name
+                   (if status status "not installed")))
+    (when website
+      (princ (format "Website: %s\n" website)))
+    (when descr
+      (princ (format "Description: %s\n" descr)))
+    (princ (format "The default installation method is %s %s\n\n" type
+                   (if url (format "from %s" url) "")))
+    (princ "Full definition: ")
+    (prin1 def)))
+
+(defun el-get-describe (package)
+  "Generate a description for PACKAGE."
+  (interactive
+   (list
+    (el-get-read-package-name "Describe")))
+
+  (if (null package)
+      (message "You didn't specify a package")
+    (help-setup-xref (list #'el-get-describe package)
+		     (called-interactively-p 'interactive))
+    (save-excursion
+      (with-help-window (help-buffer)
+        (el-get-describe-1 package)
+        (with-current-buffer standard-output
+          (buffer-string))))))
 
 
 ;;
