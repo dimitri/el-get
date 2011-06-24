@@ -1881,7 +1881,7 @@ into a local recipe file set"
      unless (file-exists-p (expand-file-name package target-dir))
      do (with-temp-file (expand-file-name package target-dir)
 	  (message "%s" package)
-	  (insert (format "(:name %s :type emacswiki :website %s)"
+	  (insert (format "(:name %s :type emacswiki :website \"%s\")"
 			  (file-name-sans-extension package) url))))))
 
 (defun el-get-emacswiki-refresh (&optional target-dir)
