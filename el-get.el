@@ -3038,6 +3038,44 @@ entry which is not a symbol and is not already a known recipe."
   'help-function (lambda (package) (find-file (el-get-recipe-filename package)))
   'help-echo (purecopy "mouse-2, RET: find package's recipe"))
 
+(define-button-type 'el-get-help-install
+  :supertype 'help-xref
+  'help-function (lambda (package)
+                   (when (y-or-n-p
+                          (format "Do you really want to install `%s'? "
+                                  package))
+                       (el-get-install package)))
+  'help-echo (purecopy "mouse-2, RET: install package"))
+
+(define-button-type 'el-get-help-remove
+  :supertype 'help-xref
+  'help-function (lambda (package)
+                   (when (y-or-n-p
+                        (format "Do you really want to uninstall `%s'? "
+                                package))
+                       (el-get-remove package)))
+  'help-echo (purecopy "mouse-2, RET: remove package"))
+
+(define-button-type 'el-get-help-update
+  :supertype 'help-xref
+  'help-function (lambda (package)
+                   (when (y-or-n-p
+                        (format "Do you really want to update `%s'? "
+                                package))
+                       (el-get-update package)))
+  'help-echo (purecopy "mouse-2, RET: update package"))
+
+(defun el-get-describe-princ-button (label regex type &rest args)
+  "Princ a new button with label LABEL.
+
+The LABEL is made clickable by calling `help-xref-button' for a backwards
+matching REGEX with TYPE and ARGS as parameter."
+  (princ label)
+  (with-current-buffer standard-output
+    (save-excursion
+      (re-search-backward regex nil t)
+      (apply #'help-xref-button 1 type args))))
+
 (defun el-get-describe-1 (package)
   (let* ((psym (el-get-as-symbol package))
          (pname (symbol-name psym))
@@ -3048,8 +3086,23 @@ entry which is not a symbol and is not already a known recipe."
          (descr (plist-get def :description))
          (type (plist-get def :type))
          (url (plist-get def :url)))
-    (princ (format "%s is an `el-get' package.\n\nIt is currently %s.\n\n" name
+    (princ (format "%s is an `el-get' package. It is currently %s " name
                    (if status status "not installed")))
+
+    (cond
+     ((string= status "installed")
+      (el-get-describe-princ-button "[update]" "\\[\\([^]]+\\)\\]"
+                                    'el-get-help-update package)
+      (el-get-describe-princ-button "[remove]" "\\[\\([^]]+\\)\\]"
+                                    'el-get-help-remove package))
+     ((string= status "required")
+      (el-get-describe-princ-button "[update]" "\\[\\([^]]+\\)\\]"
+                                    'el-get-help-update package))
+     (t
+      (el-get-describe-princ-button "[install]" "\\[\\([^]]+\\)\\]"
+                                    'el-get-help-install package)))
+    (princ ".\n\n")
+
     (when website
       (princ (format "Website: %s\n" website))
       (with-current-buffer standard-output
