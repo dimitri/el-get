@@ -3026,7 +3026,6 @@ entry which is not a symbol and is not already a known recipe."
 When PACKAGES is non-nil, only process entries from this list.
 Those packages from the list we don't know the status of are
 considered \"required\"."
-  (message "PHOQUE %S" packages)
   (let* ((required    (el-get-list-package-names-with-status "required"))
 	 (installed   (el-get-list-package-names-with-status "installed"))
 	 (to-init     (if packages
