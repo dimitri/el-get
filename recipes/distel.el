@@ -1,6 +1,8 @@
 (:name distel
-       :type svn
-       :url "http://distel.googlecode.com/svn/trunk/"
+       :website "https://github.com/massemanet/distel"
+       :description "Distributed Emacs Lisp for Erlang."
+       :type git
+       :url "https://github.com/massemanet/distel.git"
        :info "doc"
        :build `,(mapcar
                  (lambda (target)
