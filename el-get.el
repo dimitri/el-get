@@ -1881,7 +1881,7 @@ into a local recipe file set"
      unless (file-exists-p (expand-file-name package target-dir))
      do (with-temp-file (expand-file-name package target-dir)
 	  (message "%s" package)
-	  (insert (format "(:name %s :type emacswiki :website \"%s\")"
+	  (insert (format "(:name %s :type emacswiki :website %s)"
 			  (file-name-sans-extension package) url))))))
 
 (defun el-get-emacswiki-refresh (&optional target-dir)
@@ -3033,6 +3033,54 @@ entry which is not a symbol and is not already a known recipe."
 ;;
 ;; Description of packages.  (Code based on `describe-function').
 ;;
+(define-button-type 'el-get-help-package-def
+  :supertype 'help-xref
+  'help-function (lambda (package) (find-file (el-get-recipe-filename package)))
+  'help-echo (purecopy "mouse-2, RET: find package's recipe"))
+
+(define-button-type 'el-get-help-install
+  :supertype 'help-xref
+  'help-function (lambda (package)
+                   (when (y-or-n-p
+                          (format "Do you really want to install `%s'? "
+                                  package))
+                       (el-get-install package)))
+  'help-echo (purecopy "mouse-2, RET: install package"))
+
+(define-button-type 'el-get-help-remove
+  :supertype 'help-xref
+  'help-function (lambda (package)
+                   (when (y-or-n-p
+                        (format "Do you really want to uninstall `%s'? "
+                                package))
+                       (el-get-remove package)))
+  'help-echo (purecopy "mouse-2, RET: remove package"))
+
+(define-button-type 'el-get-help-update
+  :supertype 'help-xref
+  'help-function (lambda (package)
+                   (when (y-or-n-p
+                        (format "Do you really want to update `%s'? "
+                                package))
+                       (el-get-update package)))
+  'help-echo (purecopy "mouse-2, RET: update package"))
+
+(define-button-type 'el-get-help-describe-package
+  :supertype 'help-xref
+  'help-function #'el-get-describe
+  'help-echo (purecopy "mouse-2, RET: describe package"))
+
+(defun el-get-describe-princ-button (label regex type &rest args)
+  "Princ a new button with label LABEL.
+
+The LABEL is made clickable by calling `help-xref-button' for a backwards
+matching REGEX with TYPE and ARGS as parameter."
+  (princ label)
+  (with-current-buffer standard-output
+    (save-excursion
+      (re-search-backward regex nil t)
+      (apply #'help-xref-button 1 type args))))
+
 (defun el-get-describe-1 (package)
   (let* ((psym (el-get-as-symbol package))
          (pname (symbol-name psym))
@@ -3042,18 +3090,52 @@ entry which is not a symbol and is not already a known recipe."
          (website (plist-get def :website))
          (descr (plist-get def :description))
          (type (plist-get def :type))
-         (url (plist-get def :url)))
-    (princ (format "%s is an `el-get' package.\n\nIt is currently %s.\n\n" name
+         (url (plist-get def :url))
+         (depends (plist-get def :depends)))
+    (princ (format "%s is an `el-get' package. It is currently %s " name
                    (if status status "not installed")))
+
+    (cond
+     ((string= status "installed")
+      (el-get-describe-princ-button "[update]" "\\[\\([^]]+\\)\\]"
+                                    'el-get-help-update package)
+      (el-get-describe-princ-button "[remove]" "\\[\\([^]]+\\)\\]"
+                                    'el-get-help-remove package))
+     ((string= status "required")
+      (el-get-describe-princ-button "[update]" "\\[\\([^]]+\\)\\]"
+                                    'el-get-help-update package))
+     (t
+      (el-get-describe-princ-button "[install]" "\\[\\([^]]+\\)\\]"
+                                    'el-get-help-install package)))
+    (princ ".\n\n")
+
     (when website
-      (princ (format "Website: "))
-      (help-insert-xref-button website 'help-url website)
-      (princ "\n"))
+      (el-get-describe-princ-button (format "Website: %s\n" website)
+                                    ": \\(.+\\)" 'help-url website))
     (when descr
       (princ (format "Description: %s\n" descr)))
+    (when depends
+      (if (listp depends)
+          (progn
+            (princ "Dependencies: ")
+            (loop for i in depends
+                  do (el-get-describe-princ-button
+                      (format "`%s'" i) "`\\([^`']+\\)"
+                      'el-get-help-describe-package i)))
+        (princ "Dependency: ")
+        (el-get-describe-princ-button
+         (format "`%s'" depends) "`\\([^`']+\\)"
+         'el-get-help-describe-package depends))
+      (princ ".\n"))
     (princ (format "The default installation method is %s %s\n\n" type
                    (if url (format "from %s" url) "")))
-    (princ "Full definition: ")
+    (princ "Full definition")
+    (let ((file (el-get-recipe-filename package)))
+      (if (not file)
+          (princ ":\n")
+        (el-get-describe-princ-button (format " in `%s':\n" file)
+                                      "`\\([^`']+\\)"
+                                      'el-get-help-package-def package)))
     (prin1 def)))
 
 (defun el-get-describe (package)
@@ -3068,8 +3150,7 @@ entry which is not a symbol and is not already a known recipe."
 		     (called-interactively-p 'interactive))
     (save-excursion
       (with-help-window (help-buffer)
-        (with-current-buffer (help-buffer)
-          (el-get-describe-1 package))
+        (el-get-describe-1 package)
         (with-current-buffer standard-output
           (buffer-string))))))
 

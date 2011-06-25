@@ -1,4 +1,6 @@
 (:name bbcode-mode
+       :website "https://bitbucket.org/jfm/emacs-bbcode"
+       :description "A simple derived-mode for editing bbcode in emacs."
        :type hg
        :url "https://bitbucket.org/jfm/emacs-bbcode"
        :post-init (lambda ()

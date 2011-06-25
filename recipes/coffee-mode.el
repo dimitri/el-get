@@ -1,4 +1,6 @@
  (:name coffee-mode
+  :website "http://ozmm.org/posts/coffee_mode.html"
+  :description "Emacs Major Mode for CoffeeScript"
   :type git
   :url "https://github.com/defunkt/coffee-mode.git"
   :features coffee-mode
