@@ -1,4 +1,6 @@
 (:name bbdb
+       :website "http://bbdb.sourceforge.net/"
+       :description "The Insidious Big Brother Database (BBDB) is a contact management utility."
        :type git
        :url "git://git.savannah.nongnu.org/bbdb.git"
        :load-path ("./lisp")

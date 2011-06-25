@@ -1,4 +1,6 @@
 (:name magit
+       :website "https://github.com/magit/magit#readme"
+       :description "It's Magit! An Emacs mode for Git."
        :type git
        :url "http://github.com/magit/magit.git"
        :info "."
