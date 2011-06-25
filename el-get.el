@@ -1124,7 +1124,7 @@ properties:
 Any other property will get put into the process object.
 "
   (condition-case err
-      (when commands
+      (if commands
         (let* ((c       (car commands))
                (cdir    (plist-get c :default-directory))
                (cname   (plist-get c :command-name))
@@ -1167,11 +1167,10 @@ Any other property will get put into the process object.
               (process-put proc :el-get-final-func final-func)
               (process-put proc :el-get-start-process-list (cdr commands))
               (set-process-sentinel proc 'el-get-start-process-list-sentinel)
-              (when filter (set-process-filter proc filter))))))
+              (when filter (set-process-filter proc filter)))))
     ;; no commands, still run the final-func
-    (unless commands
-      (when (functionp final-func)
-      (funcall final-func package)))
+        (when (functionp final-func)
+          (funcall final-func package)))
     ((debug error)
      (el-get-installation-failed package err))))
 
