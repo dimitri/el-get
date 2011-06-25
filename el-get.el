@@ -3181,18 +3181,25 @@ considered \"required\"."
 				when (member (el-get-as-string p) installed)
 				collect (el-get-as-string p))
 			installed))
+	 (init-deps   (loop for p in to-init
+			    append (mapcar 'el-get-as-string
+					   (el-get-dependencies
+					    (el-get-as-symbol p)))))
 	 (to-install  (if packages
 			  (loop for p in packages
 				unless (member (el-get-as-symbol p) to-init)
 				collect (el-get-as-string p))
-			required)))
-    (el-get-verbose-message "el-get-init-and-install: init %S" to-init)
+			required))
+	 done)
     (el-get-verbose-message "el-get-init-and-install: install %S" to-install)
-    (loop for p in
-	  (append
-	   (loop for p in to-install do (el-get-install p) collect p)
-	   (loop for p in to-init    do (el-get-init p)    collect p))
-	  collect p)))
+    (el-get-verbose-message "el-get-init-and-install: init %S" to-init)
+    (el-get-verbose-message "el-get-init-and-install: deps %S" init-deps)
+
+    (loop for p in to-install do (el-get-install p) collect p into done)
+    (loop for p in init-deps  do (el-get-init p)    collect p into done)
+    (loop for p in to-init
+	  unless (member p done) do (el-get-init p) collect p into done)
+    done))
 
 (defun el-get (&optional sync &rest packages)
   "Ensure that packages have been downloaded once and init them as needed.
