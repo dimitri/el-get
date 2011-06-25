@@ -140,6 +140,9 @@
 (require 'bytecomp)
 (require 'autoload)
 
+(eval-when-compile
+  (require 'help-mode))  ; byte-compiling needs to know about xref-type buttons
+
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
 
@@ -2242,9 +2245,11 @@ takes care of it), thiw function returns nil."
 
 ;; Retained for compatibility
 (defun el-get-byte-compile (package &optional IGNORED)
-  (let ((bytecomp-command
-	 (el-get-construct-package-byte-compile-command package)))
-    (shell-command-to-string (mapconcat 'identity bytecomp-command " "))))
+  (let* ((bytecomp-command
+	  (el-get-construct-package-byte-compile-command package))
+	 (bytecomp-command-string (mapconcat 'identity bytecomp-command " ")))
+    (el-get-verbose-message "%s" bytecomp-command-string)
+    (shell-command-to-string bytecomp-command-string)))
 
 (defun el-get-build-commands (package)
   "Return a list of build commands for the named PACKAGE.
