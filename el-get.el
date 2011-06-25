@@ -2816,6 +2816,11 @@ called by `el-get' (usually at startup) for each installed package."
     (debug error
      (el-get-installation-failed package err))))
 
+(defun el-get-post-build (package)
+  (el-get-invalidate-autoloads package)
+  (el-get-init package)
+  (el-get-save-package-status package "installed"))
+
 (defun el-get-post-install (package)
   "Post install PACKAGE. This will get run by a sentinel."
   (let* ((hooks    (el-get-method (el-get-package-type package) :install-hook))
@@ -2824,12 +2829,8 @@ called by `el-get' (usually at startup) for each installed package."
     ;; post-install is the right place to run install-hook
     (run-hook-with-args hooks package)
 
-    (let ((wrap-up `(lambda (package)
-                     (el-get-invalidate-autoloads package)
-                     (el-get-init package)
-                     (el-get-save-package-status package "installed"))))
-      (el-get-build package commands nil el-get-default-process-sync wrap-up)))
-
+    (el-get-build package commands nil
+    el-get-default-process-sync 'el-get-post-build))
   (run-hook-with-args 'el-get-post-install-hooks package))
 
 (defun el-get-do-install (package)
