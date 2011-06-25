@@ -1127,7 +1127,7 @@ properties:
 Any other property will get put into the process object.
 "
   (condition-case err
-      (when commands
+      (if commands
         (let* ((c       (car commands))
                (cdir    (plist-get c :default-directory))
                (cname   (plist-get c :command-name))
@@ -1170,11 +1170,10 @@ Any other property will get put into the process object.
               (process-put proc :el-get-final-func final-func)
               (process-put proc :el-get-start-process-list (cdr commands))
               (set-process-sentinel proc 'el-get-start-process-list-sentinel)
-              (when filter (set-process-filter proc filter))))))
-    ;; no commands, still run the final-func
-    (unless commands
-      (when (functionp final-func)
-      (funcall final-func package)))
+              (when filter (set-process-filter proc filter)))))
+	;; no commands, still run the final-func
+	(when (functionp final-func)
+	  (funcall final-func package)))
     ((debug error)
      (el-get-installation-failed package err))))
 
@@ -2305,6 +2304,7 @@ INSTALLING-INFO is t when called from
 `el-get-install-or-init-info', as to avoid a nasty infinite
 recursion.
 "
+  (el-get-verbose-message "el-get-build %s" package)
   (let* ((pdir   (el-get-package-directory package))
 	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir))
 	 (buf    (format "*el-get-build: %s*" package))
@@ -2736,6 +2736,7 @@ Add PACKAGE's directory (or `:load-path' if specified) to the
 `Info-directory-list', and `require' its `:features'.  Will be
 called by `el-get' (usually at startup) for each installed package."
   (interactive (list (el-get-read-package-name "Init")))
+  (el-get-verbose-message "el-get-init: %s" package)
   (condition-case err
       (let* ((source   (el-get-package-def package))
              (method   (el-get-package-method source))
