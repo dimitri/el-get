@@ -2278,6 +2278,10 @@ absolute filename obtained with expand-file-name is executable."
 	  ((file-executable-p fullname) fullname)
 	  (t (or exe name)))))
 
+(defun el-get-finish-build (post-build-fun package)
+  (el-get-install-or-init-info package 'build)
+  (funcall post-build-fun package))
+
 (defun el-get-build
   (package commands &optional subdir sync post-build-fun installing-info)
   "Run each command from the package directory.
@@ -2344,9 +2348,7 @@ recursion.
 	 ;; building info too
 	 (build-info-then-post-build-fun
 	  (if installing-info post-build-fun
-	    (lambda (package)
-	      (el-get-install-or-init-info package 'build)
-	      (funcall post-build-fun package)))))
+            (apply-partially 'el-get-finish-build post-build-fun))))
 
     (el-get-start-process-list
      package full-process-list build-info-then-post-build-fun)))
