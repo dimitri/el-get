@@ -2507,6 +2507,20 @@ which defaults to installed, required and removed.  Example:
   (let ((status-plist (or package-status-plist (el-get-read-all-packages-status))))
     (plist-get status-plist (el-get-package-symbol package))))
 
+(defun el-get-extra-packages (&rest packages)
+  "Return installed or required packages that are not in given package list"
+  (let ((packages
+	 ;; &rest could contain both symbols and lists
+	 (loop for p in packages
+	       when (listp p) append (mapcar 'el-get-as-symbol p)
+	       else collect (el-get-as-symbol p))))
+    (when packages
+	(loop for (p s) on (el-get-read-all-packages-status) by 'cddr
+	      for x = (el-get-as-symbol (el-get-package-name p))
+	      unless (member x packages)
+	      unless (equal s "removed")
+	      collect (list x s)))))
+
 ;;
 ;; Get list duplicates
 ;;
