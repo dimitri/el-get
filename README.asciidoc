@@ -355,7 +355,12 @@ included so that +el-get-sources+ is now only another source for recipes,
 and +(el-get '...)+ will now only install and initialize known "required"
 and "installed" packages.
 
-The documentation has been updated to detail how to upgrade.
+The documentation has been updated to detail the new setup.
+
+If you have packages that have been installed in the past but you no longer
+want in your setup, here's how to get them out of the way:
+
+  M-: (el-get-save-package-status "package-name-here" "removed")
 
 === Upgrading to 1.1
 
