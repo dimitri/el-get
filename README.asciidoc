@@ -125,7 +125,7 @@ run emacs, and I want this documentation to be usable as-is. Enters el-get!
         (:name dictionary-el    :type apt-get)
         (:name emacs-goodies-el :type apt-get)))
 
-(setq 'my-packages
+(setq my-packages
       (append
        '(cssh el-get switch-window vkill google-maps nxhtml xcscope yasnippet)
        (loop for src in el-get-sources collect (el-get-source-name src))))
