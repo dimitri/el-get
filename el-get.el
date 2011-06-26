@@ -3252,7 +3252,10 @@ already installed packages is considered."
     ;; keep the result of `el-get-init-and-install' to return it even in the
     ;; 'wait case
     (prog1
-	(apply 'el-get-init-and-install packages)
+	(let ((packages
+	       ;; (el-get 'sync 'a 'b my-package-list)
+	       (loop for p in packages when (listp p) append p else collect p)))
+	  (el-get-init-and-install packages))
 
       ;; el-get-do-install is async, that's now ongoing.
       (when progress
