@@ -236,6 +236,13 @@ general purposes hooks facilities: +el-get-post-install-hooks+ and
 
 Yes, ok.
 
+M-x el-get-describe::
+
+    Prompt for a package name, with completion, then open an +*Help*+ window
+    with details about the selected package.  Those include current status,
+    website, description, installation method, full recipe, and buttons to
+    easily install, update or remove the package.
+
 M-x el-get-sync::
 
     Synchronously install any "required" package and init any "installed" one.
@@ -301,6 +308,32 @@ M-x el-get-emacswiki-refresh::
     +~/.emacs.d/el-get/el-get/recipes/emacswiki/+ if you didn't change
     +el-get-dir+.
 
+=== Useful functions
+
+el-get-package-types-alist (statuses &rest types)::
+
+    Return an alist of package names that are of given types. Only consider
+    packages whose status is `member' of STATUSES, which defaults to
+    installed, required and removed.
+
+  ELISP> (el-get-package-types-alist "installed" 'cvs 'emacswiki)
+  ((emacs-w3m . cvs)
+   (rect-mark . emacswiki)
+   (icomplete+ . emacswiki)
+   (php-mode-improved . emacswiki)
+   (rainbow-delimiters . emacswiki)
+   (goto-last-change . emacswiki)
+   (emacs-goodies-el . cvs))
+  
+el-get-extra-packages (&rest packages)::
+
+      Return installed or required packages that are not in given package
+      list.
+
+  ELISP> (el-get-extra-packages dim-packages)
+  ((verbiste "installed")
+   (package "installed"))
+
 == Internals
 
 TODO: explain the symlinks in +~/.emacs.d/el-get+. For now, read the source
@@ -314,6 +347,15 @@ Adding +bzr+ support for example was only about writing 2 functions, mostly
 using copy paste. Here's the patch: https://github.com/dimitri/el-get/commit/63e9018102bdeb7b6d9136db231adcd983087217#L0R437
 
 == Upgrade Notes
+
+=== Upgrading to 3.0
+
+Please remind that +3.0+ is a development branch.  A change has been
+included so that +el-get-sources+ is now only another source for recipes,
+and +(el-get '...)+ will now only install and initialize known "required"
+and "installed" packages.
+
+The documentation has been updated to detail how to upgrade.
 
 === Upgrading to 1.1
 
