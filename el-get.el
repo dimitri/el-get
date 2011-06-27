@@ -139,9 +139,7 @@
 (require 'simple)        ; needed for `apply-partially'
 (require 'bytecomp)
 (require 'autoload)
-
-(eval-when-compile
-  (require 'help-mode))  ; byte-compiling needs to know about xref-type buttons
+(require 'help-mode)     ; byte-compiling needs to know about xref-type buttons
 
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
