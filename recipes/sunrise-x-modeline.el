@@ -1,4 +1,4 @@
 (:name sunrise-x-modeline
-       :type git
-       :url "git://github.com/emacsmirror/sunrise-x-modeline.git"
+       :type emacswiki
+       :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-modeline.el"
        :features sunrise-x-modeline)
