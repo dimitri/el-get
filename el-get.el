@@ -1920,14 +1920,14 @@ the files up."
   (let* ((pdir    (el-get-package-directory package))
 	 (url     (plist-get (el-get-package-def package) :url))
 	 (tarfile (file-name-nondirectory url))
-	 (files   (directory-files pdir nil "[^.]$")))
+	 (files   (remove tarfile (directory-files pdir nil "[^.]$"))))
     ;; if there's only one directory, move its content up and get rid of it
-    (message "%S" (remove tarfile files))
-    (when (null (cdr (remove tarfile files)))
+    (el-get-verbose-message "el-get: tar cleanup %s [%s]: %S" package pdir files)
+    (unless (cdr files)
       (let ((move  (format "cd %s && mv \"%s\"/* ." pdir (car files)))
 	    (rmdir (format "cd %s && rmdir \"%s\""   pdir (car files))))
-	;; (message "%s: %s" package move)
-	;; (message "%s: %s" package rmdir)
+	(el-get-verbose-message "%s: %s" package move)
+	(el-get-verbose-message "%s: %s" package rmdir)
 	(shell-command move)
 	(shell-command rmdir)))))
 
@@ -2422,7 +2422,7 @@ each directory listed in `el-get-recipe-path' in order."
 
 (defun el-get-package-method (package-or-source)
   "Return the :type property (called method) of PACKAGE-OR-SOURCE"
-  (cond ((symbolp package-or-source)
+  (cond ((or (symbolp package-or-source) (stringp package-or-source))
 	 (plist-get (el-get-package-def package-or-source) :type))
 
 	(t (plist-get package-or-source :type))))
