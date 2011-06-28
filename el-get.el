@@ -2394,7 +2394,7 @@ each directory listed in `el-get-recipe-path' in order."
      (loop for dir in (el-get-recipe-dirs)
 	   nconc (loop for recipe in (directory-files dir nil "^[^.].*\.el$")
 		       for filename = (concat (file-name-as-directory dir) recipe)
-		       and package = (file-name-sans-extension (file-name-nondirectory recipe))
+		       for package = (file-name-sans-extension (file-name-nondirectory recipe))
 		       unless (member package packages)
 		       do (push package packages)
                        and collect (ignore-errors (el-get-read-recipe-file filename)))))))
