@@ -128,7 +128,7 @@ run emacs, and I want this documentation to be usable as-is. Enters el-get!
 (setq my-packages
       (append
        '(cssh el-get switch-window vkill google-maps nxhtml xcscope yasnippet)
-       (loop for src in el-get-sources collect (el-get-source-name src))))
+       (mapcar 'el-get-source-name el-get-sources)))
 
 (el-get 'sync my-packages)
 --------------------------------------
