@@ -1,4 +1,6 @@
 (:name babel
+       :website "https://github.com/juergenhoetzel/babel"
+       :description "An Emacs interface to different translation services available on the Internet."
        :type git
        :url "git://github.com/juergenhoetzel/babel.git"
        :prepare

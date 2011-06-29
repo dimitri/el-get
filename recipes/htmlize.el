@@ -1,0 +1,5 @@
+(:name htmlize
+       :website "http://www.emacswiki.org/emacs/Htmlize"
+       :description "Convert buffer text and decorations to HTML."
+       :type http
+       :url "http://fly.srk.fer.hr/~hniksic/emacs/htmlize.el.cgi")
