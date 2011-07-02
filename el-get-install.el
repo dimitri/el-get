@@ -53,3 +53,4 @@
 	(goto-char (point-max))
 	(insert "\nCongrats, el-get is installed and ready to serve!")))))
 
+(provide 'el-get-install)
