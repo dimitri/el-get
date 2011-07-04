@@ -1,6 +1,6 @@
 (:name lua-mode
        :type git
-       :url "https://github.com/rrthomas/lua-mode.git"
+       :url "https://github.com/immerrr/lua-mode.git"
        :features lua-mode
        :post-init (lambda ()
 		    (add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-mode))
