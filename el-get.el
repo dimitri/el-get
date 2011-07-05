@@ -814,7 +814,9 @@ this is the name to fetch in that system"
                               (string< (prin1-to-string (cadr x))
                                        (prin1-to-string (cadr y)))))))
 
-           (group :inline t :format "URL: %v" (const :format "" :url) (string :format "%v"))
+           (group :inline t :format "Source URL: %v" (const :format "" :url) (string :format "%v"))
+           (group :inline t :format "Package Website: %v" (const :format "" :website) (string :format "%v"))
+           (group :inline t :format "Description: %v" (const :format "" :description) (string :format "%v"))
            (group :inline t :format "General Build Recipe\n%v" (const :format "" :build)
                   ,el-get-build-recipe-body)
            (group :inline t  (const :format "" :load-path)
