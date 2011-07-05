@@ -829,6 +829,8 @@ this is the name to fetch in that system"
            (group :inline t :format "Options (`http-tar' and `cvs' only): %v" (const :format "" :options) (string :format "%v"))
            (group :inline t :format "CVS Module: %v" (const :format "" :module)  (string :format "%v"))
            (group :inline t :format "`Before' Function: %v" (const :format "" :before) (function :format "%v"))
+           (group :inline t :format "`Post-Init' Function: %v"
+                  (const :format "" :post-init) (function :format "%v"))
            (group :inline t :format "`After' Function (post-init recommended instead): %v"
                   (const :format "" :after) (function :format "%v"))
            (group :inline t :format "Name of downloaded file (`http' and `ftp' only): %v"
