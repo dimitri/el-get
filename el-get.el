@@ -828,10 +828,12 @@ this is the name to fetch in that system"
            (group :inline t :format "Autoloads: %v"  :value (:autoloads t) (const :format "" :autoloads) (boolean :format "%[Toggle%] %v\n"))
            (group :inline t :format "Options (`http-tar' and `cvs' only): %v" (const :format "" :options) (string :format "%v"))
            (group :inline t :format "CVS Module: %v" (const :format "" :module)  (string :format "%v"))
-           (group :inline t :format "`Before' Function: %v" (const :format "" :before) (function :format "%v"))
+           (group :inline t :format "`Before' Function (`Prepare' recommended instead): %v" (const :format "" :before) (function :format "%v"))
+           (group :inline t :format "`Prepare' Function: %v"
+                  (const :format "" :prepare) (function :format "%v"))
            (group :inline t :format "`Post-Init' Function: %v"
                   (const :format "" :post-init) (function :format "%v"))
-           (group :inline t :format "`After' Function (post-init recommended instead): %v"
+           (group :inline t :format "`After' Function (`Post-Init' recommended instead): %v"
                   (const :format "" :after) (function :format "%v"))
            (group :inline t :format "Name of downloaded file (`http' and `ftp' only): %v"
                   (const :format "" :localname) (string :format "%v"))
