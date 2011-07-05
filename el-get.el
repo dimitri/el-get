@@ -777,82 +777,110 @@ definition provided by `el-get' recipes locally.
 
 "
 
-:type `(repeat
-        (choice :tag "Entry"
-         (el-get-symbol :tag "Name of EL-Get Package")
-         (list
-          :tag "Full Recipe (or Recipe Override)"
-          (group :inline t :tag "EL-Get Package Name" :format "%t: %v"
-                 (const :format "" :name) (el-get-symbol :format "%v"))
-          (set
-           :inline t :format "%v\n"
-           (group :inline t  (const :format "" :depends)
-                  (el-get-repeat :tag "Names of packages on which this one depends" el-get-symbol))
-           (group :inline t :format "%t: %v%h"
-                  :tag "Underlying Package Name"
-                  :doc "When there is an underlying package manager (e.g. `apt')
+  :type
+  `(repeat
+    (choice
+     :tag "Entry"
+     (el-get-symbol :tag "Name of EL-Get Package")
+     (list
+      :tag "Full Recipe (or Recipe Override)"
+      (group :inline t :tag "EL-Get Package Name" :format "%t: %v"
+             (const :format "" :name) (el-get-symbol :format "%v"))
+      (set
+       :inline t :format "%v\n"
+       (group
+        :inline t  (const :format "" :depends)
+        (el-get-repeat
+         :tag "Names of packages on which this one depends" el-get-symbol))
+       (group
+        :inline t :format "%t: %v%h"
+        :tag "Underlying Package Name"
+        :doc "When there is an underlying package manager (e.g. `apt')
 this is the name to fetch in that system"
-                  (const :format "" :pkgname) (string :format "%v"))
+        (const :format "" :pkgname) (string :format "%v"))
 
-           (group :inline t :tag "Type" :format "%t: %v%h"
-                  :doc "(If omitted, this recipe provides overrides for one in recipes/)"
-                  (const :format "" :type)
-                  ,(append '(choice :value emacswiki :format "%[Value Menu%] %v"
-                                    )
-                           ;; A sorted list of method names
-                           (sort
-                            (reduce (lambda (r e)
-                                      (if (symbolp e)
-                                          (cons
-                                           (list 'const
-                                                 (intern (substring (prin1-to-string e) 1)))
-                                           r)
-                                        r))
-                                    el-get-methods
-                                    :initial-value nil)
-                            (lambda (x y)
-                              (string< (prin1-to-string (cadr x))
-                                       (prin1-to-string (cadr y)))))))
+       (group
+        :inline t :tag "Type" :format "%t: %v%h"
+        :doc "(If omitted, this recipe provides overrides for one in recipes/)"
+        (const :format "" :type)
+        ,(append '(choice :value emacswiki :format "%[Value Menu%] %v"
+                          )
+                 ;; A sorted list of method names
+                 (sort
+                  (reduce
+                   (lambda (r e)
+                     (if (symbolp e)
+                         (cons
+                          (list 'const
+                                (intern (substring (prin1-to-string e) 1)))
+                          r)
+                       r))
+                   el-get-methods
+                   :initial-value nil)
+                  (lambda (x y)
+                    (string< (prin1-to-string (cadr x))
+                             (prin1-to-string (cadr y)))))))
 
-           (group :inline t :format "Source URL: %v" (const :format "" :url) (string :format "%v"))
-           (group :inline t :format "Package Website: %v" (const :format "" :website) (string :format "%v"))
-           (group :inline t :format "Description: %v" (const :format "" :description) (string :format "%v"))
-           (group :inline t :format "General Build Recipe\n%v" (const :format "" :build)
-                  ,el-get-build-recipe-body)
-           (group :inline t  (const :format "" :load-path)
-                  (el-get-repeat :tag "Subdirectories to add to load-path" directory))
-           (group :inline t  (const :format "" :compile)
-                  (el-get-repeat  :tag "File/directory regexps to compile" regexp))
-           (group :inline t :format "%v" (const :format "" :info) (string :tag "Path to .info file or to its directory"))
-           (group :inline t (const :format "" :load)
-                  (el-get-repeat :tag "Relative paths to force-load" string))
-           (group :inline t :format "%v" (const :format "" :features) (repeat :tag "Features to `require'" el-get-symbol))
-           (group :inline t :format "Autoloads: %v"  :value (:autoloads t) (const :format "" :autoloads) (boolean :format "%[Toggle%] %v\n"))
-           (group :inline t :format "Options (`http-tar' and `cvs' only): %v" (const :format "" :options) (string :format "%v"))
-           (group :inline t :format "CVS Module: %v" (const :format "" :module)  (string :format "%v"))
-           (group :inline t :format "`Before' Function (`Prepare' recommended instead): %v" (const :format "" :before) (function :format "%v"))
-           (group :inline t :format "`Prepare' Function: %v"
-                  (const :format "" :prepare) (function :format "%v"))
-           (group :inline t :format "`Post-Init' Function: %v"
-                  (const :format "" :post-init) (function :format "%v"))
-           (group :inline t :format "`After' Function (`Post-Init' recommended instead): %v"
-                  (const :format "" :after) (function :format "%v"))
-           (group :inline t :format "Name of downloaded file (`http' and `ftp' only): %v"
-                  (const :format "" :localname) (string :format "%v"))
-           (group :inline t :format "Lazy: %v"  :value (:lazy t) (const :format "" :lazy) (boolean :format "%[Toggle%] %v\n"))
-           (group :inline t :format "Repository specification (`elpa' only): %v"
-                  (const :format "" :repo)
-                  (cons :format "\n%v" (string :tag "Name") (string :tag "URL"))))
-          (repeat
-           :inline t :tag "System-Specific Build Recipes"
-           (group :inline t
-                  (symbol :value ,(concat ":build/" (prin1-to-string system-type))
-                          :format "Build Tag: %v%h"
-                          :doc "Must be of the form `:build/<system-type>',
+       (group :inline t :format "Source URL: %v"
+              (const :format "" :url) (string :format "%v"))
+       (group :inline t :format "Package Website: %v"
+              (const :format "" :website) (string :format "%v"))
+       (group :inline t :format "Description: %v"
+              (const :format "" :description) (string :format "%v"))
+       (group :inline t :format "General Build Recipe\n%v"
+              (const :format "" :build) ,el-get-build-recipe-body)
+       (group :inline t  (const :format "" :load-path)
+              (el-get-repeat
+               :tag "Subdirectories to add to load-path" directory))
+       (group :inline t  (const :format "" :compile)
+              (el-get-repeat
+               :tag "File/directory regexps to compile" regexp))
+       (group :inline t :format "%v" (const :format "" :info)
+              (string :tag "Path to .info file or to its directory"))
+       (group :inline t (const :format "" :load)
+              (el-get-repeat :tag "Relative paths to force-load" string))
+       (group :inline t :format "%v" (const :format "" :features)
+              (repeat :tag "Features to `require'" el-get-symbol))
+       (group :inline t :format "Autoloads: %v" :value (:autoloads t)
+              (const :format "" :autoloads)
+              (boolean :format "%[Toggle%] %v\n"))
+       (group :inline t :format "Options (`http-tar' and `cvs' only): %v"
+              (const :format "" :options) (string :format "%v"))
+       (group :inline t :format "CVS Module: %v"
+              (const :format "" :module)
+              (string :format "%v"))
+       (group :inline t
+              :format "`Before' Function (`Prepare' recommended instead): %v"
+              (const :format "" :before) (function :format "%v"))
+       (group :inline t :format "`Prepare' Function: %v"
+              (const :format "" :prepare) (function :format "%v"))
+       (group :inline t :format "`Post-Init' Function: %v"
+              (const :format "" :post-init) (function :format "%v"))
+       (group :inline t
+              :format "`After' Function (`Post-Init' recommended instead): %v"
+              (const :format "" :after) (function :format "%v"))
+       (group :inline t
+              :format "Name of downloaded file (`http' and `ftp' only): %v"
+              (const :format "" :localname) (string :format "%v"))
+       (group :inline t :format "Lazy: %v"  :value (:lazy t)
+              (const :format "" :lazy) (boolean :format "%[Toggle%] %v\n"))
+       (group :inline t
+              :format "Repository specification (`elpa' only): %v"
+              (const :format "" :repo)
+              (cons :format "\n%v"
+                    (string :tag "Name")
+                    (string :tag "URL"))))
+      (repeat
+       :inline t :tag "System-Specific Build Recipes"
+       (group :inline t
+              (symbol :value ,(concat ":build/"
+                                      (prin1-to-string system-type))
+                      :format "Build Tag: %v%h"
+                      :doc "Must be of the form `:build/<system-type>',
 where `<system-type>' is the value of `system-type' on
 platforms where this recipe should apply"
-                          )
-                  ,el-get-build-recipe-body))))))
+                      )
+              ,el-get-build-recipe-body))))))
 
 
 (defun el-get-flatten (arg)
