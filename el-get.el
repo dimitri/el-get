@@ -834,7 +834,10 @@ this is the name to fetch in that system"
            (group :inline t :format "`After' Function (post-init recommended instead): %v"
                   (const :format "" :after) (function :format "%v"))
            (group :inline t :format "Name of downloaded file (`http' and `ftp' only): %v"
-                  (const :format "" :localname) (string :format "%v")))
+                  (const :format "" :localname) (string :format "%v"))
+           (group :inline t :format "Repository specification (`elpa' only): %v"
+                  (const :format "" :repo)
+                  (cons :format "\n%v" (string :tag "Name") (string :tag "URL"))))
           (repeat
            :inline t :tag "System-Specific Build Recipes"
            (group :inline t
