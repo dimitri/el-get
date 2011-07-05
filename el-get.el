@@ -849,16 +849,10 @@ this is the name to fetch in that system"
        (group :inline t :format "CVS Module: %v"
               (const :format "" :module)
               (string :format "%v"))
-       (group :inline t
-              :format "`Before' Function (`Prepare' recommended instead): %v"
-              (const :format "" :before) (function :format "%v"))
        (group :inline t :format "`Prepare' Function: %v"
               (const :format "" :prepare) (function :format "%v"))
        (group :inline t :format "`Post-Init' Function: %v"
               (const :format "" :post-init) (function :format "%v"))
-       (group :inline t
-              :format "`After' Function (`Post-Init' recommended instead): %v"
-              (const :format "" :after) (function :format "%v"))
        (group :inline t
               :format "Name of downloaded file (`http' and `ftp' only): %v"
               (const :format "" :localname) (string :format "%v"))
@@ -869,7 +863,13 @@ this is the name to fetch in that system"
               (const :format "" :repo)
               (cons :format "\n%v"
                     (string :tag "Name")
-                    (string :tag "URL"))))
+                    (string :tag "URL")))
+       (group :inline t
+              :format "`Before' Function (`Prepare' recommended instead): %v"
+              (const :format "" :before) (function :format "%v"))
+       (group :inline t
+              :format "`After' Function (`Post-Init' recommended instead): %v"
+              (const :format "" :after) (function :format "%v")))
       (repeat
        :inline t :tag "System-Specific Build Recipes"
        (group :inline t
