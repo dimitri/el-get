@@ -843,7 +843,11 @@ this is the name to fetch in that system"
               (repeat :tag "Features to `require'" el-get-symbol))
        (group :inline t :format "Autoloads: %v" :value (:autoloads t)
               (const :format "" :autoloads)
-              (boolean :format "%[Toggle%] %v\n"))
+              (choice
+               :tag "Type"
+               (boolean :format "generation %[Toggle%] %v\n")
+               (el-get-repeat
+                :tag "Relative paths to force-load" string)))
        (group :inline t :format "Options (`http-tar' and `cvs' only): %v"
               (const :format "" :options) (string :format "%v"))
        (group :inline t :format "CVS Module: %v"
