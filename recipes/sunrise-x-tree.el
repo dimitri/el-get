@@ -1,4 +1,4 @@
 (:name sunrise-x-tree
-       :type git
-       :url "git://github.com/emacsmirror/sunrise-x-tree.git"
+       :type emacswiki
+       :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-tree.el"
        :features sunrise-x-tree)

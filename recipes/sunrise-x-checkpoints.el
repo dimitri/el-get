@@ -1,4 +1,4 @@
 (:name sunrise-x-checkpoints
-       :type git
-       :url "git://github.com/emacsmirror/sunrise-x-checkpoints.git"
+       :type emacswiki
+       :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-checkpoints.el"
        :features sunrise-x-checkpoints)

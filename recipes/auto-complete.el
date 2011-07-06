@@ -1,4 +1,6 @@
 (:name auto-complete
+       :website "http://cx4a.org/software/auto-complete/"
+       :description "The most intelligent auto-completion extension."
        :type git
        :url "http://github.com/m2ym/auto-complete.git"
        :load-path "."

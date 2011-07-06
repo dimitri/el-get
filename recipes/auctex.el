@@ -1,4 +1,6 @@
 (:name auctex
+       :website "http://www.gnu.org/software/auctex/"
+       :description "AUCTeX is an extensible package for writing and formatting TeX files in GNU Emacs and XEmacs. It supports many different TeX macro packages, including AMS-TeX, LaTeX, Texinfo, ConTeXt, and docTeX (dtx files)."
        :type cvs
        :module "auctex"
        :url ":pserver:anonymous@cvs.sv.gnu.org:/sources/auctex"

@@ -1,4 +1,6 @@
 (:name cedet
+  :website "http://cedet.sourceforge.net/"
+  :description "CEDET is a Collection of Emacs Development Environment Tools written with the end goal of creating an advanced development environment in Emacs."
   :type bzr
   :url "bzr://cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk"
   :build ("touch `find . -name Makefile`" "make")

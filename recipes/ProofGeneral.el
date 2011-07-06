@@ -1,4 +1,6 @@
 (:name ProofGeneral ;; Requires Emacs >= 23.3
+       :website "http://proofgeneral.inf.ed.ac.uk/"
+       :description "Proof General is a generic front-end for proof assistants (also known as interactive theorem provers)"
        :type http-tar
        :options ("xzf")
        :url "http://proofgeneral.inf.ed.ac.uk/releases/ProofGeneral-4.1RC2.tgz"

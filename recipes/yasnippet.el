@@ -1,4 +1,6 @@
 (:name yasnippet
+       :website "http://code.google.com/p/yasnippet/"
+       :description "YASnippet is a template system for Emacs."
        :type svn
        :url "http://yasnippet.googlecode.com/svn/trunk/"
        :features "yasnippet"
@@ -29,4 +31,6 @@
                            ;; value"
                            (list (list 'quote
                                  (list (concat el-get-dir (file-name-as-directory "yasnippet") "snippets"))))))
-       )
+       ;; byte-compile load vc-svn and that fails
+       ;; see https://github.com/dimitri/el-get/issues/200
+       :compile nil)
