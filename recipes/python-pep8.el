@@ -1,6 +1,5 @@
 (:name python-pep8
-       :type git
-       :url "https://github.com/emacsmirror/python-pep8.git"
+       :type emacsmirror
        :features python-pep8
        :post-init (lambda ()
 		    (require 'tramp)))
