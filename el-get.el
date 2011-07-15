@@ -3186,6 +3186,9 @@ matching REGEX with TYPE and ARGS as parameter."
 (defvar el-get-package-menu-mode-map nil
   "Keymap for el-get-package-menu-mode")
 
+(defvar el-get-package-menu-sort-key nil
+  "sort packages by key")
+
 (defun el-get-package-menu-get-package-name ()
   (save-excursion
     (beginning-of-line)
@@ -3243,24 +3246,25 @@ matching REGEX with TYPE and ARGS as parameter."
 	(while (not (eobp))
 	  (let ((command (char-after))
 			(package-name (el-get-package-menu-get-package-name)))
-		(cond ((eq command ?I)
-			   (message "Installing %s..." package-name)
-			   (el-get-install package-name)
-			   (message "Installing %s...done" package-name))
-			  ((eq command ?U)
-			   (message "Updating %s..." package-name)
-			   (el-get-update package-name)
-			   (message "Updating %s...done" package-name))
-			  ((eq command ?D)
-			   (message "Deleting %s..." package-name)
-			   (el-get-remove package-name)
-			   (message "Deleting %s..." package-name))))
+		(cond
+		 ((eq command ?I)
+		  (message "Installing %s..." package-name)
+		  (el-get-install package-name)
+		  (message "Installing %s...done" package-name))
+		 ((eq command ?U)
+		  (message "Updating %s..." package-name)
+		  (el-get-update package-name)
+		  (message "Updating %s...done" package-name))
+		 ((eq command ?D)
+		  (message "Deleting %s..." package-name)
+		  (el-get-remove package-name)
+		  (message "Deleting %s..." package-name))))
 	  (forward-line))
 	(el-get-package-menu-revert)
 	(goto-char current-point)
 	(beginning-of-line)))
 
-(defun el-get-package-menu-package-describe ()
+(defun el-get-package-menu-describe ()
   (interactive)
   (el-get-describe (el-get-package-menu-get-package-name)))
 
@@ -3279,7 +3283,7 @@ matching REGEX with TYPE and ARGS as parameter."
   (define-key el-get-package-menu-mode-map " " 'el-get-package-menu-mark-unmark)
   (define-key el-get-package-menu-mode-map "g" 'el-get-package-menu-revert)
   (define-key el-get-package-menu-mode-map "x" 'el-get-package-menu-execute)
-  (define-key el-get-package-menu-mode-map "?" 'el-get-package-menu-package-describe)
+  (define-key el-get-package-menu-mode-map "?" 'el-get-package-menu-describe)
   (define-key el-get-package-menu-mode-map "h" 'el-get-package-menu-quick-help)
   (define-key el-get-package-menu-mode-map "q" 'quit-window))
 
@@ -3297,15 +3301,16 @@ matching REGEX with TYPE and ARGS as parameter."
 
 (defun el-get-print-package (package-name status desc)
   (let ((face
-		 (cond ((string= status "installed")
-				'font-lock-comment-face)
-			   ((string= status "required")
-				'font-lock-keyword-face)
-			   ((string= status "removed")
-				'font-lock-string-face)
-			   (t
-				(setq status "available")
-				'default))))
+		 (cond
+		  ((string= status "installed")
+		   'font-lock-comment-face)
+		  ((string= status "required")
+		   'font-lock-keyword-face)
+		  ((string= status "removed")
+		   'font-lock-string-face)
+		  (t
+		   (setq status "available")
+		   'default))))
 	(indent-to 2 1)
 	(insert (propertize package-name 'font-lock-face face))
 	(indent-to 30 1)
@@ -3321,14 +3326,51 @@ matching REGEX with TYPE and ARGS as parameter."
   (with-current-buffer (get-buffer-create "*el-get packages*")
 	(setq buffer-read-only nil)
 	(erase-buffer)
-	(mapc (lambda (package)
-			(let ((package-name (el-get-as-string (plist-get package :name))))
-			  (el-get-print-package package-name
-									(el-get-package-status package-name)
-									(plist-get package :description))))
-		  (el-get-read-all-recipes))
+	(let ((packages (el-get-read-all-recipes)))
+	  (let ((selector (cond
+					   ((string= el-get-package-menu-sort-key "Status")
+						#'(lambda (package)
+							(let ((package-name (el-get-as-string (plist-get package :name))))
+							  (el-get-package-status package-name))))
+					   ((string= el-get-package-menu-sort-key "Description")
+						#'(lambda (package)
+							(plist-get package :description)))
+					   (t
+						#'(lambda (package)
+							(el-get-as-string (plist-get package :name)))))))
+		(setq packages
+			  (sort packages
+					(lambda (left right)
+					  (let ((vleft (funcall selector left))
+							(vright (funcall selector right)))
+						(string< vleft vright))))))
+	  (mapc (lambda (package)
+			  (let ((package-name (el-get-as-string (plist-get package :name))))
+				(el-get-print-package package-name
+									  (el-get-package-status package-name)
+									  (plist-get package :description))))
+			packages))
 	(goto-char (point-min))
 	(current-buffer)))
+
+(defun el-get-package-menu-sort-by-column (&optional e)
+  "Sort the package menu by the last column clicked on."
+  (interactive (list last-input-event))
+  (if e (mouse-select-window e))
+  (let* ((pos (event-start e))
+		 (obj (posn-object pos))
+		 (col (if obj
+				  (get-text-property (cdr obj) 'column-name (car obj))
+				(get-text-property (posn-point pos) 'column-name))))
+    (setq el-get-package-menu-sort-key col)
+	(el-get-package-menu)))
+
+(defvar el-get-package-menu-sort-button-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [header-line mouse-1] 'el-get-package-menu-sort-by-column)
+    (define-key map [follow-link] 'mouse-face)
+    map)
+  "Local keymap for package menu sort buttons.")
 
 (defun el-get-package-menu ()
   (with-current-buffer (el-get-list-all-packages)
@@ -3346,8 +3388,8 @@ matching REGEX with TYPE and ARGS as parameter."
 				(propertize name
 							'column-name name
 							'help-echo "mouse-1: sort by column"
-							'mouse-face 'highlight))))
-		   ;; 'keymap package-menu-sort-button-map))))
+							'mouse-face 'highlight
+							'keymap el-get-package-menu-sort-button-map))))
 		   '((2 . "Package")
 			 (30 . "Status")
 			 (41 . "Description"))
