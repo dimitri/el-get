@@ -1,4 +1,5 @@
 (:name elscreen
+       :description "Screen Manager for Emacsen"
        :type http-tar
        :depends apel
        :options ("xzf")

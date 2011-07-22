@@ -1,1 +1,3 @@
-(:name gist :type elpa)
+(:name gist
+       :description "Emacs integration for gist.github.com"
+       :type elpa)

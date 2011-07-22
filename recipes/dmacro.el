@@ -1,4 +1,5 @@
 (:name dmacro
+       :description "Dynamic MACRO"
        :type http-tar
        :options ("xzf")
        :localname "dmacro.tar.gz"

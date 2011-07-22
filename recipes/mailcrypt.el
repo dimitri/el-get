@@ -1,4 +1,5 @@
 (:name mailcrypt
+       :description "Mail encryption with PGP"
        :type cvs
        :url ":pserver:anonymous@mailcrypt.cvs.sourceforge.net:/cvsroot/mailcrypt"
        :module "mailcrypt"

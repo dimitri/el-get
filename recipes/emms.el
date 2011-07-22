@@ -1,4 +1,5 @@
 (:name emms
+       :description "The Emacs Multimedia System"
        :type git
        :url "git://git.sv.gnu.org/emms.git"
        :info "doc"
