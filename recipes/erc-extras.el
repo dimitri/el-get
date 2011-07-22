@@ -1,5 +1,5 @@
 (:name erc-extras
-       :description "Some of ERC’s modules aren’t part of GnuEmacs due to copyright assignment issues or because they depend on other packages that aren’t a part of it."
+       :description "Some of ERC's modules aren't part of GnuEmacs due to copyright assignment issues or because they depend on other packages that aren't a part of it."
        :type http-tar
        :options ("xzf")       
        :url "http://ftp.gnu.org/gnu/erc/erc-5.3-extras.tar.gz"
