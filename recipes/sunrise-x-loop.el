@@ -1,4 +1,4 @@
 (:name sunrise-x-loop
-       :type git
-       :url "git://github.com/emacsmirror/sunrise-x-loop.git"
+       :type emacswiki
+       :url "https://github.com/emacsmirror/sunrise-commander/raw/master/sunrise-x-loop.el"
        :features sunrise-x-loop)

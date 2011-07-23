@@ -1,4 +1,6 @@
 (:name dtrt-indent
+       :website "http://savannah.nongnu.org/projects/dtrt-indent/"
+       :description "A minor mode that guesses the indentation offset originally used for creating source code files and transparently adjusts the corresponding settings in Emacs, making it more convenient to edit foreign files."
        :type git
        :url "git://git.savannah.nongnu.org/dtrt-indent.git"
        :features dtrt-indent

@@ -17,7 +17,7 @@ Current +el-get+ status is stable, ready for daily use and packed with extra
 features that make life easier.  There are some more things we could do, as
 always, but they will be about smoothing things further.
 
-=== Last released version
+=== Latest released version
 
 +el-get+ version 2.1 is available, with a boatload of features, including
 autoloads support, byte-compiling in an external "clean room" Emacs
@@ -26,13 +26,13 @@ functions to +eval-after-load+), and multi repositories +ELPA+ support.
 
 === Version numbering
 
-Version String are now inspired by how Emacs itself numbers its version.
+Version String are now inspired by how Emacs itself numbers its versions.
 First is the major version number, then a dot, then the minor version
 number.  The minor version number is 0 when still developping the next major
-version.  So 2.0 is a developer release while 2.1 will be the next stable
+version.  So 3.0 is a developer release while 3.1 will be the next stable
 release.
 
-Please not that this versioning policy has been picked while backing
+Please note that this versioning policy has been picked while backing
 1.2~dev, so 1.0 was a "stable" release in fact.  Ah, history.
 
 == How to Install it?
@@ -73,7 +73,29 @@ avoid this with the following snippet instead:
 See next section for details about how to setup you emacs so that it's able
 to benefit from +el-get+ automatically.
 
-== What is this?
+== Basic usage
+
+Now that +el-get+ is installed, simply use +M-x el-get-install+ and pick
+whatever package you need.  Arrange to have +el-get+ part of your setup, so
+that at next emacs startup the installed packages are initialized.  Here's
+how to:
+
+--------------------------------------
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+
+(unless (require 'el-get nil t)
+  (url-retrieve
+   "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+   (lambda (s)
+     (end-of-buffer)
+     (eval-print-last-sexp))))
+
+(el-get 'sync)
+--------------------------------------
+
+That's the basic setup.
+
+== Advanced setup with local recipes
 
 Of course, my emacs setup is managed in a private git repository. Some
 people on +#emacs+ are using +git submodules+ (or was it straight import)
@@ -85,10 +107,9 @@ run emacs, and I want this documentation to be usable as-is. Enters el-get!
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 (require 'el-get)
 
+;; local sources
 (setq el-get-sources
-      '(cssh el-get switch-window vkill google-maps nxhtml xcscope yasnippet
-
-	(:name magit
+      '((:name magit
 	       :after (lambda () (global-set-key (kbd "C-x C-z") 'magit-status)))
 
 	(:name asciidoc
@@ -104,7 +125,12 @@ run emacs, and I want this documentation to be usable as-is. Enters el-get!
         (:name dictionary-el    :type apt-get)
         (:name emacs-goodies-el :type apt-get)))
 
-(el-get)
+(setq my-packages
+      (append
+       '(cssh el-get switch-window vkill google-maps nxhtml xcscope yasnippet)
+       (mapcar 'el-get-source-name el-get-sources)))
+
+(el-get 'sync my-packages)
 --------------------------------------
 
 So now you have a pretty good documentation of the packages you want
@@ -154,13 +180,14 @@ You even get a progress report!
 
 === Sources
 
-See the documentation of the +el-get-sources+ variable for details.
+See the documentation of the +el-get-sources+ variable for details.  Please
+note that +el-get-sources+ is a 
 
 Note that you can also give a mix of +packages+ symbols, +inline recipes+
 and +source lists+ to +el-get+ as arguments, and completely bypass the
 +el-get-sources+ variable.
 
-  (el-get 'sync 'package 'name (:name or :type emacswiki) sources)
+  (el-get 'sync 'package 'name 'list-of-packages-names-or-symbol)
 
 It is still recommended to +(setq el-get-sources '(list of packages))+ then
 use +(el-get 'sync)+, so that commands such as +el-get-update+ know which
@@ -209,10 +236,16 @@ general purposes hooks facilities: +el-get-post-install-hooks+ and
 
 Yes, ok.
 
+M-x el-get-describe::
+
+    Prompt for a package name, with completion, then open an +*Help*+ window
+    with details about the selected package.  Those include current status,
+    website, description, installation method, full recipe, and buttons to
+    easily install, update or remove the package.
+
 M-x el-get-sync::
 
-    Synchronously make your current el-get status match +el-get-sources+,
-    by installing and initializing all your packages.
+    Synchronously install any "required" package and init any "installed" one.
 
 M-x el-get-cd::
 
@@ -236,6 +269,10 @@ M-x el-get-update::
 
     Will prompt for an installed package name, with completion, then update
     it. This will run the +build+ commands and +init+ the package again.
+
+M-x el-get-self-update::
+
+    Update only one package, +el-get+ itself.
 
 M-x el-get-update-all::
 
@@ -271,6 +308,32 @@ M-x el-get-emacswiki-refresh::
     +~/.emacs.d/el-get/el-get/recipes/emacswiki/+ if you didn't change
     +el-get-dir+.
 
+=== Useful functions
+
+el-get-package-types-alist (statuses &rest types)::
+
+    Return an alist of package names that are of given types. Only consider
+    packages whose status is `member' of STATUSES, which defaults to
+    installed, required and removed.
+
+  ELISP> (el-get-package-types-alist "installed" 'cvs 'emacswiki)
+  ((emacs-w3m . cvs)
+   (rect-mark . emacswiki)
+   (icomplete+ . emacswiki)
+   (php-mode-improved . emacswiki)
+   (rainbow-delimiters . emacswiki)
+   (goto-last-change . emacswiki)
+   (emacs-goodies-el . cvs))
+  
+el-get-extra-packages (&rest packages)::
+
+      Return installed or required packages that are not in given package
+      list.
+
+  ELISP> (el-get-extra-packages dim-packages)
+  ((verbiste "installed")
+   (package "installed"))
+
 == Internals
 
 TODO: explain the symlinks in +~/.emacs.d/el-get+. For now, read the source
@@ -284,6 +347,20 @@ Adding +bzr+ support for example was only about writing 2 functions, mostly
 using copy paste. Here's the patch: https://github.com/dimitri/el-get/commit/63e9018102bdeb7b6d9136db231adcd983087217#L0R437
 
 == Upgrade Notes
+
+=== Upgrading to 3.0
+
+Please remind that +3.0+ is a development branch.  A change has been
+included so that +el-get-sources+ is now only another source for recipes,
+and +(el-get '...)+ will now only install and initialize known "required"
+and "installed" packages.
+
+The documentation has been updated to detail the new setup.
+
+If you have packages that have been installed in the past but you no longer
+want in your setup, here's how to get them out of the way:
+
+  M-: (el-get-save-package-status "package-name-here" "removed")
 
 === Upgrading to 1.1
 
