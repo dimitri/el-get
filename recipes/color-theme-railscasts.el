@@ -1,4 +1,5 @@
 (:name color-theme-railscasts
        :type git 
        :url "https://github.com/olegshaldybin/color-theme-railscasts.git"
-       :depends color-theme)
+       :depends color-theme
+       :load "color-theme-railscasts.el")
