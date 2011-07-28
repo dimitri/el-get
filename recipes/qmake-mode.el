@@ -1,1 +1,6 @@
-(:name qmake-mode :type hg :url "https://qmake-mode.googlecode.com/hg/" :load "qmake.el" :features qmake-mode)
+(:name qmake-mode
+       :description "Qmake mode for emacs"
+       :type hg
+       :url "https://qmake-mode.googlecode.com/hg/"
+       :load "qmake.el"
+       :features qmake-mode)

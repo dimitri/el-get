@@ -1,2 +1,3 @@
 (:name auto-complete-etags
-       :type emacswiki)
+       :type emacswiki
+       :description "Auto-complete sources for etags")
