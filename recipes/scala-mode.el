@@ -1,4 +1,5 @@
 (:name scala-mode
+       :description "Major mode for editing Scala code."
        :type svn
        :url "http://lampsvn.epfl.ch/svn-repos/scala/scala-tool-support/trunk/src/emacs/"
        :build ("make")

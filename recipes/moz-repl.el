@@ -1,1 +1,4 @@
-(:name moz-repl :type http :url "http://github.com/bard/mozrepl/raw/master/chrome/content/moz.el")
+(:name moz-repl
+       :description "Lets current buffer interact with inferior mozilla."
+       :type http
+       :url "http://github.com/bard/mozrepl/raw/master/chrome/content/moz.el")

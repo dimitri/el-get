@@ -1,4 +1,5 @@
 (:name undo-tree
+       :description "Treat undo history as a tree"
        :type git
        :url "http://www.dr-qubit.org/git/undo-tree.git"
        :after (lambda ()

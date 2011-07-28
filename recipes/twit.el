@@ -1,1 +1,3 @@
-(:name twit :type emacswiki)
+(:name twit
+       :description "Interface with twitter.com"
+       :type emacswiki)

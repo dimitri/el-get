@@ -1,4 +1,5 @@
 (:name haskell-mode-exts
+       :description "Modular Emacs extensions to Haskell's editing and interactive modes."
        :type git
        :url "http://github.com/pheaver/haskell-mode-exts.git"
        :load-path (".")

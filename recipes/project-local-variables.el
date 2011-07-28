@@ -1,1 +1,3 @@
-(:name project-local-variables :type elpa)
+(:name project-local-variables
+       :description "Set project-local variables from a file."
+       :type elpa)
