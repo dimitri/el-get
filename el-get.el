@@ -3218,6 +3218,231 @@ matching REGEX with TYPE and ARGS as parameter."
         (with-current-buffer standard-output
           (buffer-string))))))
 
+;;
+;; Package Menu
+;;
+
+(defvar el-get-package-menu-mode-hook nil
+  "Hooks to run after el-get package menu init.")
+
+(defvar el-get-package-menu-mode-map nil
+  "Keymap for el-get-package-menu-mode")
+
+(defvar el-get-package-menu-sort-key nil
+  "sort packages by key")
+
+(defun el-get-package-menu-get-package-name ()
+  (save-excursion
+    (beginning-of-line)
+    (if (looking-at ". \\([^ \t]*\\)")
+		(match-string 1))))
+
+(defun el-get-package-menu-get-status ()
+  (save-excursion
+    (beginning-of-line)
+    (if (looking-at ". [^ \t]*[ \t]*\\([^ \t\n]*\\)")
+		(match-string 1))))
+
+(defun el-get-package-menu-mark (what)
+  (unless (eobp)
+    (let ((buffer-read-only nil))
+      (beginning-of-line)
+      (delete-char 1)
+      (insert what)
+      (forward-line)
+	  (setq buffer-read-only t))))
+
+(defun el-get-package-menu-mark-install ()
+  (interactive)
+  (if (or (string= (el-get-package-menu-get-status) "available")
+		  (string= (el-get-package-menu-get-status) "removed"))
+	  (el-get-package-menu-mark "I")))
+
+(defun el-get-package-menu-mark-update ()
+  (interactive)
+  (if (or (string= (el-get-package-menu-get-status) "installed")
+		  (string= (el-get-package-menu-get-status) "required"))
+	  (el-get-package-menu-mark "U")))
+
+(defun el-get-package-menu-mark-delete ()
+  (interactive)
+  (if (or (string= (el-get-package-menu-get-status) "installed")
+		  (string= (el-get-package-menu-get-status) "required"))
+	  (el-get-package-menu-mark "D")))
+
+(defun el-get-package-menu-mark-unmark ()
+  (interactive)
+  (el-get-package-menu-mark " "))
+
+(defun el-get-package-menu-revert ()
+  (interactive)
+  (let ((current-point (point)))
+	(el-get-package-menu)
+	(goto-char current-point)
+	(beginning-of-line)))
+
+(defun el-get-package-menu-execute ()
+  (interactive)
+  (let ((current-point (point)))
+	(goto-char (point-min))
+	(while (not (eobp))
+	  (let ((command (char-after))
+			(package-name (el-get-package-menu-get-package-name)))
+		(cond
+		 ((eq command ?I)
+		  (message "Installing %s..." package-name)
+		  (el-get-install package-name)
+		  (message "Installing %s...done" package-name))
+		 ((eq command ?U)
+		  (message "Updating %s..." package-name)
+		  (el-get-update package-name)
+		  (message "Updating %s...done" package-name))
+		 ((eq command ?D)
+		  (message "Deleting %s..." package-name)
+		  (el-get-remove package-name)
+		  (message "Deleting %s..." package-name))))
+	  (forward-line))
+	(el-get-package-menu-revert)
+	(goto-char current-point)
+	(beginning-of-line)))
+
+(defun el-get-package-menu-describe ()
+  (interactive)
+  (el-get-describe (el-get-package-menu-get-package-name)))
+
+(defun el-get-package-menu-quick-help ()
+  (interactive)
+  (message "n-ext, p-revious, i-nstall, u-pdate, d-elete, SPC-unmark, g-revert, x-execute, ?-package describe, h-elp, q-uit"))
+
+(unless el-get-package-menu-mode-map
+  (setq el-get-package-menu-mode-map (make-keymap))
+  (suppress-keymap el-get-package-menu-mode-map)
+  (define-key el-get-package-menu-mode-map "n" 'next-line)
+  (define-key el-get-package-menu-mode-map "p" 'previous-line)
+  (define-key el-get-package-menu-mode-map "i" 'el-get-package-menu-mark-install)
+  (define-key el-get-package-menu-mode-map "u" 'el-get-package-menu-mark-update)
+  (define-key el-get-package-menu-mode-map "d" 'el-get-package-menu-mark-delete)
+  (define-key el-get-package-menu-mode-map " " 'el-get-package-menu-mark-unmark)
+  (define-key el-get-package-menu-mode-map "g" 'el-get-package-menu-revert)
+  (define-key el-get-package-menu-mode-map "x" 'el-get-package-menu-execute)
+  (define-key el-get-package-menu-mode-map "?" 'el-get-package-menu-describe)
+  (define-key el-get-package-menu-mode-map "h" 'el-get-package-menu-quick-help)
+  (define-key el-get-package-menu-mode-map "q" 'quit-window))
+
+(defun el-get-package-menu-mode ()
+  "Major mode for browsing a list of packages."
+  (kill-all-local-variables)
+  (use-local-map el-get-package-menu-mode-map)
+  (setq major-mode 'el-get-package-menu-mode)
+  (setq mode-name "Package-Menu")
+  (setq buffer-read-only t)
+  (setq truncate-lines t)
+  (if (fboundp 'run-mode-hooks)
+	  (run-mode-hooks 'el-get-package-menu-mode-hook)
+	(run-hooks 'el-get-package-menu-mode-hook)))
+
+(defun el-get-print-package (package-name status desc)
+  (let ((face
+		 (cond
+		  ((string= status "installed")
+		   'font-lock-comment-face)
+		  ((string= status "required")
+		   'font-lock-keyword-face)
+		  ((string= status "removed")
+		   'font-lock-string-face)
+		  (t
+		   (setq status "available")
+		   'default))))
+	(indent-to 2 1)
+	(insert (propertize package-name 'font-lock-face face))
+	(indent-to 30 1)
+	(insert (propertize status 'font-lock-face face))
+	(when desc
+	  (indent-to 41 1)
+	  (insert (propertize
+			   (replace-regexp-in-string "\n" " " desc)
+			   'font-lock-face face)))
+	(insert "\n")))
+
+(defun el-get-list-all-packages ()
+  (with-current-buffer (get-buffer-create "*el-get packages*")
+	(setq buffer-read-only nil)
+	(erase-buffer)
+	(let ((packages (el-get-read-all-recipes)))
+	  (let ((selector (cond
+					   ((string= el-get-package-menu-sort-key "Status")
+						#'(lambda (package)
+							(let ((package-name (el-get-as-string (plist-get package :name))))
+							  (el-get-package-status package-name))))
+					   ((string= el-get-package-menu-sort-key "Description")
+						#'(lambda (package)
+							(plist-get package :description)))
+					   (t
+						#'(lambda (package)
+							(el-get-as-string (plist-get package :name)))))))
+		(setq packages
+			  (sort packages
+					(lambda (left right)
+					  (let ((vleft (funcall selector left))
+							(vright (funcall selector right)))
+						(string< vleft vright))))))
+	  (mapc (lambda (package)
+			  (let ((package-name (el-get-as-string (plist-get package :name))))
+				(el-get-print-package package-name
+									  (el-get-package-status package-name)
+									  (plist-get package :description))))
+			packages))
+	(goto-char (point-min))
+	(current-buffer)))
+
+(defun el-get-package-menu-sort-by-column (&optional e)
+  "Sort the package menu by the last column clicked on."
+  (interactive (list last-input-event))
+  (if e (mouse-select-window e))
+  (let* ((pos (event-start e))
+		 (obj (posn-object pos))
+		 (col (if obj
+				  (get-text-property (cdr obj) 'column-name (car obj))
+				(get-text-property (posn-point pos) 'column-name))))
+    (setq el-get-package-menu-sort-key col)
+	(el-get-package-menu)))
+
+(defvar el-get-package-menu-sort-button-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [header-line mouse-1] 'el-get-package-menu-sort-by-column)
+    (define-key map [follow-link] 'mouse-face)
+    map)
+  "Local keymap for package menu sort buttons.")
+
+(defun el-get-package-menu ()
+  (with-current-buffer (el-get-list-all-packages)
+	(el-get-package-menu-mode)
+	(setq header-line-format
+		  (mapconcat
+		   (lambda (pair)
+			 (let ((column (car pair))
+				   (name (cdr pair)))
+			   (concat
+				;; Insert a space that aligns the button properly.
+				(propertize " " 'display (list 'space :align-to column)
+							'face 'fixed-pitch)
+				;; Set up the column button.
+				(propertize name
+							'column-name name
+							'help-echo "mouse-1: sort by column"
+							'mouse-face 'highlight
+							'keymap el-get-package-menu-sort-button-map))))
+		   '((2 . "Package")
+			 (30 . "Status")
+			 (41 . "Description"))
+		   ""))
+	(pop-to-buffer (current-buffer))))
+
+(defun el-get-list-packages ()
+  "Display a list of packages."
+  (interactive)
+  (el-get-package-menu))
+
 
 ;;
 ;; User Interface, Non Interactive part
