@@ -1,7 +1,7 @@
 (:name python-mode
        :type git
        :url "https://github.com/emacsmirror/python-mode.git"
-       :features (python-mode doctest-mode)
+       :features (python-mode)
        :compile nil
        :post-init (lambda ()
 		    (add-to-list 'auto-mode-alist '("\\.py$" . python-mode))
