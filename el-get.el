@@ -2262,7 +2262,11 @@ newer, then compilation will be skipped."
       files)))
 
 (defun el-get-funcall-from-command-line-args ()
-  "Like `funcall', but reads FUNCTION and ARGS from command line"
+  "Like `funcall', but reads FUNCTION and ARGS from command line.
+
+Also set a command-line-function to prevent emacs to process the remaining arguments.
+A simple lambda function returning t will do."
+  (add-to-list 'command-line-functions '(lambda () t))
   (let ((args (mapcar 'read command-line-args-left)))
     (apply 'funcall args)))
 
