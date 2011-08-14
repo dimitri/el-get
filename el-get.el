@@ -631,8 +631,9 @@ definition provided by `el-get' recipes locally.
 :pkgname
 
     The name of the package for the underlying package management
-    system (`apt-get', `fink' or `pacman'), which can be
-    different from the Emacs package name.
+    system (`apt-get', `fink' or `pacman', also supported by
+    `emacsmirror'), which can be different from the Emacs package
+    name.
 
 :type
 
@@ -1352,8 +1353,11 @@ found."
 ;; emacsmirror support
 ;;
 (defun el-get-emacsmirror-clone (package url post-install-fun)
-  (let ((url (or url (format el-get-emacsmirror-base-url package))))
+  (let* ((source  (el-get-package-def package))
+         (pkgname (or (plist-get source :pkgname) package))
+	 (url     (or url (format el-get-emacsmirror-base-url pkgname))))
     (el-get-git-clone package url post-install-fun)))
+
 
 ;;
 ;; git-svn support
