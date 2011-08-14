@@ -1185,6 +1185,13 @@ properties:
 
    When set to non-nil value, run synchronously.
 
+:stdin
+
+   Standard input to use for the process.  A lisp value is
+   expected, it will get `prin1-to-string' then either saved to a
+   file for a synchronous process or sent with
+   `process-send-string' for an asynchronous one.
+
 Any other property will get put into the process object.
 "
   (condition-case err
@@ -1200,6 +1207,7 @@ Any other property will get put into the process object.
                (shell   (plist-get c :shell))
                (sync    (if (plist-member c :sync) (plist-get c :sync)
                           el-get-default-process-sync))
+	       (stdin   (plist-member c :stdin))
                (default-directory (if cdir
                                       (file-name-as-directory
                                        (expand-file-name cdir))
@@ -1207,7 +1215,10 @@ Any other property will get put into the process object.
           (if sync
               (let* ((startf (if shell #'call-process-shell-command #'call-process))
                      (dummy  (message "el-get is waiting for %S to complete" cname))
-                     (status (apply startf program nil cbuf t args))
+		     (infile (when stdin
+			       (with-temp-file (make-temp-file "el-get")
+				 (insert (prin1-to-string stdin)))))
+		     (status (apply startf program infile cbuf t args))
                      (message (plist-get c :message))
                      (errorm  (plist-get c :error))
                      (next    (cdr commands)))
@@ -1230,6 +1241,8 @@ Any other property will get put into the process object.
               (process-put proc :el-get-package package)
               (process-put proc :el-get-final-func final-func)
               (process-put proc :el-get-start-process-list (cdr commands))
+	      (when stdin
+		(process-send-string proc (prin1-to-string stdin)))
               (set-process-sentinel proc 'el-get-start-process-list-sentinel)
               (when filter (set-process-filter proc filter)))))
 	;; no commands, still run the final-func
@@ -2262,63 +2275,48 @@ newer, then compilation will be skipped."
         (mapc (apply-partially 'add-to-list 'files) el-path)))
       files)))
 
-(defun el-get-funcall-from-command-line-args ()
-  "Like `funcall', but reads FUNCTION and ARGS from command line"
-  (let ((args (mapcar 'read command-line-args-left)))
-    (apply 'funcall args)))
+(defun el-get-byte-compile-from-stdin ()
+  "byte compile files read on STDIN
 
-(defun el-get-construct-external-funcall (function &rest arguments)
-  "Generate a shell command that calls FUNCTION on ARGUMENTS in a
-separate emacs process.
+This is run as a subprocess with an `emacs -Q -batch -f
+el-get-byte-compile` command and with the file list as stdin,
+written by `prin1-to-string' so that `read' is able to process
+it."
+  (let ((files (read)))
+    (loop for f in files
+	  do (progn
+	       (message "el-get-byte-compile-from-stdin %s" f)
+	       (el-get-byte-compile-file f)))))
 
-The command is returned as a list of arguments. Joining them with
-spaces yields the entire command as a single string."
-  (let ((emacs el-get-emacs)
-        (libs (delete-dups
-               (remove nil
-                       (mapcar (lambda (func) (symbol-file func 'defun))
-                               (cons 'el-get-funcall-from-command-line-args
-                                     (remove-if-not 'symbolp (cons function arguments))))))))
-    (mapcar
-     'shell-quote-argument
-     (nconc
-      (list emacs)
-      (split-string "-Q -batch -f toggle-debug-on-error")
-      (mapcan (lambda (lib) (list "-l" (file-name-sans-extension lib)))
-              libs)
-      (split-string "-f el-get-funcall-from-command-line-args")
-      (mapcar 'prin1-to-string (cons function arguments))))))
+(defun el-get-byte-compile-process (package buffer working-dir)
+  "return the 'el-get-start-process-list' entry to byte compile PACKAGE"
+  (let ((bytecomp-command
+	 (split-string
+	  (format (concat "%s -Q -batch -f toggle-debug-on-error "
+			  "-l %s "
+			  "-f el-get-byte-compile-from-stdin ")
+		  el-get-emacs
+		  (file-name-sans-extension
+		   (symbol-file 'el-get-byte-compile-from-stdin 'defun)))))
+	(bytecomp-files (el-get-assemble-files-for-byte-compilation package)))
+    `(:command-name "byte-compile"
+		    :buffer-name ,buffer
+		    :default-directory ,working-dir
+		    :shell t
+		    :sync sync
+		    :stdin ,bytecomp-files
+		    :program ,(car bytecomp-command)
+		    :args ,(cdr bytecomp-command)
+		    :message ,(format "el-get-build %s: byte-compile ok." package)
+		    :error ,(format
+			     "el-get could not byte-compile %s" package))))
 
-(defun el-get-construct-external-byte-compile-command (files)
-  "Return a shell command to byte-compile FILES in a separate emacs process.
-
-The command is returned as a list of arguments. Joining them with
-spaces yields the entire command as a single string."
-  (el-get-construct-external-funcall 'mapc
-				     'el-get-byte-compile-file-or-directory
-				     files))
-
-(defun el-get-construct-package-byte-compile-command (package)
-  "Return a shell command to byte-compile PACKAGE in a separate emacs process.
-
-The command is returned as a list of arguments. Joining them with
-spaces yields the entire command as a single string.
-
-If `el-get-byte-compile' is or the package does not require
-byte-compiling (maybe because the installation method already
-takes care of it), thiw function returns nil."
-  (when el-get-byte-compile
-    (let ((files (el-get-assemble-files-for-byte-compilation package)))
-      (when files
-        (el-get-construct-external-byte-compile-command files)))))
-
-;; Retained for compatibility
-(defun el-get-byte-compile (package &optional IGNORED)
-  (let* ((bytecomp-command
-	  (el-get-construct-package-byte-compile-command package))
-	 (bytecomp-command-string (mapconcat 'identity bytecomp-command " ")))
-    (el-get-verbose-message "%s" bytecomp-command-string)
-    (shell-command-to-string bytecomp-command-string)))
+(defun el-get-byte-compile (package)
+  "byte compile files for given package"
+  (let ((pdir (el-get-package-directory package))
+	(buf  "*el-get-byte-compile*"))
+    (el-get-start-process-list
+     package (list (el-get-byte-compile-process package buf pdir)) nil)))
 
 (defun el-get-build-commands (package)
   "Return a list of build commands for the named PACKAGE.
@@ -2379,8 +2377,6 @@ recursion.
 	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir))
 	 (buf    (format "*el-get-build: %s*" package))
 	 (default-directory (file-name-as-directory wdir))
-         (bytecomp-command
-	  (el-get-construct-package-byte-compile-command package))
 	 (process-list
 	  (mapcar (lambda (c)
 		    (let* ((split    (if (stringp c)
@@ -2404,17 +2400,7 @@ recursion.
 		  commands))
 	 (full-process-list ;; includes byte compiling
 	  (append (when bytecomp-command
-		    (list
-		     `(:command-name "byte-compile"
-				     :buffer-name ,buf
-				     :default-directory ,wdir
-				     :shell t
-				     :sync sync
-				     :program ,(car bytecomp-command)
-				     :args ,(cdr bytecomp-command)
-				     :message ,(format "el-get-build %s: byte-compile ok." package)
-				     :error ,(format
-					      "el-get could not byte-compile %s" package))))
+		    (list (el-get-byte-compile-process package buf wdir)))
 		  process-list))
 	 ;; unless installing-info, post-build-fun should take care of
 	 ;; building info too
