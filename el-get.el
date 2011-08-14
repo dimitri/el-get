@@ -2402,9 +2402,11 @@ recursion.
 	 (bytecomp-files (when el-get-byte-compile
 			   (el-get-assemble-files-for-byte-compilation package)))
 	 (full-process-list ;; includes byte compiling
-	  (append (when bytecomp-files
-		    (list (el-get-byte-compile-process package buf wdir)))
-		  process-list))
+	  (append
+	   (when bytecomp-files
+	     (list
+	      (el-get-byte-compile-process package buf wdir bytecomp-files)))
+	   process-list))
 	 ;; unless installing-info, post-build-fun should take care of
 	 ;; building info too
 	 (build-info-then-post-build-fun
