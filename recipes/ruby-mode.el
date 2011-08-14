@@ -1,1 +1,3 @@
-(:name ruby-mode :type elpa)
+(:name ruby-mode
+       :description "Major mode for editing Ruby files. RubyMode provides font-locking, indentation support, and navigation for Ruby code."
+       :type elpa)

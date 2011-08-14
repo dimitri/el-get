@@ -1,1 +1,3 @@
-(:name dired-plus :type emacsmirror)
+(:name dired-plus
+       :type emacsmirror)
+       :description "Extensions to Dired")

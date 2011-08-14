@@ -1,4 +1,5 @@
 (:name hs-mode
+       :description "Haskell editing mode."
        :type git
        :url "http://github.com/chrisdone/haskell-emacs.git"
        :depends auto-complete

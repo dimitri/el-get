@@ -1,5 +1,6 @@
 (:name tuareg-mode
        :type emacsmirror
+       :description "A  GOOD Emacs mode to edit Objective Caml code."
        :load-path (".")
        :build ("make elc")
        :post-init

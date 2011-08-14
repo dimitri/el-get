@@ -1,4 +1,5 @@
 (:name slime
+       :description "Superior Lisp Interaction Mode for Emacs"
        :type git
        :module "slime"
        :info "doc"

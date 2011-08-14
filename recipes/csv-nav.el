@@ -1,1 +1,3 @@
-(:name csv-nav :type emacswiki)
+(:name csv-nav
+       :description "Navigate and edit CSV files"
+       :type emacswiki)

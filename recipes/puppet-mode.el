@@ -1,4 +1,5 @@
 (:name puppet-mode
+       :description "A simple mode for editing puppet manifests"
        :type http
        :url "http://projects.puppetlabs.com/projects/puppet/repository/revisions/master/raw/ext/emacs/puppet-mode.el"
        :after (lambda ()
