@@ -801,6 +801,7 @@ definition provided by `el-get' recipes locally.
   `(repeat
     (choice
      :tag "Entry"
+     :value (:name "")
      (el-get-symbol :tag "Name of EL-Get Package")
      (list
       :tag "Full Recipe (or Recipe Override)"
