@@ -172,7 +172,12 @@ Each hook is a binay function accepting a package and error data"
 
 (defcustom el-get-byte-compile t
   "Whether or not to byte-compile packages. Can be used to
-disable byte-compilation globally."
+disable byte-compilation globally, unless this process is not
+controlled by `el-get' itself.
+
+The cases when `el-get' loses control are with \"advanced\"
+packaging systems (apt-get, fink, pacman, elpa) or when the
+recipe contains a :build rule (using a Makefile for example)."
   :group 'el-get
   :type 'boolean)
 
