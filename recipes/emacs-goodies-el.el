@@ -9,4 +9,6 @@
 		   "elisp/devscripts-el"
 		   "elisp/dpkg-dev-el"
 		   "elisp/emacs-goodies-el")
-       :load ("elisp/dpkg-dev-el/dpkg-dev-el-loaddefs.el"))
+       :load ("elisp/dpkg-dev-el/dpkg-dev-el-loaddefs.el"
+	      "elisp/emacs-goodies-el/emacs-goodies-loaddefs.el")
+       :build ("cd elisp/emacs-goodies-el && sh emacs-goodies-loaddefs.make"))
