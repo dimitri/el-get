@@ -1,6 +1,5 @@
 (:name nxhtml
-       :type git
+       :type emacsmirror
        :build
          (list (concat el-get-emacs " -batch -q -no-site-file -L . -l nxhtmlmaint.el -f nxhtmlmaint-start-byte-compilation"))
-       :url "http://github.com/emacsmirror/nxhtml.git"
        :load "autostart.el")
