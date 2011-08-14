@@ -2288,7 +2288,7 @@ it."
 	       (message "el-get-byte-compile-from-stdin %s" f)
 	       (el-get-byte-compile-file f)))))
 
-(defun el-get-byte-compile-process (package buffer working-dir)
+(defun el-get-byte-compile-process (package buffer working-dir files)
   "return the 'el-get-start-process-list' entry to byte compile PACKAGE"
   (let ((bytecomp-command
 	 (split-string
@@ -2297,14 +2297,13 @@ it."
 			  "-f el-get-byte-compile-from-stdin ")
 		  el-get-emacs
 		  (file-name-sans-extension
-		   (symbol-file 'el-get-byte-compile-from-stdin 'defun)))))
-	(bytecomp-files (el-get-assemble-files-for-byte-compilation package)))
+		   (symbol-file 'el-get-byte-compile-from-stdin 'defun))))))
     `(:command-name "byte-compile"
 		    :buffer-name ,buffer
 		    :default-directory ,working-dir
 		    :shell t
 		    :sync sync
-		    :stdin ,bytecomp-files
+		    :stdin ,files
 		    :program ,(car bytecomp-command)
 		    :args ,(cdr bytecomp-command)
 		    :message ,(format "el-get-build %s: byte-compile ok." package)
@@ -2313,10 +2312,12 @@ it."
 
 (defun el-get-byte-compile (package)
   "byte compile files for given package"
-  (let ((pdir (el-get-package-directory package))
-	(buf  "*el-get-byte-compile*"))
-    (el-get-start-process-list
-     package (list (el-get-byte-compile-process package buf pdir)) nil)))
+  (let ((pdir  (el-get-package-directory package))
+	(buf   "*el-get-byte-compile*")
+	(files (el-get-assemble-files-for-byte-compilation package)))
+    (when files
+      (el-get-start-process-list
+       package (list (el-get-byte-compile-process package buf pdir)) nil))))
 
 (defun el-get-build-commands (package)
   "Return a list of build commands for the named PACKAGE.
@@ -2398,8 +2399,10 @@ recursion.
 				      :error ,(format
 					       "el-get could not build %s [%s]" package c))))
 		  commands))
+	 (bytecomp-files (when el-get-byte-compile
+			   (el-get-assemble-files-for-byte-compilation package)))
 	 (full-process-list ;; includes byte compiling
-	  (append (when bytecomp-command
+	  (append (when bytecomp-files
 		    (list (el-get-byte-compile-process package buf wdir)))
 		  process-list))
 	 ;; unless installing-info, post-build-fun should take care of
