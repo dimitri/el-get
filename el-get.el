@@ -172,7 +172,12 @@ Each hook is a binay function accepting a package and error data"
 
 (defcustom el-get-byte-compile t
   "Whether or not to byte-compile packages. Can be used to
-disable byte-compilation globally."
+disable byte-compilation globally, unless this process is not
+controlled by `el-get' itself.
+
+The cases when `el-get' loses control are with \"advanced\"
+packaging systems (apt-get, fink, pacman, elpa) or when the
+recipe contains a :build rule (using a Makefile for example)."
   :group 'el-get
   :type 'boolean)
 
@@ -294,6 +299,10 @@ force their evaluation on some packages only."
 
 (defcustom el-get-methods
   '(:git     (:install el-get-git-clone
+		       :install-hook el-get-git-clone-hook
+		       :update el-get-git-pull
+		       :remove el-get-rmdir)
+    :emacsmirror (:install el-get-emacsmirror-clone
 		       :install-hook el-get-git-clone-hook
 		       :update el-get-git-pull
 		       :remove el-get-rmdir)
@@ -451,6 +460,16 @@ Used to avoid errors when exploring the path for recipes"
   "The emacswiki base URL used in the index"
   :group 'el-get
   :type 'string)
+
+(defcustom el-get-emacsmirror-base-url
+  "http://github.com/emacsmirror/%s.git"
+  "The base URL where to fetch :emacsmirror packages.  Consider using
+\"git://github.com/emacsmirror/%s.git\"."
+  :group 'el-get
+  :type '(choice (const "http://github.com/emacsmirror/%s.git")
+                 (const "https://github.com/emacsmirror/%s.git")
+                 (const "git://github.com/emacsmirror/%s.git")
+                 string))
 
 (defcustom el-get-pacman-base "/usr/share/emacs/site-lisp"
   "Where to link the el-get symlink to, /<package> will get appended."
@@ -612,8 +631,9 @@ definition provided by `el-get' recipes locally.
 :pkgname
 
     The name of the package for the underlying package management
-    system (`apt-get', `fink' or `pacman'), which can be
-    different from the Emacs package name.
+    system (`apt-get', `fink' or `pacman', also supported by
+    `emacsmirror'), which can be different from the Emacs package
+    name.
 
 :type
 
@@ -781,6 +801,7 @@ definition provided by `el-get' recipes locally.
   `(repeat
     (choice
      :tag "Entry"
+     :value (:name "")
      (el-get-symbol :tag "Name of EL-Get Package")
      (list
       :tag "Full Recipe (or Recipe Override)"
@@ -1164,6 +1185,13 @@ properties:
 
    When set to non-nil value, run synchronously.
 
+:stdin
+
+   Standard input to use for the process.  A lisp value is
+   expected, it will get `prin1-to-string' then either saved to a
+   file for a synchronous process or sent with
+   `process-send-string' for an asynchronous one.
+
 Any other property will get put into the process object.
 "
   (condition-case err
@@ -1179,17 +1207,24 @@ Any other property will get put into the process object.
                (shell   (plist-get c :shell))
                (sync    (if (plist-member c :sync) (plist-get c :sync)
                           el-get-default-process-sync))
+	       (stdin   (plist-get c :stdin))
                (default-directory (if cdir
                                       (file-name-as-directory
                                        (expand-file-name cdir))
                                     default-directory)))
           (if sync
               (let* ((startf (if shell #'call-process-shell-command #'call-process))
+		     (infile (when stdin (make-temp-file "el-get")))
+		     (dummy  (when infile
+			       (with-temp-file infile
+				 (insert (prin1-to-string stdin)))))
                      (dummy  (message "el-get is waiting for %S to complete" cname))
-                     (status (apply startf program nil cbuf t args))
+		     (status (apply startf program infile cbuf t args))
                      (message (plist-get c :message))
                      (errorm  (plist-get c :error))
                      (next    (cdr commands)))
+		(when el-get-verbose
+		  (message "%S" (with-current-buffer cbuf (buffer-string))))
                 (if (eq 0 status)
                     (message "el-get: %s" message)
                   (set-window-buffer (selected-window) cbuf)
@@ -1209,6 +1244,8 @@ Any other property will get put into the process object.
               (process-put proc :el-get-package package)
               (process-put proc :el-get-final-func final-func)
               (process-put proc :el-get-start-process-list (cdr commands))
+	      (when stdin
+		(process-send-string proc (prin1-to-string stdin)))
               (set-process-sentinel proc 'el-get-start-process-list-sentinel)
               (when filter (set-process-filter proc filter)))))
 	;; no commands, still run the final-func
@@ -1328,6 +1365,15 @@ found."
 		      :message "git submodule update ok"
 		      :error "Could not update git submodules"))
      post-update-fun)))
+
+;;
+;; emacsmirror support
+;;
+(defun el-get-emacsmirror-clone (package url post-install-fun)
+  (let* ((source  (el-get-package-def package))
+         (pkgname (or (plist-get source :pkgname) package))
+	 (url     (or url (format el-get-emacsmirror-base-url pkgname))))
+    (el-get-git-clone package url post-install-fun)))
 
 
 ;;
@@ -2232,63 +2278,51 @@ newer, then compilation will be skipped."
         (mapc (apply-partially 'add-to-list 'files) el-path)))
       files)))
 
-(defun el-get-funcall-from-command-line-args ()
-  "Like `funcall', but reads FUNCTION and ARGS from command line"
-  (let ((args (mapcar 'read command-line-args-left)))
-    (apply 'funcall args)))
+(defun el-get-byte-compile-from-stdin ()
+  "byte compile files read on STDIN
 
-(defun el-get-construct-external-funcall (function &rest arguments)
-  "Generate a shell command that calls FUNCTION on ARGUMENTS in a
-separate emacs process.
+This is run as a subprocess with an `emacs -Q -batch -f
+el-get-byte-compile` command and with the file list as stdin,
+written by `prin1-to-string' so that `read' is able to process
+it."
+  (let ((files (read)))
+    (loop for f in files
+	  do (progn
+	       (message "el-get-byte-compile-from-stdin: %s" f)
+	       (el-get-byte-compile-file-or-directory f)))))
 
-The command is returned as a list of arguments. Joining them with
-spaces yields the entire command as a single string."
-  (let ((emacs el-get-emacs)
-        (libs (delete-dups
-               (remove nil
-                       (mapcar (lambda (func) (symbol-file func 'defun))
-                               (cons 'el-get-funcall-from-command-line-args
-                                     (remove-if-not 'symbolp (cons function arguments))))))))
-    (mapcar
-     'shell-quote-argument
-     (nconc
-      (list emacs)
-      (split-string "-Q -batch -f toggle-debug-on-error")
-      (mapcan (lambda (lib) (list "-l" (file-name-sans-extension lib)))
-              libs)
-      (split-string "-f el-get-funcall-from-command-line-args")
-      (mapcar 'prin1-to-string (cons function arguments))))))
+(defun el-get-byte-compile-process (package buffer working-dir sync files)
+  "return the 'el-get-start-process-list' entry to byte compile PACKAGE"
+  (let ((bytecomp-command
+	 (split-string
+	  (format (concat "%s -Q -batch -f toggle-debug-on-error "
+			  "-l %s "
+			  "-f el-get-byte-compile-from-stdin ")
+		  el-get-emacs
+		  (file-name-sans-extension
+		   (symbol-file 'el-get-byte-compile-from-stdin 'defun))))))
+    `(:command-name "byte-compile"
+		    :buffer-name ,buffer
+		    :default-directory ,working-dir
+		    :shell t
+		    :sync ,sync
+		    :stdin ,files
+		    :program ,(car bytecomp-command)
+		    :args ,(cdr bytecomp-command)
+		    :message ,(format "el-get-build %s: byte-compile ok." package)
+		    :error ,(format
+			     "el-get could not byte-compile %s" package))))
 
-(defun el-get-construct-external-byte-compile-command (files)
-  "Return a shell command to byte-compile FILES in a separate emacs process.
-
-The command is returned as a list of arguments. Joining them with
-spaces yields the entire command as a single string."
-  (el-get-construct-external-funcall 'mapc
-				     'el-get-byte-compile-file-or-directory
-				     files))
-
-(defun el-get-construct-package-byte-compile-command (package)
-  "Return a shell command to byte-compile PACKAGE in a separate emacs process.
-
-The command is returned as a list of arguments. Joining them with
-spaces yields the entire command as a single string.
-
-If `el-get-byte-compile' is or the package does not require
-byte-compiling (maybe because the installation method already
-takes care of it), thiw function returns nil."
-  (when el-get-byte-compile
-    (let ((files (el-get-assemble-files-for-byte-compilation package)))
-      (when files
-        (el-get-construct-external-byte-compile-command files)))))
-
-;; Retained for compatibility
-(defun el-get-byte-compile (package &optional IGNORED)
-  (let* ((bytecomp-command
-	  (el-get-construct-package-byte-compile-command package))
-	 (bytecomp-command-string (mapconcat 'identity bytecomp-command " ")))
-    (el-get-verbose-message "%s" bytecomp-command-string)
-    (shell-command-to-string bytecomp-command-string)))
+(defun el-get-byte-compile (package)
+  "byte compile files for given package"
+  (let ((pdir  (el-get-package-directory package))
+	(buf   "*el-get-byte-compile*")
+	(files (el-get-assemble-files-for-byte-compilation package)))
+    (when files
+      (el-get-start-process-list
+       package
+       (list (el-get-byte-compile-process package buf pdir t files))
+       nil))))
 
 (defun el-get-build-commands (package)
   "Return a list of build commands for the named PACKAGE.
@@ -2349,8 +2383,6 @@ recursion.
 	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir))
 	 (buf    (format "*el-get-build: %s*" package))
 	 (default-directory (file-name-as-directory wdir))
-         (bytecomp-command
-	  (el-get-construct-package-byte-compile-command package))
 	 (process-list
 	  (mapcar (lambda (c)
 		    (let* ((split    (if (stringp c)
@@ -2372,20 +2404,14 @@ recursion.
 				      :error ,(format
 					       "el-get could not build %s [%s]" package c))))
 		  commands))
+	 (bytecomp-files (when el-get-byte-compile
+			   (el-get-assemble-files-for-byte-compilation package)))
 	 (full-process-list ;; includes byte compiling
-	  (append (when bytecomp-command
-		    (list
-		     `(:command-name "byte-compile"
-				     :buffer-name ,buf
-				     :default-directory ,wdir
-				     :shell t
-				     :sync sync
-				     :program ,(car bytecomp-command)
-				     :args ,(cdr bytecomp-command)
-				     :message ,(format "el-get-build %s: byte-compile ok." package)
-				     :error ,(format
-					      "el-get could not byte-compile %s" package))))
-		  process-list))
+	  (append
+	   (when bytecomp-files
+	     (list
+	      (el-get-byte-compile-process package buf wdir sync bytecomp-files)))
+	   process-list))
 	 ;; unless installing-info, post-build-fun should take care of
 	 ;; building info too
 	 (build-info-then-post-build-fun
@@ -3217,6 +3243,231 @@ matching REGEX with TYPE and ARGS as parameter."
         (el-get-describe-1 package)
         (with-current-buffer standard-output
           (buffer-string))))))
+
+;;
+;; Package Menu
+;;
+
+(defvar el-get-package-menu-mode-hook nil
+  "Hooks to run after el-get package menu init.")
+
+(defvar el-get-package-menu-mode-map nil
+  "Keymap for el-get-package-menu-mode")
+
+(defvar el-get-package-menu-sort-key nil
+  "sort packages by key")
+
+(defun el-get-package-menu-get-package-name ()
+  (save-excursion
+    (beginning-of-line)
+    (if (looking-at ". \\([^ \t]*\\)")
+		(match-string 1))))
+
+(defun el-get-package-menu-get-status ()
+  (save-excursion
+    (beginning-of-line)
+    (if (looking-at ". [^ \t]*[ \t]*\\([^ \t\n]*\\)")
+		(match-string 1))))
+
+(defun el-get-package-menu-mark (what)
+  (unless (eobp)
+    (let ((buffer-read-only nil))
+      (beginning-of-line)
+      (delete-char 1)
+      (insert what)
+      (forward-line)
+	  (setq buffer-read-only t))))
+
+(defun el-get-package-menu-mark-install ()
+  (interactive)
+  (if (or (string= (el-get-package-menu-get-status) "available")
+		  (string= (el-get-package-menu-get-status) "removed"))
+	  (el-get-package-menu-mark "I")))
+
+(defun el-get-package-menu-mark-update ()
+  (interactive)
+  (if (or (string= (el-get-package-menu-get-status) "installed")
+		  (string= (el-get-package-menu-get-status) "required"))
+	  (el-get-package-menu-mark "U")))
+
+(defun el-get-package-menu-mark-delete ()
+  (interactive)
+  (if (or (string= (el-get-package-menu-get-status) "installed")
+		  (string= (el-get-package-menu-get-status) "required"))
+	  (el-get-package-menu-mark "D")))
+
+(defun el-get-package-menu-mark-unmark ()
+  (interactive)
+  (el-get-package-menu-mark " "))
+
+(defun el-get-package-menu-revert ()
+  (interactive)
+  (let ((current-point (point)))
+	(el-get-package-menu)
+	(goto-char current-point)
+	(beginning-of-line)))
+
+(defun el-get-package-menu-execute ()
+  (interactive)
+  (let ((current-point (point)))
+	(goto-char (point-min))
+	(while (not (eobp))
+	  (let ((command (char-after))
+			(package-name (el-get-package-menu-get-package-name)))
+		(cond
+		 ((eq command ?I)
+		  (message "Installing %s..." package-name)
+		  (el-get-install package-name)
+		  (message "Installing %s...done" package-name))
+		 ((eq command ?U)
+		  (message "Updating %s..." package-name)
+		  (el-get-update package-name)
+		  (message "Updating %s...done" package-name))
+		 ((eq command ?D)
+		  (message "Deleting %s..." package-name)
+		  (el-get-remove package-name)
+		  (message "Deleting %s..." package-name))))
+	  (forward-line))
+	(el-get-package-menu-revert)
+	(goto-char current-point)
+	(beginning-of-line)))
+
+(defun el-get-package-menu-describe ()
+  (interactive)
+  (el-get-describe (el-get-package-menu-get-package-name)))
+
+(defun el-get-package-menu-quick-help ()
+  (interactive)
+  (message "n-ext, p-revious, i-nstall, u-pdate, d-elete, SPC-unmark, g-revert, x-execute, ?-package describe, h-elp, q-uit"))
+
+(unless el-get-package-menu-mode-map
+  (setq el-get-package-menu-mode-map (make-keymap))
+  (suppress-keymap el-get-package-menu-mode-map)
+  (define-key el-get-package-menu-mode-map "n" 'next-line)
+  (define-key el-get-package-menu-mode-map "p" 'previous-line)
+  (define-key el-get-package-menu-mode-map "i" 'el-get-package-menu-mark-install)
+  (define-key el-get-package-menu-mode-map "u" 'el-get-package-menu-mark-update)
+  (define-key el-get-package-menu-mode-map "d" 'el-get-package-menu-mark-delete)
+  (define-key el-get-package-menu-mode-map " " 'el-get-package-menu-mark-unmark)
+  (define-key el-get-package-menu-mode-map "g" 'el-get-package-menu-revert)
+  (define-key el-get-package-menu-mode-map "x" 'el-get-package-menu-execute)
+  (define-key el-get-package-menu-mode-map "?" 'el-get-package-menu-describe)
+  (define-key el-get-package-menu-mode-map "h" 'el-get-package-menu-quick-help)
+  (define-key el-get-package-menu-mode-map "q" 'quit-window))
+
+(defun el-get-package-menu-mode ()
+  "Major mode for browsing a list of packages."
+  (kill-all-local-variables)
+  (use-local-map el-get-package-menu-mode-map)
+  (setq major-mode 'el-get-package-menu-mode)
+  (setq mode-name "Package-Menu")
+  (setq buffer-read-only t)
+  (setq truncate-lines t)
+  (if (fboundp 'run-mode-hooks)
+	  (run-mode-hooks 'el-get-package-menu-mode-hook)
+	(run-hooks 'el-get-package-menu-mode-hook)))
+
+(defun el-get-print-package (package-name status desc)
+  (let ((face
+		 (cond
+		  ((string= status "installed")
+		   'font-lock-comment-face)
+		  ((string= status "required")
+		   'font-lock-keyword-face)
+		  ((string= status "removed")
+		   'font-lock-string-face)
+		  (t
+		   (setq status "available")
+		   'default))))
+	(indent-to 2 1)
+	(insert (propertize package-name 'font-lock-face face))
+	(indent-to 30 1)
+	(insert (propertize status 'font-lock-face face))
+	(when desc
+	  (indent-to 41 1)
+	  (insert (propertize
+			   (replace-regexp-in-string "\n" " " desc)
+			   'font-lock-face face)))
+	(insert "\n")))
+
+(defun el-get-list-all-packages ()
+  (with-current-buffer (get-buffer-create "*el-get packages*")
+	(setq buffer-read-only nil)
+	(erase-buffer)
+	(let ((packages (el-get-read-all-recipes)))
+	  (let ((selector (cond
+					   ((string= el-get-package-menu-sort-key "Status")
+						#'(lambda (package)
+							(let ((package-name (el-get-as-string (plist-get package :name))))
+							  (el-get-package-status package-name))))
+					   ((string= el-get-package-menu-sort-key "Description")
+						#'(lambda (package)
+							(plist-get package :description)))
+					   (t
+						#'(lambda (package)
+							(el-get-as-string (plist-get package :name)))))))
+		(setq packages
+			  (sort packages
+					(lambda (left right)
+					  (let ((vleft (funcall selector left))
+							(vright (funcall selector right)))
+						(string< vleft vright))))))
+	  (mapc (lambda (package)
+			  (let ((package-name (el-get-as-string (plist-get package :name))))
+				(el-get-print-package package-name
+									  (el-get-package-status package-name)
+									  (plist-get package :description))))
+			packages))
+	(goto-char (point-min))
+	(current-buffer)))
+
+(defun el-get-package-menu-sort-by-column (&optional e)
+  "Sort the package menu by the last column clicked on."
+  (interactive (list last-input-event))
+  (if e (mouse-select-window e))
+  (let* ((pos (event-start e))
+		 (obj (posn-object pos))
+		 (col (if obj
+				  (get-text-property (cdr obj) 'column-name (car obj))
+				(get-text-property (posn-point pos) 'column-name))))
+    (setq el-get-package-menu-sort-key col)
+	(el-get-package-menu)))
+
+(defvar el-get-package-menu-sort-button-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [header-line mouse-1] 'el-get-package-menu-sort-by-column)
+    (define-key map [follow-link] 'mouse-face)
+    map)
+  "Local keymap for package menu sort buttons.")
+
+(defun el-get-package-menu ()
+  (with-current-buffer (el-get-list-all-packages)
+	(el-get-package-menu-mode)
+	(setq header-line-format
+		  (mapconcat
+		   (lambda (pair)
+			 (let ((column (car pair))
+				   (name (cdr pair)))
+			   (concat
+				;; Insert a space that aligns the button properly.
+				(propertize " " 'display (list 'space :align-to column)
+							'face 'fixed-pitch)
+				;; Set up the column button.
+				(propertize name
+							'column-name name
+							'help-echo "mouse-1: sort by column"
+							'mouse-face 'highlight
+							'keymap el-get-package-menu-sort-button-map))))
+		   '((2 . "Package")
+			 (30 . "Status")
+			 (41 . "Description"))
+		   ""))
+	(pop-to-buffer (current-buffer))))
+
+(defun el-get-list-packages ()
+  "Display a list of packages."
+  (interactive)
+  (el-get-package-menu))
 
 
 ;;

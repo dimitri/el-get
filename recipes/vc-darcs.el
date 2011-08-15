@@ -1,1 +1,4 @@
-(:name vc-darcs :type http :url "http://www.pps.jussieu.fr/~jch/software/repos/vc-darcs/vc-darcs.el")
+(:name vc-darcs
+       :description "A VC backend for darcs"
+       :type http
+       :url "http://www.pps.jussieu.fr/~jch/software/repos/vc-darcs/vc-darcs.el")

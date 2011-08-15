@@ -1,6 +1,6 @@
 (:name python-pep8
-       :type git
-       :url "https://github.com/emacsmirror/python-pep8.git"
+       :type emacsmirror
+       :description "Minor mode for running `pep8'"
        :features python-pep8
        :post-init (lambda ()
-		    (require 'tramp)))
+            (require 'tramp)))

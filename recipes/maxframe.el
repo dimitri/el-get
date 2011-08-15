@@ -1,4 +1,5 @@
 (:name maxframe
+       :description "Maxframe provides the ability to maximize the emacs frame and stay within the display resolution."
        :type git
        :url "http://github.com/rmm5t/maxframe.el.git"
        :post-init (lambda () 
