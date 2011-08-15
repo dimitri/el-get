@@ -1207,21 +1207,24 @@ Any other property will get put into the process object.
                (shell   (plist-get c :shell))
                (sync    (if (plist-member c :sync) (plist-get c :sync)
                           el-get-default-process-sync))
-	       (stdin   (plist-member c :stdin))
+	       (stdin   (plist-get c :stdin))
                (default-directory (if cdir
                                       (file-name-as-directory
                                        (expand-file-name cdir))
                                     default-directory)))
           (if sync
               (let* ((startf (if shell #'call-process-shell-command #'call-process))
-                     (dummy  (message "el-get is waiting for %S to complete" cname))
-		     (infile (when stdin
-			       (with-temp-file (make-temp-file "el-get")
+		     (infile (when stdin (make-temp-file "el-get")))
+		     (dummy  (when infile
+			       (with-temp-file infile
 				 (insert (prin1-to-string stdin)))))
+                     (dummy  (message "el-get is waiting for %S to complete" cname))
 		     (status (apply startf program infile cbuf t args))
                      (message (plist-get c :message))
                      (errorm  (plist-get c :error))
                      (next    (cdr commands)))
+		(when el-get-verbose
+		  (message "%S" (with-current-buffer cbuf (buffer-string))))
                 (if (eq 0 status)
                     (message "el-get: %s" message)
                   (set-window-buffer (selected-window) cbuf)
@@ -2285,10 +2288,10 @@ it."
   (let ((files (read)))
     (loop for f in files
 	  do (progn
-	       (message "el-get-byte-compile-from-stdin %s" f)
-	       (el-get-byte-compile-file f)))))
+	       (message "el-get-byte-compile-from-stdin: %s" f)
+	       (el-get-byte-compile-file-or-directory f)))))
 
-(defun el-get-byte-compile-process (package buffer working-dir files)
+(defun el-get-byte-compile-process (package buffer working-dir sync files)
   "return the 'el-get-start-process-list' entry to byte compile PACKAGE"
   (let ((bytecomp-command
 	 (split-string
@@ -2302,7 +2305,7 @@ it."
 		    :buffer-name ,buffer
 		    :default-directory ,working-dir
 		    :shell t
-		    :sync sync
+		    :sync ,sync
 		    :stdin ,files
 		    :program ,(car bytecomp-command)
 		    :args ,(cdr bytecomp-command)
@@ -2317,7 +2320,9 @@ it."
 	(files (el-get-assemble-files-for-byte-compilation package)))
     (when files
       (el-get-start-process-list
-       package (list (el-get-byte-compile-process package buf pdir)) nil))))
+       package
+       (list (el-get-byte-compile-process package buf pdir t files))
+       nil))))
 
 (defun el-get-build-commands (package)
   "Return a list of build commands for the named PACKAGE.
@@ -2405,7 +2410,7 @@ recursion.
 	  (append
 	   (when bytecomp-files
 	     (list
-	      (el-get-byte-compile-process package buf wdir bytecomp-files)))
+	      (el-get-byte-compile-process package buf wdir sync bytecomp-files)))
 	   process-list))
 	 ;; unless installing-info, post-build-fun should take care of
 	 ;; building info too
