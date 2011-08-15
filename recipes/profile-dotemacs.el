@@ -1,0 +1,5 @@
+(:name profile-dotemacs
+       :type http
+       :url "http://www.randomsample.de/profile-dotemacs.el"
+       :description "profiles your .emacs"
+       :autoloads t)
