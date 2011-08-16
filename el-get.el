@@ -2977,7 +2977,9 @@ called by `el-get' (usually at startup) for each installed package."
 (defun el-get-self-update ()
   "Update el-get itself.  The standard recipe takes care of reloading the code."
   (interactive)
-  (let ((el-get-default-process-sync t))
+  (let ((el-get-default-process-sync t)
+	(el-get-dir
+	 (expand-file-name ".." (file-name-directory el-get-script))))
     (el-get-update "el-get")))
 
 (defun el-get-post-remove (package)
