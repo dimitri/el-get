@@ -1883,6 +1883,13 @@ the recipe, then return nil."
 ;;
 ;; http support
 ;;
+(defun el-get-filename-from-url (url)
+  "return a suitable filename from given url
+
+Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
+  (replace-regexp-in-string "[^a-zA-Z0-9-_\.]" "_"
+			    (file-name-nondirectory url)))
+
 (defun el-get-http-retrieve-callback (status package post-install-fun &optional dest sources)
   "Callback function for `url-retrieve', store the emacs lisp file for the package."
   (let* ((pdir   (el-get-package-directory package))
@@ -1911,7 +1918,7 @@ Should dest be omitted (nil), the url content will get written
 into the package :localname option or its `file-name-nondirectory' part."
   (let* ((pdir   (el-get-package-directory package))
 	 (fname  (or (plist-get (el-get-package-def package) :localname)
-		     (file-name-nondirectory url)))
+		     (el-get-filename-from-url url)))
 	 (dest   (or dest
 		     (concat (file-name-as-directory pdir) fname))))
     (unless (file-directory-p pdir)
@@ -2007,7 +2014,7 @@ that"
 the files up."
   (let* ((pdir    (el-get-package-directory package))
 	 (url     (plist-get (el-get-package-def package) :url))
-	 (tarfile (file-name-nondirectory url))
+	 (tarfile (el-get-filename-from-url url))
 	 (files   (remove tarfile (directory-files pdir nil "[^.]$")))
 	 (dir     (car files)))
     ;; if there's only one directory, move its content up and get rid of it
@@ -2029,7 +2036,7 @@ the files up."
   (let* ((source  (el-get-package-def package))
 	 (options (plist-get source :options))
 	 (pdir    (el-get-package-directory package))
-	 (tarfile (file-name-nondirectory url))
+	 (tarfile (el-get-filename-from-url url))
 	 (dest    (concat (file-name-as-directory pdir) tarfile))
 	 (name    (format "*tar %s %s*" options url))
 	 (ok      (format "Package %s installed." package))
