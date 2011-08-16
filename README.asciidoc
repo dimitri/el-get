@@ -237,6 +237,16 @@ general purposes hooks facilities: +el-get-post-install-hooks+ and
 
 Yes, ok.
 
+M-x el-get-list-packages::
+
+    Opens a buffer listing all known packages (those for which you have a
+    recipe).  The listing includes the package name, its status (one of
+    "available", "installed", "removed" or "required") and the package
+    description.  The description is a free form text and has not been
+    provided for all recipes.  Please also note that
+    +el-get-emacswiki-refresh+ will create recipes omitting the description
+    as of now.
+
 M-x el-get-describe::
 
     Prompt for a package name, with completion, then open an +*Help*+ window
