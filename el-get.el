@@ -2294,13 +2294,11 @@ it."
 (defun el-get-byte-compile-process (package buffer working-dir sync files)
   "return the 'el-get-start-process-list' entry to byte compile PACKAGE"
   (let ((bytecomp-command
-	 (split-string
-	  (format (concat "%s -Q -batch -f toggle-debug-on-error "
-			  "-l %s "
-			  "-f el-get-byte-compile-from-stdin ")
-		  el-get-emacs
-		  (file-name-sans-extension
-		   (symbol-file 'el-get-byte-compile-from-stdin 'defun))))))
+	 (list el-get-emacs
+	       "-Q" "-batch" "-f" "toggle-debug-on-error"
+	       "-l" (file-name-sans-extension
+		     (symbol-file 'el-get-byte-compile-from-stdin 'defun))
+	       "-f" "el-get-byte-compile-from-stdin")))
     `(:command-name "byte-compile"
 		    :buffer-name ,buffer
 		    :default-directory ,working-dir
