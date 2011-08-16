@@ -181,7 +181,8 @@ You even get a progress report!
 === Sources
 
 See the documentation of the +el-get-sources+ variable for details.  Please
-note that +el-get-sources+ is a 
+note that +el-get-sources+ is another source location for recipes, adding to
+your +el-get-recipe-path+.
 
 Note that you can also give a mix of +packages+ symbols, +inline recipes+
 and +source lists+ to +el-get+ as arguments, and completely bypass the
