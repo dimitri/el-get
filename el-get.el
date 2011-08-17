@@ -1245,7 +1245,8 @@ Any other property will get put into the process object.
               (process-put proc :el-get-final-func final-func)
               (process-put proc :el-get-start-process-list (cdr commands))
 	      (when stdin
-		(process-send-string proc (prin1-to-string stdin)))
+		(process-send-string proc (prin1-to-string stdin))
+		(process-send-eof proc))
               (set-process-sentinel proc 'el-get-start-process-list-sentinel)
               (when filter (set-process-filter proc filter)))))
 	;; no commands, still run the final-func
