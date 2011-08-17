@@ -1,4 +1,5 @@
 (:name ess
+       :description "Emacs Speaks Statistics: statistical programming within Emacs"
        :type svn
        :url "https://svn.r-project.org/ESS/trunk/"
        :info "doc/info/"

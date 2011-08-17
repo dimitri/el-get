@@ -1,4 +1,5 @@
 (:name flim
+       :description "A library to provide basic features about message representation or encoding"
        :depends apel
        :type cvs
        :module "flim"

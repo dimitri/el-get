@@ -1,6 +1,6 @@
 (:name tuareg-mode
-       :type git
-       :url "https://github.com/emacsmirror/tuareg.git"
+       :type emacsmirror
+       :description "A  GOOD Emacs mode to edit Objective Caml code."
        :load-path (".")
        :build ("make elc")
        :post-init

@@ -1,4 +1,5 @@
 (:name nognus
+       :description "A newsreader for GNU Emacs"
        :type git
        :url "http://git.gnus.org/gnus.git"
        :build ("./configure" "make")

@@ -1,2 +1,3 @@
 (:name auto-complete-extension
-       :type emacswiki)
+       :type emacswiki
+       :description "Some extension for auto-complete-mode")

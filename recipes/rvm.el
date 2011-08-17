@@ -1,4 +1,5 @@
-(:name rvm-el
+(:name rvm
+       :description "Emacs integration for rvm"
        :type git
        :features rvm
        :url "https://github.com/senny/rvm.el.git"

@@ -1,4 +1,5 @@
 (:name mailcrypt
+       :description "Mail encryption with PGP"
        :type cvs
        :url ":pserver:anonymous@mailcrypt.cvs.sourceforge.net:/cvsroot/mailcrypt"
        :module "mailcrypt"
@@ -8,7 +9,10 @@
                 ,(mapconcat 'shell-quote-argument
                             `("make"
                               ,(concat "EMACS=" el-get-emacs)
-                              "INFOFILES=mailcrypt.info") " ")
+                              "INFOFILES=mailcrypt.info"
+							  "all"
+							  "info") " ")
                 )
+       :info  "."
 )
 
