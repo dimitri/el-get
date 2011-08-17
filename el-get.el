@@ -33,6 +33,9 @@
 ;;
 ;;   - support fo package dependencies
 ;;   - rely on package status for `el-get' to install and init them
+;;   - M-x el-get-list-packages
+;;   - new recipes, galore
+;;   - bug fixes, byte compiling, windows compatibility, etc
 ;;
 ;;  2.2 - 2011-05-26 - Fix the merge
 ;;
