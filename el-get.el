@@ -2431,9 +2431,9 @@ recursion.
 	 ;; building info too
 	 (build-info-then-post-build-fun
 	  (if installing-info post-build-fun
-	    (lambda (package)
-	      (el-get-install-or-init-info package 'build)
-	      (funcall post-build-fun package)))))
+	    `(lambda (package)
+	       (el-get-install-or-init-info package 'build)
+	       (funcall ,post-build-fun package)))))
 
     (el-get-start-process-list
      package full-process-list build-info-then-post-build-fun)))
