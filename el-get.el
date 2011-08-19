@@ -34,6 +34,7 @@
 ;;   - support fo package dependencies
 ;;   - rely on package status for `el-get' to install and init them
 ;;   - M-x el-get-list-packages
+;;   - support for :branch in git
 ;;   - new recipes, galore
 ;;   - bug fixes, byte compiling, windows compatibility, etc
 ;;
@@ -643,6 +644,11 @@ definition provided by `el-get' recipes locally.
     The type of the package, currently el-get offers support for
     `apt-get', `elpa', `git' and `http'. You can easily support
     your own types here, see the variable `el-get-methods'.
+
+:branch
+
+    Which branch to fetch when using `git'.  Also supported in
+    the installer in `el-get-install'.
 
 :url
 
@@ -1321,18 +1327,22 @@ found."
 (defun el-get-git-clone (package url post-install-fun)
   "Clone the given package following the URL."
   (let* ((git-executable (el-get-executable-find "git"))
-	 (pdir (el-get-package-directory package))
-	 (name (format "*git clone %s*" package))
-	 (ok   (format "Package %s installed." package))
-	 (ko   (format "Could not install package %s." package)))
-
+	 (pdir   (el-get-package-directory package))
+	 (name   (format "*git clone %s*" package))
+	 (source (el-get-package-def package))
+	 (branch (plist-get source :branch))
+	 (args   (if branch
+		     (list "--no-pager" "clone" "-b" branch url package)
+		   (list "--no-pager" "clone" url package)))
+	 (ok     (format "Package %s installed." package))
+	 (ko     (format "Could not install package %s." package)))
     (el-get-start-process-list
      package
      `((:command-name ,name
 		      :buffer-name ,name
 		      :default-directory ,el-get-dir
 		      :program ,git-executable
-		      :args ( "--no-pager" "clone" ,url ,package)
+		      :args ,args
 		      :message ,ok
 		      :error ,ko)
        (:command-name "*git submodule update*"
