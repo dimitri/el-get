@@ -2433,7 +2433,11 @@ recursion.
 	  (if installing-info post-build-fun
 	    `(lambda (package)
 	       (el-get-install-or-init-info package 'build)
-	       (funcall ,post-build-fun package)))))
+	       (funcall ,(if (symbolp post-build-fun)
+			     (symbol-function post-build-fun)
+			   ;; it must be a lambda, just inline its value
+			   post-build-fun)
+			package)))))
 
     (el-get-start-process-list
      package full-process-list build-info-then-post-build-fun)))
