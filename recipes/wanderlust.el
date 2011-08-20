@@ -23,4 +23,4 @@
      ("compile-wl-package"  "site-lisp" "icons") 
      ("install-wl-package" "site-lisp" "icons")))
        :info "doc/wl.info"
-       :load-path ("site-lisp/wl"))
+       :load-path ("site-lisp/wl" "utils"))
