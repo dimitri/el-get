@@ -3071,9 +3071,8 @@ entry which is not a symbol and is not already a known recipe."
 ;; notify user with emacs notifications API (new in 24)
 ;;
 (when (and (eq system-type 'darwin)
-	   (not (fboundp 'growl))
 	   (file-executable-p el-get-growl-notify))
-  (defun growl (title message)
+  (defun el-get-growl (title message)
     "Send a message to growl, that implements notifications for darwin"
     (let* ((name  "*growl*")
 	   (proc
@@ -3100,7 +3099,7 @@ entry which is not a symbol and is not already a known recipe."
   (cond ((fboundp 'notifications-notify) (notifications-notify :title title
 							       :body message))
 	((fboundp 'notify)               (notify title message))
-	((fboundp 'growl)                (growl title message))
+	((fboundp 'el-get-growl)         (el-get-growl title message))
 	(t                               (message "%s: %s" title message))))
 
 (when (or (fboundp 'notifications-notify) (fboundp 'notify) (fboundp 'growl))
