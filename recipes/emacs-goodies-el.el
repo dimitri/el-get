@@ -8,5 +8,7 @@
        :load-path ("elisp/debian-el"
 		   "elisp/devscripts-el"
 		   "elisp/dpkg-dev-el"
-		   "elisp/emacs-goodies-el")
+		   "elisp/emacs-goodies-el"
+		   ;; "elisp/gnus-bonus-el"
+		   "elisp/vm-bonus-el")
        :load ("elisp/dpkg-dev-el/dpkg-dev-el-loaddefs.el"))

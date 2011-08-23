@@ -1,1 +1,3 @@
-(:name lively :type emacswiki)
+(:name lively
+       :description "Interactively updating text"
+       :type emacswiki)

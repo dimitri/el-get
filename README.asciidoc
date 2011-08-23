@@ -181,7 +181,8 @@ You even get a progress report!
 === Sources
 
 See the documentation of the +el-get-sources+ variable for details.  Please
-note that +el-get-sources+ is a 
+note that +el-get-sources+ is another source location for recipes, adding to
+your +el-get-recipe-path+.
 
 Note that you can also give a mix of +packages+ symbols, +inline recipes+
 and +source lists+ to +el-get+ as arguments, and completely bypass the
@@ -235,6 +236,16 @@ general purposes hooks facilities: +el-get-post-install-hooks+ and
 === Some more commands?
 
 Yes, ok.
+
+M-x el-get-list-packages::
+
+    Opens a buffer listing all known packages (those for which you have a
+    recipe).  The listing includes the package name, its status (one of
+    "available", "installed", "removed" or "required") and the package
+    description.  The description is a free form text and has not been
+    provided for all recipes.  Please also note that
+    +el-get-emacswiki-refresh+ will create recipes omitting the description
+    as of now.
 
 M-x el-get-describe::
 
