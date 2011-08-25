@@ -2,6 +2,7 @@
        :website "https://github.com/dimitri/el-get#readme"
        :description "Manage the external elisp bits and pieces you depend upon."
        :type git
+       :branch "2.stable"
        :url "https://github.com/dimitri/el-get.git"
        :features el-get
        :load    "el-get.el"
