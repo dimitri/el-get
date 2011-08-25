@@ -9,7 +9,10 @@
                 ,(mapconcat 'shell-quote-argument
                             `("make"
                               ,(concat "EMACS=" el-get-emacs)
-                              "INFOFILES=mailcrypt.info") " ")
+                              "INFOFILES=mailcrypt.info"
+							  "all"
+							  "info") " ")
                 )
+       :info  "."
 )
 

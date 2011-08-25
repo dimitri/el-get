@@ -33,6 +33,10 @@
 ;;
 ;;   - support fo package dependencies
 ;;   - rely on package status for `el-get' to install and init them
+;;   - M-x el-get-list-packages
+;;   - support for :branch in git
+;;   - new recipes, galore
+;;   - bug fixes, byte compiling, windows compatibility, etc
 ;;
 ;;  2.2 - 2011-05-26 - Fix the merge
 ;;
@@ -641,6 +645,11 @@ definition provided by `el-get' recipes locally.
     `apt-get', `elpa', `git' and `http'. You can easily support
     your own types here, see the variable `el-get-methods'.
 
+:branch
+
+    Which branch to fetch when using `git'.  Also supported in
+    the installer in `el-get-install'.
+
 :url
 
     Where to fetch the package, only meaningful for `git' and `http' types.
@@ -1245,7 +1254,8 @@ Any other property will get put into the process object.
               (process-put proc :el-get-final-func final-func)
               (process-put proc :el-get-start-process-list (cdr commands))
 	      (when stdin
-		(process-send-string proc (prin1-to-string stdin)))
+		(process-send-string proc (prin1-to-string stdin))
+		(process-send-eof proc))
               (set-process-sentinel proc 'el-get-start-process-list-sentinel)
               (when filter (set-process-filter proc filter)))))
 	;; no commands, still run the final-func
@@ -1317,18 +1327,22 @@ found."
 (defun el-get-git-clone (package url post-install-fun)
   "Clone the given package following the URL."
   (let* ((git-executable (el-get-executable-find "git"))
-	 (pdir (el-get-package-directory package))
-	 (name (format "*git clone %s*" package))
-	 (ok   (format "Package %s installed." package))
-	 (ko   (format "Could not install package %s." package)))
-
+	 (pdir   (el-get-package-directory package))
+	 (name   (format "*git clone %s*" package))
+	 (source (el-get-package-def package))
+	 (branch (plist-get source :branch))
+	 (args   (if branch
+		     (list "--no-pager" "clone" "-b" branch url package)
+		   (list "--no-pager" "clone" url package)))
+	 (ok     (format "Package %s installed." package))
+	 (ko     (format "Could not install package %s." package)))
     (el-get-start-process-list
      package
      `((:command-name ,name
 		      :buffer-name ,name
 		      :default-directory ,el-get-dir
 		      :program ,git-executable
-		      :args ( "--no-pager" "clone" ,url ,package)
+		      :args ,args
 		      :message ,ok
 		      :error ,ko)
        (:command-name "*git submodule update*"
@@ -1883,6 +1897,13 @@ the recipe, then return nil."
 ;;
 ;; http support
 ;;
+(defun el-get-filename-from-url (url)
+  "return a suitable filename from given url
+
+Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
+  (replace-regexp-in-string "[^a-zA-Z0-9-_\.]" "_"
+			    (file-name-nondirectory url)))
+
 (defun el-get-http-retrieve-callback (status package post-install-fun &optional dest sources)
   "Callback function for `url-retrieve', store the emacs lisp file for the package."
   (let* ((pdir   (el-get-package-directory package))
@@ -1911,7 +1932,7 @@ Should dest be omitted (nil), the url content will get written
 into the package :localname option or its `file-name-nondirectory' part."
   (let* ((pdir   (el-get-package-directory package))
 	 (fname  (or (plist-get (el-get-package-def package) :localname)
-		     (file-name-nondirectory url)))
+		     (el-get-filename-from-url url)))
 	 (dest   (or dest
 		     (concat (file-name-as-directory pdir) fname))))
     (unless (file-directory-p pdir)
@@ -2007,24 +2028,29 @@ that"
 the files up."
   (let* ((pdir    (el-get-package-directory package))
 	 (url     (plist-get (el-get-package-def package) :url))
-	 (tarfile (file-name-nondirectory url))
-	 (files   (remove tarfile (directory-files pdir nil "[^.]$"))))
+	 (tarfile (el-get-filename-from-url url))
+	 (files   (remove tarfile (directory-files pdir nil "[^.]$")))
+	 (dir     (car files)))
     ;; if there's only one directory, move its content up and get rid of it
     (el-get-verbose-message "el-get: tar cleanup %s [%s]: %S" package pdir files)
     (unless (cdr files)
-      (let ((move  (format "cd %s && mv \"%s\"/* ." pdir (car files)))
-	    (rmdir (format "cd %s && rmdir \"%s\""   pdir (car files))))
-	(el-get-verbose-message "%s: %s" package move)
-	(el-get-verbose-message "%s: %s" package rmdir)
-	(shell-command move)
-	(shell-command rmdir)))))
+      (loop for fname in (directory-files
+			  (expand-file-name dir pdir) nil "[^.]$")
+	    for fullname = (expand-file-name fname (expand-file-name dir pdir))
+	    for newname  = (expand-file-name pdir fname)
+	    do (progn
+		 (el-get-verbose-message "%S %S %S" pdir dir fname)
+		 (el-get-verbose-message "mv %S %S" fullname newname)
+		 (rename-file fullname newname)))
+      (el-get-verbose-message "delete-directory: %s" (expand-file-name dir pdir))
+      (delete-directory (expand-file-name dir pdir)))))
 
 (defun el-get-http-tar-install (package url post-install-fun)
   "Dowload a tar archive package over HTTP."
   (let* ((source  (el-get-package-def package))
 	 (options (plist-get source :options))
 	 (pdir    (el-get-package-directory package))
-	 (tarfile (file-name-nondirectory url))
+	 (tarfile (el-get-filename-from-url url))
 	 (dest    (concat (file-name-as-directory pdir) tarfile))
 	 (name    (format "*tar %s %s*" options url))
 	 (ok      (format "Package %s installed." package))
@@ -2294,13 +2320,12 @@ it."
 (defun el-get-byte-compile-process (package buffer working-dir sync files)
   "return the 'el-get-start-process-list' entry to byte compile PACKAGE"
   (let ((bytecomp-command
-	 (split-string
-	  (format (concat "%s -Q -batch -f toggle-debug-on-error "
-			  "-l %s "
-			  "-f el-get-byte-compile-from-stdin ")
-		  el-get-emacs
-		  (file-name-sans-extension
-		   (symbol-file 'el-get-byte-compile-from-stdin 'defun))))))
+	 (list el-get-emacs
+	       "-Q" "-batch" "-f" "toggle-debug-on-error"
+	       "-l" (shell-quote-argument
+		     (file-name-sans-extension
+		      (symbol-file 'el-get-byte-compile-from-stdin 'defun)))
+	       "-f" "el-get-byte-compile-from-stdin")))
     `(:command-name "byte-compile"
 		    :buffer-name ,buffer
 		    :default-directory ,working-dir
@@ -2416,9 +2441,13 @@ recursion.
 	 ;; building info too
 	 (build-info-then-post-build-fun
 	  (if installing-info post-build-fun
-	    (lambda (package)
-	      (el-get-install-or-init-info package 'build)
-	      (funcall post-build-fun package)))))
+	    `(lambda (package)
+	       (el-get-install-or-init-info package 'build)
+	       (funcall ,(if (symbolp post-build-fun)
+			     (symbol-function post-build-fun)
+			   ;; it must be a lambda, just inline its value
+			   post-build-fun)
+			package)))))
 
     (el-get-start-process-list
      package full-process-list build-info-then-post-build-fun)))
@@ -2974,7 +3003,9 @@ called by `el-get' (usually at startup) for each installed package."
 (defun el-get-self-update ()
   "Update el-get itself.  The standard recipe takes care of reloading the code."
   (interactive)
-  (let ((el-get-default-process-sync t))
+  (let ((el-get-default-process-sync t)
+	(el-get-dir
+	 (expand-file-name ".." (file-name-directory el-get-script))))
     (el-get-update "el-get")))
 
 (defun el-get-post-remove (package)
@@ -3040,9 +3071,8 @@ entry which is not a symbol and is not already a known recipe."
 ;; notify user with emacs notifications API (new in 24)
 ;;
 (when (and (eq system-type 'darwin)
-	   (not (fboundp 'growl))
 	   (file-executable-p el-get-growl-notify))
-  (defun growl (title message)
+  (defun el-get-growl (title message)
     "Send a message to growl, that implements notifications for darwin"
     (let* ((name  "*growl*")
 	   (proc
@@ -3069,7 +3099,7 @@ entry which is not a symbol and is not already a known recipe."
   (cond ((fboundp 'notifications-notify) (notifications-notify :title title
 							       :body message))
 	((fboundp 'notify)               (notify title message))
-	((fboundp 'growl)                (growl title message))
+	((fboundp 'el-get-growl)         (el-get-growl title message))
 	(t                               (message "%s: %s" title message))))
 
 (when (or (fboundp 'notifications-notify) (fboundp 'notify) (fboundp 'growl))
