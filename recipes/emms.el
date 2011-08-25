@@ -5,6 +5,9 @@
        :info "doc"
        :load-path ("./lisp")
        :features emms-setup
-       :build ("make autoloads" "make")
-       :build/darwin `(,(concat "make EMACS=" el-get-emacs " autoloads all")))
+       :build `(,(format "mkdir -p %s/emms " user-emacs-directory)
+		,(concat "make EMACS=" el-get-emacs
+			 " SITEFLAG=\"--no-site-file -L " el-get-dir "/emacs-w3m/ \""
+			 " autoloads lisp docs"))
+       :depends emacs-w3m)
 
