@@ -1903,7 +1903,7 @@ the recipe, then return nil."
   "return a suitable filename from given url
 
 Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
-  (replace-regexp-in-string "[^a-zA-Z0-9-_\.]" "_"
+  (replace-regexp-in-string "[^a-zA-Z0-9-_\.\+]" "_"
 			    (file-name-nondirectory url)))
 
 (defun el-get-http-retrieve-callback (status package post-install-fun &optional dest sources)
