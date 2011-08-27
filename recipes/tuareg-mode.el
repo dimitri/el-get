@@ -1,8 +1,8 @@
 (:name tuareg-mode
-       :type emacsmirror
+       :type git
+       :url "git://github.com/afeinberg/tuareg-mode.git"
        :description "A  GOOD Emacs mode to edit Objective Caml code."
        :load-path (".")
-       :build ("make elc")
        :post-init
        (lambda ()
          (add-to-list 'auto-mode-alist '("\\.ml[iylp]?" . tuareg-mode))
