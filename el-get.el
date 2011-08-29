@@ -642,8 +642,10 @@ definition provided by `el-get' recipes locally.
 :type
 
     The type of the package, currently el-get offers support for
-    `apt-get', `elpa', `git' and `http'. You can easily support
-    your own types here, see the variable `el-get-methods'.
+    `apt-get', `elpa', `git', `emacsmirror', `git-svn', `bzr' `svn',
+    `cvs', `darcs', `fink', `ftp', `emacswiki', `http-tar', `pacman',
+    `hg' and `http'. You can easily support your own types here, 
+    see the variable `el-get-methods'.
 
 :branch
 
