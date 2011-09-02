@@ -1,1 +1,3 @@
-(:name javadoc-help :type emacsmirror)
+(:name javadoc-help
+       :description "Javadoc-Help. Look up Java class on online javadocs in browser"
+       :type emacsmirror)
