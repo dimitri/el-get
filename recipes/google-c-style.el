@@ -1,4 +1,5 @@
 (:name google-c-style :type http
+       :description "Google's C/C++ style for c-mode"
        :url "http://google-styleguide.googlecode.com/svn/trunk/google-c-style.el"
        :features google-c-style
        :post-init (lambda()

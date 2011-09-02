@@ -1,4 +1,5 @@
 (:name mustache-mode
+       :description "Emacs Major Mode for Mustache"
        :features mustache-mode
        :type git
        :url "https://github.com/mustache/emacs.git"
