@@ -3581,7 +3581,7 @@ already installed packages is considered."
   (let ((previously-installing (el-get-currently-installing-packages))
         (progress (and (eq sync 'wait)
                         (make-progress-reporter
-			 "Waiting for `el-get' to complete… "
+			 "Waiting for `el-get' to complete... "
 			 0 100 0)))
          (el-get-default-process-sync sync))
 
