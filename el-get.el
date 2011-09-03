@@ -3104,30 +3104,29 @@ entry which is not a symbol and is not already a known recipe."
 	((fboundp 'el-get-growl)         (el-get-growl title message))
 	(t                               (message "%s: %s" title message))))
 
-(when (or (fboundp 'notifications-notify) (fboundp 'notify) (fboundp 'growl))
-  (defun el-get-post-install-notification (package)
-    "Notify the PACKAGE has been installed."
-    (el-get-notify (format "%s installed" package)
-		   "This package has been installed successfully by el-get."))
-  (add-hook 'el-get-post-install-hooks 'el-get-post-install-notification)
+(defun el-get-post-install-notification (package)
+  "Notify the PACKAGE has been installed."
+  (el-get-notify (format "%s installed" package)
+		 "This package has been installed successfully by el-get."))
+(add-hook 'el-get-post-install-hooks 'el-get-post-install-notification)
 
-  (defun el-get-post-update-notification (package)
-    "Notify the PACKAGE has been updated."
-    (el-get-notify (format "%s updated" package)
-		   "This package has been updated successfully by el-get."))
-  (add-hook 'el-get-post-update-hooks 'el-get-post-update-notification)
+(defun el-get-post-update-notification (package)
+  "Notify the PACKAGE has been updated."
+  (el-get-notify (format "%s updated" package)
+		 "This package has been updated successfully by el-get."))
+(add-hook 'el-get-post-update-hooks 'el-get-post-update-notification)
 
-  (defun el-get-post-remove-notification (package)
-    "Notify the PACKAGE has been removed."
-    (el-get-notify (format "%s removed" package)
-		   "This package has been removed successfully by el-get."))
-  (add-hook 'el-get-post-remove-hooks 'el-get-post-remove-notification)
+(defun el-get-post-remove-notification (package)
+  "Notify the PACKAGE has been removed."
+  (el-get-notify (format "%s removed" package)
+		 "This package has been removed successfully by el-get."))
+(add-hook 'el-get-post-remove-hooks 'el-get-post-remove-notification)
 
-  (defun el-get-post-error-notification (package info)
-    "Notify the PACKAGE has failed to install."
-    (el-get-notify (format "%s failed to install" package)
-		   (format "%s" info)))
-  (add-hook 'el-get-post-error-hooks 'el-get-post-error-notification))
+(defun el-get-post-error-notification (package info)
+  "Notify the PACKAGE has failed to install."
+  (el-get-notify (format "%s failed to install" package)
+		 (format "%s" info)))
+(add-hook 'el-get-post-error-hooks 'el-get-post-error-notification))
 
 ;;
 ;; Emacs `message' notifications
