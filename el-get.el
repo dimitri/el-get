@@ -3126,7 +3126,7 @@ entry which is not a symbol and is not already a known recipe."
   "Notify the PACKAGE has failed to install."
   (el-get-notify (format "%s failed to install" package)
 		 (format "%s" info)))
-(add-hook 'el-get-post-error-hooks 'el-get-post-error-notification))
+(add-hook 'el-get-post-error-hooks 'el-get-post-error-notification)
 
 ;;
 ;; Emacs `message' notifications
