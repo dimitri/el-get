@@ -1,9 +1,12 @@
 (:name reftex
-       :description "Version and autoloads of RefTeX"
-       :type cvs
+;       :type cvs
+       :type git
        :module "reftex"
-       :url ":pserver:anonymous@cvs.sv.gnu.org:/sources/auctex"
+       :url "git://github.com/emacsmirror/reftex.git"
+;       :url ":pserver:anonymous@cvs.sv.gnu.org:/sources/auctex"
        :build ("make" "make info")
        :features reftex
        :load-path ("lisp")
-       :info "doc")
+;       :info "doc"
+       :after (lambda ()
+		(load "reftex")))

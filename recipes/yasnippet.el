@@ -1,8 +1,8 @@
 (:name yasnippet
        :website "http://code.google.com/p/yasnippet/"
        :description "YASnippet is a template system for Emacs."
-       :type svn
-       :url "http://yasnippet.googlecode.com/svn/trunk/"
+       :type git
+       :url "git://github.com/marciomr/yasnippet.git"
        :features "yasnippet"
        :prepare (lambda ()                      
                       ;; Set up the default snippets directory
@@ -30,7 +30,8 @@
                            ;; whose car evaluates to the standard
                            ;; value"
                            (list (list 'quote
-                                 (list (concat el-get-dir (file-name-as-directory "yasnippet") "snippets"))))))
+                                 (list (concat el-get-dir (file-name-as-directory "yasnippet") "snippets")))))
+                     (yas/initialize))
        ;; byte-compile load vc-svn and that fails
        ;; see https://github.com/dimitri/el-get/issues/200
        :compile nil)
