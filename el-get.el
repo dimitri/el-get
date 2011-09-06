@@ -37,6 +37,7 @@
 ;;   - support for :branch in git
 ;;   - new recipes, galore
 ;;   - bug fixes, byte compiling, windows compatibility, etc
+;;   - recipe files are now *.rcp rather than *.el (el still supported)
 ;;
 ;;  2.2 - 2011-05-26 - Fix the merge
 ;;
@@ -407,6 +408,11 @@ Used to avoid errors when exploring the path for recipes"
   (reduce (lambda (dir result)
             (if (file-directory-p dir) (cons dir result) result))
           el-get-recipe-path :from-end t :initial-value nil))
+
+;; recipe files are elisp data, you can't byte-compile or eval them on their
+;; own, but having elisp indenting and colors make sense
+(eval-and-compile
+  (add-to-list 'auto-mode-alist '("\\.rcp\\'" . emacs-lisp-mode)))
 
 (defcustom el-get-status-file
   (concat (file-name-as-directory el-get-dir) ".status.el")
@@ -1989,8 +1995,10 @@ into a local recipe file set"
     (unless (file-directory-p target-dir) (make-directory target-dir))
     (loop
      for (url . package) in (el-get-emacswiki-retrieve-package-list)
-     unless (file-exists-p (expand-file-name package target-dir))
-     do (with-temp-file (expand-file-name package target-dir)
+     for recipe = (replace-regexp-in-string "el$" "rcp" package)
+     for rfile  = (expand-file-name recipe target-dir)
+     unless (file-exists-p rfile)
+     do (with-temp-file (expand-file-name rfile target-dir)
 	  (message "%s" package)
 	  (insert (format "(:name %s :type emacswiki :website \"%s\")"
 			  (file-name-sans-extension package) url))))))
@@ -2466,12 +2474,13 @@ recursion.
 
 (defun el-get-recipe-filename (package)
   "Return the name of the file that contains the recipe for PACKAGE, if any."
-  (let ((package-el (concat (el-get-as-string package) ".el")))
+  (let ((package-el  (concat (el-get-as-string package) ".el"))
+	(package-rcp (concat (el-get-as-string package) ".rcp")))
     (loop for dir in el-get-recipe-path
-	  for recipe-filename = (expand-file-name package-el
-						  (file-name-as-directory dir))
-	  if (file-exists-p recipe-filename)
-	  return recipe-filename)))
+	  for recipe-el  = (expand-file-name package-el dir)
+	  for recipe-rcp = (expand-file-name package-rcp dir)
+	  if (file-exists-p recipe-el)  return recipe-el
+	  if (file-exists-p recipe-rcp) return recipe-rcp)))
 
 (defun el-get-read-recipe (package)
   "Return the source definition for PACKAGE, from the recipes."
@@ -2491,7 +2500,7 @@ each directory listed in `el-get-recipe-path' in order."
     (append
      el-get-sources
      (loop for dir in (el-get-recipe-dirs)
-	   nconc (loop for recipe in (directory-files dir nil "^[^.].*\.el$")
+	   nconc (loop for recipe in (directory-files dir nil "^[^.].*\.\\(rcp\\|el\\)$")
 		       for filename = (concat (file-name-as-directory dir) recipe)
 		       for package = (file-name-sans-extension (file-name-nondirectory recipe))
 		       unless (member package packages)
@@ -2680,7 +2689,7 @@ This function does not deal with `el-get-sources' at all."
 If no recipe file exists for PACKAGE, create a new one in DIR,
 which defaults to the first element in `el-get-recipe-path'."
   (interactive (list (el-get-read-recipe-name "Find or create")))
-  (let* ((package-el (concat (el-get-as-string package) ".el"))
+  (let* ((package-el (concat (el-get-as-string package) ".rcp"))
 	 (recipe-file (or
 		       ;; If dir was specified, open or create the
 		       ;; recipe file in that directory.
@@ -3044,7 +3053,7 @@ called by `el-get' (usually at startup) for each installed package."
   (let* (;; Replace a package name with its definition
 	 (source (if (symbolp source) (el-get-read-recipe source) source))
 	 ;; Autogenerate filename if unspecified
-	 (filename (or filename (format "%s.el" (el-get-source-name source)))))
+	 (filename (or filename (format "%s.rcp" (el-get-source-name source)))))
     ;; Filepath is dir/file
     (let ((filepath (format "%s/%s" dir filename)))
       (with-temp-file filepath
