@@ -1,1 +1,0 @@
-(:name oddmuse :type emacsmirror)

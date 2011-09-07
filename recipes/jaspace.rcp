@@ -1,4 +1,5 @@
 (:name jaspace :type http
+       :description "Make Japanese whitespaces visible"
        :url "http://homepage3.nifty.com/satomii/software/jaspace.el"
        :features jaspace
        :post-init (lambda()

@@ -1,4 +1,5 @@
 (:name ppindent :type emacswiki
+       :description "Indents C preprocessor directives"
        :features ppindent
        :post-init (lambda()
                     (setq ppindent-increment 4)

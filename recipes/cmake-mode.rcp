@@ -3,4 +3,7 @@
        :description "Provides syntax highlighting and indentation for CMakeLists.txt and *.cmake source files."
        :type http
        :url "http://www.cmake.org/CMakeDocs/cmake-mode.el"
-       :features "cmake-mode")
+       :features "cmake-mode"
+       :post-init (lambda()
+                    (add-to-list 'auto-mode-alist '("CMakeLists\\.txt\\'" . cmake-mode))
+                    (add-to-list 'auto-mode-alist '("\\.cmake\\'" . cmake-mode))))
