@@ -53,7 +53,7 @@
       ;; switch branch if we have to
       (let* ((branch  (plist-get (with-temp-buffer
 				   (insert-file-contents-literally
-				    (expand-file-name "recipes/el-get.el" pdir))
+				    (expand-file-name "recipes/el-get.rcp" pdir))
 				   (read (current-buffer)))
 				 :branch))
 	     (branch (when branch (concat "origin/" branch)))
