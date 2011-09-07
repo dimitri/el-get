@@ -1,4 +1,0 @@
-(:name auto-complete-yasnippet
-       :description "Auto-complete sources for YASnippet"
-       :type http
-       :url "http://www.cx4a.org/pub/auto-complete-yasnippet.el")

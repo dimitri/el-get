@@ -1,4 +1,0 @@
-(:name auto-complete-ruby
-       :description "Auto-complete sources for Ruby"
-       :type http
-       :url "http://www.cx4a.org/pub/auto-complete-ruby.el")
