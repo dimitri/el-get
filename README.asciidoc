@@ -43,7 +43,7 @@ Here's the 'lazy installer':
 ;; So the idea is that you copy/paste this code into your *scratch* buffer,
 ;; hit C-j, and you have a working el-get.
 (url-retrieve
- "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+ "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
  (lambda (s)
    (end-of-buffer)
    (eval-print-last-sexp)))
@@ -64,7 +64,7 @@ avoid this with the following snippet instead:
 
 (unless (require 'el-get nil t)
   (url-retrieve
-   "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+   "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
    (lambda (s)
      (end-of-buffer)
      (eval-print-last-sexp))))
@@ -85,7 +85,7 @@ how to:
 
 (unless (require 'el-get nil t)
   (url-retrieve
-   "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+   "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
    (lambda (s)
      (end-of-buffer)
      (eval-print-last-sexp))))
