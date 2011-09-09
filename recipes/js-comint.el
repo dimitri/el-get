@@ -1,1 +1,0 @@
-(:name js-comint :type http :url "http://downloads.sourceforge.net/js-comint-el/js-comint.el")

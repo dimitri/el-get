@@ -1,1 +1,0 @@
-(:name ruby-compilation :type elpa)

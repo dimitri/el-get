@@ -1,0 +1,6 @@
+(:name notmuch
+       :description "Run notmuch(thread-based email index, search and tagging) within emacs"
+       :type git
+       :url "git://notmuchmail.org/git/notmuch"
+       :load-path ("./emacs")
+       :build ("./configure" "make"))

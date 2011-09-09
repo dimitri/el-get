@@ -1,0 +1,5 @@
+(:name predictive
+       :description "The Emacs Predictive Completion package adds a new minor-mode to the GNU Emacs editor."
+       :type git
+       :url "http://www.dr-qubit.org/git/predictive.git"
+       :features predictive)

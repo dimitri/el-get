@@ -1,1 +1,0 @@
-(:name tidy :type emacswiki)

@@ -1,1 +1,0 @@
-(:name edit-server :type http :url "http://github.com/stsquad/emacs_chrome/raw/master/servers/edit-server.el")

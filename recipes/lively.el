@@ -1,1 +1,0 @@
-(:name lively :type emacswiki)

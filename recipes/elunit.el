@@ -1,2 +1,0 @@
-(:name elunit
-       :type emacswiki)

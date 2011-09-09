@@ -1,1 +1,0 @@
-(:name vc-darcs :type http :url "http://www.pps.jussieu.fr/~jch/software/repos/vc-darcs/vc-darcs.el")

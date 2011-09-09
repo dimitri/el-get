@@ -1,1 +1,0 @@
-(:name rdebug :type svn :url "http://ruby-debug.rubyforge.org/svn/trunk/emacs/")

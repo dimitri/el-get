@@ -1,1 +1,0 @@
-(:name fuzzy-format :type emacswiki)

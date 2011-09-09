@@ -1,0 +1,3 @@
+(:name column-marker
+       :description "Highlight certain character columns"
+       :type emacswiki :features column-marker)

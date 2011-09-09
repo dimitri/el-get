@@ -1,0 +1,5 @@
+(:name hlinum
+       :description "Extension for linum.el to highlight current line number"
+       :type http :url "http://hlinum-mode.googlecode.com/hg/hlinum.el"
+       :features hlinum
+       :depends linum-ex)

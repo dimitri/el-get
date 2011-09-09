@@ -1,1 +1,0 @@
-(:name twit :type emacswiki)

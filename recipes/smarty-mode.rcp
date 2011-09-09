@@ -1,0 +1,4 @@
+(:name smarty-mode
+       :description "Smarty-Mode is a mode allowing easy edit of Smarty templates: highlight, templates, navigation into source files."
+       :type http
+       :url "http://lisp.morinie.fr/smarty/download/smarty-mode.el")

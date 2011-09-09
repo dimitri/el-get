@@ -38,14 +38,32 @@
 			  el-get-git-install-url
 			"http://github.com/dimitri/el-get.git"))
 	   (default-directory el-get-root)
-	   (process-connection-type nil) ; pipe, no pty (--no-progress)
+	   (process-connection-type nil)   ; pipe, no pty (--no-progress)
+	   (el-get-default-process-sync t) ; force sync operations for installer
+	   (el-get-verbose t)		   ; let's see it all
 
 	   ;; First clone el-get
 	   (status
-	    (call-process git nil `(,buf t) t "--no-pager" "clone" "-v" url package)))
+	    (call-process
+	     git nil `(,buf t) t "--no-pager" "clone" "-v" url package)))
 
       (unless (zerop status)
-	(error "Couldn't get el-get from the Git repository"))
+	(error "Couldn't clone el-get from the Git repository: %s" url))
+
+      ;; switch branch if we have to
+      (let* ((branch  (plist-get (with-temp-buffer
+				   (insert-file-contents-literally
+				    (expand-file-name "recipes/el-get.rcp" pdir))
+				   (read (current-buffer)))
+				 :branch))
+	     (branch (when branch (concat "origin/" branch)))
+	     (default-directory pdir)
+	     (bstatus
+	      (when branch
+		(call-process git nil `(,buf t) t "checkout" "-t" branch))))
+
+	(when (and branch (not (zerop bstatus)))
+	  (error "Couldn't `git checkout -t %s`" branch)))
 
       (load (concat pdir package ".el"))
       (el-get-post-install "el-get")
