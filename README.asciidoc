@@ -73,6 +73,23 @@ avoid this with the following snippet instead:
 See next section for details about how to setup you emacs so that it's able
 to benefit from +el-get+ automatically.
 
+== How to install the developer version (master branch)?
+
+The 'lazy installer' uses the default +el-get-install.el+ file which targets
+the +2.stable+ branch.  To install el-get directly on the +master+ branch,
+summon the +el-get-master-branch+ variable into existence:
+
+--------------------------------------
+;; So the idea is that you copy/paste this code into your *scratch* buffer,
+;; hit C-j, and you have a working developper edition of el-get.
+(url-retrieve
+ "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
+ (lambda (s)
+   (let (el-get-master-branch)
+     (end-of-buffer)
+     (eval-print-last-sexp))))
+--------------------------------------
+
 == Basic usage
 
 Now that +el-get+ is installed, simply use +M-x el-get-install+ and pick
