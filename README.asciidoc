@@ -233,8 +233,8 @@ would take too much time.
 === Package setup
 
 The package setup can either go into the +:after+ function, or in a file
-named +init-package.el+ in +el-get-configs-dir+.  Any such named file will
-get automatically loaded by +el-get+ at +init+ time, if it exists.
+named +init-package.el+ in +el-get-user-package-directory+.  Any such named
+file will get automatically loaded by +el-get+ at +init+ time, if it exists.
 
 === Build Commands
 

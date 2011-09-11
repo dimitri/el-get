@@ -38,7 +38,7 @@
 ;;   - new recipes, galore
 ;;   - bug fixes, byte compiling, windows compatibility, etc
 ;;   - recipe files are now *.rcp rather than *.el (el still supported)
-;;   - el-get-configs-dir allow to setup init-<package>.el files
+;;   - el-get-user-package-directory allows to setup init-<package>.el files
 ;;
 ;;  2.2 - 2011-05-26 - Fix the merge
 ;;
@@ -402,13 +402,21 @@ the named package action in the given method."
   :group 'el-get
   :type '(repeat (directory)))
 
-(defcustom el-get-configs-dir nil
+(defcustom el-get-user-package-directory nil
   "Define where to look for init-pkgname.el configurations. Disabled if nil."
   :group 'el-get
   :type '(choice (const :tag "Off" nil) directory))
 
-(defun el-get-package-user-init-file (package)
-  (expand-file-name (concat "init-" package ".el") el-get-configs-dir))
+(defun el-get-load-package-user-init-file (package)
+  "Load the user init file for PACKAGE, called init-package.el
+and to be found in `el-get-user-package-directory'.  Do nothing
+when this custom is nil."
+  (when el-get-user-package-directory
+    (let* ((init-file-name    (concat "init-" package ".el"))
+	   (package-init-file
+	    (expand-file-name init-file-name el-get-user-package-directory)))
+      (el-get-verbose-message "el-get: load %S" package-init-file)
+      (load package-init-file 'noerror))))
 
 (defun el-get-recipe-dirs ()
   "Return the elements of el-get-recipe-path that actually exist.
@@ -793,7 +801,7 @@ definition provided by `el-get' recipes locally.
 
     A function to register for `eval-after-load' against the
     recipe library, after :post-init, and after per-package
-    user-init-file (see `el-get-configs-dir').  That's not
+    user-init-file (see `el-get-user-package-directory').  That's not
     intended for recipe use.
 
 :lazy
@@ -2930,14 +2938,15 @@ called by `el-get' (usually at startup) for each installed package."
 
         ;; now handle the user configs and :post-init and :after functions
         (if (or lazy el-get-is-lazy)
-            (let ((lazy-form `(progn ,(when postinit (list 'funcall postinit))
-				     ,(when el-get-configs-dir `(load ,(el-get-package-user-init-file package) 'noerror))
-                                     ,(when after (list 'funcall after)))))
+            (let ((lazy-form
+		   `(progn ,(when postinit (list 'funcall postinit))
+			   ,(el-get-load-package-user-init-file package)
+			   ,(when after (list 'funcall after)))))
               (eval-after-load library lazy-form))
 
           ;; el-get is not lazy here
           (el-get-funcall postinit "post-init" package)
-	  (when el-get-configs-dir (load (el-get-package-user-init-file package) 'noerror))
+	  (el-get-load-package-user-init-file package)
           (el-get-funcall after "after" package))
 
         ;; and call the global init hooks
