@@ -230,6 +230,12 @@ We do not intend to provide recipes for advanced types such as +apt-get+ and
 +elpa+ because there's so little to win here, and maintaining a package list
 would take too much time.
 
+=== Package setup
+
+The package setup can either go into the +:after+ function, or in a file
+named +init-package.el+ in +el-get-configs-dir+.  Any such named file will
+get automatically loaded by +el-get+ at +init+ time, if it exists.
+
 === Build Commands
 
 Avoid using +make install+, which will usually move files into a

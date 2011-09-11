@@ -38,6 +38,7 @@
 ;;   - new recipes, galore
 ;;   - bug fixes, byte compiling, windows compatibility, etc
 ;;   - recipe files are now *.rcp rather than *.el (el still supported)
+;;   - el-get-configs-dir allow to setup init-<package>.el files
 ;;
 ;;  2.2 - 2011-05-26 - Fix the merge
 ;;
@@ -791,8 +792,9 @@ definition provided by `el-get' recipes locally.
 :after
 
     A function to register for `eval-after-load' against the
-    recipe library, after :post-init.  That's not intended for
-    recipe use.
+    recipe library, after :post-init, and after per-package
+    user-init-file (see `el-get-configs-dir').  That's not
+    intended for recipe use.
 
 :lazy
 
