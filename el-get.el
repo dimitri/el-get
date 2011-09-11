@@ -401,6 +401,14 @@ the named package action in the given method."
   :group 'el-get
   :type '(repeat (directory)))
 
+(defcustom el-get-configs-dir nil
+  "Define where to look for init-pkgname.el configurations. Disabled if nil."
+  :group 'el-get
+  :type '(choice (const :tag "Off" nil) directory))
+
+(defun el-get-package-user-init-file (package)
+  (expand-file-name (concat "init-" package ".el") el-get-configs-dir))
+
 (defun el-get-recipe-dirs ()
   "Return the elements of el-get-recipe-path that actually exist.
 
@@ -2918,14 +2926,16 @@ called by `el-get' (usually at startup) for each installed package."
                 (el-get-verbose-message "require '%s" feature)
                 (require feature)))))
 
-        ;; now handle the :post-init and :after functions
+        ;; now handle the user configs and :post-init and :after functions
         (if (or lazy el-get-is-lazy)
             (let ((lazy-form `(progn ,(when postinit (list 'funcall postinit))
+				     ,(when el-get-configs-dir `(load ,(el-get-package-user-init-file package) 'noerror))
                                      ,(when after (list 'funcall after)))))
               (eval-after-load library lazy-form))
 
           ;; el-get is not lazy here
           (el-get-funcall postinit "post-init" package)
+	  (when el-get-configs-dir (load (el-get-package-user-init-file package) 'noerror))
           (el-get-funcall after "after" package))
 
         ;; and call the global init hooks
