@@ -231,13 +231,15 @@ We do not intend to provide recipes for advanced types such as +apt-get+ and
 would take too much time.
 
 When using recipes, your el-get-sources might look like the following:
-(setq el-get-sources
+
+  (setq el-get-sources
       '((:name bbdb)
 	(:name magit)
 	(:name twitter)
 	(:name scratch)
 	(:name vkill)
 	(:name el-get)))
+
 === Package setup
 
 The package setup can either go into the +:after+ function, or in a file
