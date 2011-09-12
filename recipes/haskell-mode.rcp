@@ -1,0 +1,8 @@
+(:name haskell-mode
+       :description "A Haskell editing mode"
+       :type git
+       :url "https://github.com/pheaver/haskell-mode.git"
+       :load "haskell-site-file.el"
+       :post-init (lambda ()
+            (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+            (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)))

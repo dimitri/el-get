@@ -1,0 +1,5 @@
+(:name opa-mode
+       :website "https://opalang.org"
+       :description "Major mode for editing OPA programs"
+       :type http
+       :url "https://raw.github.com/MLstate/opalang/master/utils/emacs/opa-mode.el")

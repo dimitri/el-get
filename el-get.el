@@ -37,6 +37,8 @@
 ;;   - support for :branch in git
 ;;   - new recipes, galore
 ;;   - bug fixes, byte compiling, windows compatibility, etc
+;;   - recipe files are now *.rcp rather than *.el (el still supported)
+;;   - el-get-user-package-directory allows to setup init-<package>.el files
 ;;
 ;;  2.2 - 2011-05-26 - Fix the merge
 ;;
@@ -400,6 +402,22 @@ the named package action in the given method."
   :group 'el-get
   :type '(repeat (directory)))
 
+(defcustom el-get-user-package-directory nil
+  "Define where to look for init-pkgname.el configurations. Disabled if nil."
+  :group 'el-get
+  :type '(choice (const :tag "Off" nil) directory))
+
+(defun el-get-load-package-user-init-file (package)
+  "Load the user init file for PACKAGE, called init-package.el
+and to be found in `el-get-user-package-directory'.  Do nothing
+when this custom is nil."
+  (when el-get-user-package-directory
+    (let* ((init-file-name    (concat "init-" package ".el"))
+	   (package-init-file
+	    (expand-file-name init-file-name el-get-user-package-directory)))
+      (el-get-verbose-message "el-get: load %S" package-init-file)
+      (load package-init-file 'noerror))))
+
 (defun el-get-recipe-dirs ()
   "Return the elements of el-get-recipe-path that actually exist.
 
@@ -407,6 +425,11 @@ Used to avoid errors when exploring the path for recipes"
   (reduce (lambda (dir result)
             (if (file-directory-p dir) (cons dir result) result))
           el-get-recipe-path :from-end t :initial-value nil))
+
+;; recipe files are elisp data, you can't byte-compile or eval them on their
+;; own, but having elisp indenting and colors make sense
+(eval-and-compile
+  (add-to-list 'auto-mode-alist '("\\.rcp\\'" . emacs-lisp-mode)))
 
 (defcustom el-get-status-file
   (concat (file-name-as-directory el-get-dir) ".status.el")
@@ -642,8 +665,10 @@ definition provided by `el-get' recipes locally.
 :type
 
     The type of the package, currently el-get offers support for
-    `apt-get', `elpa', `git' and `http'. You can easily support
-    your own types here, see the variable `el-get-methods'.
+    `apt-get', `elpa', `git', `emacsmirror', `git-svn', `bzr' `svn',
+    `cvs', `darcs', `fink', `ftp', `emacswiki', `http-tar', `pacman',
+    `hg' and `http'. You can easily support your own types here, 
+    see the variable `el-get-methods'.
 
 :branch
 
@@ -775,8 +800,9 @@ definition provided by `el-get' recipes locally.
 :after
 
     A function to register for `eval-after-load' against the
-    recipe library, after :post-init.  That's not intended for
-    recipe use.
+    recipe library, after :post-init, and after per-package
+    user-init-file (see `el-get-user-package-directory').  That's not
+    intended for recipe use.
 
 :lazy
 
@@ -1901,7 +1927,7 @@ the recipe, then return nil."
   "return a suitable filename from given url
 
 Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
-  (replace-regexp-in-string "[^a-zA-Z0-9-_\.]" "_"
+  (replace-regexp-in-string "[^a-zA-Z0-9-_\.\+]" "_"
 			    (file-name-nondirectory url)))
 
 (defun el-get-http-retrieve-callback (status package post-install-fun &optional dest sources)
@@ -1987,8 +2013,10 @@ into a local recipe file set"
     (unless (file-directory-p target-dir) (make-directory target-dir))
     (loop
      for (url . package) in (el-get-emacswiki-retrieve-package-list)
-     unless (file-exists-p (expand-file-name package target-dir))
-     do (with-temp-file (expand-file-name package target-dir)
+     for recipe = (replace-regexp-in-string "el$" "rcp" package)
+     for rfile  = (expand-file-name recipe target-dir)
+     unless (file-exists-p rfile)
+     do (with-temp-file (expand-file-name rfile target-dir)
 	  (message "%s" package)
 	  (insert (format "(:name %s :type emacswiki :website \"%s\")"
 			  (file-name-sans-extension package) url))))))
@@ -2464,12 +2492,13 @@ recursion.
 
 (defun el-get-recipe-filename (package)
   "Return the name of the file that contains the recipe for PACKAGE, if any."
-  (let ((package-el (concat (el-get-as-string package) ".el")))
+  (let ((package-el  (concat (el-get-as-string package) ".el"))
+	(package-rcp (concat (el-get-as-string package) ".rcp")))
     (loop for dir in el-get-recipe-path
-	  for recipe-filename = (expand-file-name package-el
-						  (file-name-as-directory dir))
-	  if (file-exists-p recipe-filename)
-	  return recipe-filename)))
+	  for recipe-el  = (expand-file-name package-el dir)
+	  for recipe-rcp = (expand-file-name package-rcp dir)
+	  if (file-exists-p recipe-el)  return recipe-el
+	  if (file-exists-p recipe-rcp) return recipe-rcp)))
 
 (defun el-get-read-recipe (package)
   "Return the source definition for PACKAGE, from the recipes."
@@ -2489,7 +2518,7 @@ each directory listed in `el-get-recipe-path' in order."
     (append
      el-get-sources
      (loop for dir in (el-get-recipe-dirs)
-	   nconc (loop for recipe in (directory-files dir nil "^[^.].*\.el$")
+	   nconc (loop for recipe in (directory-files dir nil "^[^.].*\.\\(rcp\\|el\\)$")
 		       for filename = (concat (file-name-as-directory dir) recipe)
 		       for package = (file-name-sans-extension (file-name-nondirectory recipe))
 		       unless (member package packages)
@@ -2678,7 +2707,7 @@ This function does not deal with `el-get-sources' at all."
 If no recipe file exists for PACKAGE, create a new one in DIR,
 which defaults to the first element in `el-get-recipe-path'."
   (interactive (list (el-get-read-recipe-name "Find or create")))
-  (let* ((package-el (concat (el-get-as-string package) ".el"))
+  (let* ((package-el (concat (el-get-as-string package) ".rcp"))
 	 (recipe-file (or
 		       ;; If dir was specified, open or create the
 		       ;; recipe file in that directory.
@@ -2907,14 +2936,17 @@ called by `el-get' (usually at startup) for each installed package."
                 (el-get-verbose-message "require '%s" feature)
                 (require feature)))))
 
-        ;; now handle the :post-init and :after functions
+        ;; now handle the user configs and :post-init and :after functions
         (if (or lazy el-get-is-lazy)
-            (let ((lazy-form `(progn ,(when postinit (list 'funcall postinit))
-                                     ,(when after (list 'funcall after)))))
+            (let ((lazy-form
+		   `(progn ,(when postinit (list 'funcall postinit))
+			   (el-get-load-package-user-init-file ,package)
+			   ,(when after (list 'funcall after)))))
               (eval-after-load library lazy-form))
 
           ;; el-get is not lazy here
           (el-get-funcall postinit "post-init" package)
+	  (el-get-load-package-user-init-file package)
           (el-get-funcall after "after" package))
 
         ;; and call the global init hooks
@@ -3042,7 +3074,7 @@ called by `el-get' (usually at startup) for each installed package."
   (let* (;; Replace a package name with its definition
 	 (source (if (symbolp source) (el-get-read-recipe source) source))
 	 ;; Autogenerate filename if unspecified
-	 (filename (or filename (format "%s.el" (el-get-source-name source)))))
+	 (filename (or filename (format "%s.rcp" (el-get-source-name source)))))
     ;; Filepath is dir/file
     (let ((filepath (format "%s/%s" dir filename)))
       (with-temp-file filepath
@@ -3102,30 +3134,29 @@ entry which is not a symbol and is not already a known recipe."
 	((fboundp 'el-get-growl)         (el-get-growl title message))
 	(t                               (message "%s: %s" title message))))
 
-(when (or (fboundp 'notifications-notify) (fboundp 'notify) (fboundp 'growl))
-  (defun el-get-post-install-notification (package)
-    "Notify the PACKAGE has been installed."
-    (el-get-notify (format "%s installed" package)
-		   "This package has been installed successfully by el-get."))
-  (add-hook 'el-get-post-install-hooks 'el-get-post-install-notification)
+(defun el-get-post-install-notification (package)
+  "Notify the PACKAGE has been installed."
+  (el-get-notify (format "%s installed" package)
+		 "This package has been installed successfully by el-get."))
+(add-hook 'el-get-post-install-hooks 'el-get-post-install-notification)
 
-  (defun el-get-post-update-notification (package)
-    "Notify the PACKAGE has been updated."
-    (el-get-notify (format "%s updated" package)
-		   "This package has been updated successfully by el-get."))
-  (add-hook 'el-get-post-update-hooks 'el-get-post-update-notification)
+(defun el-get-post-update-notification (package)
+  "Notify the PACKAGE has been updated."
+  (el-get-notify (format "%s updated" package)
+		 "This package has been updated successfully by el-get."))
+(add-hook 'el-get-post-update-hooks 'el-get-post-update-notification)
 
-  (defun el-get-post-remove-notification (package)
-    "Notify the PACKAGE has been removed."
-    (el-get-notify (format "%s removed" package)
-		   "This package has been removed successfully by el-get."))
-  (add-hook 'el-get-post-remove-hooks 'el-get-post-remove-notification)
+(defun el-get-post-remove-notification (package)
+  "Notify the PACKAGE has been removed."
+  (el-get-notify (format "%s removed" package)
+		 "This package has been removed successfully by el-get."))
+(add-hook 'el-get-post-remove-hooks 'el-get-post-remove-notification)
 
-  (defun el-get-post-error-notification (package info)
-    "Notify the PACKAGE has failed to install."
-    (el-get-notify (format "%s failed to install" package)
-		   (format "%s" info)))
-  (add-hook 'el-get-post-error-hooks 'el-get-post-error-notification))
+(defun el-get-post-error-notification (package info)
+  "Notify the PACKAGE has failed to install."
+  (el-get-notify (format "%s failed to install" package)
+		 (format "%s" info)))
+(add-hook 'el-get-post-error-hooks 'el-get-post-error-notification)
 
 ;;
 ;; Emacs `message' notifications
@@ -3580,7 +3611,7 @@ already installed packages is considered."
   (let ((previously-installing (el-get-currently-installing-packages))
         (progress (and (eq sync 'wait)
                         (make-progress-reporter
-			 "Waiting for `el-get' to complete… "
+			 "Waiting for `el-get' to complete... "
 			 0 100 0)))
          (el-get-default-process-sync sync))
 

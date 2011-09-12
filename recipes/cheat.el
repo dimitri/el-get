@@ -1,1 +1,0 @@
-(:name cheat :type emacsmirror)

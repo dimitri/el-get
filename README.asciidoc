@@ -43,7 +43,7 @@ Here's the 'lazy installer':
 ;; So the idea is that you copy/paste this code into your *scratch* buffer,
 ;; hit C-j, and you have a working el-get.
 (url-retrieve
- "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+ "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
  (lambda (s)
    (end-of-buffer)
    (eval-print-last-sexp)))
@@ -64,7 +64,7 @@ avoid this with the following snippet instead:
 
 (unless (require 'el-get nil t)
   (url-retrieve
-   "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+   "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
    (lambda (s)
      (end-of-buffer)
      (eval-print-last-sexp))))
@@ -72,6 +72,23 @@ avoid this with the following snippet instead:
 
 See next section for details about how to setup you emacs so that it's able
 to benefit from +el-get+ automatically.
+
+== How to install the developer version (master branch)?
+
+The 'lazy installer' uses the default +el-get-install.el+ file which targets
+the +2.stable+ branch.  To install el-get directly on the +master+ branch,
+summon the +el-get-master-branch+ variable into existence:
+
+--------------------------------------
+;; So the idea is that you copy/paste this code into your *scratch* buffer,
+;; hit C-j, and you have a working developper edition of el-get.
+(url-retrieve
+ "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
+ (lambda (s)
+   (let (el-get-master-branch)
+     (end-of-buffer)
+     (eval-print-last-sexp))))
+--------------------------------------
 
 == Basic usage
 
@@ -85,7 +102,7 @@ how to:
 
 (unless (require 'el-get nil t)
   (url-retrieve
-   "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+   "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
    (lambda (s)
      (end-of-buffer)
      (eval-print-last-sexp))))
@@ -221,6 +238,11 @@ When using recipes, your el-get-sources might look like the following:
 	(:name scratch)
 	(:name vkill)
 	(:name el-get)))
+=== Package setup
+
+The package setup can either go into the +:after+ function, or in a file
+named +init-package.el+ in +el-get-user-package-directory+.  Any such named
+file will get automatically loaded by +el-get+ at +init+ time, if it exists.
 
 === Build Commands
 

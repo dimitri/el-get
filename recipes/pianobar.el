@@ -1,1 +1,0 @@
-(:name pianobar :type emacswiki)

@@ -51,19 +51,20 @@
 	(error "Couldn't clone el-get from the Git repository: %s" url))
 
       ;; switch branch if we have to
-      (let* ((branch  (plist-get (with-temp-buffer
-				   (insert-file-contents-literally
-				    (expand-file-name "recipes/el-get.el" pdir))
-				   (read (current-buffer)))
-				 :branch))
-	     (branch (when branch (concat "origin/" branch)))
-	     (default-directory pdir)
-	     (bstatus
-	      (when branch
-		(call-process git nil `(,buf t) t "checkout" "-t" branch))))
+      (unless (boundp 'el-get-master-branch)
+	(let* ((branch  (plist-get (with-temp-buffer
+				     (insert-file-contents-literally
+				      (expand-file-name "recipes/el-get.rcp" pdir))
+				     (read (current-buffer)))
+				   :branch))
+	       (branch (when branch (concat "origin/" branch)))
+	       (default-directory pdir)
+	       (bstatus
+		(when branch
+		  (call-process git nil `(,buf t) t "checkout" "-t" branch))))
 
-	(when (and branch (not (zerop bstatus)))
-	  (error "Couldn't `git checkout -t %s`" branch)))
+	  (when (and branch (not (zerop bstatus)))
+	    (error "Couldn't `git checkout -t %s`" branch))))
 
       (load (concat pdir package ".el"))
       (el-get-post-install "el-get")
