@@ -3,8 +3,9 @@
 ;; Copyright (C) 2010 Dimitri Fontaine
 ;;
 ;; Author: Dimitri Fontaine <dim@tapoueh.org>
-;; URL: http://www.emacswiki.org/emacs/el-get.el
-;; Version: 2.2
+;; URL: http://www.emacswiki.org/emacs/el-get
+;; GIT: https://github.com/dimitri/el-get
+;; Version: 3.1
 ;; Created: 2010-06-17
 ;; Keywords: emacs package elisp install elpa git git-svn bzr cvs svn darcs hg
 ;;           apt-get fink pacman http http-tar emacswiki
@@ -29,9 +30,9 @@
 
 ;;; Change Log:
 ;;
-;;  3.0 - WIP - Get a fix
+;;  3.1 - 2011-09-15 - Get a fix
 ;;
-;;   - support fo package dependencies
+;;   - support for package dependencies
 ;;   - rely on package status for `el-get' to install and init them
 ;;   - M-x el-get-list-packages
 ;;   - support for :branch in git
@@ -39,6 +40,7 @@
 ;;   - bug fixes, byte compiling, windows compatibility, etc
 ;;   - recipe files are now *.rcp rather than *.el (el still supported)
 ;;   - el-get-user-package-directory allows to setup init-<package>.el files
+;;   - remove M-x el-get-sync, now obsolete
 ;;
 ;;  2.2 - 2011-05-26 - Fix the merge
 ;;
@@ -139,6 +141,7 @@
 ;;   - implement el-get-rmdir
 
 ;;; Code:
+
 (require 'dired)
 (require 'package nil t) ; that's ELPA, but you can use el-get to install it
 (require 'cl)            ; needed for `remove-duplicates'
@@ -532,6 +535,7 @@ being sent to the underlying shell."
                  )
            ))
 
+
 ;;
 ;; Support for tracking package states
 ;;
@@ -579,6 +583,7 @@ for reasons described in INFO."
   (el-get-set-package-state package `(error ,info)))
 (add-hook 'el-get-post-error-hooks 'el-get-mark-failed)
 
+
 ;;
 ;; "Fuzzy" data structure handling
 ;;
@@ -627,6 +632,8 @@ returning a list that contains it (and only it)."
 )
 ;;; END "Fuzzy" data structure support
 
+
+
 (defun el-get-source-name (source)
   "Return the package name (stringp) given an `el-get-sources'
 entry."
@@ -943,6 +950,9 @@ platforms where this recipe should apply"
               ,el-get-build-recipe-body))))))
 
 
+;;
+;; Some tools
+;;
 (defun el-get-flatten (arg)
   "Return a version of ARG as a one-level list
 
@@ -1079,6 +1089,7 @@ are now installed"
   install DEPENDENCY, with error information DATA"
   (el-get-mark-failed package (list dependency data)))
 
+
 (defun el-get-install (package)
   "Cause the named PACKAGE to be installed after all of its
 dependencies (if any).
@@ -1130,12 +1141,12 @@ PACKAGE may be either a string or the corresponding symbol."
       ((debug error)
        (el-get-installation-failed package err)))))
 
-
 (defun el-get-installation-failed (package signal-data)
   "Run all the failure hooks for PACKAGE and `signal' the car and cdr of SIGNAL-DATA."
   (run-hook-with-args 'el-get-post-error-hooks package signal-data)
   (signal (car signal-data) (cdr signal-data)))
 
+
 ;;
 ;; call-process-list utility
 ;;
@@ -3093,11 +3104,6 @@ entry which is not a symbol and is not already a known recipe."
       (message "el-get: preparing recipe file for %s" (el-get-source-name r))
       (el-get-write-recipe r dir)))
   (dired dir))
-
-(defun el-get-sync ()
-  "M-x el-get-sync will synchronously install and init your el-get packages"
-  (interactive)
-  (el-get 'sync))
 
 ;;
 ;; notify user with emacs notifications API (new in 24)
