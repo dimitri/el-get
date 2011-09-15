@@ -3553,7 +3553,7 @@ considered \"required\"."
 					    (el-get-as-symbol p)))))
 	 (to-install  (if packages
 			  (loop for p in packages
-				unless (member (el-get-as-symbol p) to-init)
+				unless (member (el-get-as-string p) to-init)
 				collect (el-get-as-string p))
 			required))
 	 done)
