@@ -30,6 +30,8 @@
 
 ;;; Change Log:
 ;;
+;;  4.0 - WIP - To infinity, and beyond!
+;;
 ;;  3.1 - 2011-09-15 - Get a fix
 ;;
 ;;   - support for package dependencies
