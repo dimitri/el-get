@@ -19,7 +19,7 @@ always, but they will be about smoothing things further.
 
 === Latest released version
 
-+el-get+ version 2.1 is available, with a boatload of features, including
++el-get+ version 3.1 is available, with a boatload of features, including
 autoloads support, byte-compiling in an external "clean room" Emacs
 instance, custom support, lazy initialisation support (defering all init
 functions to +eval-after-load+), and multi repositories +ELPA+ support.
