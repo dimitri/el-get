@@ -19,7 +19,7 @@ always, but they will be about smoothing things further.
 
 === Latest released version
 
-+el-get+ version 2.1 is available, with a boatload of features, including
++el-get+ version 3.1 is available, with a boatload of features, including
 autoloads support, byte-compiling in an external "clean room" Emacs
 instance, custom support, lazy initialisation support (defering all init
 functions to +eval-after-load+), and multi repositories +ELPA+ support.
@@ -43,7 +43,7 @@ Here's the 'lazy installer':
 ;; So the idea is that you copy/paste this code into your *scratch* buffer,
 ;; hit C-j, and you have a working el-get.
 (url-retrieve
- "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+ "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
  (lambda (s)
    (end-of-buffer)
    (eval-print-last-sexp)))
@@ -64,7 +64,7 @@ avoid this with the following snippet instead:
 
 (unless (require 'el-get nil t)
   (url-retrieve
-   "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+   "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
    (lambda (s)
      (end-of-buffer)
      (eval-print-last-sexp))))
@@ -72,6 +72,23 @@ avoid this with the following snippet instead:
 
 See next section for details about how to setup you emacs so that it's able
 to benefit from +el-get+ automatically.
+
+== How to install the developer version (master branch)?
+
+The 'lazy installer' uses the default +el-get-install.el+ file which targets
+the +2.stable+ branch.  To install el-get directly on the +master+ branch,
+summon the +el-get-master-branch+ variable into existence:
+
+--------------------------------------
+;; So the idea is that you copy/paste this code into your *scratch* buffer,
+;; hit C-j, and you have a working developper edition of el-get.
+(url-retrieve
+ "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
+ (lambda (s)
+   (let (el-get-master-branch)
+     (end-of-buffer)
+     (eval-print-last-sexp))))
+--------------------------------------
 
 == Basic usage
 
@@ -85,7 +102,7 @@ how to:
 
 (unless (require 'el-get nil t)
   (url-retrieve
-   "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+   "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
    (lambda (s)
      (end-of-buffer)
      (eval-print-last-sexp))))
@@ -213,6 +230,12 @@ We do not intend to provide recipes for advanced types such as +apt-get+ and
 +elpa+ because there's so little to win here, and maintaining a package list
 would take too much time.
 
+=== Package setup
+
+The package setup can either go into the +:after+ function, or in a file
+named +init-package.el+ in +el-get-user-package-directory+.  Any such named
+file will get automatically loaded by +el-get+ at +init+ time, if it exists.
+
 === Build Commands
 
 Avoid using +make install+, which will usually move files into a
@@ -254,27 +277,21 @@ M-x el-get-describe::
     website, description, installation method, full recipe, and buttons to
     easily install, update or remove the package.
 
-M-x el-get-sync::
-
-    Synchronously install any "required" package and init any "installed" one.
+M-x el-get-install::
++
+Will prompt for a package name, with completion, then install it.  It will
+only propose packages that are not already +installed+.  Any package that
+you have a recipe for is a candidate.
++
+Please note that when installing a package that is not in your
++el-get-sources+ or your +el-get+ call means that it will not be initialized
+for you automatically at emacs startup.  You get a +WARNING+ message when
+that's the case.
 
 M-x el-get-cd::
 
     Will prompt for an +installed+ package name, with completion, then open
     its directory with dired.
-
-M-x el-get-install::
-
-    Will prompt for a package name, with completion, then install it.  It
-    will only propose packages that are not already +installed+.  Any
-    package that you have a recipe for is a candidate.
-
-    Please note that when installing a package that is not in your
-    +el-get-sources+ or your +el-get+ call means that it will not be
-    initialized for you automatically at emacs startup.  You get a +WARNING+
-    message when that's the case.
-
-  C-h e runs the command view-echo-area-messages.
 
 M-x el-get-update::
 
@@ -345,11 +362,6 @@ el-get-extra-packages (&rest packages)::
   ((verbiste "installed")
    (package "installed"))
 
-== Internals
-
-TODO: explain the symlinks in +~/.emacs.d/el-get+. For now, read the source
-and try it out.
-
 == Extending it
 
 Please see the documentation for the +el-get-methods+ and provide a patch!
@@ -359,12 +371,11 @@ using copy paste. Here's the patch: https://github.com/dimitri/el-get/commit/63e
 
 == Upgrade Notes
 
-=== Upgrading to 3.0
+=== Upgrading to 3.1
 
-Please remind that +3.0+ is a development branch.  A change has been
-included so that +el-get-sources+ is now only another source for recipes,
-and +(el-get '...)+ will now only install and initialize known "required"
-and "installed" packages.
+A change has been included so that +el-get-sources+ is now only another
+source for recipes, and +(el-get '...)+ will now only install and initialize
+known "required" and "installed" packages.
 
 The documentation has been updated to detail the new setup.
 
@@ -373,22 +384,4 @@ want in your setup, here's how to get them out of the way:
 
   M-: (el-get-save-package-status "package-name-here" "removed")
 
-=== Upgrading to 1.1
-
-==== Package Status
-
-+el-get+ will now save some package status information into the file
-+el-get-status-file+, it's a property list of the package symbol and its
-status. The status is set to "required" when you enter +el-get-install+ and
-is changed to +installed+ upon successful completion of the installation,
-including the build.
-
-Now, if you +el-get-install+ an already installed package, this is an
-error. If the status is "required", a previous install failed, you have to
-+el-get-remove+ the package before continuing. If the status is "installed",
-well, the package is known installed.
-
-To reinit the status file you might need to execute the following code:
-
-  (mapc (lambda (p) (el-get-save-package-status p "installed"))
-	(el-get-package-name-list))
+Please review documentation section 'Advanced setup with local recipes'.

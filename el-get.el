@@ -3,8 +3,9 @@
 ;; Copyright (C) 2010 Dimitri Fontaine
 ;;
 ;; Author: Dimitri Fontaine <dim@tapoueh.org>
-;; URL: http://www.emacswiki.org/emacs/el-get.el
-;; Version: 2.2
+;; URL: http://www.emacswiki.org/emacs/el-get
+;; GIT: https://github.com/dimitri/el-get
+;; Version: 3.1
 ;; Created: 2010-06-17
 ;; Keywords: emacs package elisp install elpa git git-svn bzr cvs svn darcs hg
 ;;           apt-get fink pacman http http-tar emacswiki
@@ -29,15 +30,19 @@
 
 ;;; Change Log:
 ;;
-;;  3.0 - WIP - Get a fix
+;;  4.0 - WIP - To infinity, and beyond!
 ;;
-;;   - support fo package dependencies
+;;  3.1 - 2011-09-15 - Get a fix
+;;
+;;   - support for package dependencies
 ;;   - rely on package status for `el-get' to install and init them
 ;;   - M-x el-get-list-packages
 ;;   - support for :branch in git
 ;;   - new recipes, galore
 ;;   - bug fixes, byte compiling, windows compatibility, etc
 ;;   - recipe files are now *.rcp rather than *.el (el still supported)
+;;   - el-get-user-package-directory allows to setup init-<package>.el files
+;;   - remove M-x el-get-sync, now obsolete
 ;;
 ;;  2.2 - 2011-05-26 - Fix the merge
 ;;
@@ -138,6 +143,7 @@
 ;;   - implement el-get-rmdir
 
 ;;; Code:
+
 (require 'dired)
 (require 'package nil t) ; that's ELPA, but you can use el-get to install it
 (require 'cl)            ; needed for `remove-duplicates'
@@ -401,6 +407,22 @@ the named package action in the given method."
   :group 'el-get
   :type '(repeat (directory)))
 
+(defcustom el-get-user-package-directory nil
+  "Define where to look for init-pkgname.el configurations. Disabled if nil."
+  :group 'el-get
+  :type '(choice (const :tag "Off" nil) directory))
+
+(defun el-get-load-package-user-init-file (package)
+  "Load the user init file for PACKAGE, called init-package.el
+and to be found in `el-get-user-package-directory'.  Do nothing
+when this custom is nil."
+  (when el-get-user-package-directory
+    (let* ((init-file-name    (concat "init-" package ".el"))
+	   (package-init-file
+	    (expand-file-name init-file-name el-get-user-package-directory)))
+      (el-get-verbose-message "el-get: load %S" package-init-file)
+      (load package-init-file 'noerror))))
+
 (defun el-get-recipe-dirs ()
   "Return the elements of el-get-recipe-path that actually exist.
 
@@ -515,6 +537,7 @@ being sent to the underlying shell."
                  )
            ))
 
+
 ;;
 ;; Support for tracking package states
 ;;
@@ -562,6 +585,7 @@ for reasons described in INFO."
   (el-get-set-package-state package `(error ,info)))
 (add-hook 'el-get-post-error-hooks 'el-get-mark-failed)
 
+
 ;;
 ;; "Fuzzy" data structure handling
 ;;
@@ -610,6 +634,8 @@ returning a list that contains it (and only it)."
 )
 ;;; END "Fuzzy" data structure support
 
+
+
 (defun el-get-source-name (source)
   "Return the package name (stringp) given an `el-get-sources'
 entry."
@@ -783,8 +809,9 @@ definition provided by `el-get' recipes locally.
 :after
 
     A function to register for `eval-after-load' against the
-    recipe library, after :post-init.  That's not intended for
-    recipe use.
+    recipe library, after :post-init, and after per-package
+    user-init-file (see `el-get-user-package-directory').  That's not
+    intended for recipe use.
 
 :lazy
 
@@ -925,6 +952,9 @@ platforms where this recipe should apply"
               ,el-get-build-recipe-body))))))
 
 
+;;
+;; Some tools
+;;
 (defun el-get-flatten (arg)
   "Return a version of ARG as a one-level list
 
@@ -1061,6 +1091,7 @@ are now installed"
   install DEPENDENCY, with error information DATA"
   (el-get-mark-failed package (list dependency data)))
 
+
 (defun el-get-install (package)
   "Cause the named PACKAGE to be installed after all of its
 dependencies (if any).
@@ -1112,12 +1143,12 @@ PACKAGE may be either a string or the corresponding symbol."
       ((debug error)
        (el-get-installation-failed package err)))))
 
-
 (defun el-get-installation-failed (package signal-data)
   "Run all the failure hooks for PACKAGE and `signal' the car and cdr of SIGNAL-DATA."
   (run-hook-with-args 'el-get-post-error-hooks package signal-data)
   (signal (car signal-data) (cdr signal-data)))
 
+
 ;;
 ;; call-process-list utility
 ;;
@@ -2918,14 +2949,17 @@ called by `el-get' (usually at startup) for each installed package."
                 (el-get-verbose-message "require '%s" feature)
                 (require feature)))))
 
-        ;; now handle the :post-init and :after functions
+        ;; now handle the user configs and :post-init and :after functions
         (if (or lazy el-get-is-lazy)
-            (let ((lazy-form `(progn ,(when postinit (list 'funcall postinit))
-                                     ,(when after (list 'funcall after)))))
+            (let ((lazy-form
+		   `(progn ,(when postinit (list 'funcall postinit))
+			   (el-get-load-package-user-init-file ,package)
+			   ,(when after (list 'funcall after)))))
               (eval-after-load library lazy-form))
 
           ;; el-get is not lazy here
           (el-get-funcall postinit "post-init" package)
+	  (el-get-load-package-user-init-file package)
           (el-get-funcall after "after" package))
 
         ;; and call the global init hooks
@@ -3072,11 +3106,6 @@ entry which is not a symbol and is not already a known recipe."
       (message "el-get: preparing recipe file for %s" (el-get-source-name r))
       (el-get-write-recipe r dir)))
   (dired dir))
-
-(defun el-get-sync ()
-  "M-x el-get-sync will synchronously install and init your el-get packages"
-  (interactive)
-  (el-get 'sync))
 
 ;;
 ;; notify user with emacs notifications API (new in 24)
@@ -3532,7 +3561,7 @@ considered \"required\"."
 					    (el-get-as-symbol p)))))
 	 (to-install  (if packages
 			  (loop for p in packages
-				unless (member (el-get-as-symbol p) to-init)
+				unless (member (el-get-as-string p) to-init)
 				collect (el-get-as-string p))
 			required))
 	 done)
