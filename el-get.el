@@ -155,7 +155,7 @@
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
 
-(defconst el-get-version "3.0" "el-get version number")
+(defconst el-get-version "4.0.0" "el-get version number")
 
 (defcustom el-get-post-init-hooks nil
   "Hooks to run after a package init.
