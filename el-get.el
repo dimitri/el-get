@@ -5,7 +5,7 @@
 ;; Author: Dimitri Fontaine <dim@tapoueh.org>
 ;; URL: http://www.emacswiki.org/emacs/el-get
 ;; GIT: https://github.com/dimitri/el-get
-;; Version: 3.1
+;; Version: 4.0
 ;; Created: 2010-06-17
 ;; Keywords: emacs package elisp install elpa git git-svn bzr cvs svn darcs hg
 ;;           apt-get fink pacman http http-tar emacswiki
