@@ -1,0 +1,4 @@
+(:name descbind-anything
+       :type emacswiki
+       :depends anything
+       :features descbind-anything)
