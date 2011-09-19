@@ -4,7 +4,6 @@
 ;;
 ;; Author: Dimitri Fontaine <dim@tapoueh.org>
 ;; URL: http://www.emacswiki.org/emacs/el-get.el
-;; Version: 0.9
 ;; Created: 2010-06-17
 ;; Keywords: emacs package elisp install elpa git git-svn bzr cvs apt-get fink http http-tar
 ;; Licence: WTFPL, grab your copy here: http://sam.zoy.org/wtfpl/
@@ -19,7 +18,7 @@
 
 (let ((el-get-root
        (file-name-as-directory
-	(or (and (boundp 'el-get-dir) el-get-dir)
+	(or (bound-and-true-p el-get-dir)
 	    (concat (file-name-as-directory user-emacs-directory) "el-get")))))
 
   (when (file-directory-p el-get-root)
