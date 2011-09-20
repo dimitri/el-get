@@ -126,20 +126,12 @@ symbol) depends"
 (defun el-get-package-initialized-p (package)
   (eq (el-get-package-state package) 'init))
 
-(defun el-get-demand1 (package)
-  "Install, if necessary, and init the el-get package given by
-PACKAGE, a symbol"
-  (let ((p (symbol-name package)))
-    (if (string= (el-get-package-status p) "installed")
-        (el-get-init p)
-      (el-get-do-install p))))
-
 (defun el-get-dependency-installed (package dependency)
   "Install the given PACKAGE (a symbol) iff all its dependencies
 are now installed"
   (when (every 'el-get-package-initialized-p
                (el-get-dependencies package))
-    (el-get-demand1 package)))
+    (el-get-do-install package)))
 
 (defun el-get-dependency-error (package dependency data)
   "Mark PACKAGE as having failed installation due to a failure to

@@ -299,7 +299,7 @@ PACKAGE may be either a string or the corresponding symbol."
 		(el-get-install dep))
 
 	      (unless non-installed-dependencies
-		(el-get-demand1 psym)))))
+		(el-get-do-install psym)))))
       ((debug error)
        (el-get-installation-failed package err)))))
 
@@ -495,26 +495,28 @@ called by `el-get' (usually at startup) for each installed package."
 (defun el-get-do-install (package)
   "Install any PACKAGE for which you have a recipe."
   (el-get-error-unless-package-p package)
-  (let* ((status   (el-get-read-package-status package))
-	 (source   (el-get-package-def package))
-	 (method   (el-get-package-method source))
-	 (install  (el-get-method method :install))
-	 (url      (plist-get source :url)))
+  (if (string= (el-get-package-status package) "installed")
+      (el-get-init p)
+    (let* ((status   (el-get-read-package-status package))
+	   (source   (el-get-package-def package))
+	   (method   (el-get-package-method source))
+	   (install  (el-get-method method :install))
+	   (url      (plist-get source :url)))
 
-    (when (string= "installed" status)
-      (error "Package %s is already installed." package))
+      (when (string= "installed" status)
+	(error "Package %s is already installed." package))
 
-    (when (string= "required" status)
-      (message "Package %s failed to install, removing it first." package)
-      (el-get-remove package))
+      (when (string= "required" status)
+	(message "Package %s failed to install, removing it first." package)
+	(el-get-remove package))
 
-    ;; check we can install the package and save to "required" status
-    (el-get-check-init)
-    (el-get-save-package-status package "required")
+      ;; check we can install the package and save to "required" status
+      (el-get-check-init)
+      (el-get-save-package-status package "required")
 
-    ;; and install the package now, *then* message about it
-    (funcall install package url 'el-get-post-install)
-    (message "el-get install %s" package)))
+      ;; and install the package now, *then* message about it
+      (funcall install package url 'el-get-post-install)
+      (message "el-get install %s" package))))
 
 (defun el-get-post-update (package)
   "Post update PACKAGE. This will get run by a sentinel."
