@@ -15,6 +15,31 @@
 (require 'el-get-core)
 
 ;;
+;; topological sort, see
+;; http://rosettacode.org/wiki/Topological_sort#Common_Lisp
+;;
+
+(defun el-get-dependencies (package &optional deps)
+  "Return the list of packages (as symbols) on which PACKAGE (a
+symbol) depends"
+  (let* ((source (el-get-package-def (symbol-name package)))
+	 (method (el-get-package-method source))
+         (pdeps  (el-get-as-list (plist-get source :depends)))
+	 (alldeps
+	  ;; Make sure all elpa packages depend on the package `package'.
+	  ;; The package `package' is an elpa package, though, so exclude it
+	  ;; to avoid a circular dependency.
+	  (if (and (not (eq package 'package)) (eq method 'elpa))
+	      (cons 'package pdeps)
+	    pdeps)))
+    (append (list (append (list package) alldeps))
+	    (loop for p in pdeps append (el-get-dependencies p)))))
+
+(defun topological-sort (graph)
+  "return a list of packages to install in order"
+  nil)
+
+;;
 ;; Support for tracking package states
 ;;
 (defvar el-get-pkg-state
@@ -109,19 +134,6 @@ passing DATA"
 (dolist (action '(init install update error))
   (add-hook (intern (format "el-get-post-%s-hooks" action))
             `(lambda (p &optional data) (el-get-event-occurred p ',action data))))
-
-(defun el-get-dependencies (package)
-  "Return the list of packages (as symbols) on which PACKAGE (a
-symbol) depends"
-  (let* ((source (el-get-package-def (symbol-name package)))
-	 (method (el-get-package-method source))
-         (deps (el-get-as-list (plist-get source :depends))))
-    ;; Make sure all elpa packages depend on the package `package'.
-    ;; The package `package' is an elpa package, though, so exclude
-    ;; it to avoid a circular dependency.
-    (if (and (not (eq package 'package)) (eq method 'elpa))
-        (cons 'package deps)
-      deps)))
 
 (defun el-get-package-initialized-p (package)
   (eq (el-get-package-state package) 'init))
