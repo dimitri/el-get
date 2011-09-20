@@ -1071,20 +1071,40 @@ symbol) depends"
 (defun el-get-package-initialized-p (package)
   (eq (el-get-package-state package) 'init))
 
-(defun el-get-demand1 (package)
+(defun el-get-do-install (package)
   "Install, if necessary, and init the el-get package given by
 PACKAGE, a symbol"
   (let ((p (symbol-name package)))
     (if (string= (el-get-package-status p) "installed")
         (el-get-init p)
-      (el-get-do-install p))))
+      (el-get-error-unless-package-p p)
+      (let* ((status   (el-get-read-package-status p))
+             (source   (el-get-package-def p))
+             (method   (el-get-package-method source))
+             (install  (el-get-method method :install))
+             (url      (plist-get source :url)))
+
+        (when (string= "installed" status)
+          (error "Package %s is already installed." p))
+
+        (when (string= "required" status)
+          (message "Package %s failed to install, removing it first." p)
+          (el-get-remove p))
+
+        ;; check we can install the package and save to "required" status
+        (el-get-check-init)
+        (el-get-save-package-status p "required")
+
+        ;; and install the package now, *then* message about it
+        (funcall install p url 'el-get-post-install)
+        (message "el-get install %s" p)))))
 
 (defun el-get-dependency-installed (package dependency)
   "Install the given PACKAGE (a symbol) iff all its dependencies
 are now installed"
   (when (every 'el-get-package-initialized-p
                (el-get-dependencies package))
-    (el-get-demand1 package)))
+    (el-get-do-install package)))
 
 (defun el-get-dependency-error (package dependency data)
   "Mark PACKAGE as having failed installation due to a failure to
@@ -1139,7 +1159,7 @@ PACKAGE may be either a string or the corresponding symbol."
 		(el-get-install dep))
 
 	      (unless non-installed-dependencies
-		(el-get-demand1 psym)))))
+		(el-get-do-install psym)))))
       ((debug error)
        (el-get-installation-failed package err)))))
 
@@ -2989,30 +3009,6 @@ called by `el-get' (usually at startup) for each installed package."
     ;; package, and will change the status to "installed"
     (el-get-build package commands nil sync 'el-get-post-install-build))
   (run-hook-with-args 'el-get-post-install-hooks package))
-
-(defun el-get-do-install (package)
-  "Install any PACKAGE for which you have a recipe."
-  (el-get-error-unless-package-p package)
-  (let* ((status   (el-get-read-package-status package))
-	 (source   (el-get-package-def package))
-	 (method   (el-get-package-method source))
-	 (install  (el-get-method method :install))
-	 (url      (plist-get source :url)))
-
-    (when (string= "installed" status)
-      (error "Package %s is already installed." package))
-
-    (when (string= "required" status)
-      (message "Package %s failed to install, removing it first." package)
-      (el-get-remove package))
-
-    ;; check we can install the package and save to "required" status
-    (el-get-check-init)
-    (el-get-save-package-status package "required")
-
-    ;; and install the package now, *then* message about it
-    (funcall install package url 'el-get-post-install)
-    (message "el-get install %s" package)))
 
 (defun el-get-post-update (package)
   "Post update PACKAGE. This will get run by a sentinel."
