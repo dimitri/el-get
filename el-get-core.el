@@ -39,25 +39,10 @@ the named package action in the given method.")
 (defun el-get-register-method (name install update remove
 				    &optional install-hook remove-hook)
   "Register the method for backend NAME, with given functions"
-  ;; TODO: proper code.
-  (cond ((and install-hook remove-hook)
-	 (add-to-list 'el-get-methods
-		      `(,name (:install ,install
-					:install-hook ,install-hook
-					:update update :remove remove
-					:remove-hook remove-hook))))
-
-	(install-hook
-	 (add-to-list 'el-get-methods
-		      `(,name (:install ,install
-					:install-hook ,install-hook
-					:update update :remove remove))))
-
-	(t
-	 (add-to-list 'el-get-methods
-		      `(,name (:install ,install
-					:update update
-					:remove remove))))))
+  (let ((def (list :install install :update update :remove remove)))
+    (when install-hook (setq def (append def (list :install-hook install-hook))))
+    (when remove-hook  (setq def (append def (list :remove-hook remove-hook))))
+    (setq el-get-methods (plist-put el-get-methods name def))))
 
 
 ;;
