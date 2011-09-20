@@ -1,0 +1,4 @@
+(:name pwsafe
+       :description "Emacs interface to pwsafe, by Stefan Reichoer"
+       :type http
+       :url "http://www.xsteve.at/prg/emacs/pwsafe.el")
