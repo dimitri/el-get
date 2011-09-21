@@ -146,19 +146,18 @@
 
 (require 'el-get-core)
 
-(require 'el-get-autoloads)
-(require 'el-get-build)
-(require 'el-get-byte-compile)
-(require 'el-get-core)
-(require 'el-get-custom)
-(require 'el-get)
-(require 'el-get-install)
-(require 'el-get-list-depends)
-(require 'el-get-list-packages)
-(require 'el-get-methods)
-(require 'el-get-notify)
-(require 'el-get-recipes)
-(require 'el-get-status)
+(require 'el-get-core)			; core facilities used everywhere
+(require 'el-get-custom)		; user tweaks and `el-get-sources'
+(require 'el-get-methods)		; support for `el-get-methods', backends
+(require 'el-get-recipes)		; support for dealing with recipes
+(require 'el-get-status)		; support for dealing with status
+(require 'el-get-build)			; building packages
+(require 'el-get-byte-compile)		; byte compiling in a subprocess
+(require 'el-get-dependencies)		; topological-sort of package dep graph
+(require 'el-get-notify)		; notification support (dbus, growl...)
+(require 'el-get-list-packages)		; menu and `el-get-describe' facilities
+
+(require 'el-get-autoloads)		; to be removed^W cleaned up next
 
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
@@ -251,57 +250,8 @@ force their evaluation on some packages only."
 (defvar el-get-install-info (or (executable-find "ginstall-info")
 				(executable-find "install-info")))
 
-
-(defun el-get-install (package)
-  "Cause the named PACKAGE to be installed after all of its
-dependencies (if any).
-
-PACKAGE may be either a string or the corresponding symbol."
-  (interactive (list (el-get-read-package-name "Install")))
-  (if (el-get-package-is-installed package)
-      (message "el-get: `%s' package is already installed" package)
-
-    (condition-case err
-	(let* ((psym (el-get-as-symbol package))
-	       (pname (symbol-name psym)))
-
-	  ;; don't do anything if it's already installed or in progress
-	  (unless (memq (el-get-package-state psym) '(init installing))
-
-	    ;; Remember that we're working on it
-	    (el-get-set-package-state psym 'installing)
-
-	    (let ((non-installed-dependencies
-		   (remove-if 'el-get-package-initialized-p
-			      (el-get-dependencies psym))))
-
-	      ;;
-	      ;; demand all non-installed dependencies with appropriate
-	      ;; handlers in place to trigger installation of this package
-	      ;;
-	      (dolist (dep non-installed-dependencies)
-		;; set up a handler that will install `package' when all
-		;; its dependencies are installed
-		(el-get-add-generic-event-task
-		 (el-get-event-id dep 'init)
-		 `(lambda (data)
-		    (el-get-mark-initialized ',dep)
-		    (el-get-dependency-installed ',psym ',dep)))
-
-		;; set up a handler that will cancel installation of
-		;; `package' if installing the dependency fails
-		(el-get-add-generic-event-task
-		 (el-get-event-id dep 'error)
-		 `(lambda (data)
-		    (el-get-set-package-state ',dep (list 'error data))
-		    (el-get-dependency-error ',psym ',dep data)))
-
-		(el-get-install dep))
-
-	      (unless non-installed-dependencies
-		(el-get-do-install psym)))))
-      ((debug error)
-       (el-get-installation-failed package err)))))
+(defvar el-get-next-packages nil
+  "List of packages to install next, used when dealing with dependencies.")
 
 (defun el-get-installation-failed (package signal-data)
   "Run all the failure hooks for PACKAGE and `signal' the car and cdr of SIGNAL-DATA."
@@ -381,6 +331,7 @@ which defaults to the first element in `el-get-recipe-path'."
       (let (pdir (el-get-package-directory package))
 	(funcall func))))
 
+
 (defun el-get-init (package)
   "Make the named PACKAGE available for use.
 
@@ -472,6 +423,34 @@ called by `el-get' (usually at startup) for each installed package."
     (debug error
      (el-get-installation-failed package err))))
 
+
+(defun el-get-install (package)
+  "Cause the named PACKAGE to be installed after all of its
+dependencies (if any).
+
+PACKAGE may be either a string or the corresponding symbol."
+  (interactive (list (el-get-read-package-name "Install")))
+  (if (el-get-package-is-installed package)
+      (message "el-get: `%s' package is already installed" package)
+
+    (let* ((packages  (el-get-dependencies package)))
+      (when (cdr packages)
+	;; tweak el-get-post-install-hooks to install remaining packages
+	;; once the first is installed
+	(setq el-get-next-packages (cdr packages))
+	(add-hook 'el-get-post-install-hooks 'el-get-install-next-packages))
+      (el-get-do-install package))))
+
+(defun el-get-install-next-packages ()
+  "Run as part of `el-get-post-init-hooks' when dealing with dependencies."
+  (let ((package (pop el-get-next-packages)))
+    (if package
+	(if (el-get-package-is-installed package)
+	    (message "el-get: `%s' package is already installed" package)
+	  (el-get-do-install package))
+      ;; no more packages to install in the dependency walk, clean up
+      (remove-hook 'el-get-post-init-hooks 'el-get-install-next-packages))))
+
 (defun el-get-post-install-build (package)
   "Function to call after building the package while installing it."
   (el-get-invalidate-autoloads package)
@@ -518,6 +497,7 @@ called by `el-get' (usually at startup) for each installed package."
       (funcall install package url 'el-get-post-install)
       (message "el-get install %s" package))))
 
+
 (defun el-get-post-update (package)
   "Post update PACKAGE. This will get run by a sentinel."
   (let* ((source   (el-get-package-def package))
@@ -557,6 +537,7 @@ called by `el-get' (usually at startup) for each installed package."
 	 (expand-file-name ".." (file-name-directory el-get-script))))
     (el-get-update "el-get")))
 
+
 (defun el-get-post-remove (package)
   "Run the post-remove hooks for PACKAGE."
   (let* ((hooks   (el-get-method (el-get-package-method package) :remove-hook)))
