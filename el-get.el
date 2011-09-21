@@ -1271,8 +1271,10 @@ Any other property will get put into the process object.
                (killed  (when (get-buffer cbuf) (kill-buffer cbuf)))
                (filter  (plist-get c :process-filter))
                (program (plist-get c :program))
-               (args    (plist-get c :args))
                (shell   (plist-get c :shell))
+               (args    (if shell
+			    (mapcar #'shell-quote-argument (plist-get c :args))
+			  (plist-get c :args))) 
                (sync    (if (plist-member c :sync) (plist-get c :sync)
                           el-get-default-process-sync))
 	       (stdin   (plist-get c :stdin))
