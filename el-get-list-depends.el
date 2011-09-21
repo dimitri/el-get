@@ -15,14 +15,16 @@
 (require 'cl)
 (require 'el-get-core)
 
-;;
-;; topological sort, see
-;; http://rosettacode.org/wiki/Topological_sort#Common_Lisp
-;;
+(defun el-get-dependencies (package)
+  "Return the list of packages to install in order."
+  (multiple-value-bind (plist all-sorted-p non-sorted)
+      (topological-sort (el-get-dependencies-graph package))
+    (if all-sorted-p
+	plist
+      (error "Couldn't sort package dependencies for \"%s\"" package))))
 
-(defun el-get-dependencies (package &optional deps)
-  "Return the list of packages (as symbols) on which PACKAGE (a
-symbol) depends"
+(defun el-get-dependencies-graph (package)
+  "Return the graph of packages on which PACKAGE depends"
   (let* ((source (el-get-package-def (symbol-name package)))
 	 (method (el-get-package-method source))
          (pdeps  (el-get-as-list (plist-get source :depends)))
@@ -34,8 +36,12 @@ symbol) depends"
 	      (cons 'package pdeps)
 	    pdeps)))
     (append (list (append (list package) alldeps))
-	    (loop for p in pdeps append (el-get-dependencies p)))))
+	    (loop for p in pdeps append (el-get-dependencies-graph p)))))
 
+;;
+;; topological sort, see
+;; http://rosettacode.org/wiki/Topological_sort#Common_Lisp
+;;
 (defun* topological-sort (graph &key (test 'eql))
   "Returns a list of packages to install in order.
 
@@ -76,7 +82,6 @@ in the topological ordering (i.e., the first value)."
             (dolist (dependant (cdr ventry) (push v L))
               (when (zerop (decf (car (entry dependant))))
                 (push dependant S)))))
-      (message "ARF %S" L)
         ;; return (1) the list of sorted items, (2) whether all items
         ;; were sorted, and (3) if there were unsorted vertices, the
         ;; hash table mapping these vertices to their dependants
