@@ -38,7 +38,7 @@
   "sudo -S fink install PACKAGE"
   (let* ((name (format "*fink install %s*" package))
 	 (source  (el-get-package-def package))
-	 (pkgname (or (plist-get source :pkgname) package))
+	 (pkgname (or (plist-get source :pkgname) (el-get-as-string package)))
 	 (ok   (format "Package %s installed." package))
 	 (ko   (format "Could not install package %s." package)))
 
@@ -59,7 +59,7 @@
   "apt-get remove PACKAGE. URL is there for API compliance."
   (let* ((name (format "*fink remove %s*" package))
 	 (source  (el-get-package-def package))
-         (pkgname (or (plist-get source :pkgname) package))
+         (pkgname (or (plist-get source :pkgname) (el-get-as-string package)))
 	 (ok   (format "Package %s removed." package))
 	 (ko   (format "Could not remove package %s." package)))
 
@@ -76,7 +76,7 @@
 
 (add-hook 'el-get-fink-remove-hook 'el-get-dpkg-remove-symlink)
 
-(el-get-register
+(el-get-register-method
  :fink
  #'el-get-fink-install #'el-get-fink-install #'el-get-fink-remove
  #'el-get-fink-install-hook #'el-get-fink-remove-hook)

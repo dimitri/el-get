@@ -106,7 +106,7 @@ the recipe, then return nil."
             emacs-lisp-mode-hook fundamental-mode-hook prog-mode-hook)
 	(unless p
 	  (package-refresh-contents)))
-      (package-install (intern package)))
+      (package-install (el-get-as-symbol package)))
     ;; we symlink even when the package already is installed because it's
     ;; not an error to have installed ELPA packages before using el-get, and
     ;; that will register them
@@ -117,7 +117,7 @@ the recipe, then return nil."
   "Ask elpa to update given PACKAGE."
   (el-get-elpa-remove package url nil)
   (package-refresh-contents)
-  (package-install (intern package))
+  (package-install (el-get-as-symbol package))
   (funcall post-update-fun package))
 
 (defun el-get-elpa-remove (package url post-remove-fun)

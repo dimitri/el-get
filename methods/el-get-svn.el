@@ -31,6 +31,7 @@
   "svn checkout the package."
   (let* ((svn-executable (el-get-executable-find "svn"))
 	 (source  (el-get-package-def package))
+	 (pname   (el-get-as-string package))
 	 (name    (format "*svn checkout %s*" package))
 	 (ok      (format "Checked out package %s." package))
 	 (ko      (format "Could not checkout package %s." package)))
@@ -41,7 +42,7 @@
 		      :buffer-name ,name
 		      :default-directory ,el-get-dir
 		      :program ,svn-executable
-		      :args ("checkout" ,url ,package)
+		      :args ("checkout" ,url ,pname)
 		      :message ,ok
 		      :error ,ko))
      post-install-fun)))

@@ -68,6 +68,13 @@
   (loop for (p s) on (el-get-read-all-packages-status) by 'cddr
 	if (member s status) sum 1))
 
+(defun el-get-count-packages-with-status (packages &rest status)
+  "Return how many packages are currently in given status in PACKAGES"
+  (loop for (p s) on (el-get-read-all-packages-status) by 'cddr
+	when (and (member (el-get-as-symbol p) packages)
+		  (member s status))
+	sum 1))
+
 (defun el-get-package-status (package &optional package-status-plist)
   "Return current status of package from given list"
   (let ((status-plist (or package-status-plist (el-get-read-all-packages-status))))

@@ -17,6 +17,10 @@
 ;;
 ;; NOTE: this will probably benefit from some autoloading magic, later.
 ;;
+(add-to-list 'load-path
+	     (expand-file-name
+	      "methods"
+	      (file-name-directory (or load-file-name buffer-file-name))))
 
 (require 'el-get-apt-get)
 (require 'el-get-bzr)

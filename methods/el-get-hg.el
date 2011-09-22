@@ -22,10 +22,11 @@
 (defun el-get-hg-clone (package url post-install-fun)
   "Clone the given package following the URL."
   (let* ((hg-executable (el-get-executable-find "hg"))
-	 (pdir (el-get-package-directory package))
-	 (name (format "*hg clone %s*" package))
-	 (ok   (format "Package %s installed." package))
-	 (ko   (format "Could not install package %s." package)))
+	 (pdir  (el-get-package-directory package))
+	 (pname (el-get-as-string package))
+	 (name  (format "*hg clone %s*" package))
+	 (ok    (format "Package %s installed." package))
+	 (ko    (format "Could not install package %s." package)))
 
     (el-get-start-process-list
      package
@@ -33,7 +34,7 @@
 		      :buffer-name ,name
 		      :default-directory ,el-get-dir
 		      :program ,hg-executable
-		      :args ("clone" ,url ,package)
+		      :args ("clone" ,url ,pname)
 		      :message ,ok
 		      :error ,ko))
      post-install-fun)))

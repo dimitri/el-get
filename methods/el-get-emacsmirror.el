@@ -29,7 +29,7 @@
 ;;
 (defun el-get-emacsmirror-clone (package url post-install-fun)
   (let* ((source  (el-get-package-def package))
-         (pkgname (or (plist-get source :pkgname) package))
+         (pkgname (or (plist-get source :pkgname) (el-get-as-string package)))
 	 (url     (or url (format el-get-emacsmirror-base-url pkgname))))
     (el-get-git-clone package url post-install-fun)))
 
