@@ -433,7 +433,7 @@ PACKAGE may be either a string or the corresponding symbol."
   (if (el-get-package-is-installed package)
       (message "el-get: `%s' package is already installed" package)
 
-    (let* ((packages  (el-get-dependencies package)))
+    (let* ((packages  (el-get-dependencies (el-get-as-symbol package))))
       (when (cdr packages)
 	;; tweak el-get-post-install-hooks to install remaining packages
 	;; once the first is installed
