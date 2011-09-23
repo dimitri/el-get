@@ -48,6 +48,35 @@ the named package action in the given method.")
     (when remove-hook  (setq def (append def (list :remove-hook remove-hook))))
     (setq el-get-methods (plist-put el-get-methods name def))))
 
+
+
+;;
+;; "Fuzzy" data structure handling
+;;
+;; In el-get-sources, single elements are often allowed instead of a
+;; list, and strings and symbols are often interchangeable.
+;; Presumably it's easier for users who don't use the customization
+;; interface to write such structures as raw elisp.
+;;
+;;;  "Fuzzy" data structure conversion utilities
+(defun el-get-as-string (symbol-or-string)
+  "If STRING-OR-SYMBOL is already a string, return it.  Otherwise
+convert it to a string and return that."
+  (if (stringp symbol-or-string) symbol-or-string
+    (symbol-name symbol-or-string)))
+
+(defun el-get-as-symbol (string-or-symbol)
+  "If STRING-OR-SYMBOL is already a symbol, return it.  Otherwise
+convert it to a symbol and return that."
+  (if (symbolp string-or-symbol) string-or-symbol
+      (intern string-or-symbol)))
+
+(defun el-get-as-list (element-or-list)
+  "If ELEMENT-OR-LIST is already a list, return it.  Otherwise
+returning a list that contains it (and only it)."
+  (if (listp element-or-list) element-or-list
+      (list element-or-list)))
+
 
 ;;
 ;; Common support bits
