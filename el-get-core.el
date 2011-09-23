@@ -27,6 +27,10 @@
 (defun el-get-verbose-message (format &rest arguments)
   (when el-get-verbose (apply 'message format arguments)))
 
+
+;;
+;; el-get-methods support, those are like backends.
+;;
 (defvar el-get-methods nil
   "Register methods that el-get can use to fetch and update a given package.
 
@@ -108,7 +112,8 @@ given method."
 (defun el-get-package-directory (package)
   "Return the absolute directory name of the named PACKAGE."
   (file-name-as-directory
-   (expand-file-name package (expand-file-name el-get-dir))))
+   (expand-file-name (el-get-as-string package)
+		     (expand-file-name el-get-dir))))
 
 (defun el-get-add-path-to-list (package list path)
   "(add-to-list LIST PATH) checking for path existence within
@@ -231,8 +236,10 @@ Any other property will get put into the process object.
                (killed  (when (get-buffer cbuf) (kill-buffer cbuf)))
                (filter  (plist-get c :process-filter))
                (program (plist-get c :program))
-               (args    (plist-get c :args))
                (shell   (plist-get c :shell))
+               (args    (if shell
+			    (mapcar #'shell-quote-argument (plist-get c :args))
+			  (plist-get c :args)))
                (sync    (if (plist-member c :sync) (plist-get c :sync)
                           el-get-default-process-sync))
 	       (stdin   (plist-get c :stdin))

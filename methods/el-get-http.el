@@ -29,7 +29,7 @@ Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
 (defun el-get-http-retrieve-callback (status package post-install-fun &optional dest sources)
   "Callback function for `url-retrieve', store the emacs lisp file for the package."
   (let* ((pdir   (el-get-package-directory package))
-	 (dest   (or dest (concat (file-name-as-directory pdir) package ".el")))
+	 (dest   (or dest (format "%s%s.el" (file-name-as-directory pdir) package)))
 	 (part   (concat dest ".part"))
 	 (el-get-sources (if sources sources el-get-sources))
 	 (buffer-file-coding-system 'no-conversion)

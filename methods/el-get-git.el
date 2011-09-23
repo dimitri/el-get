@@ -36,12 +36,13 @@ found."
   "Clone the given package following the URL."
   (let* ((git-executable (el-get-executable-find "git"))
 	 (pdir   (el-get-package-directory package))
+	 (pname  (el-get-as-string package))
 	 (name   (format "*git clone %s*" package))
 	 (source (el-get-package-def package))
 	 (branch (plist-get source :branch))
 	 (args   (if branch
-		     (list "--no-pager" "clone" "-b" branch url package)
-		   (list "--no-pager" "clone" url package)))
+		     (list "--no-pager" "clone" "-b" branch url pname)
+		   (list "--no-pager" "clone" url pname)))
 	 (ok     (format "Package %s installed." package))
 	 (ko     (format "Could not install package %s." package)))
     (el-get-start-process-list

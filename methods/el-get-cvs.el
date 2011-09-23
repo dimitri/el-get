@@ -25,6 +25,7 @@
 	 (source  (el-get-package-def package))
 	 (module  (plist-get source :module))
 	 (options (plist-get source :options))
+	 (pname   (el-get-as-string package))
 	 (name    (format "*cvs checkout %s*" package))
 	 (ok      (format "Checked out package %s." package))
 	 (ko      (format "Could not checkout package %s." package)))
@@ -48,7 +49,7 @@
 		      :buffer-name ,name
 		      :default-directory ,el-get-dir
 		      :program ,cvs-executable
-		      :args ("-d" ,url "checkout" "-d" ,package ,module)
+		      :args ("-d" ,url "checkout" "-d" ,pname ,module)
 		      :message ,ok
 		      :error ,ko))
      post-install-fun)))

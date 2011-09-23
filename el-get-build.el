@@ -13,6 +13,12 @@
 ;;     Please see the README.asciidoc file from the same distribution
 
 (require 'el-get-core)
+(require 'el-get-byte-compile)
+
+;; debian uses ginstall-info and it's compatible to fink's install-info on
+;; MacOSX, so:
+(defvar el-get-install-info (or (executable-find "ginstall-info")
+				(executable-find "install-info")))
 
 (defun el-get-build-commands (package)
   "Return a list of build commands for the named PACKAGE.
@@ -113,7 +119,6 @@ recursion.
 			   ;; it must be a lambda, just inline its value
 			   post-build-fun)
 			package)))))
-
     (el-get-start-process-list
      package full-process-list build-info-then-post-build-fun)))
 
@@ -129,6 +134,7 @@ recursion.
   (let* ((source   (el-get-package-def package))
 	 (method   (el-get-package-method source))
 	 (infodir  (plist-get source :info))
+	 (pname    (el-get-as-string package))
 	 (pdir     (el-get-package-directory package)))
 
     ;; apt-get, pacman and ELPA will set up Info-directory-list
@@ -145,7 +151,7 @@ recursion.
 	     (infofile (if (and (file-exists-p infodir-abs-conf)
 				(not (file-directory-p infodir-abs-conf)))
 			   infodir-abs-conf
-			 (concat infodir-abs package))))
+			 (concat infodir-abs pname))))
 
 	(cond
 	 ((eq build-or-init 'init)

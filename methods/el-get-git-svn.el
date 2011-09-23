@@ -22,9 +22,10 @@
 (defun el-get-git-svn-clone (package url post-install-fun)
   "Clone the given svn PACKAGE following the URL using git."
   (let ((git-executable (el-get-executable-find "git"))
-	(name (format "*git svn clone %s*" package))
-	(ok   (format "Package %s installed." package))
-	(ko   (format "Could not install package %s." package)))
+	(pname (el-get-as-string package))
+	(name  (format "*git svn clone %s*" package))
+	(ok    (format "Package %s installed." package))
+	(ko    (format "Could not install package %s." package)))
 
     (el-get-start-process-list
      package
@@ -32,7 +33,7 @@
 		      :buffer-name ,name
 		      :default-directory ,el-get-dir
 		      :program ,git-executable
-		      :args ( "--no-pager" "svn" "clone" ,url ,package)
+		      :args ( "--no-pager" "svn" "clone" ,url ,pname)
 		      :message ,ok
 		      :error ,ko))
      post-install-fun)))

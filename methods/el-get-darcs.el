@@ -22,16 +22,17 @@
 (defun el-get-darcs-get (package url post-install-fun)
   "Get a given PACKAGE following the URL using darcs."
   (let* ((darcs-executable (el-get-executable-find "darcs"))
-	 (name (format "*darcs get %s*" package))
-	 (ok   (format "Package %s installed" package))
-	 (ko   (format "Could not install package %s." package)))
+	 (pname (el-get-as-string package))
+	 (name  (format "*darcs get %s*" package))
+	 (ok    (format "Package %s installed" package))
+	 (ko    (format "Could not install package %s." package)))
     (el-get-start-process-list
      package
      `((:command-name ,name
 		      :buffer-name ,name
 		      :default-directory ,el-get-dir
 		      :program ,darcs-executable
-		      :args ("get" "--lazy" ,url ,package)
+		      :args ("get" "--lazy" ,url ,pname)
 		      :message ,ok
 		      :error ,ko))
      post-install-fun)))

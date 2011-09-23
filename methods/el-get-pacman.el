@@ -24,7 +24,7 @@
 (defun el-get-pacman-install (package url post-install-fun)
   "echo $pass | sudo -S pacman install PACKAGE"
   (let* ((source  (el-get-package-def package))
-         (pkgname (or (plist-get source :pkgname) package))
+         (pkgname (or (plist-get source :pkgname) (el-get-as-string package)))
          (name    (format "*pacman install %s*" package))
 	 (ok      (format "Package %s installed." package))
 	 (ko      (format "Could not install package %s." package)))
@@ -44,7 +44,7 @@
 (defun el-get-pacman-remove (package url post-remove-fun)
   "pacman remove PACKAGE, URL is there for API compliance"
   (let* ((source  (el-get-package-def package))
-         (pkgname (or (plist-get source :pkgname) package))
+         (pkgname (or (plist-get source :pkgname) (el-get-as-string package)))
          (name    (format "*pacman remove %s*" package))
 	 (ok      (format "Package %s removed." package))
 	 (ko      (format "Could not remove package %s." package)))

@@ -12,7 +12,7 @@
 ;; Install
 ;;     Please see the README.asciidoc file from the same distribution
 
-(require 'el-get-core)
+(require 'cl)				; yes I like loop
 (require 'bytecomp)
 
 ;; Emacs < 24

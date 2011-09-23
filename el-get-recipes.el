@@ -46,7 +46,7 @@
 and to be found in `el-get-user-package-directory'.  Do nothing
 when this custom is nil."
   (when el-get-user-package-directory
-    (let* ((init-file-name    (concat "init-" package ".el"))
+    (let* ((init-file-name    (format "init-%s.el" package))
 	   (package-init-file
 	    (expand-file-name init-file-name el-get-user-package-directory)))
       (el-get-verbose-message "el-get: load %S" package-init-file)

@@ -144,8 +144,33 @@
 
 ;;; Code:
 
-(require 'el-get-core)
+;; first some essential variables, used in other parts of the code.
+(defgroup el-get nil "el-get customization group"
+  :group 'convenience)
 
+(defconst el-get-version "4.0.0" "el-get version number")
+
+(defconst el-get-script (or load-file-name buffer-file-name))
+
+(defcustom el-get-dir "~/.emacs.d/el-get/"
+  "Path where to install the packages."
+  :group 'el-get
+  :type 'directory)
+
+(defcustom el-get-status-file
+  (concat (file-name-as-directory el-get-dir) ".status.el")
+  "Define where to store and read the package statuses")
+
+(defvar el-get-autoload-file
+  (concat (file-name-as-directory el-get-dir) ".loaddefs.el")
+  "Where generated autoloads are saved")
+
+(defvar el-get-emacs (concat invocation-directory invocation-name)
+  "Where to find the currently running emacs, a facility for :build commands")
+
+;;
+;; Now load the rest of the el-get code
+;;
 (require 'el-get-core)			; core facilities used everywhere
 (require 'el-get-custom)		; user tweaks and `el-get-sources'
 (require 'el-get-methods)		; support for `el-get-methods', backends
@@ -159,11 +184,11 @@
 
 (require 'el-get-autoloads)		; to be removed^W cleaned up next
 
-(defgroup el-get nil "el-get customization group"
-  :group 'convenience)
-
-(defconst el-get-version "4.0.0" "el-get version number")
-
+;;
+;; And then define some more code-level customs.  They stay here so that
+;; it's easier for elisp programmers to find them and know about them.  If
+;; that is too lame of an excuse, let's move them to el-get-custom.el.
+;;
 (defcustom el-get-post-init-hooks nil
   "Hooks to run after a package init.
 Each hook is a unary function accepting a package"
@@ -226,29 +251,6 @@ skip the :load and :features properties when set.  See :lazy to
 force their evaluation on some packages only."
   :group 'el-get
   :type 'boolean)
-
-(defconst el-get-script (or load-file-name buffer-file-name))
-
-(defcustom el-get-dir "~/.emacs.d/el-get/"
-  "Path where to install the packages."
-  :group 'el-get
-  :type 'directory)
-
-(defcustom el-get-status-file
-  (concat (file-name-as-directory el-get-dir) ".status.el")
-  "Define where to store and read the package statuses")
-
-(defvar el-get-autoload-file
-  (concat (file-name-as-directory el-get-dir) ".loaddefs.el")
-  "Where generated autoloads are saved")
-
-(defvar el-get-emacs (concat invocation-directory invocation-name)
-  "Where to find the currently running emacs, a facility for :build commands")
-
-;; debian uses ginstall-info and it's compatible to fink's install-info on
-;; MacOSX, so:
-(defvar el-get-install-info (or (executable-find "ginstall-info")
-				(executable-find "install-info")))
 
 (defvar el-get-next-packages nil
   "List of packages to install next, used when dealing with dependencies.")
@@ -437,17 +439,19 @@ PACKAGE may be either a string or the corresponding symbol."
       (when (cdr packages)
 	;; tweak el-get-post-install-hooks to install remaining packages
 	;; once the first is installed
+	(el-get-verbose-message "el-get-install %s: %S" package packages)
 	(setq el-get-next-packages (cdr packages))
 	(add-hook 'el-get-post-install-hooks 'el-get-install-next-packages))
-      (el-get-do-install package))))
+      (el-get-do-install (car packages)))))
 
-(defun el-get-install-next-packages ()
+(defun el-get-install-next-packages (current-package)
   "Run as part of `el-get-post-init-hooks' when dealing with dependencies."
   (let ((package (pop el-get-next-packages)))
+    (el-get-verbose-message "el-get-install-next-packages: %s" package)
     (if package
 	(if (el-get-package-is-installed package)
 	    (message "el-get: `%s' package is already installed" package)
-	  (el-get-do-install package))
+	  (el-get-do-install (el-get-as-string package)))
       ;; no more packages to install in the dependency walk, clean up
       (remove-hook 'el-get-post-init-hooks 'el-get-install-next-packages))))
 
@@ -670,35 +674,31 @@ already installed packages is considered."
   ;; Autoloads path are relative to el-get-dir, so add it to load-path
   (add-to-list 'load-path (file-name-as-directory el-get-dir))
 
-  (let ((previously-installing (el-get-currently-installing-packages))
-        (progress (and (eq sync 'wait)
+  (let* ((packages
+	  ;; (el-get 'sync 'a 'b my-package-list)
+	  (loop for p in packages when (listp p) append p else collect p))
+	 (p-status    (el-get-read-all-packages-status))
+         (total       (length packages))
+         (installed   (el-get-count-packages-with-status packages "installed"))
+         (progress (and (eq sync 'wait)
                         (make-progress-reporter
 			 "Waiting for `el-get' to complete... "
-			 0 100 0)))
+			 0 (- total installed) 0)))
          (el-get-default-process-sync sync))
 
     ;; keep the result of `el-get-init-and-install' to return it even in the
     ;; 'wait case
     (prog1
-	(let ((packages
-	       ;; (el-get 'sync 'a 'b my-package-list)
-	       (loop for p in packages when (listp p) append p else collect p)))
-	  (el-get-init-and-install packages))
+	(el-get-init-and-install packages)
 
-      ;; el-get-do-install is async, that's now ongoing.
+      ;; el-get-install is async, that's now ongoing.
       (when progress
-        (let* ((newly-installing
-               (set-difference (el-get-currently-installing-packages)
-                               previously-installing))
-              (still-installing newly-installing))
-
-          (while (> (length still-installing) 0)
-            (sleep-for 0.2)
-            (setq still-installing (delete-if-not 'el-get-currently-installing-p still-installing))
-            (progress-reporter-update
-             progress
-             (/ (* 100.0 (- newly-installing still-installing)) newly-installing)))
-        (progress-reporter-done progress)))
+        (while (> (- total installed) 0)
+          (sleep-for 0.2)
+          ;; don't forget to account for installation failure
+          (setq installed (el-get-count-packages-with-status packages "installed" "required"))
+          (progress-reporter-update progress (- total installed)))
+        (progress-reporter-done progress))
 
       ;; unless we have autoloads to update, just load them now
       (unless el-get-outdated-autoloads

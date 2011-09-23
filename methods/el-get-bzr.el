@@ -22,16 +22,17 @@
 (defun el-get-bzr-branch (package url post-install-fun)
   "Branch a given bzr PACKAGE following the URL using bzr."
   (let* ((bzr-executable (el-get-executable-find "bzr"))
-	 (name (format "*bzr branch %s*" package))
-	 (ok   (format "Package %s installed" package))
-	 (ko   (format "Could not install package %s." package)))
+	 (pname (el-get-as-string package))
+	 (name  (format "*bzr branch %s*" package))
+	 (ok    (format "Package %s installed" package))
+	 (ko    (format "Could not install package %s." package)))
     (el-get-start-process-list
      package
      `((:command-name ,name
 		      :buffer-name ,name
 		      :default-directory ,el-get-dir
 		      :program ,bzr-executable
-		      :args ("branch" ,url ,package)
+		      :args ("branch" ,url ,pname)
 		      :message ,ok
 		      :error ,ko))
      post-install-fun)))
@@ -56,7 +57,7 @@
      post-update-fun)))
 
 (el-get-register-method
- :bzr #'el-get-bzr-branch el-get-bzr-pull el-get-rmdir
+ :bzr #'el-get-bzr-branch #'el-get-bzr-pull #'el-get-rmdir
  el-get-bzr-branch-hook)
 
 (provide 'el-get-bzr)

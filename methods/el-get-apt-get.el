@@ -53,19 +53,20 @@
   "ln -s /usr/share/emacs/site-lisp/package ~/.emacs.d/el-get/package"
   (let* ((pdir    (el-get-package-directory package))
 	 (method  (el-get-package-method package))
+	 (pname   (el-get-as-string package))
 	 (basedir (cond ((eq method 'apt-get) el-get-apt-get-base)
 			((eq method 'fink)    el-get-fink-base)
 			((eq method 'pacman)  el-get-pacman-base)))
-	 (debdir  (concat (file-name-as-directory basedir) package)))
+	 (debdir  (concat (file-name-as-directory basedir) pname)))
     (unless (file-directory-p pdir)
       (shell-command
-       (concat "cd " el-get-dir " && ln -s " debdir  " " package)))))
+       (concat "cd " el-get-dir " && ln -s " debdir  " " pname)))))
 
 (defun el-get-dpkg-remove-symlink (package)
   "rm -f ~/.emacs.d/el-get/package"
   (let* ((pdir    (el-get-package-directory package)))
     (when (file-symlink-p pdir)
-      (let ((command (concat "cd " el-get-dir " && rm -f " package)))
+      (let ((command (concat "cd " el-get-dir " && rm -f " pname)))
         (message command)
         (shell-command command)))))
 
@@ -111,7 +112,7 @@ password prompt."
 (defun el-get-apt-get-install (package url post-install-fun)
   "echo $pass | sudo -S apt-get install PACKAGE"
   (let* ((source  (el-get-package-def package))
-         (pkgname (or (plist-get source :pkgname) package))
+         (pkgname (or (plist-get source :pkgname) (el-get-as-string package)))
          (name (format "*apt-get install %s*" package))
 	 (ok   (format "Package %s installed." package))
 	 (ko   (format "Could not install package %s." package)))
@@ -130,7 +131,7 @@ password prompt."
 (defun el-get-apt-get-remove (package url post-remove-fun)
   "apt-get remove PACKAGE, URL is there for API compliance"
   (let* ((source  (el-get-package-def package))
-         (pkgname (or (plist-get source :pkgname) package))
+         (pkgname (or (plist-get source :pkgname) (el-get-as-string package)))
          (name (format "*apt-get remove %s*" package))
 	 (ok   (format "Package %s removed." package))
 	 (ko   (format "Could not remove package %s." package)))
