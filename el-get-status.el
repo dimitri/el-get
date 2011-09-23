@@ -23,7 +23,9 @@
 
 (defun el-get-package-symbol (package-name)
   "Returns a symbol :package."
-  (if (symbolp package-name) package-name
+  (if (and (symbolp package-name)
+	   (string= (substring (symbol-name package-name) 0 1) ":"))
+      package-name
     (intern (format ":%s" package-name))))
 
 (defun el-get-package-name (package-symbol)
@@ -56,7 +58,7 @@
 (defun el-get-list-package-names-with-status (&rest status)
   "Return package names that are currently in given status"
   (loop for (p s) on (el-get-read-all-packages-status) by 'cddr
-	if (member s status) collect (el-get-package-name p)))
+	when (member s status) collect (el-get-package-name p)))
 
 (defun el-get-read-package-with-status (action &rest status)
   "Read a package name in given status"

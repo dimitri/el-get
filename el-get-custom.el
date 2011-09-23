@@ -44,13 +44,6 @@
 )
 ;;; END "Fuzzy" data structure support
 
-(defun el-get-source-name (source)
-  "Return the package name (stringp) given an `el-get-sources'
-entry."
-  (if (symbolp source) (symbol-name source)
-    (format "%s" (plist-get source :name))))
-
-
 (defconst el-get-build-recipe-body
   '(choice :tag "Format"
 
