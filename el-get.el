@@ -611,26 +611,21 @@ considered \"required\"."
 	 (to-init     (if packages
 			  (loop for p in packages
 				when (member (el-get-as-string p) installed)
-				collect (el-get-as-string p))
-			installed))
-	 (init-deps   (loop for p in to-init
-			    append (mapcar 'el-get-as-string
-					   (el-get-dependencies
-					    (el-get-as-symbol p)))))
+				collect p)
+			(mapcar 'el-get-as-symbol installed)))
+	 (init-deps   (el-get-dependencies to-init))
 	 (to-install  (if packages
 			  (loop for p in packages
-				unless (member (el-get-as-string p) to-init)
-				collect (el-get-as-string p))
-			required))
+				unless (member p init-deps)
+				collect p)
+			(mapcar 'el-get-as-symbol required)))
+	 (install-deps (el-get-dependencies to-install))
 	 done)
-    (el-get-verbose-message "el-get-init-and-install: install %S" to-install)
-    (el-get-verbose-message "el-get-init-and-install: init %S" to-init)
-    (el-get-verbose-message "el-get-init-and-install: deps %S" init-deps)
+    (el-get-verbose-message "el-get-init-and-install: install %S" install-deps)
+    (el-get-verbose-message "el-get-init-and-install: init %S" init-deps)
 
-    (loop for p in to-install do (el-get-install p) collect p into done)
-    (loop for p in init-deps  do (el-get-init p)    collect p into done)
-    (loop for p in to-init
-	  unless (member p done) do (el-get-init p) collect p into done)
+    (loop for p in install-deps do (el-get-do-install p) collect p into done)
+    (loop for p in init-deps    do (el-get-init p)       collect p into done)
     done))
 
 (defun el-get (&optional sync &rest packages)
@@ -689,7 +684,7 @@ already installed packages is considered."
     ;; keep the result of `el-get-init-and-install' to return it even in the
     ;; 'wait case
     (prog1
-	(el-get-init-and-install packages)
+	(el-get-init-and-install (mapcar 'el-get-as-symbol packages))
 
       ;; el-get-install is async, that's now ongoing.
       (when progress

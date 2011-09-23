@@ -15,10 +15,11 @@
 (require 'cl)
 (require 'el-get-core)
 
-(defun el-get-dependencies (package)
+(defun el-get-dependencies (packages)
   "Return the list of packages to install in order."
   (multiple-value-bind (plist all-sorted-p non-sorted)
-      (topological-sort (el-get-dependencies-graph package))
+      (topological-sort
+       (apply 'append (mapcar 'el-get-dependencies-graph (el-get-as-list packages))))
     (if all-sorted-p
 	plist
       (error "Couldn't sort package dependencies for \"%s\"" package))))
