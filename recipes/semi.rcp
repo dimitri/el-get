@@ -1,6 +1,6 @@
 (:name semi
        :description "SEMI is a library to provide MIME feature for GNU Emacs."
-       :depends (apel flim)
+       :depends flim
        :type cvs
        :module "semi"
        :url ":pserver:anonymous@cvs.m17n.org:/cvs/root"
