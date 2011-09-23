@@ -51,7 +51,7 @@
 (defun el-get-update-autoloads (package)
   "Regenerate, compile, and load any outdated packages' autoloads."
 
-  (message "el-get: updating outdated autoloads")
+  (message "el-get: updating autoloads for %s" package)
 
   (let (;; Generating autoloads runs theses hooks; disable then
         fundamental-mode-hook

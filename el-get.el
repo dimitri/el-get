@@ -456,9 +456,9 @@ PACKAGE may be either a string or the corresponding symbol."
 
 (defun el-get-post-install-build (package)
   "Function to call after building the package while installing it."
-  (el-get-invalidate-autoloads package)
-  (el-get-init package)
-  (el-get-save-package-status package "installed"))
+  (el-get-save-package-status package "installed")
+  (el-get-invalidate-autoloads package)	; that will also update them
+  (el-get-init package))
 
 (defun el-get-post-install (package)
   "Post install PACKAGE. This will get run by a sentinel."
@@ -692,11 +692,7 @@ already installed packages is considered."
           ;; don't forget to account for installation failure
           (setq installed (el-get-count-packages-with-status packages "installed" "required"))
           (progress-reporter-update progress (- total installed)))
-        (progress-reporter-done progress))
-
-      ;; unless we have autoloads to update, just load them now
-      (unless el-get-outdated-autoloads
-	(el-get-eval-autoloads)))))
+        (progress-reporter-done progress)))))
 
 (provide 'el-get)
 
