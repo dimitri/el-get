@@ -5,7 +5,6 @@
 (let ((debug-on-error t)
       ;; (el-get-byte-compile nil)
       (el-get-verbose t))
-  (add-to-list 'load-path "/Users/dim/dev/emacs/el-get")
   (require 'el-get)
   (el-get 'sync 'yasnippet))
 

@@ -11,7 +11,7 @@ Typical run:
 
   mkdir -p /tmp/test/.emacs.d
   rm -rf /tmp/test/.emacs.d/el-get/
-  HOME=/tmp/test /Applications/Emacs.app/Contents/MacOS/Emacs -Q -batch -l test/el-get-issue-303.el
+  HOME=/tmp/test /usr/bin/emacs-snapshot-gtk -Q -batch -L . -l test/el-get-issue-303.el
 
 At the moment you need to run the el-get-issue scripts with some known
 working el-get version to know what to expect, and you probably need to have

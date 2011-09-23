@@ -6,7 +6,6 @@
 ;; path.
 
 (let ((debug-on-error t))
-  (add-to-list 'load-path "/Users/dim/dev/emacs/el-get")
   (setq el-get-byte-compile nil
 	el-get-verbose t)
   (require 'el-get)
