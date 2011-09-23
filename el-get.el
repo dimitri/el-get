@@ -181,8 +181,7 @@
 (require 'el-get-dependencies)		; topological-sort of package dep graph
 (require 'el-get-notify)		; notification support (dbus, growl...)
 (require 'el-get-list-packages)		; menu and `el-get-describe' facilities
-
-(require 'el-get-autoloads)		; to be removed^W cleaned up next
+(require 'el-get-autoloads)		; manages updating el-get's loaddefs.el
 
 ;;
 ;; And then define some more code-level customs.  They stay here so that
@@ -664,7 +663,7 @@ already installed packages is considered."
     (error "el-get sync parameter should be either nil, sync or wait"))
 
   ;; If there's no autoload file, everything needs to be regenerated.
-  (if (not (file-exists-p el-get-autoload-file)) (el-get-invalidate-autoloads))
+  (unless (file-exists-p el-get-autoload-file) (el-get-invalidate-autoloads))
 
   ;; Autoloads path are relative to el-get-dir, so add it to load-path
   (add-to-list 'load-path (file-name-as-directory el-get-dir))
