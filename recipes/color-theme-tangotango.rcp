@@ -1,0 +1,4 @@
+(:name color-theme-tangotango
+       :description "Another color theme based on the Tango palette."
+       :type git
+       :url "https://github.com/juba/color-theme-tangotango.git")
