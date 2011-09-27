@@ -1,0 +1,6 @@
+(:name oauth2
+       :description "Oauth library for Emacs 24"
+       :type http
+       :url "http://elpa.gnu.org/packages/oauth2-0.1.el"
+       :load "oauth2-0.1.el"
+       )
