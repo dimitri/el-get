@@ -412,7 +412,7 @@ called by `el-get' (usually at startup) for each installed package."
         (if (or lazy el-get-is-lazy)
             (let ((lazy-form
 		   `(progn ,(when postinit (list 'funcall postinit))
-			   (el-get-load-package-user-init-file ,package)
+			   (el-get-load-package-user-init-file ',package)
 			   ,(when after (list 'funcall after)))))
               (eval-after-load library lazy-form))
 
