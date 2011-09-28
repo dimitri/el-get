@@ -1,4 +1,4 @@
-(:name google-maps
+(:name google-contacts
        :description "Access Google Contacts from Emacs"
        :type git
        :depends oauth2
