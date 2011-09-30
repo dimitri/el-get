@@ -5,4 +5,4 @@
        :url "https://github.com/davidmiller/pony-mode"
        :post-init (lambda ()
             (require 'pony-mode)
-            (setq pony-snippet-dir "~/.emacs.d/el-get/pony-mode/snippets")))
+            (setq pony-snippet-dir (concat el-get-dir "pony-mode/snippets"))))
