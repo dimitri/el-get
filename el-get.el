@@ -36,6 +36,7 @@
 ;;   - fix dependency tracking at install and init times
 ;;   - fix autoloading so that it happens before notifying install is done
 ;;   - add some tests
+;;   - deprecate package.el from the old days, only include the Emacs24 one
 ;;
 ;;  3.1 - 2011-09-15 - Get a fix
 ;;
@@ -153,7 +154,7 @@
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
 
-(defconst el-get-version "4.0.1" "el-get version number")
+(defconst el-get-version "4.0.2" "el-get version number")
 
 (defconst el-get-script (or load-file-name buffer-file-name))
 
