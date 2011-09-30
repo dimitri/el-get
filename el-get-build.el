@@ -167,10 +167,11 @@ recursion.
 	     (el-get-build
 	      package
 	      `(,(format "%s %s dir"
-			 el-get-install-info
-			 (if (string= (substring infofile -5) ".info")
-			     infofile
-			   (concat infofile ".info")))) infodir-rel t nil t)))
+			 (shell-quote-argument el-get-install-info)
+			 (shell-quote-argument
+			  (if (string= (substring infofile -5) ".info")
+			      infofile
+			    (concat infofile ".info")))) infodir-rel t nil t))))
 
 	  (t
 	   (error
