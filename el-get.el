@@ -37,6 +37,7 @@
 ;;   - fix autoloading so that it happens before notifying install is done
 ;;   - add some tests
 ;;   - deprecate package.el from the old days, only include the Emacs24 one
+;;   - implement :builtin property (useful for dealing with package.el)
 ;;
 ;;  3.1 - 2011-09-15 - Get a fix
 ;;
@@ -351,6 +352,7 @@ called by `el-get' (usually at startup) for each installed package."
   (condition-case err
       (let* ((source   (el-get-package-def package))
              (method   (el-get-package-method source))
+	     (builtin  (plist-get source :builtin))
              (loads    (el-get-as-list (plist-get source :load)))
              (autoloads (plist-get source :autoloads))
              (feats    (el-get-as-list (plist-get source :features)))
@@ -363,6 +365,10 @@ called by `el-get' (usually at startup) for each installed package."
              (pkgname  (plist-get source :pkgname))
              (library  (or (plist-get source :library) pkgname package))
              (pdir     (el-get-package-directory package)))
+
+	;; a builtin package is never installed, we shouldn't reach this code
+	(when (and builtin (>= emacs-major-version builtin))
+	  (error "%s is builtin" package))
 
         ;; append entries to load-path and Info-directory-list
         (unless (member method '(elpa apt-get fink pacman))
@@ -489,22 +495,27 @@ PACKAGE may be either a string or the corresponding symbol."
 	   (source   (el-get-package-def package))
 	   (method   (el-get-package-method source))
 	   (install  (el-get-method method :install))
-	   (url      (plist-get source :url)))
+	   (url      (plist-get source :url))
+	   (builtin  (plist-get source :builtin)))
 
-      (when (string= "installed" status)
-	(error "Package %s is already installed." package))
+      (if (and builtin (>= emacs-major-version builtin))
+	(message "el-get-do-install: skipping builtin package \"%s\"" package)
 
-      (when (string= "required" status)
-	(message "Package %s failed to install, removing it first." package)
-	(el-get-remove package))
+	;; really install package otherwise
+	(when (string= "installed" status)
+	  (error "Package %s is already installed." package))
 
-      ;; check we can install the package and save to "required" status
-      (el-get-check-init)
-      (el-get-save-package-status package "required")
+	(when (string= "required" status)
+	  (message "Package %s failed to install, removing it first." package)
+	  (el-get-remove package))
 
-      ;; and install the package now, *then* message about it
-      (funcall install package url 'el-get-post-install)
-      (message "el-get install %s" package))))
+	;; check we can install the package and save to "required" status
+	(el-get-check-init)
+	(el-get-save-package-status package "required")
+
+	;; and install the package now, *then* message about it
+	(funcall install package url 'el-get-post-install)
+	(message "el-get install %s" package)))))
 
 
 (defun el-get-post-update (package)

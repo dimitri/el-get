@@ -1,6 +1,7 @@
 ;; Same as "package" except that it takes the version from Emacs 24
 (:name package
        :description "ELPA implementation (\"package.el\") from Emacs 24"
+       :builtin 24
        :type http
        :url "http://repo.or.cz/w/emacs.git/blob_plain/HEAD:/lisp/emacs-lisp/package.el"
        :features package

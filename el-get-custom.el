@@ -85,6 +85,13 @@ definition provided by `el-get' recipes locally.
     the package depends.  All of a packages dependencies will be
     installed before the package is installed.
 
+:builtin
+
+    Emacs major version (see `emacs-major-version' variable) from
+    which Emacs includes the recipe as a builtin.  For example,
+    `package.el' (the implementation of ELPA) is part fo Emacs24
+    but needs an external recipe for previous major versions.
+
 :pkgname
 
     The name of the package for the underlying package management
