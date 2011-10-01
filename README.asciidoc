@@ -139,7 +139,6 @@ run emacs, and I want this documentation to be usable as-is. Enters el-get!
 						    (require 'asciidoc)))))
 
 	(:name lisppaste        :type elpa)
-        (:name dictionary-el    :type apt-get)
         (:name emacs-goodies-el :type apt-get)))
 
 (setq my-packages
