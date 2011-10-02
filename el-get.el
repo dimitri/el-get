@@ -366,7 +366,8 @@ called by `el-get' (usually at startup) for each installed package."
              (library  (or (plist-get source :library) pkgname package))
              (pdir     (el-get-package-directory package)))
 
-	;; a builtin package is never installed, we shouldn't reach this code
+	;; a builtin package initialisation is about calling recipe and user
+	;; code only, no load-path nor byte-compiling support needed here.
 	(unless (and builtin (>= emacs-major-version builtin))
 	  ;; append entries to load-path and Info-directory-list
 	  (unless (member method '(elpa apt-get fink pacman))
