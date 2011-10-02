@@ -367,29 +367,27 @@ called by `el-get' (usually at startup) for each installed package."
              (pdir     (el-get-package-directory package)))
 
 	;; a builtin package is never installed, we shouldn't reach this code
-	(when (and builtin (>= emacs-major-version builtin))
-	  (error "%s is builtin" package))
+	(unless (and builtin (>= emacs-major-version builtin))
+	  ;; append entries to load-path and Info-directory-list
+	  (unless (member method '(elpa apt-get fink pacman))
+	    ;; append entries to load-path
+	    (dolist (path el-path)
+	      (el-get-add-path-to-list package 'load-path path))
+	    ;;  and Info-directory-list
+	    (el-get-install-or-init-info package 'init))
 
-        ;; append entries to load-path and Info-directory-list
-        (unless (member method '(elpa apt-get fink pacman))
-          ;; append entries to load-path
-          (dolist (path el-path)
-            (el-get-add-path-to-list package 'load-path path))
-          ;;  and Info-directory-list
-          (el-get-install-or-init-info package 'init))
+	  (when el-get-byte-compile-at-init
+	    ;; If the package has been updated outside el-get, the .el files will be
+	    ;; out of date, so just check if we need to recompile them.
+	    ;;
+	    ;; when using el-get-update to update packages, though, there's no
+	    ;; need to byte compile at init.
+	    (el-get-byte-compile package))
 
-        (when el-get-byte-compile-at-init
-          ;; If the package has been updated outside el-get, the .el files will be
-          ;; out of date, so just check if we need to recompile them.
-          ;;
-          ;; when using el-get-update to update packages, though, there's no
-          ;; need to byte compile at init.
-          (el-get-byte-compile package))
-
-        ;; load any autoloads file if needed
-        (unless (eq autoloads t)
-          (dolist (file (el-get-as-list autoloads))
-            (el-get-load-fast file)))
+	  ;; load any autoloads file if needed
+	  (unless (eq autoloads t)
+	    (dolist (file (el-get-as-list autoloads))
+	      (el-get-load-fast file))))
 
         ;; first, the :prepare function, usually defined in the recipe
         (el-get-funcall prepare "prepare" package)
