@@ -171,7 +171,7 @@ recursion.
 			 (shell-quote-argument
 			  (if (string= (substring infofile -5) ".info")
 			      infofile
-			    (concat infofile ".info")))) infodir-rel t nil t))))
+			    (concat infofile ".info"))))) infodir-rel t nil t)))
 
 	  (t
 	   (error
