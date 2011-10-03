@@ -26,7 +26,7 @@
              package-archives
              '(("ELPA" . "http://tromey.com/elpa/")
                ("gnu" . "http://elpa.gnu.org/packages/")
-               ("marmalade" . "http://marmalade-repo.org/packages")))))
+               ("marmalade" . "http://marmalade-repo.org/packages/")))))
 
             ;; Don't init, elpa packages installed by el-get is
             ;; initialized from loaddefs (package-initialize)
