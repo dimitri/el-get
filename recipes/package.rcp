@@ -10,7 +10,7 @@
               (expand-file-name
                (convert-standard-filename
                 (concat (file-name-as-directory
-                     (el-get-package-directory "package24"))
+                     (el-get-package-directory "package"))
                     "elpa")))
               package-directory-list
               (list (file-name-as-directory package-user-dir)
