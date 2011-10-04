@@ -81,9 +81,9 @@ recursion.
 	 (default-directory (file-name-as-directory wdir))
 	 (process-list
 	  (mapcar (lambda (c)
-		    (let* ((split    (if (stringp c)
-					 (split-string c)
-				       (mapcar 'shell-quote-argument c)))
+		    (let* ((split    (cond ((stringp c) (split-string c))
+					   ((sequencep c) c)
+					   (t (error "Invalid command: %S" c))))
 			   (c        (mapconcat 'identity split " "))
 			   (name     (car split))
 			   (program  (el-get-build-command-program name))
