@@ -352,7 +352,6 @@ called by `el-get' (usually at startup) for each installed package."
   (condition-case err
       (let* ((source   (el-get-package-def package))
              (method   (el-get-package-method source))
-	     (builtin  (plist-get source :builtin))
              (loads    (el-get-as-list (plist-get source :load)))
              (autoloads (plist-get source :autoloads))
              (feats    (el-get-as-list (plist-get source :features)))
@@ -368,7 +367,7 @@ called by `el-get' (usually at startup) for each installed package."
 
 	;; a builtin package initialisation is about calling recipe and user
 	;; code only, no load-path nor byte-compiling support needed here.
-	(unless (and builtin (>= emacs-major-version builtin))
+	(unless (eq method 'builtin)
 	  ;; append entries to load-path and Info-directory-list
 	  (unless (member method '(elpa apt-get fink pacman))
 	    ;; append entries to load-path
