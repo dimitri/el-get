@@ -83,8 +83,7 @@ the recipe, then return nil."
 	  (make-directory (el-get-package-directory package))
 	(message "%s"
 		 (shell-command
-		  (concat "cd " el-get-dir
-			  " && ln -s \"" elpa-dir "\" \"" package "\"")))))))
+		  (format "cd %s && ln -s \"%s\" \"%s\"" el-get-dir elpa-dir package)))))))
 
 (defun el-get-elpa-install (package url post-install-fun)
   "Ask elpa to install given PACKAGE."
