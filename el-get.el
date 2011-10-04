@@ -494,27 +494,22 @@ PACKAGE may be either a string or the corresponding symbol."
 	   (source   (el-get-package-def package))
 	   (method   (el-get-package-method source))
 	   (install  (el-get-method method :install))
-	   (url      (plist-get source :url))
-	   (builtin  (plist-get source :builtin)))
+	   (url      (plist-get source :url)))
 
-      (if (and builtin (>= emacs-major-version builtin))
-	(message "el-get-do-install: skipping builtin package \"%s\"" package)
+      (when (string= "installed" status)
+        (error "Package %s is already installed." package))
 
-	;; really install package otherwise
-	(when (string= "installed" status)
-	  (error "Package %s is already installed." package))
+      (when (string= "required" status)
+        (message "Package %s failed to install, removing it first." package)
+        (el-get-remove package))
 
-	(when (string= "required" status)
-	  (message "Package %s failed to install, removing it first." package)
-	  (el-get-remove package))
+      ;; check we can install the package and save to "required" status
+      (el-get-check-init)
+      (el-get-save-package-status package "required")
 
-	;; check we can install the package and save to "required" status
-	(el-get-check-init)
-	(el-get-save-package-status package "required")
-
-	;; and install the package now, *then* message about it
-	(funcall install package url 'el-get-post-install)
-	(message "el-get install %s" package)))))
+      ;; and install the package now, *then* message about it
+      (funcall install package url 'el-get-post-install)
+      (message "el-get install %s" package))))
 
 
 (defun el-get-post-update (package)

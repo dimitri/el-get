@@ -131,11 +131,18 @@ each directory listed in `el-get-recipe-path' in order."
 	  (t source))))
 
 (defun el-get-package-method (package-or-source)
-  "Return the :type property (called method) of PACKAGE-OR-SOURCE"
-  (cond ((or (symbolp package-or-source) (stringp package-or-source))
-	 (plist-get (el-get-package-def package-or-source) :type))
+  "Return the :type property (called method) of PACKAGE-OR-SOURCE.
 
-	(t (plist-get package-or-source :type))))
+If the package is built in to the current major version of Emacs,
+return 'builtin."
+  (let* ((def (if (or (symbolp package-or-source) (stringp package-or-source))
+                  (el-get-package-def package-or-source)
+                package-or-source))
+         (builtin (plist-get def :builtin)))
+
+    (if (and builtin (>= emacs-major-version builtin))
+        'builtin
+      (plist-get package-or-source :type))))
 
 (defalias 'el-get-package-type #'el-get-package-method)
 
