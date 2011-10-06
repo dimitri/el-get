@@ -142,7 +142,7 @@ return 'builtin."
 
     (if (and builtin (>= emacs-major-version builtin))
         'builtin
-      (plist-get package-or-source :type))))
+      (plist-get def :type))))
 
 (defalias 'el-get-package-type #'el-get-package-method)
 
