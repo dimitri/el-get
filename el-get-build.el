@@ -81,7 +81,10 @@ recursion.
 	 (default-directory (file-name-as-directory wdir))
 	 (process-list
 	  (mapcar (lambda (c)
-		    (let* ((split    (cond ((stringp c) (split-string c))
+		    (let* ((split    (cond ((stringp c)
+                                            (when (string-match split-string-default-separators c)
+                                              (warn "Build command %S in package %s is relying on whitespace splitting. You should rewrite the recipe to use a list of string arguments instead." c package))
+                                            (split-string c))
 					   ((sequencep c) c)
 					   (t (error "Invalid command: %S" c))))
 			   (c        (mapconcat 'identity split " "))
