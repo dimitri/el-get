@@ -65,10 +65,8 @@
 
       (add-to-list 'load-path pdir)
       (load package)
-      ;; (load (concat pdir package ".el"))
       (let ((el-get-default-process-sync t) ; force sync operations for installer
-            (el-get-verbose t)		    ; let's see it all
-            )
+            (el-get-verbose t))		    ; let's see it all
         (el-get-post-install "el-get"))
       (with-current-buffer buf
 	(goto-char (point-max))
