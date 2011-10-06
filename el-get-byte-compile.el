@@ -102,9 +102,8 @@ it."
   (let ((bytecomp-command
 	 (list el-get-emacs
 	       "-Q" "-batch" "-f" "toggle-debug-on-error"
-	       "-l" (shell-quote-argument
-		     (file-name-sans-extension
-		      (symbol-file 'el-get-byte-compile-from-stdin 'defun)))
+	       "-l" (file-name-sans-extension
+                     (symbol-file 'el-get-byte-compile-from-stdin 'defun))
 	       "-f" "el-get-byte-compile-from-stdin")))
     `(:command-name "byte-compile"
 		    :buffer-name ,buffer
