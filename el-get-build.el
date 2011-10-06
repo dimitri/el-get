@@ -81,7 +81,10 @@ recursion.
 	 (default-directory (file-name-as-directory wdir))
 	 (process-list
 	  (mapcar (lambda (c)
-		    (let* ((split    (cond ((stringp c) (split-string c))
+		    (let* ((split    (cond ((stringp c)
+                                            (when (string-match split-string-default-separators c)
+                                              (warn "Build command %S in package %s is relying on whitespace splitting. You should rewrite the recipe to use a list of string arguments instead." c package))
+                                            (split-string c))
 					   ((sequencep c) c)
 					   (t (error "Invalid command: %S" c))))
 			   (c        (mapconcat 'identity split " "))
@@ -166,13 +169,12 @@ recursion.
 	     (el-get-set-info-path package infodir-rel)
 	     (el-get-build
 	      package
-	      `(,(format "%s %s dir"
-			 (shell-quote-argument el-get-install-info)
-			 (shell-quote-argument
-			  (if (string= (substring infofile -5) ".info")
+              (list (list el-get-install-info
+                          (if (string= (substring infofile -5) ".info")
 			      infofile
-			    (concat infofile ".info"))))) infodir-rel t nil t)))
-
+			    (concat infofile ".info"))
+                          "dir"))
+              infodir-rel t nil t)))
 	  (t
 	   (error
 	    "el-get-install-or-init-info: %s not supported" build-or-init)))))))
