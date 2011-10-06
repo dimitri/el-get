@@ -28,18 +28,32 @@ interpreted as a shell command; or a list of lists of
 strings, each string representing a single shell argument."
   (let* ((source     (el-get-package-def package))
          (build-type (intern (format ":build/%s" system-type)))
-         (build-commands
+         (raw-build-commands
 	   (or (plist-get source build-type)
-	       (plist-get source :build))))
+	       (plist-get source :build)))
+         (build-commands
+          (if (listp (raw-build-commands))
+              ;; If the :build property's car is a symbol, assume that it is an
+              ;; expression that evaluates to a command list, rather than a
+              ;; literal command list.
+              (if (symbolp (car raw-build-commands))
+                  (eval raw-build-commands)
+                raw-build-commands)
+            (error "build commands for package %s are not a list" package)))
+         (flat-build-commands
+          ;; Flatten lists, but not strings
+          (mapcar (lambda (x) (if (stringp x) x (el-get-flatten x)))
+                  build-commands)))
 
-    (unless (listp build-commands)
-      (error "build commands for package %s are not a list" package))
-
-    (unless (stringp (car build-commands))
-      (setq build-commands (eval build-commands)))
-
-    (mapcar (lambda (x) (if (stringp x) x (el-get-flatten x)))
-            build-commands)))
+    ;; Verify that each build command is a string or a list of strings
+    (let ((invalid-cmds
+           (remove-if (lambda (cmd)
+                        (or (stringp cmd)
+                            (el-get-list-of-strings-p cmd)))
+                      flat-build-commands)))
+      (when invalid-cmds
+        (error "Package %s has invalid build commands: %S" package invalid-cmds)))
+    flat-build-commands))
 
 (defun el-get-build-command-program (name)
   "Given the user command name, get the command program to execute.

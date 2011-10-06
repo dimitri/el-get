@@ -77,6 +77,12 @@ returning a list that contains it (and only it)."
   (if (listp element-or-list) element-or-list
       (list element-or-list)))
 
+(defun el-get-list-of-strings-p (obj)
+  (or (null obj)
+      (and (consp obj)
+           (stringp (car obj))
+           (el-get-list-of-strings-p (cdr obj)))))
+
 (defun el-get-source-name (source)
   "Return the package name (stringp) given an `el-get-sources'
 entry."
