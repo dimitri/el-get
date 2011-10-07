@@ -50,7 +50,7 @@
       ;; switch branch if we have to
       (let* ((branch (cond
                       ;; Check if a specific branch is requested
-                      ((bound-and-true-p 'el-get-install-branch))
+                      ((bound-and-true-p el-get-install-branch))
                       ;; Check if master branch is requested
                       ((boundp 'el-get-master-branch) "master")
                       ;; Read the default branch from the el-get recipe
