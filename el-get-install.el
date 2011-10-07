@@ -48,20 +48,25 @@
 	(error "Couldn't clone el-get from the Git repository: %s" url))
 
       ;; switch branch if we have to
-      (unless (boundp 'el-get-master-branch)
-	(let* ((branch  (plist-get (with-temp-buffer
-				     (insert-file-contents-literally
-				      (expand-file-name "recipes/el-get.rcp" pdir))
-				     (read (current-buffer)))
-				   :branch))
-	       (branch (when branch (concat "origin/" branch)))
-	       (default-directory pdir)
-	       (bstatus
-		(when branch
-		  (call-process git nil `(,buf t) t "checkout" "-t" branch))))
-
-	  (when (and branch (not (zerop bstatus)))
-	    (error "Couldn't `git checkout -t %s`" branch))))
+      (let* ((branch (cond
+                      ;; Check if a specific branch is requested
+                      ((bound-and-true-p el-get-install-branch))
+                      ;; Check if master branch is requested
+                      ((boundp 'el-get-master-branch) "master")
+                      ;; Read the default branch from the el-get recipe
+                      ((plist-get (with-temp-buffer
+                                    (insert-file-contents-literally
+                                     (expand-file-name "recipes/el-get.rcp" pdir))
+                                    (read (current-buffer)))
+                                  :branch))
+                      ;; As a last resort, use the master branch
+                      ("master")))
+             (remote-branch (format "origin/%s" branch))
+             (default-directory pdir)
+             (bstatus
+              (call-process git nil (list buf t) t "checkout" "-t" remote-branch)))
+        (unless (zerop bstatus)
+          (error "Couldn't `git checkout -t %s`" branch)))
 
       (add-to-list 'load-path pdir)
       (load package)
