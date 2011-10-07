@@ -1,0 +1,5 @@
+(:name find-file-in-project
+       :type git
+       :url "git://github.com/technomancy/find-file-in-project.git"
+       :load "find-file-in-project.el"
+       :compile ("find-file-in-project.el"))
