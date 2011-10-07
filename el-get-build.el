@@ -32,7 +32,7 @@ strings, each string representing a single shell argument."
 	   (or (plist-get source build-type)
 	       (plist-get source :build)))
          (build-commands
-          (if (listp (raw-build-commands))
+          (if (listp raw-build-commands)
               ;; If the :build property's car is a symbol, assume that it is an
               ;; expression that evaluates to a command list, rather than a
               ;; literal command list.
