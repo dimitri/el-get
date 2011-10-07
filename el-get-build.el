@@ -96,9 +96,12 @@ recursion.
 	 (process-list
 	  (mapcar (lambda (c)
 		    (let* ((split    (cond ((stringp c)
-                                            (when (string-match split-string-default-separators c)
-                                              (warn "Build command %S in package %s is relying on whitespace splitting. You should rewrite the recipe to use a list of string arguments instead." c package))
-                                            (split-string c))
+                                            ;; `("sh" "-c" ,c) or equivalent
+                                            (prog1 (list shell-file-name
+                                                         shell-command-switch
+                                                         c)
+                                              (when (not (string= c (shell-quote-argument c)))
+                                                (warn "Build command %S in package \"%s\" will be shell-interpolated. To bypass shell interpolation, the recipe for \"%s\" should specify build commands as lists of strings instead." c package package))))
 					   ((sequencep c) c)
 					   (t (error "Invalid command: %S" c))))
 			   (c        (mapconcat 'identity split " "))
