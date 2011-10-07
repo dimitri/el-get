@@ -1,0 +1,7 @@
+(:name jekyll-el
+       :description "Jekyll Integration for emacs"
+       :type git
+       :url "git://github.com/diasjorge/jekyll.el.git"
+       :load-path (".")
+       :compile ("\\.el$")
+       :features jekyll)
