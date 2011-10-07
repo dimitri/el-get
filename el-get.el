@@ -488,7 +488,7 @@ PACKAGE may be either a string or the corresponding symbol."
   "Install any PACKAGE for which you have a recipe."
   (el-get-error-unless-package-p package)
   (if (string= (el-get-package-status package) "installed")
-      (el-get-init p)
+      (el-get-init package)
     (let* ((status   (el-get-read-package-status package))
 	   (source   (el-get-package-def package))
 	   (method   (el-get-package-method source))
