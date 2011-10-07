@@ -120,14 +120,16 @@ definition provided by `el-get' recipes locally.
 
     Your build recipe, a list.
 
-    A recipe R whose `car' is not a string will be replaced
-    by (eval R).
+    A build command C whose `car' is a symbol (see `symbolp') will be
+    replaced by (eval C).
 
     Then, each element of the recipe will be interpreted as
     a command:
 
-    * If the element is a string, it will be interpreted directly
-      by the shell.
+    * If the element is a list of string, the first element of
+      the list must be the program to call, and each following
+      element a different argument to the call.  No whitespace
+      parsing is done.
 
     * Otherwise, if it is a list, any list sub-elements will be
       recursively \"flattened\" (see `el-get-flatten').  The

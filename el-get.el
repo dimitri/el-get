@@ -38,6 +38,7 @@
 ;;   - add some tests
 ;;   - deprecate package.el from the old days, only include the Emacs24 one
 ;;   - implement :builtin property (useful for dealing with package.el)
+;;   - fix recipes :build commands, must be either lists of strings or expr
 ;;
 ;;  3.1 - 2011-09-15 - Get a fix
 ;;
@@ -155,7 +156,7 @@
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
 
-(defconst el-get-version "4.0.2" "el-get version number")
+(defconst el-get-version "4.0.3" "el-get version number")
 
 (defconst el-get-script (or load-file-name buffer-file-name))
 
