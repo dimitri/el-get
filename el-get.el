@@ -442,17 +442,21 @@ dependencies (if any).
 
 PACKAGE may be either a string or the corresponding symbol."
   (interactive (list (el-get-read-package-name "Install")))
-  (if (el-get-package-is-installed package)
-      (message "el-get: `%s' package is already installed" package)
+  (let ((packages  (el-get-dependencies (el-get-as-symbol package))))
+    (when (cdr packages)
+      ;; tweak el-get-post-install-hooks to install remaining packages
+      ;; once the first is installed
+      (el-get-verbose-message "el-get-install %s: %S" package packages)
+      (setq el-get-next-packages (cdr packages))
+      (add-hook 'el-get-post-install-hooks 'el-get-install-next-packages))
 
-    (let* ((packages  (el-get-dependencies (el-get-as-symbol package))))
-      (when (cdr packages)
-	;; tweak el-get-post-install-hooks to install remaining packages
-	;; once the first is installed
-	(el-get-verbose-message "el-get-install %s: %S" package packages)
-	(setq el-get-next-packages (cdr packages))
-	(add-hook 'el-get-post-install-hooks 'el-get-install-next-packages))
-      (el-get-do-install (car packages)))))
+    (let ((package (car packages)))
+      (if (not (el-get-package-is-installed package))
+	  (el-get-do-install package)
+	;; if package is already installed, skip to the next
+	(message "el-get: `%s' package is already installed" package)
+	(el-get-init package)
+	(el-get-install-next-packages package)))))
 
 (defun el-get-install-next-packages (current-package)
   "Run as part of `el-get-post-init-hooks' when dealing with dependencies."
