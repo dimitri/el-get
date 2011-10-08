@@ -55,8 +55,10 @@
                                                                    :body message))
             ((fboundp 'notify)               (notify title message))
             ((fboundp 'el-get-growl)         (el-get-growl title message))
-            (t                               (error "No notification system available")))
+            (t                               (message "%s: %s" title message)))
+    ;; when notification function errored out, degrade gracefully to `message'
     (error (message "%s: %s" title message))))
+
 (defun el-get-post-install-notification (package)
   "Notify the PACKAGE has been installed."
   (el-get-notify (format "%s installed" package)
