@@ -50,12 +50,13 @@
       (when (featurep 'notify)
 	(require 'notify))))
 
-  (cond ((fboundp 'notifications-notify) (notifications-notify :title title
-							       :body message))
-	((fboundp 'notify)               (notify title message))
-	((fboundp 'el-get-growl)         (el-get-growl title message))
-	(t                               (message "%s: %s" title message))))
-
+  (condition-case nil
+      (cond ((fboundp 'notifications-notify) (notifications-notify :title title
+                                                                   :body message))
+            ((fboundp 'notify)               (notify title message))
+            ((fboundp 'el-get-growl)         (el-get-growl title message))
+            (t                               (error "No notification system available")))
+    (error (message "%s: %s" title message))))
 (defun el-get-post-install-notification (package)
   "Notify the PACKAGE has been installed."
   (el-get-notify (format "%s installed" package)
