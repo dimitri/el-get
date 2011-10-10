@@ -526,6 +526,7 @@ PACKAGE may be either a string or the corresponding symbol."
 		    ;; fix trailing failed installs
 		    (when (string= (el-get-read-package-status package) "required")
 		      (el-get-save-package-status package "installed"))
+		    (el-get-reload package)
                     (run-hook-with-args 'el-get-post-update-hooks package)))))
 
 (defun el-get-update (package)
