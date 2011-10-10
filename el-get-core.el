@@ -174,6 +174,25 @@ directory or a symlink in el-get-dir."
     (or (file-directory-p pdir)
 	(file-symlink-p   pdir))))
 
+(defun el-get-reload-alist (package &rest prefixes)
+  "Returns an alist of (feature . filename) for el-get packages
+which uses given prefixes. For example, el-get features all begin
+with 'el-get and gnus features are more spread, thus you would do
+
+ el-get-reload-alist 'gnus 'mail- 'mm- 'mess 'mml 'nn 'pgg 'sasl 'sieve 'spam
+
+That's not the whole story for gnus but hopefully gives an idea
+on how to call that function."
+  (loop with pdir =  (el-get-package-directory package)
+	for (f . l) in load-history
+	for lib = (cdr (assoc 'provide l))
+	when (loop for p in (or prefixes package)
+		   when (and (string-match (format "^%s" pdir) f)
+			     (string-match (format "^%s" (symbol-name p))
+					   (symbol-name lib)))
+		   return t)
+	collect (cons lib f)))
+
 
 ;;
 ;; call-process-list utility

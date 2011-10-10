@@ -58,7 +58,10 @@
 (defun el-get-list-package-names-with-status (&rest status)
   "Return package names that are currently in given status"
   (loop for (p s) on (el-get-read-all-packages-status) by 'cddr
-	when (member s status) collect (el-get-package-name p)))
+	;; it can happen that (el-get-package-name) returns nil here and
+	;; that breaks the completion-read command
+	when (and (member s status) (el-get-package-name p))
+	collect (el-get-package-name p)))
 
 (defun el-get-read-package-with-status (action &rest status)
   "Read a package name in given status"
