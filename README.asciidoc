@@ -308,6 +308,10 @@ M-x el-get-update-all::
     updating a package requires some adjustments to your setup.  Updating
     all of them at once will require reviewing almost all your setup.
 
+M-x el-get-reload::
+
+    Reload the given package files.  Happens automatically at update time too.
+
 M-x el-get-remove::
 
     Will prompt for an +installed+ package name, with completion, then

@@ -172,6 +172,14 @@ definition provided by `el-get' recipes locally.
     List of files to load, or a single file to load after having
     installed the source but before `require'ing its features.
 
+:reload
+
+    List of the features prefixes that the package requires, that
+    defaults to the package symbol itself (e.g. for the package
+    el-get, the :reload property defaults to 'el-get). This will
+    be used by both M-x el-get-reload and M-x el-get-update in
+    order to reload your package's files.
+
 :features
 
     List of features el-get will `require' for you.
