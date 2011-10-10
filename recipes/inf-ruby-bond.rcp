@@ -2,4 +2,5 @@
        :description "Use Bond autocompletion from inf-ruby buffers"
        :type git
        :url "https://github.com/pd/inf-ruby-bond.git"
+       :depends inf-ruby
        :features inf-ruby-bond)
