@@ -174,24 +174,29 @@ directory or a symlink in el-get-dir."
     (or (file-directory-p pdir)
 	(file-symlink-p   pdir))))
 
-(defun el-get-reload-alist (package &rest prefixes)
-  "Returns an alist of (feature . filename) for el-get packages
-which uses given prefixes. For example, el-get features all begin
-with 'el-get and gnus features are more spread, thus you would do
+
+;;
+;; el-get-reload API functions
+;;
+(defun el-get-package-files (package)
+  "Return a list of files loaded from PACKAGE's directory."
+  (loop with pdir = (file-truename (el-get-package-directory package))
+        with regexp = (format "^%s" (regexp-quote (file-name-as-directory (expand-file-name pdir))))
+        for (f . nil) in load-history
+        when (and (stringp f) (string-match-p regexp (file-truename f)))
+        collect (if (string-match-p "\\.elc?$" f)
+                    (file-name-sans-extension f)
+                  f)))
 
- el-get-reload-alist 'gnus 'mail- 'mm- 'mess 'mml 'nn 'pgg 'sasl 'sieve 'spam
-
-That's not the whole story for gnus but hopefully gives an idea
-on how to call that function."
-  (loop with pdir =  (el-get-package-directory package)
-	for (f . l) in load-history
-	for lib = (cdr (assoc 'provide l))
-	when (loop for p in (or prefixes package)
-		   when (and (string-match (format "^%s" pdir) f)
-			     (string-match (format "^%s" (symbol-name p))
-					   (symbol-name lib)))
-		   return t)
-	collect (cons lib f)))
+(defun el-get-package-features (package)
+  "Return a list of features provided by files in PACKAGE."
+  (loop with pdir = (file-truename (el-get-package-directory package))
+        with regexp = (format "^%s" (regexp-quote (file-name-as-directory (expand-file-name pdir))))
+        for (f . l) in load-history
+        when (and (stringp f) (string-match-p regexp (file-truename f)))
+        nconc (loop for i in l
+                    when (and (consp i) (eq (car i) 'provide))
+                    collect (cdr i))))
 
 
 ;;

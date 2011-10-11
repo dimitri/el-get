@@ -8,12 +8,4 @@
        :info "texi"
        :load-path ("lisp")
        :autoloads nil
-       :reload  (gnus assistant binhex canlock color compface deuglify dgnus
-		      dig dns ecomplete flow-fill format-spec gmm-
-		      gravatar gssapi hashcash hex-util hmac- html2text
-		      ietf-drums imap legacy-gnus lpath md4 netrc ntlm
-		      parse-time password-cache plstore pop3 proto-stream qp
-		      registry rfc rtree score-mode sha1 shr smiley smime
-		      mail- mm- mess mml nn pgg sasl sieve spam starttls
-		      time-date tls utf7 uudecode yenc)
        :features gnus-load)
