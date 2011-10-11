@@ -464,9 +464,9 @@ PACKAGE may be either a string or the corresponding symbol."
   (let ((package (pop el-get-next-packages)))
     (el-get-verbose-message "el-get-install-next-packages: %s" package)
     (if package
-	(if (el-get-package-is-installed package)
-	    (message "el-get: `%s' package is already installed" package)
-	  (el-get-do-install (el-get-as-string package)))
+	;; el-get-do-install will either init the package, installing it
+	;; first only when necessary to do so
+	(el-get-do-install (el-get-as-string package))
       ;; no more packages to install in the dependency walk, clean up
       (remove-hook 'el-get-post-init-hooks 'el-get-install-next-packages))))
 
