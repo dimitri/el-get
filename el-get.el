@@ -157,7 +157,7 @@
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
 
-(defconst el-get-version "4.0.4" "el-get version number")
+(defconst el-get-version "4.0.5" "el-get version number")
 
 (defconst el-get-script (or load-file-name buffer-file-name))
 
@@ -759,7 +759,10 @@ already installed packages is considered."
           ;; don't forget to account for installation failure
           (setq installed (el-get-count-packages-with-status packages "installed" "required"))
           (progress-reporter-update progress (- total installed)))
-        (progress-reporter-done progress)))))
+        (progress-reporter-done progress))
+
+      ;; now is a good time to care about autoloads
+      (el-get-eval-autoloads))))
 
 (provide 'el-get)
 

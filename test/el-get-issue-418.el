@@ -7,4 +7,5 @@
       (el-get-verbose t)
       (debug-ignored-errors '()))
   (require 'el-get)
-  (el-get 'sync '(el-get magit)))
+  (el-get 'sync 'magit)
+  (message "%S" (symbol-function 'magit-status)))
