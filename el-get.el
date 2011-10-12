@@ -588,17 +588,6 @@ PACKAGE may be either a string or the corresponding symbol."
   (interactive)
   (mapc 'el-get-update (el-get-list-package-names-with-status "installed")))
 
-(defun el-get-reload (package)
-  "reload all the files associated with features coming from PACKAGE"
-  (interactive
-   (list (el-get-read-package-with-status "Reload" "installed")))
-  (loop with package = (intern package)
-	with prefixes = (or (plist-get (el-get-package-def package) :reload)
-			    (list package))
-	for (feat . file) in (apply #'el-get-reload-alist package prefixes)
-	for f = (file-name-sans-extension file)
-	do (load f)))
-
 (defun el-get-self-update ()
   "Update el-get itself.  The standard recipe takes care of reloading the code."
   (interactive)
