@@ -76,6 +76,7 @@ into a local recipe file set"
 	  (insert (format "(:name %s :type emacswiki :website \"%s\")"
 			  (file-name-sans-extension package) url))))))
 
+;;;###autoload
 (defun el-get-emacswiki-refresh (&optional target-dir)
   "run Emacs -Q in an asynchronous subprocess to get the package
 list from emacswiki and build a local recipe directory out of

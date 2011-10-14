@@ -272,6 +272,7 @@ force their evaluation on some packages only."
 ;;
 ;; User Interface, Interactive part
 ;;
+;;;###autoload
 (defun el-get-version ()
   "Message the current el-get version"
   (interactive)
@@ -583,11 +584,13 @@ PACKAGE may be either a string or the corresponding symbol."
     (funcall update package url 'el-get-post-update)
     (message "el-get update %s" package)))
 
+;;;###autoload
 (defun el-get-update-all ()
   "Performs update of all installed packages."
   (interactive)
   (mapc 'el-get-update (el-get-list-package-names-with-status "installed")))
 
+;;;###autoload
 (defun el-get-self-update ()
   "Update el-get itself.  The standard recipe takes care of reloading the code."
   (interactive)
@@ -619,6 +622,7 @@ PACKAGE may be either a string or the corresponding symbol."
     (el-get-save-package-status package "removed")
     (message "el-get remove %s" package)))
 
+;;;###autoload
 (defun el-get-cd (package)
   "Open dired in the package directory."
   (interactive
@@ -637,6 +641,7 @@ PACKAGE may be either a string or the corresponding symbol."
       (with-temp-file filepath
 	(insert (prin1-to-string source))))))
 
+;;;###autoload
 (defun el-get-make-recipes (&optional dir)
   "Loop over `el-get-sources' and write a recipe file for each
 entry which is not a symbol and is not already a known recipe."

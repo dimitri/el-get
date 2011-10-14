@@ -365,6 +365,7 @@ matching REGEX with TYPE and ARGS as parameter."
 		   ""))
 	(pop-to-buffer (current-buffer))))
 
+;;;###autoload
 (defun el-get-list-packages ()
   "Display a list of packages."
   (interactive)
