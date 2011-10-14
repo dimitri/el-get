@@ -2,4 +2,7 @@
        :description "Twilight color theme for GNU Emacs inspired by TextMate."
        :type git
        :url "http://github.com/crafterm/twilight-emacs.git"
-       :load "color-theme-twilight.el")
+       :depends color-theme)
+; :features is not defined, because color-theme-twilight automatically sets itself
+; as the current color-theme when loading the file.
+; This can be fixed pending https://github.com/crafterm/twilight-emacs/pull/5

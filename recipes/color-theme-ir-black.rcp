@@ -2,4 +2,5 @@
        :description "IR Black Color Theme for Emacs."
        :type git 
        :url "https://github.com/burke/color-theme-ir-black.git"
-       :depends color-theme)
+       :depends color-theme
+       :features color-theme-ir-black)
