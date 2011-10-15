@@ -1,0 +1,15 @@
+(:name evil-numbers
+       :website "http://github.com/cofi/evil-numbers"
+       :description "Increment/decrement numbers in Evil, the extensible vim 
+       emulation layer. Like C-a/C-x in vim.
+
+       After installation, you will need to add a key-binding for evil-numbers.
+       For example:
+
+       (define-key evil-normal-state-map (kbd \"C-c +\") 'evil-numbers/inc-at-pt)
+       (define-key evil-normal-state-map (kbd \"C-c -\") 'evil-numbers/dec-at-pt)"
+
+       :type git
+       :url "http://github.com/cofi/evil-numbers.git"
+       :features evil-numbers
+       :depends evil)
