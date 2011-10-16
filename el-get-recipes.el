@@ -70,9 +70,12 @@ Used to avoid errors when exploring the path for recipes"
 ;;
 (defun el-get-read-recipe-file (filename)
   "Read given filename and return its content (a valid form is expected)"
-  (with-temp-buffer
-    (insert-file-contents-literally filename)
-    (read (current-buffer))))
+  (condition-case err
+      (with-temp-buffer
+        (insert-file-contents-literally filename)
+        (read (current-buffer)))
+    ((debug error)
+     (error "Error reading recipe %s: %S" filename err))))
 
 (defun el-get-recipe-filename (package)
   "Return the name of the file that contains the recipe for PACKAGE, if any."
