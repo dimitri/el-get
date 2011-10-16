@@ -3,4 +3,6 @@
        :type git
        :url "http://github.com/crafterm/twilight-emacs.git"
        :depends color-theme
-       :features color-theme-twilight)
+       :post-init (lambda ()
+                    (autoload 'color-theme-twilight "color-theme-twilight"
+                      "color-theme: twilight" t)))

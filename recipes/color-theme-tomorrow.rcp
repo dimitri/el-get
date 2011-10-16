@@ -2,5 +2,15 @@
        :description "Emacs highlighting using Chris Charles's Tomorrow color scheme"
        :type git
        :url "https://github.com/ccharles/Tomorrow-Theme.git"
-       :load "GNU Emacs/color-theme-tomorrow.el"
-       :depends color-theme)
+       :depends color-theme
+       :post-init (lambda ()
+                    (autoload 'color-theme-tomorrow "GNU Emacs/color-theme-tomorrow"
+                      "color-theme: tomorrow" t)
+                    (autoload 'color-theme-tomorrow-night "GNU Emacs/color-theme-tomorrow"
+                      "color-theme: tomorrow-night" t)
+                    (autoload 'color-theme-tomorrow-night-eighties "GNU Emacs/color-theme-tomorrow"
+                      "color-theme: tomorrow-night-eighties" t)
+                    (autoload 'color-theme-tomorrow-night-blue "GNU Emacs/color-theme-tomorrow"
+                      "color-theme: tomorrow-night-blue" t)
+                    (autoload 'color-theme-tomorrow-night-bright "GNU Emacs/color-theme-tomorrow"
+                      "color-theme: tomorrow-night-bright" t)))

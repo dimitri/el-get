@@ -3,4 +3,6 @@
        :type git
        :url "https://github.com/superbobry/color-theme-desert.git"
        :depends color-theme
-       :features color-theme-desert)
+       :post-init (lambda ()
+                    (autoload 'color-theme-desert "color-theme-desert"
+                      "color-theme: desert" t)))

@@ -3,4 +3,6 @@
        :type git
        :url "git://github.com/lut4rp/almost-monokai.git"
        :depends color-theme
-       :features color-theme-almost-monokai)
+       :post-init (lambda ()
+                    (autoload 'color-theme-almost-monokai "color-theme-almost-monokai"
+                      "color-theme: almost-monokai" t)))

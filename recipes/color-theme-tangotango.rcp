@@ -3,4 +3,6 @@
        :type git
        :url "https://github.com/juba/color-theme-tangotango.git"
        :depends color-theme
-       :features color-theme-tangotango)
+       :post-init (lambda ()
+                    (autoload 'color-theme-tangotango "color-theme-tangotango"
+                      "color-theme: tangotango" t)))

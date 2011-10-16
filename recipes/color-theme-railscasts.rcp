@@ -3,4 +3,6 @@
        :type git
        :url "https://github.com/olegshaldybin/color-theme-railscasts.git"
        :depends color-theme
-       :load "color-theme-railscasts.el")
+       :post-init (lambda ()
+                    (autoload 'color-theme-railscasts "color-theme-railscasts"
+                      "color-theme: railscasts" t)))

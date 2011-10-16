@@ -3,4 +3,6 @@
        :type http
        :url "http://jblevins.org/git/misc.git/plain/color-theme-subdued.el"
        :depends color-theme
-       :features color-theme-subdued)
+       :post-init (lambda ()
+                    (autoload 'color-theme-subdued "color-theme-subdued"
+                      "color-theme: subdued" t)))

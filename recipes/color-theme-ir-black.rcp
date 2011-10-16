@@ -1,6 +1,8 @@
 (:name color-theme-ir-black
        :description "IR Black Color Theme for Emacs."
-       :type git 
+       :type git
        :url "https://github.com/burke/color-theme-ir-black.git"
        :depends color-theme
-       :features color-theme-ir-black)
+       :post-init (lambda ()
+                    (autoload 'color-theme-ir-black "color-theme-ir-black"
+                      "color-theme: ir-black" t)))
