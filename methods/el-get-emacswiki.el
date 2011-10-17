@@ -89,10 +89,13 @@ that"
   (let* ((name "*el-get-emacswiki*")
 	 (dummy (when (get-buffer name) (kill-buffer name)))
 	 (args
-	  (format "-Q -batch -l %s -f el-get-emacswiki-build-local-recipes %s"
-		  (file-name-sans-extension
-		   (symbol-file 'el-get-emacswiki-build-local-recipes 'defun))
-		  target-dir))
+	  (format
+	   "-Q -batch -L %s -L %s -l %s -f el-get-emacswiki-build-local-recipes %s"
+	   (el-get-package-directory 'el-get)
+	   (expand-file-name "methods" (el-get-package-directory 'el-get))
+	   (file-name-sans-extension
+	    (symbol-file 'el-get-emacswiki-build-local-recipes 'defun))
+	   target-dir))
 	 (process
 	  (apply 'start-process name name el-get-emacs (split-string args))))
     (message "%s %s" el-get-emacs args)
