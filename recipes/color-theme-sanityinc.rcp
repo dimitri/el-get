@@ -1,4 +1,10 @@
 (:name color-theme-sanityinc
        :description "Two pleasant medium-contrast Emacs color themes in light and dark flavours"
        :type git
-       :url "https://github.com/purcell/color-theme-sanityinc.git")
+       :url "https://github.com/purcell/color-theme-sanityinc.git"
+       :depends color-theme
+       :post-init (lambda ()
+                    (autoload 'color-theme-sanityinc-light "color-theme-sanityinc"
+                      "color-theme: sanityinc-light" t)
+                    (autoload 'color-theme-sanityinc-dark "color-theme-sanityinc"
+                      "color-theme: sanityinc-dark" t)))
