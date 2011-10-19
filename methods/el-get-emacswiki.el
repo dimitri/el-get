@@ -15,66 +15,74 @@
 (require 'el-get-http)
 
 (defcustom el-get-emacswiki-base-url
-  "http://www.emacswiki.org/emacs/download/%s.el"
+  "http://www.emacswiki.org/emacs/download/"
   "The base URL where to fetch :emacswiki packages"
   :group 'el-get
   :type 'string)
 
-(defcustom el-get-emacswiki-elisp-index-url
-  "http://www.emacswiki.org/cgi-bin/wiki?action=index;match=%5C.(el%7Ctar)(%5C.gz)%3F%24"
-  "The emacswiki index URL of elisp pages"
-  :group 'el-get
-  :type 'string)
+(defcustom el-get-emacswiki-elisp-file-list-url
+  "http://www.emacswiki.org/cgi-bin/wiki?action=elisp"
+  "The emacswiki URL where to fetch a list of elisp files with descriptions.
 
-(defcustom el-get-emacswiki-elisp-index-base-url
-  "http://www.emacswiki.org/emacs/"
-  "The emacswiki base URL used in the index"
+We get back list of filename space first line, and in general
+that matches the following pattern:
+
+filename.el ;;; filename.el --- description"
   :group 'el-get
   :type 'string)
 
 (defun el-get-emacswiki-install (package url post-install-fun)
   "Download a single-file PACKAGE over HTTP from emacswiki."
-  (let ((url (or url (format el-get-emacswiki-base-url package))))
+  (let ((url (or url (format "%s%s.el" el-get-emacswiki-base-url package))))
     (el-get-http-install package url post-install-fun)))
 
+(el-get-register-method
+ :emacswiki #'el-get-emacswiki-install #'el-get-emacswiki-install #'el-get-rmdir
+ #'el-get-http-install-hook)
+
+;;;
+;;; Functions to maintain a local recipe list from EmacsWiki
+;;;
 (defun el-get-emacswiki-retrieve-package-list ()
-  "returns a list of (URL . PACKAGE) from emacswiki listing page"
-  (with-current-buffer
-      (url-retrieve-synchronously el-get-emacswiki-elisp-index-url)
-    (goto-char (point-min))
-    (re-search-forward "pages found.</h2>" nil 'move)
-    (remove-if-not
-     (lambda (p) (string-match "el$" (cdr p)))
-     (loop
-      with offset = (length el-get-emacswiki-elisp-index-base-url)
-      ;; <a class="local" href="http://www.emacswiki.org/emacs/thingatpt%2b.el">thingatpt+.el</a>
-      while (re-search-forward el-get-emacswiki-elisp-index-base-url nil 'move)
-      collect (cons
-	       ;; URL
-	       (buffer-substring-no-properties
-		(- (point) offset)
-		(1- (re-search-forward "\"" nil 'move)))
-	       ;; PACKAGE name
-	       (buffer-substring-no-properties
-		(re-search-forward ">" nil 'move)
-		(1- (re-search-forward "<" nil 'move))))))))
+  "return a list of (URL PACKAGE DESCRIPTION) from emacswiki"
+  (loop for line in
+	(split-string
+	 (with-current-buffer
+	     (url-retrieve-synchronously el-get-emacswiki-elisp-file-list-url)
+	   ;; prune HTTP headers
+	   (goto-char (point-min))
+	   (re-search-forward "^$" nil 'move)
+	   (forward-char)
+	   (delete-region (point-min) (point))
+	   (buffer-string))
+	 "\n")
+	for filename = (substring line 0 (string-match " " line))
+	for description = (if (string-match "--?-? " line)
+			      (substring line (match-end 0)) "")
+	for url = (format "%s%s" el-get-emacswiki-base-url filename)
+	collect (list url filename description)))
 
 (defun el-get-emacswiki-build-local-recipes (&optional target-dir)
   "retrieve the index of elisp pages at emacswiki and turn them
 into a local recipe file set"
   (let ((target-dir (or target-dir
 			(car command-line-args-left)
-			el-get-recipe-path-emacswiki)))
+			el-get-recipe-path-emacswiki))
+	(coding-system-for-write 'utf-8))
     (unless (file-directory-p target-dir) (make-directory target-dir))
     (loop
-     for (url . package) in (el-get-emacswiki-retrieve-package-list)
+     for (url package description) in (el-get-emacswiki-retrieve-package-list)
      for recipe = (replace-regexp-in-string "el$" "rcp" package)
      for rfile  = (expand-file-name recipe target-dir)
      unless (file-exists-p rfile)
      do (with-temp-file (expand-file-name rfile target-dir)
-	  (message "%s" package)
-	  (insert (format "(:name %s :type emacswiki :website \"%s\")"
-			  (file-name-sans-extension package) url))))))
+	  (message "%s: %s" package description)
+	  (insert
+	   (format
+	    "(:name %s\n:type emacswiki\n:description \"%s\"\n:website \"%s\")"
+	    (file-name-sans-extension package) description url))
+	  ;; (encode-coding-region (point-min) (point-max) 'utf-8)
+	  (indent-region (point-min) (point-max))))))
 
 ;;;###autoload
 (defun el-get-emacswiki-refresh (&optional target-dir)
@@ -105,9 +113,5 @@ that"
 	(when (eq (process-status proc) 'exit)
 	  (el-get-notify "el-get: EmacsWiki"
 			 "EmacsWiki local recipe list refreshed"))))))
-
-(el-get-register-method
- :emacswiki #'el-get-emacswiki-install #'el-get-emacswiki-install #'el-get-rmdir
- #'el-get-http-install-hook)
 
 (provide 'el-get-emacswiki)
