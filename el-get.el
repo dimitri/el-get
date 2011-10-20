@@ -416,16 +416,16 @@ called by `el-get' (usually at startup) for each installed package."
                 (el-get-verbose-message "require '%s" feature)
                 (require feature)))))
 
-        ;; now handle the user configs and :post-init and :after functions
+        (el-get-funcall postinit "post-init" package)
+
+        ;; now handle the user configs and :after functions
         (if (or lazy el-get-is-lazy)
             (let ((lazy-form
-		   `(progn ,(when postinit (list 'funcall postinit))
-			   (el-get-load-package-user-init-file ',package)
+		   `(progn (el-get-load-package-user-init-file ',package)
 			   ,(when after (list 'funcall after)))))
               (eval-after-load library lazy-form))
 
           ;; el-get is not lazy here
-          (el-get-funcall postinit "post-init" package)
 	  (el-get-load-package-user-init-file package)
           (el-get-funcall after "after" package))
 
