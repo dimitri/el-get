@@ -1,4 +1,10 @@
 (:name django-mode
        :description "Major mode for Django web framework."
-       :type bzr
-       :url "https://code.launchpad.net/~lol2fast4u/django-mode/trunk")
+       :type git
+       :url "https://github.com/myfreeweb/django-mode.git"
+       :post-init (lambda ()
+                    (require 'django-html-mode)
+                    (require 'django-mode)
+                    (yas/load-directory "~/.emacs.d/el-get/django-mode/snippets")
+                    (add-to-list 'auto-mode-alist '("\.djhtml$" . django-html-mode))
+                    ))
