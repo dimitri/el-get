@@ -72,7 +72,7 @@ Used to avoid errors when exploring the path for recipes"
   "Read given filename and return its content (a valid form is expected)"
   (condition-case err
       (with-temp-buffer
-        (insert-file-contents-literally filename)
+        (insert-file-contents filename)
         (read (current-buffer)))
     ((debug error)
      (error "Error reading recipe %s: %S" filename err))))
