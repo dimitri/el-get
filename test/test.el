@@ -60,7 +60,8 @@
          (el-get-sources `((:name ,pkg
                                   :features (,pkg)
                                   :type http
-                                  :url ,(concat "file://" pkg-source)))))
+                                  :url ,(concat "file://" pkg-source))))
+	 (el-get-packages (mapcar 'el-get-source-name el-get-sources)))
     (make-directory el-get-dir t)
     (unwind-protect
         (progn
@@ -75,7 +76,7 @@
           (should-not (zerop (nth 7 (file-attributes pkg-source))))
           (message "Installing %s" pkg)
           (should (progn
-                    (el-get 'sync el-get-sources)
+                    (el-get 'sync el-get-packages)
                     t))
           (message "Verifying installed package file %s" pkg-destination)
           (should (file-exists-p pkg-destination))
