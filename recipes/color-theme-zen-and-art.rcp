@@ -2,4 +2,7 @@
        :description "Irfn's zen with a bit of art."
        :type git
        :url "https://github.com/irfn/zen-and-art.git"
-       :load "zen-and-art.el")
+       :depends color-theme
+       :post-init (lambda ()
+                    (autoload 'color-theme-zen-and-art "zen-and-art"
+                      "color-theme: zen-and-art" t)))

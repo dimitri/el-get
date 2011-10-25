@@ -1,0 +1,5 @@
+(:name ruby-test-mode
+       :type git
+       :url "git://github.com/r0man/ruby-test-mode.git"
+       :load "ruby-test-mode.el"
+       :compile ("ruby-test-mode.el"))

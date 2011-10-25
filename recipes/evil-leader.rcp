@@ -1,0 +1,8 @@
+(:name evil-leader
+       :website "http://github.com/cofi/evil-leader"
+       :description "Add <leader> shortcuts to Evil, the extensible vim
+       emulation layer"
+       :type git
+       :url "http://github.com/cofi/evil-leader.git"
+       :features evil-leader
+       :depends evil)

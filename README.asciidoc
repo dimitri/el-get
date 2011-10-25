@@ -101,11 +101,11 @@ how to:
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
 (unless (require 'el-get nil t)
-  (url-retrieve
-   "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
-   (lambda (s)
-     (end-of-buffer)
-     (eval-print-last-sexp))))
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
+    (end-of-buffer)
+    (eval-print-last-sexp)))
 
 (el-get 'sync)
 --------------------------------------
@@ -139,7 +139,6 @@ run emacs, and I want this documentation to be usable as-is. Enters el-get!
 						    (require 'asciidoc)))))
 
 	(:name lisppaste        :type elpa)
-        (:name dictionary-el    :type apt-get)
         (:name emacs-goodies-el :type apt-get)))
 
 (setq my-packages
@@ -308,6 +307,10 @@ M-x el-get-update-all::
     this function can lead to hours of settings review: more often than not
     updating a package requires some adjustments to your setup.  Updating
     all of them at once will require reviewing almost all your setup.
+
+M-x el-get-reload::
+
+    Reload the given package files.  Happens automatically at update time too.
 
 M-x el-get-remove::
 

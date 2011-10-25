@@ -1,0 +1,5 @@
+(:name pony-mode
+       :website "https://github.com/davidmiller/pony-mode"
+       :description "A Django mode for Emacs."
+       :type git
+       :url "https://github.com/davidmiller/pony-mode")

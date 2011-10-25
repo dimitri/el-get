@@ -1,82 +1,93 @@
-(setq debug-on-error t)
-(setq message-log-max t)
-(setq eval-expression-debug-on-error t)
+(eval-when-compile
+  (require 'cl)
+  (when (null (ignore-errors (require 'ert)))
+    (defmacro* ert-deftest (name () &body docstring-keys-and-body)
+      (message "Skipping tests, ERT is not available"))))
 
-(defconst dwa:test-log
-  (find-file-noselect "test.log" 'nowarn))
+(defconst testing-destination-dir "/tmp/emacs.d.testing")
 
-(with-current-buffer dwa:test-log
-  ;; in case there's an old buffer hanging around
-  (erase-buffer))
-
-(defun el-get-compiled ()
-  (file-exists-p 
-   (concat
-    (mapconcat
-     'file-name-as-directory `(,user-emacs-directory "el-get" "el-get") 
-     "") "el-get.elc")))
-   
-(defun dwa:test-result (exit-status)
-  (with-current-buffer dwa:test-log
-    (insert (format"Testing %s
-el-get installed: %s
-el-get compiled: %s
-autoloads updated: %s"
-                   (if (zerop exit-status) 
-                       "passed" 
-                     (format "failed with status %s" exit-status))
-                   (featurep 'el-get)
-                   (el-get-compiled)
-                   (null el-get-outdated-autoloads)))
-      (insert "\n\n=================== Messages =====================\n\n")
-      (insert-buffer "*Messages*")
-      (save-buffer))
-  (kill-emacs exit-status))
-  
-(defadvice debugger-setup-buffer (after dwa:debug-exit 0 (debugger-args) activate preactivate)
-  (message "Entering debugger...")
-  (let ((backtrace-buffer (current-buffer)))
-    (with-current-buffer dwa:test-log
-      (insert "\n\n=================== Backtrace =====================\n\n")
-      (insert-buffer backtrace-buffer)))
-  (dwa:test-result 666))
-
-;;
-;; Test bootstrapping initially
-;;
-(defconst el-get-root-directory
-  (file-name-directory 
-   (directory-file-name
-    (file-name-directory load-file-name))))
-
-;; Extract the instructions directly from the documentation
-(save-window-excursion
-  (find-file (concat el-get-root-directory "README.asciidoc"))
-  (search-forward-regexp "^-\\{9,\\}
+(ert-deftest el-get-installation-test ()
+  (let ((el-get-default-process-sync 'wait)
+         (user-emacs-directory testing-destination-dir)
+         (el-get-dir (concat (file-name-as-directory user-emacs-directory)
+                             "el-get"))
+         (el-get-status-file
+          (concat (file-name-as-directory el-get-dir) ".status.el")))
+    (make-directory el-get-dir t)
+    ;; Extract the instructions directly from the documentation
+    (with-temp-buffer
+      (insert-file-contents "../README.asciidoc")
+      (goto-char (point-min))
+      (search-forward-regexp "^-\\{9,\\}
 \\(\\(?:.\\|
 \\)+?\\)-\\{9,\\}")
-  (message "evaluating %s" (match-string 1))
-  (eval (read (match-string 1))))
+      (let ((install-string (match-string 1)))
+        (should install-string)
+        (message "evaluating %s" install-string)
+        (should (eval (read (match-string 1)))))))
+  (should (featurep 'el-get))
+  ;; (should (el-get-compiled))
+  (should-not el-get-outdated-autoloads))
 
-;; if this takes more than 15 seconds, time out
-(run-at-time 15 nil 
- (lambda () 
-      (condition-case err
-          (with-current-buffer dwa:test-log
-            (insert "\n\n** Timeout Reached **\n\n"))
-        (dwa:test-result 111)
-        ((debug error)
-         (dwa:test-result 888)))))
+(ert-deftest el-get-recipe-dirs-test ()
+  (require 'el-get)
+  (let ((el-get-recipe-path
+         `("/"
+           ,(let ((f "/foo"))
+              (while (file-exists-p f)
+                (setq f (concat f f))) f))))
+    (should (equal (el-get-recipe-dirs)
+                   (loop for f in el-get-recipe-path
+                         when (file-exists-p f)
+                         collect f)))))
 
-;; When el-get is installed and compiled, and autoloads are generated,
-;; we're done.  Check for it every half second.
-(run-at-time 0.5 0.5
-    (lambda () (message "waiting for el-get installation...")
-      (condition-case err
-       (when (and (featurep 'el-get)
-                  (null el-get-outdated-autoloads)
-                  (el-get-compiled))
-         (dwa:test-result 0))
-       ((debug error)
-        (dwa:test-result 777)))))
+(ert-deftest el-get-trivial-install-test ()
+  (require 'el-get)
+  (let* ((pkg 'el-get-trivial-install-test)
+         (pkg-name (symbol-name pkg))
+         (pkg-file (concat pkg-name ".el"))
+         (pkg-source (concat "/tmp/" pkg-file))
+         (user-emacs-directory testing-destination-dir)
+         (el-get-dir (concat (file-name-as-directory user-emacs-directory)
+                             "el-get"))
+         (el-get-status-file
+          (concat (file-name-as-directory el-get-dir) ".status.el"))
+         (pkg-destination-dir (mapconcat
+                               'file-name-as-directory
+                               (list user-emacs-directory "el-get" pkg-name)
+                               ""))
+         (pkg-destination (concat pkg-destination-dir pkg-file))
+         (el-get-sources `((:name ,pkg
+                                  :features (,pkg)
+                                  :type http
+                                  :url ,(concat "file://" pkg-source))))
+	 (el-get-packages (mapcar 'el-get-source-name el-get-sources)))
+    (make-directory el-get-dir t)
+    (unwind-protect
+        (progn
+          (message "Checking %s is not loaded" pkg)
+          (should-not (featurep pkg))
+          (message "Creating %s package file in %s" pkg pkg-source)
+          (with-temp-file pkg-source
+            (insert (format "(defun %s-empty ())\n(provide '%s)\n" pkg pkg)))
+          (message "Verifying package file %s" pkg-source)
+          (should (file-exists-p pkg-source))
+          ;; and it's not empty
+          (should-not (zerop (nth 7 (file-attributes pkg-source))))
+          (message "Installing %s" pkg)
+          (should (progn
+                    (el-get 'sync el-get-packages)
+                    t))
+          (message "Verifying installed package file %s" pkg-destination)
+          (should (file-exists-p pkg-destination))
+          (should-not (zerop (nth 7 (file-attributes pkg-destination))))
+          (message "Verifying package %s was loaded" pkg)
+          (should (featurep pkg))
+          (message "Unloading and removing package %s" pkg)
+          (el-get-remove (symbol-name pkg))
+          (message "Verifying package %s was unloaded and removed" pkg)
+          (should-not (file-exists-p pkg-destination)))
+      (delete-file pkg-source))))
 
+;(featurep 'el-get-trivial-install-test)
+;(unload-feature 'el-get-trivial-install-test)

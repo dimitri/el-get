@@ -1,0 +1,26 @@
+= Tests
+
+Like, yes, we have some! :)
+
+== el-get manual tests
+
+Tries to cover some known issues, example that will allow building a
+regression test suite some day.
+
+Typical run:
+
+  mkdir -p /tmp/test/.emacs.d
+  rm -rf /tmp/test/.emacs.d/el-get/
+  HOME=/tmp/test /usr/bin/emacs-snapshot-gtk -Q -batch -L . -l test/el-get-issue-303.el
+
+At the moment you need to run the el-get-issue scripts with some known
+working el-get version to know what to expect, and you probably need to have
+el-get installed at +~/dev/emacs/el-get/+ for this to work as-is.
+
+Yet it might be useful.
+
+== el-get automated tests
+
+See +test.el+ in this directory, and see the el-get-devel mailing list for a
+promising patch to port the effort to +ert+.  This has yet to happen,
+though.

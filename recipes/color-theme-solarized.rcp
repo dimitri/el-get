@@ -2,5 +2,9 @@
        :description "Emacs highlighting using Ethan Schoonover's Solarized color scheme"
        :type git
        :url "https://github.com/sellout/emacs-color-theme-solarized.git"
-       :load "color-theme-solarized.el"
-       :depends color-theme)
+       :depends color-theme
+       :post-init (lambda ()
+                    (autoload 'color-theme-solarized-light "color-theme-solarized"
+                      "color-theme: solarized-light" t)
+                    (autoload 'color-theme-solarized-dark "color-theme-solarized"
+                      "color-theme: solarized-dark" t)))
