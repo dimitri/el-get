@@ -2,7 +2,4 @@
        :website "https://github.com/davidmiller/pony-mode"
        :description "A Django mode for Emacs."
        :type git
-       :url "https://github.com/davidmiller/pony-mode"
-       :post-init (lambda ()
-            (require 'pony-mode)
-            (setq pony-snippet-dir (el-get-package-directory "pony-mode"))))
+       :url "https://github.com/davidmiller/pony-mode")
