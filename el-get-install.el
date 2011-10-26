@@ -61,12 +61,11 @@
                                   :branch))
                       ;; As a last resort, use the master branch
                       ("master")))
-             (remote-branch (format "origin/%s" branch))
              (default-directory pdir)
              (bstatus
-              (call-process git nil (list buf t) t "checkout" "-t" remote-branch)))
+              (call-process git nil (list buf t) t "checkout" branch)))
         (unless (zerop bstatus)
-          (error "Couldn't `git checkout -t %s`" branch)))
+          (error "Couldn't `git checkout %s`" branch)))
 
       (add-to-list 'load-path pdir)
       (load package)
