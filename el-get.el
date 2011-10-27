@@ -479,9 +479,28 @@ PACKAGE may be either a string or the corresponding symbol."
 
 (defun el-get-post-install (package)
   "Post install PACKAGE. This will get run by a sentinel."
-  (let* ((sync     el-get-default-process-sync)
-	 (hooks    (el-get-method (el-get-package-type package) :install-hook))
-	 (commands (el-get-build-commands package)))
+  (let* ((sync             el-get-default-process-sync)
+	 (type             (el-get-package-type package))
+	 (hooks            (el-get-method type :install-hook))
+	 (commands         (el-get-build-commands package))
+	 (checksum         (plist-get (el-get-package-def package) :checksum))
+	 (compute-checksum (el-get-method type :compute-checksum)))
+
+    ;; check the checksum of the package here, as early as possible
+    (and checksum
+	 (not compute-checksum)
+	 (error
+	  "Checksum verification of package %s is not supported with method %s."
+	  package type))
+    (when compute-checksum
+      (let ((computed (funcall compute-checksum package)))
+	(if checksum
+	    (when (not (equal computed checksum))
+	      (error "Checksum verification failed. Required: %s, actual: %s."
+		     checksum computed))
+	  (el-get-verbose-message
+	   "el-get: Checksum value for unchecked pakage %s is %s."
+	   package computed))))
 
     ;; post-install is the right place to run install-hook
     (run-hook-with-args hooks package)
