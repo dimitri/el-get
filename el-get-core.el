@@ -36,16 +36,17 @@
 
 The methods list is a PLIST, each entry has a method name
 property which value is another PLIST, which must contain values
-for :install, :install-hook, :update and :remove
+for :install, :install-hook, :update, :remove and :checksum
 properties. Those should be the elisp functions to call for doing
 the named package action in the given method.")
 
 (defun el-get-register-method (name install update remove
-				    &optional install-hook remove-hook)
+				    &optional install-hook remove-hook compute-checksum)
   "Register the method for backend NAME, with given functions"
   (let ((def (list :install install :update update :remove remove)))
-    (when install-hook (setq def (append def (list :install-hook install-hook))))
-    (when remove-hook  (setq def (append def (list :remove-hook remove-hook))))
+    (when install-hook     (setq def (append def (list :install-hook install-hook))))
+    (when remove-hook      (setq def (append def (list :remove-hook remove-hook))))
+    (when compute-checksum (setq def (append def (list :compute-checksum compute-checksum))))
     (setq el-get-methods (plist-put el-get-methods name def))))
 
 
