@@ -674,8 +674,6 @@ entry which is not a symbol and is not already a known recipe."
       (el-get-write-recipe r dir)))
   (dired dir))
 
-	 (compute-checksum (el-get-method type :compute-checksum)))
-
 ;;;###autoload
 (defun el-get-checksum (package)
   "Compute the checksum of the given package, and put it in the kill-ring"
