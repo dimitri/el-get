@@ -283,7 +283,7 @@ definition provided by `el-get' recipes locally.
     Checksum calculation is currently supported by these methods
     with the following meaning:
 
-      * `http', `ftp' and `emacswiki' with the SHA1 of the downloaded file,
+      * `http', `ftp' and `emacswiki' with the SHA1 of the downloaded file
 "
 
   :type

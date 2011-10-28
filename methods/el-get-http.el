@@ -20,15 +20,15 @@
   :group 'el-get
   :type 'hook)
 
+(defvar el-get-http-checksums (make-hash-table)
+  "Hash table for storing downloaded SHA1 checksums.")
+
 (defun el-get-filename-from-url (url)
   "return a suitable filename from given url
 
 Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
   (replace-regexp-in-string "[^a-zA-Z0-9-_\.\+]" "_"
 			    (file-name-nondirectory url)))
-
-(defvar el-get-http-checksums (make-hash-table)
-  "Hash table for storing downloaded SHA1 checksums.")
 
 (defun el-get-http-retrieve-callback (status package post-install-fun &optional dest sources)
   "Callback function for `url-retrieve', store the emacs lisp file for the package."
@@ -52,16 +52,21 @@ Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
     (kill-buffer))
   (funcall post-install-fun package))
 
+(defun el-get-http-dest-filename (package &optional url)
+  "Return where to store the file at given URL for given PACKAGE"
+  (let* ((pdir   (el-get-package-directory package))
+	 (url    (or url (plist-get (el-get-package-def package) :url)))
+	 (fname  (or (plist-get (el-get-package-def package) :localname)
+		     (el-get-filename-from-url url))))
+    (expand-file-name fname pdir)))
+
 (defun el-get-http-install (package url post-install-fun &optional dest)
   "Dowload a single-file PACKAGE over HTTP and store it in DEST.
 
 Should dest be omitted (nil), the url content will get written
 into the package :localname option or its `file-name-nondirectory' part."
   (let* ((pdir   (el-get-package-directory package))
-	 (fname  (or (plist-get (el-get-package-def package) :localname)
-		     (el-get-filename-from-url url)))
-	 (dest   (or dest
-		     (concat (file-name-as-directory pdir) fname))))
+	 (dest   (or dest (el-get-http-dest-filename package url))))
     (unless (file-directory-p pdir)
       (make-directory pdir))
 
@@ -75,7 +80,15 @@ into the package :localname option or its `file-name-nondirectory' part."
 
 (defun el-get-http-compute-checksum (package)
   "Look up download time SHA1 of PACKAGE."
-  (gethash package el-get-http-checksums "not installed in this session"))
+  (let ((checksum (gethash package el-get-http-checksums)))
+    (unless checksum
+      ;; compute the checksum
+      (setq checksum
+	    (with-temp-buffer
+	      (insert-file-contents-literally (el-get-http-dest-filename package))
+	      (sha1 (current-buffer))))
+      (puthash package checksum el-get-http-checksums))
+    checksum))
 
 (el-get-register-method
  :http #'el-get-http-install #'el-get-http-install #'el-get-rmdir
