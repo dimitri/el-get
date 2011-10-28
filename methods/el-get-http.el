@@ -13,6 +13,7 @@
 ;;     Please see the README.asciidoc file from the same distribution
 
 (require 'el-get-core)
+(require 'sha1)
 
 (defcustom el-get-http-install-hook nil
   "Hook run after http retrieve."
@@ -25,6 +26,9 @@
 Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
   (replace-regexp-in-string "[^a-zA-Z0-9-_\.\+]" "_"
 			    (file-name-nondirectory url)))
+
+(defvar el-get-http-checksums (make-hash-table)
+  "Hash table for storing downloaded SHA1 checksums.")
 
 (defun el-get-http-retrieve-callback (status package post-install-fun &optional dest sources)
   "Callback function for `url-retrieve', store the emacs lisp file for the package."
@@ -40,6 +44,7 @@ Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
     (forward-char)
     (delete-region (point-min) (point))
     (write-file part)
+    (puthash package (sha1 (current-buffer)) el-get-http-checksums)
     (when (file-exists-p dest)
       (delete-file dest))
     (rename-file part dest)
@@ -68,12 +73,16 @@ into the package :localname option or its `file-name-nondirectory' part."
         (el-get-http-retrieve-callback
 	 nil package post-install-fun dest el-get-sources)))))
 
+(defun el-get-http-compute-checksum (package)
+  "Look up download time SHA1 of PACKAGE."
+  (gethash package el-get-http-checksums "not installed in this session"))
+
 (el-get-register-method
  :http #'el-get-http-install #'el-get-http-install #'el-get-rmdir
- #'el-get-http-install-hook)
+ #'el-get-http-install-hook nil #'el-get-http-compute-checksum)
 
 (el-get-register-method
  :ftp #'el-get-http-install #'el-get-http-install #'el-get-rmdir
- #'el-get-http-install-hook)
+ #'el-get-http-install-hook nil #'el-get-http-compute-checksum)
 
 (provide 'el-get-http)

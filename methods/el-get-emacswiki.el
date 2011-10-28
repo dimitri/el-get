@@ -38,7 +38,7 @@ filename.el ;;; filename.el --- description"
 
 (el-get-register-method
  :emacswiki #'el-get-emacswiki-install #'el-get-emacswiki-install #'el-get-rmdir
- #'el-get-http-install-hook)
+ #'el-get-http-install-hook nil #'el-get-http-compute-checksum)
 
 ;;;
 ;;; Functions to maintain a local recipe list from EmacsWiki
