@@ -158,7 +158,7 @@
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
 
-(defconst el-get-version "4.0.5" "el-get version number")
+(defconst el-get-version "4.0.6" "el-get version number")
 
 (defconst el-get-script (or load-file-name buffer-file-name))
 
