@@ -495,7 +495,9 @@ PACKAGE may be either a string or the corresponding symbol."
     (when compute-checksum
       (let ((computed (funcall compute-checksum package)))
 	(if checksum
-	    (unless (equal computed checksum)
+	    (if (equal computed checksum)
+		(message "el-get: package %s passed checksum check, checksum is %s."
+			 package computed)
 	      (error "Checksum verification failed. Required: %s, actual: %s."
 		     checksum computed))
 	  (el-get-verbose-message "el-get: pakage %s checksum is %s."
@@ -599,8 +601,10 @@ PACKAGE may be either a string or the corresponding symbol."
 	 (url      (plist-get source :url))
 	 (commands (plist-get source :build)))
     ;; update the package now
-    (funcall update package url 'el-get-post-update)
-    (message "el-get update %s" package)))
+    (if (plist-get source :checksum)
+	(message "el-get: package %s is checksum protected, update not possible." package)
+      (funcall update package url 'el-get-post-update)
+      (message "el-get update %s" package))))
 
 ;;;###autoload
 (defun el-get-update-all ()
