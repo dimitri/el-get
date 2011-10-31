@@ -495,10 +495,10 @@ PACKAGE may be either a string or the corresponding symbol."
     (when compute-checksum
       (let ((computed (funcall compute-checksum package)))
 	(if checksum
-	    (if (equal computed checksum)
-		(message "el-get: package %s passed checksum check, checksum is %s."
-			 package computed)
-	      (error "Checksum verification failed. Required: %s, actual: %s."
+	    (if (equal computed (el-get-as-string checksum))
+		(el-get-verbose-message "el-get: package %s passed checksum with \"%s\"."
+					package computed)
+	      (error "Checksum verification failed. Required: \"%s\", actual: \"%s\"."
 		     checksum computed))
 	  (el-get-verbose-message "el-get: pakage %s checksum is %s."
 				  package computed))))
@@ -602,7 +602,7 @@ PACKAGE may be either a string or the corresponding symbol."
 	 (commands (plist-get source :build)))
     ;; update the package now
     (if (plist-get source :checksum)
-	(message "el-get: package %s is checksum protected, update not possible." package)
+	(error "el-get: remove checksum from package %s to update it." package)
       (funcall update package url 'el-get-post-update)
       (message "el-get update %s" package))))
 
