@@ -13,11 +13,15 @@
 ;;     Please see the README.asciidoc file from the same distribution
 
 (require 'el-get-core)
+(require 'sha1)
 
 (defcustom el-get-http-install-hook nil
   "Hook run after http retrieve."
   :group 'el-get
   :type 'hook)
+
+(defvar el-get-http-checksums (make-hash-table)
+  "Hash table for storing downloaded SHA1 checksums.")
 
 (defun el-get-filename-from-url (url)
   "return a suitable filename from given url
@@ -40,6 +44,7 @@ Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
     (forward-char)
     (delete-region (point-min) (point))
     (write-file part)
+    (puthash package (sha1 (current-buffer)) el-get-http-checksums)
     (when (file-exists-p dest)
       (delete-file dest))
     (rename-file part dest)
@@ -47,16 +52,21 @@ Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
     (kill-buffer))
   (funcall post-install-fun package))
 
+(defun el-get-http-dest-filename (package &optional url)
+  "Return where to store the file at given URL for given PACKAGE"
+  (let* ((pdir   (el-get-package-directory package))
+	 (url    (or url (plist-get (el-get-package-def package) :url)))
+	 (fname  (or (plist-get (el-get-package-def package) :localname)
+		     (el-get-filename-from-url url))))
+    (expand-file-name fname pdir)))
+
 (defun el-get-http-install (package url post-install-fun &optional dest)
   "Dowload a single-file PACKAGE over HTTP and store it in DEST.
 
 Should dest be omitted (nil), the url content will get written
 into the package :localname option or its `file-name-nondirectory' part."
   (let* ((pdir   (el-get-package-directory package))
-	 (fname  (or (plist-get (el-get-package-def package) :localname)
-		     (el-get-filename-from-url url)))
-	 (dest   (or dest
-		     (concat (file-name-as-directory pdir) fname))))
+	 (dest   (or dest (el-get-http-dest-filename package url))))
     (unless (file-directory-p pdir)
       (make-directory pdir))
 
@@ -68,12 +78,24 @@ into the package :localname option or its `file-name-nondirectory' part."
         (el-get-http-retrieve-callback
 	 nil package post-install-fun dest el-get-sources)))))
 
+(defun el-get-http-compute-checksum (package)
+  "Look up download time SHA1 of PACKAGE."
+  (let ((checksum (gethash package el-get-http-checksums)))
+    (unless checksum
+      ;; compute the checksum
+      (setq checksum
+	    (with-temp-buffer
+	      (insert-file-contents-literally (el-get-http-dest-filename package))
+	      (sha1 (current-buffer))))
+      (puthash package checksum el-get-http-checksums))
+    checksum))
+
 (el-get-register-method
  :http #'el-get-http-install #'el-get-http-install #'el-get-rmdir
- #'el-get-http-install-hook)
+ #'el-get-http-install-hook nil #'el-get-http-compute-checksum)
 
 (el-get-register-method
  :ftp #'el-get-http-install #'el-get-http-install #'el-get-rmdir
- #'el-get-http-install-hook)
+ #'el-get-http-install-hook nil #'el-get-http-compute-checksum)
 
 (provide 'el-get-http)

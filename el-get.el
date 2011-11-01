@@ -40,6 +40,7 @@
 ;;   - implement :builtin property (useful for dealing with package.el)
 ;;   - fix recipes :build commands, must be either lists of strings or expr
 ;;   - add support for el-get-reload and do that at update time
+;;   - implement :checksum property for http kinds of files
 ;;
 ;;  3.1 - 2011-09-15 - Get a fix
 ;;
@@ -157,7 +158,7 @@
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
 
-(defconst el-get-version "4.0.5" "el-get version number")
+(defconst el-get-version "4.0.6" "el-get version number")
 
 (defconst el-get-script (or load-file-name buffer-file-name))
 
@@ -479,9 +480,28 @@ PACKAGE may be either a string or the corresponding symbol."
 
 (defun el-get-post-install (package)
   "Post install PACKAGE. This will get run by a sentinel."
-  (let* ((sync     el-get-default-process-sync)
-	 (hooks    (el-get-method (el-get-package-type package) :install-hook))
-	 (commands (el-get-build-commands package)))
+  (let* ((sync             el-get-default-process-sync)
+	 (type             (el-get-package-type package))
+	 (hooks            (el-get-method type :install-hook))
+	 (commands         (el-get-build-commands package))
+	 (checksum         (plist-get (el-get-package-def package) :checksum))
+	 (compute-checksum (el-get-method type :compute-checksum)))
+
+    ;; check the checksum of the package here, as early as possible
+    (when (and checksum (not compute-checksum))
+      (error
+       "Checksum verification of package %s is not supported with method %s."
+       package type))
+    (when compute-checksum
+      (let ((computed (funcall compute-checksum package)))
+	(if checksum
+	    (if (equal computed (el-get-as-string checksum))
+		(el-get-verbose-message "el-get: package %s passed checksum with \"%s\"."
+					package computed)
+	      (error "Checksum verification failed. Required: \"%s\", actual: \"%s\"."
+		     checksum computed))
+	  (el-get-verbose-message "el-get: pakage %s checksum is %s."
+				  package computed))))
 
     ;; post-install is the right place to run install-hook
     (run-hook-with-args hooks package)
@@ -581,8 +601,10 @@ PACKAGE may be either a string or the corresponding symbol."
 	 (url      (plist-get source :url))
 	 (commands (plist-get source :build)))
     ;; update the package now
-    (funcall update package url 'el-get-post-update)
-    (message "el-get update %s" package)))
+    (if (plist-get source :checksum)
+	(error "el-get: remove checksum from package %s to update it." package)
+      (funcall update package url 'el-get-post-update)
+      (message "el-get update %s" package))))
 
 ;;;###autoload
 (defun el-get-update-all ()
@@ -655,6 +677,21 @@ entry which is not a symbol and is not already a known recipe."
       (message "el-get: preparing recipe file for %s" (el-get-source-name r))
       (el-get-write-recipe r dir)))
   (dired dir))
+
+;;;###autoload
+(defun el-get-checksum (package)
+  "Compute the checksum of the given package, and put it in the kill-ring"
+  (interactive
+   (list (el-get-read-package-with-status "Checksum" "installed")))
+  (let* ((type             (el-get-package-type package))
+	 (checksum         (plist-get (el-get-package-def package) :checksum))
+	 (compute-checksum (el-get-method type :compute-checksum)))
+    (when (and checksum (not compute-checksum))
+      (error "package method %s does not support checksums" type))
+    (when compute-checksum
+      (let ((checksum (funcall compute-checksum package)))
+	(message "Checksum for package %s is: %s" package checksum)
+	(kill-new checksum)))))
 
 
 ;;

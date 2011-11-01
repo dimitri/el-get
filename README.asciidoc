@@ -331,6 +331,13 @@ M-x el-get-make-recipes::
     recipe files: one file for each entry in +el-get-sources+ that is not
     just a +symbol+ and that is not found anywhere in +el-get-recipe-path+.
 
+M-x el-get-checksum::
+
+    Will prompt for the name of an installed package, with complement, then
+    compute its checksum if the package type supports that feature.  The
+    checksum is added to the kill-ring so that you're ready to yank it into
+    your +el-get-sources+ :checksum property if you want to.
+
 M-x el-get-emacswiki-refresh::
 
     Will launch a subprocess that connects to EmacsWiki and fetch from there
