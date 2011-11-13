@@ -1,0 +1,4 @@
+(:name color-moccur
+       :description "A multi-buffer occur (grep) mode"
+       :type emacswiki
+       :features color-moccur)

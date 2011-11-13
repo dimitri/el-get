@@ -1,0 +1,4 @@
+(:name moccur-edit
+       :description "Applying replaces to multiple files"
+       :type emacswiki
+       :features moccur-edit)
