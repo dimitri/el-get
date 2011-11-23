@@ -373,7 +373,7 @@ called by `el-get' (usually at startup) for each installed package."
 	;; code only, no load-path nor byte-compiling support needed here.
 	(unless (eq method 'builtin)
 	  ;; append entries to load-path and Info-directory-list
-	  (unless (member method '(elpa apt-get fink pacman))
+	  (unless (member method '(apt-get fink pacman))
 	    ;; append entries to load-path
 	    (dolist (path el-path)
 	      (el-get-add-path-to-list package 'load-path path))
