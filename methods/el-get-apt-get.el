@@ -55,6 +55,7 @@
 	 (method  (el-get-package-method package))
 	 (pname   (el-get-as-string package))
 	 (basedir (cond ((eq method 'apt-get) el-get-apt-get-base)
+                        ((eq method 'brew)    el-get-brew-base)
 			((eq method 'fink)    el-get-fink-base)
 			((eq method 'pacman)  el-get-pacman-base)))
 	 (debdir  (concat (file-name-as-directory basedir) pname)))
