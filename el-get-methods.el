@@ -24,6 +24,7 @@
 
 (require 'el-get-apt-get)
 (require 'el-get-builtin)
+(require 'el-get-brew)
 (require 'el-get-bzr)
 (require 'el-get-cvs)
 (require 'el-get-darcs)
