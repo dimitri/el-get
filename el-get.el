@@ -340,7 +340,7 @@ which defaults to the first element in `el-get-recipe-path'."
       (el-get-verbose-message "el-get: Calling :%s function for package %s"
 			      fname package)
       ;; don't forget to make some variables available
-      (let (pdir (el-get-package-directory package))
+      (let ((pdir (el-get-package-directory package)))
 	(funcall func))))
 
 
