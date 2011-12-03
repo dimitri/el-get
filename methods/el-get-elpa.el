@@ -39,8 +39,9 @@ PACKAGE isn't currently installed by ELPA."
 		   (shell-command-to-string
 		    (concat
 		     "ls -i1 "
-		     (expand-file-name
-		      (file-name-as-directory package-user-dir)))))))
+                     (shell-quote-argument
+                      (expand-file-name
+                       (file-name-as-directory package-user-dir))))))))
 
 	 (realname (try-completion pname l)))
 
