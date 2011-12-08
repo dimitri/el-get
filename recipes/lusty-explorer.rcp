@@ -1,0 +1,4 @@
+(:name lusty-explorer
+       :type emacswiki
+       :description "LustyExplorer is a fast and responsive way to manage files and buffers"
+)

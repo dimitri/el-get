@@ -340,7 +340,7 @@ which defaults to the first element in `el-get-recipe-path'."
       (el-get-verbose-message "el-get: Calling :%s function for package %s"
 			      fname package)
       ;; don't forget to make some variables available
-      (let (pdir (el-get-package-directory package))
+      (let ((pdir (el-get-package-directory package)))
 	(funcall func))))
 
 
@@ -520,14 +520,17 @@ PACKAGE may be either a string or the corresponding symbol."
 	   (source   (el-get-package-def package))
 	   (method   (el-get-package-method source))
 	   (install  (el-get-method method :install))
-	   (url      (plist-get source :url)))
+	   (url      (plist-get source :url))
+           (pdir     (el-get-package-directory package)))
 
-      (when (string= "installed" status)
-        (error "Package %s is already installed." package))
-
-      (when (string= "required" status)
-        (message "Package %s failed to install, removing it first." package)
-        (el-get-remove package))
+      (cond ((string= "installed" status)
+             (error "Package %s is already installed." package))
+            ((string= "required" status)
+             (message "Package %s failed to install, removing it first." package)
+             (el-get-remove package))
+            ((file-exists-p pdir)
+             (message "Package %s has an install dir but is not known to be installed. Removing it so we can install a known version." package)
+             (el-get-remove package)))
 
       ;; check we can install the package and save to "required" status
       (el-get-check-init)
