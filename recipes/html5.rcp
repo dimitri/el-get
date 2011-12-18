@@ -8,5 +8,5 @@
   :after '(eval-after-load
 	    "rng-loc"
 	    '(add-to-list 'rng-schema-locating-files (concat el-get-dir "html5/schemas.xml")))
-  :feature whattf-dt
+  :features whattf-dt
   :build ("make relaxng"))
