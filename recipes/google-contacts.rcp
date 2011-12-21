@@ -1,0 +1,5 @@
+(:name google-contacts
+       :description "Access Google Contacts from Emacs"
+       :type git
+       :depends oauth2
+       :url "git://git.naquadah.org/google-contacts.el.git")
