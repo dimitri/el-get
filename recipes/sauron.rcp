@@ -1,0 +1,4 @@
+(:name sauron
+       :description "Sauron notification service"
+       :type git
+       :url "https://github.com/djcb/sauron.git")
