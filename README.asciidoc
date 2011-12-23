@@ -101,11 +101,11 @@ how to:
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
 (unless (require 'el-get nil t)
-  (url-retrieve
-   "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
-   (lambda (s)
-     (end-of-buffer)
-     (eval-print-last-sexp))))
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
+    (end-of-buffer)
+    (eval-print-last-sexp)))
 
 (el-get 'sync)
 --------------------------------------
@@ -139,7 +139,6 @@ run emacs, and I want this documentation to be usable as-is. Enters el-get!
 						    (require 'asciidoc)))))
 
 	(:name lisppaste        :type elpa)
-        (:name dictionary-el    :type apt-get)
         (:name emacs-goodies-el :type apt-get)))
 
 (setq my-packages
@@ -319,6 +318,10 @@ M-x el-get-update-all::
     updating a package requires some adjustments to your setup.  Updating
     all of them at once will require reviewing almost all your setup.
 
+M-x el-get-reload::
+
+    Reload the given package files.  Happens automatically at update time too.
+
 M-x el-get-remove::
 
     Will prompt for an +installed+ package name, with completion, then
@@ -337,6 +340,13 @@ M-x el-get-make-recipes::
     Will prompt for an existing directory where to output all your 'new'
     recipe files: one file for each entry in +el-get-sources+ that is not
     just a +symbol+ and that is not found anywhere in +el-get-recipe-path+.
+
+M-x el-get-checksum::
+
+    Will prompt for the name of an installed package, with complement, then
+    compute its checksum if the package type supports that feature.  The
+    checksum is added to the kill-ring so that you're ready to yank it into
+    your +el-get-sources+ :checksum property if you want to.
 
 M-x el-get-emacswiki-refresh::
 
@@ -362,7 +372,7 @@ el-get-package-types-alist (statuses &rest types)::
    (rainbow-delimiters . emacswiki)
    (goto-last-change . emacswiki)
    (emacs-goodies-el . cvs))
-  
+
 el-get-extra-packages (&rest packages)::
 
       Return installed or required packages that are not in given package

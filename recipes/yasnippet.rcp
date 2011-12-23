@@ -1,10 +1,10 @@
 (:name yasnippet
        :website "http://code.google.com/p/yasnippet/"
        :description "YASnippet is a template system for Emacs."
-       :type svn
-       :url "http://yasnippet.googlecode.com/svn/trunk/"
+       :type git
+       :url "https://github.com/capitaomorte/yasnippet.git"
        :features "yasnippet"
-       :prepare (lambda ()                      
+       :prepare (lambda ()
                       ;; Set up the default snippets directory
                       ;;
                       ;; Principle: don't override any user settings
@@ -13,7 +13,7 @@
                       ;; want the default snippets, she shouldn't get
                       ;; them!
                       (unless (or (boundp 'yas/snippet-dirs) (get 'yas/snippet-dirs 'customized-value))
-                        (setq yas/snippet-dirs 
+                        (setq yas/snippet-dirs
                               (list (concat el-get-dir (file-name-as-directory "yasnippet") "snippets")))))
 
        :post-init (lambda ()
@@ -25,7 +25,7 @@
                       ;; snippets directory, and thus doesn't know
                       ;; where those snippets will be installed.  See
                       ;; http://code.google.com/p/yasnippet/issues/detail?id=179
-                      (put 'yas/snippet-dirs 'standard-value 
+                      (put 'yas/snippet-dirs 'standard-value
                            ;; as cus-edit.el specifies, "a cons-cell
                            ;; whose car evaluates to the standard
                            ;; value"

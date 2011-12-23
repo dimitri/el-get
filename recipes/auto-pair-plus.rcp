@@ -1,0 +1,6 @@
+(:name auto-pair-plus
+  :description "Autopair handler to extend Autopair behavior."
+  :type git
+  :url "git://github.com/emacsmirror/auto-pair-plus.git"
+  :autoloads nil
+  :depends autopair)

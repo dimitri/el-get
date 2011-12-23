@@ -64,6 +64,12 @@ matching REGEX with TYPE and ARGS as parameter."
       (re-search-backward regex nil t)
       (apply #'help-xref-button 1 type args))))
 
+(defun el-get-guess-github-website (url)
+  "If a package's URL is on Github, return the project's Github URL."
+  (when (and url (string-match "github\\.com/" url))
+    (replace-regexp-in-string "\\.git$" ""
+                              (replace-regexp-in-string "\\(git\\|https\\)://" "http://" url))))
+
 (defun el-get-describe-1 (package)
   (let* ((psym (el-get-as-symbol package))
          (pname (symbol-name psym))
@@ -92,9 +98,11 @@ matching REGEX with TYPE and ARGS as parameter."
                                     'el-get-help-install package)))
     (princ ".\n\n")
 
-    (when website
-      (el-get-describe-princ-button (format "Website: %s\n" website)
-                                    ": \\(.+\\)" 'help-url website))
+    (let ((website (or website
+                       (and (eq 'git type) (el-get-guess-github-website url)))))
+      (when website
+        (el-get-describe-princ-button (format "Website: %s\n" website)
+                                      ": \\(.+\\)" 'help-url website)))
     (when descr
       (princ (format "Description: %s\n" descr)))
     (when depends
@@ -357,6 +365,7 @@ matching REGEX with TYPE and ARGS as parameter."
 		   ""))
 	(pop-to-buffer (current-buffer))))
 
+;;;###autoload
 (defun el-get-list-packages ()
   "Display a list of packages."
   (interactive)

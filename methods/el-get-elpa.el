@@ -39,8 +39,9 @@ PACKAGE isn't currently installed by ELPA."
 		   (shell-command-to-string
 		    (concat
 		     "ls -i1 "
-		     (expand-file-name
-		      (file-name-as-directory package-user-dir)))))))
+                     (shell-quote-argument
+                      (expand-file-name
+                       (file-name-as-directory package-user-dir))))))))
 
 	 (realname (try-completion pname l)))
 
@@ -72,8 +73,9 @@ the recipe, then return nil."
 
 (defun el-get-elpa-symlink-package (package)
   "ln -s ../elpa/<package> ~/.emacs.d/el-get/<package>"
-  (let ((elpa-dir (file-relative-name
-		   (el-get-elpa-package-directory package) el-get-dir)))
+  (let* ((package  (el-get-as-string package))
+         (elpa-dir (file-relative-name
+                    (el-get-elpa-package-directory package) el-get-dir)))
     (unless (el-get-package-exists-p package)
       ;; better style would be to check for (fboundp 'make-symbolic-link) but
       ;; that would be true on Vista, where by default only administrator is
@@ -83,8 +85,7 @@ the recipe, then return nil."
 	  (make-directory (el-get-package-directory package))
 	(message "%s"
 		 (shell-command
-		  (concat "cd " el-get-dir
-			  " && ln -s \"" elpa-dir "\" \"" package "\"")))))))
+		  (format "cd %s && ln -s \"%s\" \"%s\"" el-get-dir elpa-dir package)))))))
 
 (defun el-get-elpa-install (package url post-install-fun)
   "Ask elpa to install given PACKAGE."

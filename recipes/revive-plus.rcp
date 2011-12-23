@@ -1,0 +1,5 @@
+(:name revive-plus
+       :website "https://github.com/martialboniou/revive-plus"
+       :description "Serialize your window configurations in Emacs"
+       :type git
+       :url "https://github.com/martialboniou/revive-plus.git")

@@ -1,5 +1,5 @@
 (:name google-contacts
-       :website "http://julien.danjou.info/google-contacts.el.html"
-       :description "The google-contacts for Emacs extension allows to display your Google Contacts directly inside Emacs."
+       :description "Access Google Contacts from Emacs"
        :type git
+       :depends oauth2
        :url "git://git.naquadah.org/google-contacts.el.git")

@@ -34,13 +34,10 @@
 	   (pdir      (file-name-as-directory (concat el-get-root package)))
 	   (git       (or (executable-find "git")
 			  (error "Unable to find `git'")))
-	   (url       (if (bound-and-true-p el-get-git-install-url)
-			  el-get-git-install-url
-			"http://github.com/dimitri/el-get.git"))
+	   (url       (or (bound-and-true-p el-get-git-install-url)
+			  "http://github.com/dimitri/el-get.git"))
 	   (default-directory el-get-root)
 	   (process-connection-type nil)   ; pipe, no pty (--no-progress)
-	   (el-get-default-process-sync t) ; force sync operations for installer
-	   (el-get-verbose t)		   ; let's see it all
 
 	   ;; First clone el-get
 	   (status
@@ -51,24 +48,31 @@
 	(error "Couldn't clone el-get from the Git repository: %s" url))
 
       ;; switch branch if we have to
-      (unless (boundp 'el-get-master-branch)
-	(let* ((branch  (plist-get (with-temp-buffer
-				     (insert-file-contents-literally
-				      (expand-file-name "recipes/el-get.rcp" pdir))
-				     (read (current-buffer)))
-				   :branch))
-	       (branch (when branch (concat "origin/" branch)))
-	       (default-directory pdir)
-	       (bstatus
-		(when branch
-		  (call-process git nil `(,buf t) t "checkout" "-t" branch))))
+      (let* ((branch (cond
+                      ;; Check if a specific branch is requested
+                      ((bound-and-true-p el-get-install-branch))
+                      ;; Check if master branch is requested
+                      ((boundp 'el-get-master-branch) "master")
+                      ;; Read the default branch from the el-get recipe
+                      ((plist-get (with-temp-buffer
+                                    (insert-file-contents-literally
+                                     (expand-file-name "recipes/el-get.rcp" pdir))
+                                    (read (current-buffer)))
+                                  :branch))
+                      ;; As a last resort, use the master branch
+                      ("master")))
+             (remote-branch (format "origin/%s" branch))
+             (default-directory pdir)
+             (bstatus
+              (call-process git nil (list buf t) t "checkout" "-t" remote-branch)))
+        (unless (zerop bstatus)
+          (error "Couldn't `git checkout -t %s`" branch)))
 
-	  (when (and branch (not (zerop bstatus)))
-	    (error "Couldn't `git checkout -t %s`" branch))))
-
-      (load (concat pdir package ".el"))
-      (el-get-post-install "el-get")
+      (add-to-list 'load-path pdir)
+      (load package)
+      (let ((el-get-default-process-sync t) ; force sync operations for installer
+            (el-get-verbose t))		    ; let's see it all
+        (el-get-post-install "el-get"))
       (with-current-buffer buf
 	(goto-char (point-max))
 	(insert "\nCongrats, el-get is installed and ready to serve!")))))
-

@@ -1,0 +1,4 @@
+(:name lorem-ipsum
+       :description "Lorem Ipsum Generator"
+       :type emacswiki
+       :features lorem-ipsum)

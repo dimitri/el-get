@@ -2,4 +2,5 @@
        :description "Blog from Org mode to wordpress"
        :type git
        :url "https://github.com/punchagan/org2blog.git"
+       :depends xml-rpc-el
        :features org2blog)

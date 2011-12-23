@@ -1,0 +1,7 @@
+(:name toggle-friend-file
+       :type http
+       :website "https://github.com/gizmomogwai/toggle-friend-file"
+       :description "Toggles between friend files (e.g. h and cpp). See customize-group toggle-friend-file."
+       :url "https://github.com/gizmomogwai/toggle-friend-file/raw/master/toggle-friend-file.el"
+       :features toggle-friend-file)
+

@@ -36,16 +36,17 @@
 
 The methods list is a PLIST, each entry has a method name
 property which value is another PLIST, which must contain values
-for :install, :install-hook, :update and :remove
+for :install, :install-hook, :update, :remove and :checksum
 properties. Those should be the elisp functions to call for doing
 the named package action in the given method.")
 
 (defun el-get-register-method (name install update remove
-				    &optional install-hook remove-hook)
+				    &optional install-hook remove-hook compute-checksum)
   "Register the method for backend NAME, with given functions"
   (let ((def (list :install install :update update :remove remove)))
-    (when install-hook (setq def (append def (list :install-hook install-hook))))
-    (when remove-hook  (setq def (append def (list :remove-hook remove-hook))))
+    (when install-hook     (setq def (append def (list :install-hook install-hook))))
+    (when remove-hook      (setq def (append def (list :remove-hook remove-hook))))
+    (when compute-checksum (setq def (append def (list :compute-checksum compute-checksum))))
     (setq el-get-methods (plist-put el-get-methods name def))))
 
 
@@ -76,6 +77,12 @@ convert it to a symbol and return that."
 returning a list that contains it (and only it)."
   (if (listp element-or-list) element-or-list
       (list element-or-list)))
+
+(defun el-get-list-of-strings-p (obj)
+  (or (null obj)
+      (and (consp obj)
+           (stringp (car obj))
+           (el-get-list-of-strings-p (cdr obj)))))
 
 (defun el-get-source-name (source)
   "Return the package name (stringp) given an `el-get-sources'
@@ -167,6 +174,30 @@ directory or a symlink in el-get-dir."
     ;; seems overkill as file-directory-p will always be true
     (or (file-directory-p pdir)
 	(file-symlink-p   pdir))))
+
+
+;;
+;; el-get-reload API functions
+;;
+(defun el-get-package-files (package)
+  "Return a list of files loaded from PACKAGE's directory."
+  (loop with pdir = (file-truename (el-get-package-directory package))
+        with regexp = (format "^%s" (regexp-quote (file-name-as-directory (expand-file-name pdir))))
+        for (f . nil) in load-history
+        when (and (stringp f) (string-match-p regexp (file-truename f)))
+        collect (if (string-match-p "\\.elc?$" f)
+                    (file-name-sans-extension f)
+                  f)))
+
+(defun el-get-package-features (package)
+  "Return a list of features provided by files in PACKAGE."
+  (loop with pdir = (file-truename (el-get-package-directory package))
+        with regexp = (format "^%s" (regexp-quote (file-name-as-directory (expand-file-name pdir))))
+        for (f . l) in load-history
+        when (and (stringp f) (string-match-p regexp (file-truename f)))
+        nconc (loop for i in l
+                    when (and (consp i) (eq (car i) 'provide))
+                    collect (cdr i))))
 
 
 ;;
