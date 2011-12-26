@@ -1,0 +1,5 @@
+(:name rust-mode
+       :type git
+       :url "git://github.com/marijnh/rust-mode.git"
+       :description "Emacs mode for Rust"
+       :features rust-mode)
