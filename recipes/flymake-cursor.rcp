@@ -1,0 +1,4 @@
+(:name flymake-cursor
+       :description "Display flymake error message in minibuffer."
+       :type emacswiki
+       :features flymake-cursor)
