@@ -94,21 +94,15 @@ entry."
 ;;
 ;; Common support bits
 ;;
-(defun el-get-rmdir (package url post-remove-fun)
-  "Just rm -rf the package directory. Follow symlinks."
-  (let* ((source   (el-get-package-def package))
-	 (method   (el-get-package-method source))
-	 (pdir (el-get-package-directory package)))
-    (if (eq method 'elpa)
-	;; only remove a symlink here
-	(when (or (file-symlink-p (directory-file-name pdir))
-                  (file-exists-p pdir))
-	  (delete-file (directory-file-name pdir)))
-      ;; non ELPA packages, remove the directory
-      (if (file-exists-p pdir)
-	  (dired-delete-file pdir 'always)
-	(message "el-get could not find package directory \"%s\"" pdir))
-      (funcall post-remove-fun package))))
+(defun el-get-rmdir (package &rest ignored)
+  "Just rm -rf the package directory. If it is a symlink, delete it."
+  (let* ((pdir (el-get-package-directory package)))
+    (cond ((file-symlink-p pdir)
+           (delete-file pdir))
+          ((file-directory-p pdir)
+           (delete-directory pdir 'recursive))
+          ((file-exists-p pdir)
+           (delete-file pdir)))))
 
 
 ;;
@@ -400,4 +394,3 @@ out if it's nil."
 	command)))))
 
 (provide 'el-get-core)
-
