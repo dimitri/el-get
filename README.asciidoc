@@ -67,7 +67,9 @@ avoid this with the following snippet instead:
    "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
    (lambda (s)
      (end-of-buffer)
-     (eval-print-last-sexp))))
+     (eval-print-last-sexp)
+     (funcall 'el-get-emacswiki-build-local-recipes))))
+
 --------------------------------------
 
 See next section for details about how to setup you emacs so that it's able
@@ -87,7 +89,8 @@ summon the +el-get-master-branch+ variable into existence:
  (lambda (s)
    (let (el-get-master-branch)
      (end-of-buffer)
-     (eval-print-last-sexp))))
+     (eval-print-last-sexp)
+     (funcall 'el-get-emacswiki-build-local-recipes))))
 --------------------------------------
 
 == Basic usage
@@ -105,7 +108,8 @@ how to:
       (url-retrieve-synchronously
        "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
     (end-of-buffer)
-    (eval-print-last-sexp)))
+    (eval-print-last-sexp)
+    (funcall 'el-get-emacswiki-build-local-recipes)))
 
 (el-get 'sync)
 --------------------------------------
