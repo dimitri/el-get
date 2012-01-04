@@ -93,6 +93,7 @@ recursion.
 	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir))
 	 (buf    (format "*el-get-build: %s*" package))
 	 (default-directory (file-name-as-directory wdir))
+         (shell-file-name (if (eq system-type 'windows-nt) "cmdproxy.exe"))
 	 (process-list
 	  (mapcar (lambda (c)
 		    (let* ((split    (cond ((stringp c)
