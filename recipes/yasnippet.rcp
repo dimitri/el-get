@@ -1,5 +1,5 @@
 (:name yasnippet
-       :website "http://code.google.com/p/yasnippet/"
+       :website "https://github.com/capitaomorte/yasnippet.git"
        :description "YASnippet is a template system for Emacs."
        :type git
        :url "https://github.com/capitaomorte/yasnippet.git"
