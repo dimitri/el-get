@@ -51,11 +51,13 @@
 	(require 'notify))))
 
   (condition-case nil
-      (cond ((fboundp 'notifications-notify) (notifications-notify :title title
-                                                                   :body message))
-            ((fboundp 'notify)               (notify title message))
-            ((fboundp 'el-get-growl)         (el-get-growl title message))
-            (t                               (message "%s: %s" title message)))
+      (cond
+       ((not (window-system))           (error "Fallback to message"))
+       ((fboundp 'notifications-notify) (notifications-notify :title title
+                                                              :body message))
+       ((fboundp 'notify)               (notify title message))
+       ((fboundp 'el-get-growl)         (el-get-growl title message))
+       (t                               (error "Fallback to message")))
     ;; when notification function errored out, degrade gracefully to `message'
     (error (message "%s: %s" title message))))
 
