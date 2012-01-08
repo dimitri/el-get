@@ -51,7 +51,8 @@
 	(require 'notify))))
 
   (condition-case nil
-      (cond ((fboundp 'notifications-notify) (notifications-notify :title title
+      (cond ((not (window-system))           (message "%s: %s" title message))
+            ((fboundp 'notifications-notify) (notifications-notify :title title
                                                                    :body message))
             ((fboundp 'notify)               (notify title message))
             ((fboundp 'el-get-growl)         (el-get-growl title message))
