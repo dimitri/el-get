@@ -16,21 +16,22 @@
 (require 'help-mode)     ; byte-compiling needs to know about xref-type buttons
 
 ;; we support notifications on darwin too, thanks to growlnotify
-(defcustom el-get-growl-notify "/usr/local/bin/growlnotify"
+(defcustom el-get-growl-notify-path "/usr/local/bin/growlnotify"
   "Absolute path of the growlnotify tool"
   :group 'el-get
   :type 'file)
 
+(define-obsolete-variable-alias 'el-get-growl-notify 'el-get-growl-notify-path "4.0")
 
 ;; notify user with emacs notifications API (new in 24)
 ;;
 (when (and (eq system-type 'darwin)
-	   (file-executable-p el-get-growl-notify))
+	   (file-executable-p el-get-growl-notify-path))
   (defun el-get-growl (title message)
     "Send a message to growl, that implements notifications for darwin"
     (let* ((name  "*growl*")
 	   (proc
-	    (start-process name name el-get-growl-notify title "-a" "Emacs")))
+	    (start-process name name el-get-growl-notify-path title "-a" "Emacs")))
       (process-send-string proc (concat message "\n"))
       (process-send-eof proc))))
 
