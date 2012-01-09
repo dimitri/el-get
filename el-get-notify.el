@@ -35,6 +35,17 @@
       (process-send-string proc (concat message "\n"))
       (process-send-eof proc))))
 
+(defcustom el-get-notify-type 'graphical
+  "Type of notification to use for changes in package statuses
+
+Choices are `graphical', `message', or `both'. Note that if
+graphical notification is impossible, `message' will be used as a
+fallback."
+  :group 'el-get
+  :type '(choice (const :tag "Graphical notifications" graphical)
+                 (const :tag "Minibuffer message" message)
+                 (const :tag "Graphical & Minibuffer" both)))
+
 ;;
 ;; Notification support is either the internal one provided by Emacs 24, or
 ;; the external growl one as defined above, or the one provided by the
@@ -43,20 +54,30 @@
 ;;
 (defun el-get-notify (title message)
   "Notify the user using either the dbus based API or the `growl' one"
-  (if (fboundp 'dbus-register-signal)
-      ;; avoid a bug in Emacs 24.0 under darwin
-      (require 'notifications nil t)
-    ;; else try notify.el, there's a recipe for it
-    (unless (fboundp 'notify)
-      (when (featurep 'notify)
-	(require 'notify))))
+  (when (not (eq el-get-notify-type 'message))
+    (if (fboundp 'dbus-register-signal)
+        ;; avoid a bug in Emacs 24.0 under darwin
+        (require 'notifications nil t)
+      ;; else try notify.el, there's a recipe for it
+      (unless (fboundp 'notify)
+        (when (featurep 'notify)
+          (require 'notify)))))
 
   (condition-case nil
-      (cond ((fboundp 'notifications-notify) (notifications-notify :title title
-                                                                   :body message))
-            ((fboundp 'notify)               (notify title message))
-            ((fboundp 'el-get-growl)         (el-get-growl title message))
-            (t                               (message "%s: %s" title message)))
+      (progn
+        (cond
+         ;; Message only
+         ((equal el-get-notify-type 'message) (error "Use `message' instead"))
+         ;; Graphical notification
+         ((fboundp 'notifications-notify) (notifications-notify :title title
+                                                                :body message))
+         ((fboundp 'notify)               (notify title message))
+         ((fboundp 'el-get-growl)         (el-get-growl title message))
+         ;; Fallback
+         (t                               (error "Fallback to `message'")))
+        ;; Handle "both"
+        (when (equal el-get-notify-type 'both)
+          (error "Fallback to `message' even though graphical notification succeeded")))
     ;; when notification function errored out, degrade gracefully to `message'
     (error (message "%s: %s" title message))))
 
