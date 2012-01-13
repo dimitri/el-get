@@ -289,61 +289,61 @@ Any other property will get put into the process object.
 "
   (condition-case err
       (if commands
-        (let* ((c       (car commands))
-               (next    (cdr commands))
-               (cdir    (plist-get c :default-directory))
-               (cname   (plist-get c :command-name))
-               (cbuf    (plist-get c :buffer-name))
-               (killed  (when (get-buffer cbuf) (kill-buffer cbuf)))
-               (filter  (plist-get c :process-filter))
-               (program (plist-get c :program))
-               (shell   (plist-get c :shell))
-               (args    (if shell
-                            (mapcar #'shell-quote-argument (plist-get c :args))
-                          (plist-get c :args)))
-               (sync    (if (plist-member c :sync) (plist-get c :sync)
-                          el-get-default-process-sync))
-               (stdin   (plist-get c :stdin))
-               (default-directory (if cdir
-                                      (file-name-as-directory
-                                       (expand-file-name cdir))
-                                    default-directory)))
-          (if sync
-              (let* ((startf (if shell #'call-process-shell-command #'call-process))
-                     (infile (when stdin (make-temp-file "el-get")))
-                     (dummy  (when infile
-                               (with-temp-file infile
-                                 (insert (prin1-to-string stdin)))))
-                     (dummy  (message "el-get is waiting for %S to complete" cname))
-                     (status (apply startf program infile cbuf t args))
-                     (message (plist-get c :message))
-                     (errorm  (plist-get c :error)))
-                (when el-get-verbose
-                  (message "%S" (with-current-buffer cbuf (buffer-string))))
-                (if (eq 0 status)
-                    (message "el-get: %s" message)
-                  (set-window-buffer (selected-window) cbuf)
-                  (error "el-get: %s %s" cname errorm))
-                (when cbuf (kill-buffer cbuf))
-                (if next
-                    (el-get-start-process-list package next final-func)
-                  (when (functionp final-func)
-                    (funcall final-func package))))
-            ;; async case
-            (let* ((startf (if shell #'start-process-shell-command #'start-process))
-                   (process-connection-type nil) ; pipe, don't pretend we're a pty
-                   (proc (apply startf cname cbuf program args)))
-              ;; add the properties to the process, then set the sentinel
-              (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
-              (process-put proc :el-get-sources el-get-sources)
-              (process-put proc :el-get-package package)
-              (process-put proc :el-get-final-func final-func)
-              (process-put proc :el-get-start-process-list next)
-              (when stdin
-                (process-send-string proc (prin1-to-string stdin))
-                (process-send-eof proc))
-              (set-process-sentinel proc 'el-get-start-process-list-sentinel)
-              (when filter (set-process-filter proc filter)))))
+          (let* ((c       (car commands))
+                 (next    (cdr commands))
+                 (cdir    (plist-get c :default-directory))
+                 (cname   (plist-get c :command-name))
+                 (cbuf    (plist-get c :buffer-name))
+                 (killed  (when (get-buffer cbuf) (kill-buffer cbuf)))
+                 (filter  (plist-get c :process-filter))
+                 (program (plist-get c :program))
+                 (shell   (plist-get c :shell))
+                 (args    (if shell
+                              (mapcar #'shell-quote-argument (plist-get c :args))
+                            (plist-get c :args)))
+                 (sync    (if (plist-member c :sync) (plist-get c :sync)
+                            el-get-default-process-sync))
+                 (stdin   (plist-get c :stdin))
+                 (default-directory (if cdir
+                                        (file-name-as-directory
+                                         (expand-file-name cdir))
+                                      default-directory)))
+            (if sync
+                (let* ((startf (if shell #'call-process-shell-command #'call-process))
+                       (infile (when stdin (make-temp-file "el-get")))
+                       (dummy  (when infile
+                                 (with-temp-file infile
+                                   (insert (prin1-to-string stdin)))))
+                       (dummy  (message "el-get is waiting for %S to complete" cname))
+                       (status (apply startf program infile cbuf t args))
+                       (message (plist-get c :message))
+                       (errorm  (plist-get c :error)))
+                  (when el-get-verbose
+                    (message "%S" (with-current-buffer cbuf (buffer-string))))
+                  (if (eq 0 status)
+                      (message "el-get: %s" message)
+                    (set-window-buffer (selected-window) cbuf)
+                    (error "el-get: %s %s" cname errorm))
+                  (when cbuf (kill-buffer cbuf))
+                  (if next
+                      (el-get-start-process-list package next final-func)
+                    (when (functionp final-func)
+                      (funcall final-func package))))
+              ;; async case
+              (let* ((startf (if shell #'start-process-shell-command #'start-process))
+                     (process-connection-type nil) ; pipe, don't pretend we're a pty
+                     (proc (apply startf cname cbuf program args)))
+                ;; add the properties to the process, then set the sentinel
+                (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
+                (process-put proc :el-get-sources el-get-sources)
+                (process-put proc :el-get-package package)
+                (process-put proc :el-get-final-func final-func)
+                (process-put proc :el-get-start-process-list next)
+                (when stdin
+                  (process-send-string proc (prin1-to-string stdin))
+                  (process-send-eof proc))
+                (set-process-sentinel proc 'el-get-start-process-list-sentinel)
+                (when filter (set-process-filter proc filter)))))
         ;; no commands, still run the final-func
         (when (functionp final-func)
           (funcall final-func package)))
