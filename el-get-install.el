@@ -64,7 +64,9 @@
              (remote-branch (format "origin/%s" branch))
              (default-directory pdir)
              (bstatus
-              (call-process git nil (list buf t) t "checkout" "-t" remote-branch)))
+               (if (string-equal branch "master")
+                 0
+                 (call-process git nil (list buf t) t "checkout" "-t" remote-branch))))
         (unless (zerop bstatus)
           (error "Couldn't `git checkout -t %s`" branch)))
 

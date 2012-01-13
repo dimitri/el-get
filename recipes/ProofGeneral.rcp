@@ -3,7 +3,7 @@
        :description "Proof General is a generic front-end for proof assistants (also known as interactive theorem provers)"
        :type http-tar
        :options ("xzf")
-       :url "http://proofgeneral.inf.ed.ac.uk/releases/ProofGeneral-4.1RC2.tgz"
+       :url "http://proofgeneral.inf.ed.ac.uk/releases/ProofGeneral-4.2pre111207.tgz"
        :build ("cd ProofGeneral && make clean" "cd ProofGeneral && make compile")
        :load  ("ProofGeneral/generic/proof-site.el")
        :info "./ProofGeneral/doc/")
