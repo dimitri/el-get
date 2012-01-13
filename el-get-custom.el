@@ -77,7 +77,7 @@ definition provided by `el-get' recipes locally.
 
     The name of the package. It can be different from the name of
     the directory where the package is stored (after a `git
-    clone' for example, in which case a symlink will be created.
+    clone' for example), in which case a symlink will be created.
 
 :depends
 
