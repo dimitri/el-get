@@ -284,6 +284,22 @@ definition provided by `el-get' recipes locally.
     with the following meaning:
 
       * `http', `ftp' and `emacswiki' with the SHA1 of the downloaded file
+      * `git' in which it is an alias for `:checkout' (see below)
+
+:checkout
+
+    A git refspec (branch, tag, commit hash) that should be
+    checked out after cloning the git repository. If provided,
+    this overrides any value for the `:branch' property. Unlike
+    the `:branch' property, this can be any valid argument to
+    `git checkout', including a tag name or a commit hash. The
+    intended use of this property is to \"lock\" a repository at
+    a particular revision, regardless of what happens to the repo
+    upstream.
+
+    Currently this property only has meaning for `git' type
+    recipes. Other VCS-based methods may implement support in the
+    future.
 "
   :group 'el-get
   :type
