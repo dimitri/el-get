@@ -40,7 +40,8 @@ found."
 	 (name   (format "*git clone %s*" package))
 	 (source (el-get-package-def package))
 	 (branch (plist-get source :branch))
-	 (checkout (plist-get source :checkout))
+	 (checkout (or (plist-get source :checkout)
+		       (plist-get source :checksum)))
 	 (clone-args (append '("--no-pager" "clone")
 			     (cond
 			      ;; With :checkout, the "git checkout"
@@ -86,7 +87,8 @@ found."
 	 (pdir (el-get-package-directory package))
 	 (name (format "*git pull %s*" package))
 	 (source (el-get-package-def package))
-	 (checkout (plist-get source :checkout))
+	 (checkout (or (plist-get source :checkout)
+		       (plist-get source :checksum)))
 	 ;; When dealing with a specific checkout, we cannot use
 	 ;; "pull", but must instead use "fetch" and then "checkout".
 	 (pull-args (list "--no-pager" (if checkout "fetch" "pull")))
