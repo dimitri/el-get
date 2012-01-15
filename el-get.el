@@ -461,6 +461,12 @@ PACKAGE may be either a string or the corresponding symbol."
 	(el-get-init package)
 	(el-get-install-next-packages package)))))
 
+(defun el-get-reinstall (package)
+  "Remove PACKAGE and then install it again."
+  (interactive (list (el-get-read-package-name "Reinstall")))
+  (el-get-remove package)
+  (el-get-install package))
+
 (defun el-get-install-next-packages (current-package)
   "Run as part of `el-get-post-init-hooks' when dealing with dependencies."
   (let ((package (pop el-get-next-packages)))
