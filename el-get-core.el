@@ -290,6 +290,7 @@ Any other property will get put into the process object.
   (condition-case err
       (if commands
         (let* ((c       (car commands))
+               (next    (cdr commands))
                (cdir    (plist-get c :default-directory))
                (cname   (plist-get c :command-name))
                (cbuf    (plist-get c :buffer-name))
@@ -316,8 +317,7 @@ Any other property will get put into the process object.
                      (dummy  (message "el-get is waiting for %S to complete" cname))
 		     (status (apply startf program infile cbuf t args))
                      (message (plist-get c :message))
-                     (errorm  (plist-get c :error))
-                     (next    (cdr commands)))
+                     (errorm  (plist-get c :error)))
 		(when el-get-verbose
 		  (message "%S" (with-current-buffer cbuf (buffer-string))))
                 (if (eq 0 status)
@@ -338,7 +338,7 @@ Any other property will get put into the process object.
               (process-put proc :el-get-sources el-get-sources)
               (process-put proc :el-get-package package)
               (process-put proc :el-get-final-func final-func)
-              (process-put proc :el-get-start-process-list (cdr commands))
+              (process-put proc :el-get-start-process-list next)
 	      (when stdin
 		(process-send-string proc (prin1-to-string stdin))
 		(process-send-eof proc))
