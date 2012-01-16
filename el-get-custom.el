@@ -285,7 +285,7 @@ definition provided by `el-get' recipes locally.
 
       * `http', `ftp' and `emacswiki' with the SHA1 of the downloaded file
 "
-
+  :group 'el-get
   :type
   `(repeat
     (choice
