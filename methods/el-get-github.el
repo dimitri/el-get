@@ -13,6 +13,7 @@
 ;;     Please see the README.asciidoc file from the same distribution
 
 (require 'el-get-core)
+(require 'el-get-git)
 
 (defconst el-get-github-url-type-plist
   (list 'http "http://github.com/%USER%/%REPO%.git"
@@ -57,7 +58,7 @@ FROM is a literal string, not a regexp."
                        (or (plist-get source :username)
                            (error "Recipe for Github package %s needs a username" package))))
             (reponame (el-get-as-string
-                       (or (plist-get source :reponame)
+                       (or (plist-get source :pkgname)
                            package)))
             (url-type (el-get-as-symbol
                        (or (plist-get source :url-type)
@@ -77,13 +78,7 @@ FROM is a literal string, not a regexp."
                     (or url (el-get-github-url package))
                     post-install-fun))
 
-(defun el-get-github-pull (package url post-update-fun)
-  "git pull the package."
-  (el-get-git-pull package
-                   (or url (el-get-github-url package))
-                   post-install-fun))
-
 (el-get-register-method
- :github #'el-get-github-clone #'el-get-github-pull #'el-get-rmdir)
+ :github #'el-get-github-clone #'el-get-git-pull #'el-get-rmdir)
 
 (provide 'el-get-github)
