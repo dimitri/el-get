@@ -12,6 +12,7 @@
 ;; Install
 ;;     Please see the README.asciidoc file from the same distribution
 
+(require 'el-get-core)
 (require 'el-get-git)
 
 (defcustom el-get-emacsmirror-base-url
