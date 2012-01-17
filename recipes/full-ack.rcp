@@ -1,7 +1,8 @@
 (:name full-ack
        :description "A front-end for ack"
-       :type git
-       :url "https://github.com/nschum/full-ack.git"
+       :type github
+       :username "nschum"
+       :reponame "full-ack"
        :post-init (lambda ()
             (autoload 'ack "full-ack" nil t)
             (autoload 'ack-find-file "full-ack" nil t)

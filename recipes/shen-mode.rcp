@@ -1,4 +1,5 @@
 (:name shen-mode
        :website "http://shenlanguage.org"
-       :type git
-       :url "git://github.com/eschulte/shen-mode.git")
+       :type github
+       :username "eschulte"
+       :reponame "shen-mode")

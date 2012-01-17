@@ -1,7 +1,8 @@
 (:name pylookup
        :description "Emacs mode for searching python documents with convenience"
-       :type git
-       :url "https://github.com/tsgates/pylookup.git"
+       :type github
+       :username "tsgates"
+       :reponame "pylookup"
        :post-init (lambda ()
             (setq pylookup-dir (expand-file-name "pylookup" el-get-dir)
               pylookup-program (expand-file-name "pylookup.py" pylookup-dir)

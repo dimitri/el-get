@@ -1,7 +1,8 @@
 (:name color-theme-tomorrow
        :description "Emacs highlighting using Chris Charles's Tomorrow color scheme"
-       :type git
-       :url "https://github.com/ccharles/Tomorrow-Theme.git"
+       :type github
+       :username "ccharles"
+       :reponame "Tomorrow-Theme"
        :depends color-theme
        :post-init (lambda ()
                     (autoload 'color-theme-tomorrow "GNU Emacs/color-theme-tomorrow"

@@ -1,6 +1,7 @@
 (:name midje-mode
-       :type git
-       :url "https://github.com/dnaumov/midje-mode.git"
+       :type github
+       :username "dnaumov"
+       :reponame "midje-mode"
        :website "https://github.com/dnaumov/midje-mode"
        :description
        "Midje is a testing framework for the Clojure programming language;

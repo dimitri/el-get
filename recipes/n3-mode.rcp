@@ -1,7 +1,8 @@
 (:name n3-mode
        :description "Mode for Notation 3"
-       :type git
-       :url "https://github.com/kurtjx/n3-mode-for-emacs.git"
+       :type github
+       :username "kurtjx"
+       :reponame "n3-mode-for-emacs"
        :post-init (lambda ()
             (autoload 'n3-mode "n3-mode" "Major mode for OWL or N3 files" t)
             (add-hook 'n3-mode-hook 'turn-on-font-lock)
