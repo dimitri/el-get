@@ -32,6 +32,7 @@
 (require 'el-get-emacswiki)
 (require 'el-get-fink)
 (require 'el-get-git)
+(require 'el-get-github)
 (require 'el-get-git-svn)
 (require 'el-get-hg)
 (require 'el-get-http)
