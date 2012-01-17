@@ -1,0 +1,5 @@
+(:name pcmpl-git
+       :description "pcomplete support for git"
+       :type git
+       :url "https://github.com/leoliu/pcmpl-git-el.git"
+       :features pcmpl-git)
