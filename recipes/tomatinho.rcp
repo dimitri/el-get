@@ -2,4 +2,4 @@
        :description "Pomodoro technique timer with a lean and usable interface."
        :type git
        :branch "autoload"
-       :url "https://konr@github.com/konr/tomatinho.git")
+       :url "https://github.com/konr/tomatinho.git")
