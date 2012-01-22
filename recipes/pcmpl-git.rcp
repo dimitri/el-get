@@ -2,4 +2,7 @@
        :description "pcomplete support for git"
        :type git
        :url "https://github.com/leoliu/pcmpl-git-el.git"
-       :features pcmpl-git)
+       :features pcmpl-git
+       :prepare (lambda ()
+                  (setq pcmpl-git-options-file
+                        (expand-file-name "git-options" (el-get-package-directory 'pcmpl-git)))))
