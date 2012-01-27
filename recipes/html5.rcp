@@ -1,0 +1,12 @@
+(:name html5
+  :website "http://github.com/hober/html5-el"
+  :description "Umbrella project for projects adding HTML5 support to Emacs.
+  This recipe is a work in progress."
+
+  :type git
+  :url "http://github.com/hober/html5-el"
+  :after '(eval-after-load
+	    "rng-loc"
+	    '(add-to-list 'rng-schema-locating-files (concat el-get-dir "html5/schemas.xml")))
+  :features whattf-dt
+  :build ("make relaxng"))

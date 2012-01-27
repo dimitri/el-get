@@ -362,7 +362,7 @@ el-get-package-types-alist (statuses &rest types)::
    (rainbow-delimiters . emacswiki)
    (goto-last-change . emacswiki)
    (emacs-goodies-el . cvs))
-  
+
 el-get-extra-packages (&rest packages)::
 
       Return installed or required packages that are not in given package
