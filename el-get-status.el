@@ -49,7 +49,8 @@
 (defun el-get-save-package-status (package status)
   "Save given package status"
   (let ((p (el-get-package-symbol package))
-	(s (el-get-read-all-packages-status)))
+	(s (el-get-read-all-packages-status))
+	print-length print-level)
     (with-temp-file el-get-status-file
       (insert
        (format "%S" (if s (plist-put s p status)
