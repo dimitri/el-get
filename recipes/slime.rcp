@@ -6,6 +6,6 @@
        :url "https://github.com/nablaone/slime.git"
        :load-path ("." "contrib")
        :compile (".")
-       :build ("make -C doc")
+       :build ("make" "-C" "doc")
        :post-init slime-setup
        )

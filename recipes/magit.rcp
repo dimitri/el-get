@@ -5,5 +5,5 @@
        :url "http://github.com/magit/magit.git"
        :info "."
        ;; that used to be how to build it :build ("./autogen.sh" "./configure" "make")
-       :build ("make all")
-       :build/darwin `(,(concat "PATH=" invocation-directory ":$PATH make all")))
+       :build (("make" "all"))
+       :build/darwin `(("env" ,(format "PATH=%s:%s" invocation-directory (getenv "PATH")) "make" "all")))
