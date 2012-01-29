@@ -1,0 +1,5 @@
+(:name emacs-http-server
+       :description "A rudimentary HTTP server in elisp."
+       :type git
+       :url "git://github.com/jrhbailey/emacs-http-server.git")
+
