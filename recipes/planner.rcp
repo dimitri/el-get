@@ -4,5 +4,17 @@
        :url "http://repo.or.cz/r/planner-el.git"
        :build ("make")
        :features planner-autoloads
-       )
-
+       :after (lambda ()
+                (defvar plans-dir
+                  (concat (file-name-as-directory (getenv "HOME"))
+                          "plans"))
+                (unless (file-exists-p plans-dir)
+                  (mkdir plans-dir))
+                (setq planner-project "WikiPlanner")
+                (setq muse-project-alist
+                      `(("WikiPlanner"
+                         (,plans-dir
+                          :default "index"
+                          :major-mode planner-mode
+                          :visit-link planner-visit-link
+                          ))))))

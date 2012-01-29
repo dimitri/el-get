@@ -9,4 +9,3 @@
        :features bbdb
        :autoloads nil
        :post-init (lambda () (bbdb-initialize)))
-
