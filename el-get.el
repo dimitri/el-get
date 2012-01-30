@@ -41,6 +41,7 @@
 ;;   - fix recipes :build commands, must be either lists of strings or expr
 ;;   - add support for el-get-reload and do that at update time
 ;;   - implement :checksum property for http kinds of files
+;;   - New package types: github, emacsmirror
 ;;
 ;;  3.1 - 2011-09-15 - Get a fix
 ;;
