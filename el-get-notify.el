@@ -35,7 +35,7 @@
       (process-send-string proc (concat message "\n"))
       (process-send-eof proc))))
 
-(defcustom el-get-notify-type 'graphical
+(defcustom el-get-notify-type 'both
   "Type of notification to use for changes in package statuses
 
 Choices are `graphical', `message', or `both'. Note that if
