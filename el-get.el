@@ -1098,21 +1098,21 @@ PACKAGE may be either a string or the corresponding symbol."
   (interactive (list (el-get-read-package-name "Install")))
   (if (el-get-package-is-installed package)
       (message "el-get: `%s' package is already installed" package)
-
+    
     (condition-case err
 	(let* ((psym (el-get-as-symbol package))
 	       (pname (symbol-name psym)))
-
+          
 	  ;; don't do anything if it's already installed or in progress
 	  (unless (memq (el-get-package-state psym) '(init installing))
-
+            
 	    ;; Remember that we're working on it
 	    (el-get-set-package-state psym 'installing)
-
+            
 	    (let ((non-installed-dependencies
 		   (remove-if 'el-get-package-initialized-p
 			      (el-get-dependencies psym))))
-
+              
 	      ;;
 	      ;; demand all non-installed dependencies with appropriate
 	      ;; handlers in place to trigger installation of this package
@@ -1125,7 +1125,7 @@ PACKAGE may be either a string or the corresponding symbol."
 		 `(lambda (data)
 		    (el-get-mark-initialized ',dep)
 		    (el-get-dependency-installed ',psym ',dep)))
-
+                
 		;; set up a handler that will cancel installation of
 		;; `package' if installing the dependency fails
 		(el-get-add-generic-event-task
@@ -1133,9 +1133,9 @@ PACKAGE may be either a string or the corresponding symbol."
 		 `(lambda (data)
 		    (el-get-set-package-state ',dep (list 'error data))
 		    (el-get-dependency-error ',psym ',dep data)))
-
+                
 		(el-get-install dep))
-
+              
 	      (unless non-installed-dependencies
 		(el-get-demand1 psym)))))
       ((debug error)
@@ -1564,19 +1564,44 @@ found."
 ;;
 ;; CVS support
 ;;
-(defun el-get-cvs-checkout (package url post-install-fun)
+
+(defun el-get-cvs-checkout-proxy-url (url)
+  (let ((proxy (getenv "HTTP_PROXY")) port
+        (user "")
+        (password "")
+        (url-proxy url))
+    (when (getenv "HTTP_PROXY")
+      (when (string-match "^\\(.*\\)@" proxy)
+        (setq user (match-string 1 proxy))
+        (setq proxy (replace-match "" nil nil proxy))
+        (when (string-match "^http://" user)
+          (setq user (replace-match "" nil nil user)))
+        (when (string-match "^\\([^:]*\\):\\(.*\\)$" user)
+          (setq password (concat ";proxypassword=" (match-string 2 user)))
+          (setq user (match-string 1 user)))
+        (setq user (concat ";proxyuser=" user password)))
+      (when (string-match "^\\(.*\\):\\([0-9]+\\)$" proxy)
+        (setq port (match-string 2 proxy))
+        (setq proxy (match-string 1 proxy))
+        (when (string-match ":pserver:" url-proxy)
+          (setq url-proxy (replace-match
+                           (format ":pserver;proxy=%s;proxyport=%s%s:"
+                                   proxy port user) t t url-proxy))))
+      (symbol-value 'url-proxy))))
+
+(defun el-get-cvs-checkout (package urlp post-install-fun)
   "cvs checkout the package."
   (let* ((cvs-executable (el-get-executable-find "cvs"))
 	 (source  (el-get-package-def package))
 	 (module  (plist-get source :module))
 	 (options (plist-get source :options))
 	 (name    (format "*cvs checkout %s*" package))
+        (url (el-get-cvs-checkout-proxy-url urlp))
 	 (ok      (format "Checked out package %s." package))
 	 (ko      (format "Could not checkout package %s." package)))
-
+    
     ;; (message "%S" `(:args ("-d" ,url "checkout" "-d" ,package ,module)))
     ;; (message "el-get-cvs-checkout: %S" (string= options "login"))
-
     (el-get-start-process-list
      package
      `(,@(when (string= options "login")
@@ -1588,7 +1613,7 @@ found."
 			    :args ("-d" ,url "login")
 			    :message "cvs login"
 			    :error "Could not login against the cvs server")))
-
+       
        (:command-name ,name
 		      :buffer-name ,name
 		      :default-directory ,el-get-dir
@@ -1598,14 +1623,15 @@ found."
 		      :error ,ko))
      post-install-fun)))
 
-(defun el-get-cvs-update (package url post-update-fun)
+(defun el-get-cvs-update (package urlp post-update-fun)
   "cvs checkout the package."
   (let* ((cvs-executable (el-get-executable-find "cvs"))
+         (url (el-get-cvs-checkout-proxy-url urlp))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*cvs update %s*" package))
 	 (ok   (format "Updated package %s." package))
 	 (ko   (format "Could not update package %s." package)))
-
+    
     (el-get-start-process-list
      package
      `((:command-name ,name
