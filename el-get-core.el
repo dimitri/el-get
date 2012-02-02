@@ -36,9 +36,9 @@
 
 The methods list is a PLIST, each entry has a method name
 property which value is another PLIST, which must contain values
-for :install, :install-hook, :update, :remove and :checksum
-properties. Those should be the elisp functions to call for doing
-the named package action in the given method.")
+for :install, :install-hook, :update, :remove, :remove-hook
+and :checksum properties. Those should be the elisp functions to
+call for doing the named package action in the given method.")
 
 (defun el-get-register-method (name install update remove
 				    &optional install-hook remove-hook compute-checksum)
