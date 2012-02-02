@@ -68,8 +68,8 @@
 		      :error ,r-ko))
      post-update-fun)))
 
-(el-get-register-method
- :git-svn
+(el-get-register-derived-method
+ :git-svn :git
  #'el-get-git-svn-clone #'el-get-git-svn-update #'el-get-rmdir
  #'el-get-git-svn-clone-hook)
 
