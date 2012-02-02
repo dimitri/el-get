@@ -40,6 +40,10 @@ for :install, :install-hook, :update, :remove, :remove-hook
 and :checksum properties. Those should be the elisp functions to
 call for doing the named package action in the given method.")
 
+(defun el-get-method-defined-p (name)
+  "Returns t if NAME is a known el-get install method backend, nil otherwise."
+  (and (el-get-method name :install) t))
+
 (defun el-get-register-method (name install update remove
 				    &optional install-hook remove-hook compute-checksum)
   "Register the method for backend NAME, with given functions"
@@ -49,6 +53,27 @@ call for doing the named package action in the given method.")
     (when compute-checksum (setq def (append def (list :compute-checksum compute-checksum))))
     (setq el-get-methods (plist-put el-get-methods name def))))
 
+(defun el-get-register-derived-method (name derived-from-name
+                                            &optional install update remove
+                                            install-hook remove-hook compute-checksum)
+  "Register the method for backend NAME.
+
+Defaults for all optional arguments are taken from
+already-defined method DERIVED-FROM-NAME."
+  (unless (el-get-method-defined-p derived-from-name)
+    (error "Cannot derive new el-get method from unknown method %s" derived-from-name))
+  (el-get-register-method
+   name
+   (or install          (el-get-method derived-from-name :install))
+   (or update           (el-get-method derived-from-name :update))
+   (or remove           (el-get-method derived-from-name :remove))
+   (or install-hook     (el-get-method derived-from-name :install-hook))
+   (or remove-hook      (el-get-method derived-from-name :remove-hook))
+   (or compute-checksum (el-get-method derived-from-name :compute-checksum))))
+
+(defun el-get-register-method-alias (name old-name)
+  "Register NAME as an alias for install method OLD-NAME."
+  (el-get-register-derived-method name old-name))
 
 
 ;;
@@ -136,8 +161,9 @@ entry."
 (defun el-get-method (method-name action)
   "Return the function to call for doing action (e.g. install) in
 given method."
-  (let* ((method  (intern (concat ":" (format "%s" method-name))))
-	 (actions (plist-get el-get-methods method)))
+  (let* ((method  (if (keywordp method-name) method-name
+                    (intern (concat ":" (format "%s" method-name)))))
+         (actions (plist-get el-get-methods method)))
     (plist-get actions action)))
 
 (defun el-get-check-init ()
