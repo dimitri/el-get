@@ -73,8 +73,10 @@
 		      :error ,ko))
      post-update-fun)))
 
-(el-get-register-method
- :cvs #'el-get-cvs-checkout #'el-get-cvs-update #'el-get-rmdir
- #'el-get-cvs-checkout-hook)
+(el-get-register-method :cvs
+  :install #'el-get-cvs-checkout
+  :update #'el-get-cvs-update
+  :remove #'el-get-rmdir
+  :install-hook #'el-get-cvs-checkout-hook)
 
 (provide 'el-get-cvs)

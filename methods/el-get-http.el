@@ -90,9 +90,12 @@ into the package :localname option or its `file-name-nondirectory' part."
       (puthash package checksum el-get-http-checksums))
     checksum))
 
-(el-get-register-method
- :http #'el-get-http-install #'el-get-http-install #'el-get-rmdir
- #'el-get-http-install-hook nil #'el-get-http-compute-checksum)
+(el-get-register-method :http
+  :install #'el-get-http-install
+  :update #'el-get-http-install
+  :remove #'el-get-rmdir
+  :install-hook #'el-get-http-install-hook
+  :compute-checksum #'el-get-http-compute-checksum)
 
 (el-get-register-method-alias :ftp :http)
 
