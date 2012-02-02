@@ -703,6 +703,13 @@ entry which is not a symbol and is not already a known recipe."
 	(message "Checksum for package %s is: %s" package checksum)
 	(kill-new checksum)))))
 
+(defun el-get-self-checksum ()
+  "Compute the checksum of the running version of el-get itself.
+
+Also put the checksum in the kill-ring."
+  (interactive)
+  (el-get-checksum 'el-get))
+
 
 ;;
 ;; User Interface, Non Interactive part
