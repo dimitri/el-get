@@ -69,8 +69,11 @@
                       (match-string 0 output))))
       hash)))
 
-(el-get-register-method
- :hg #'el-get-hg-clone #'el-get-hg-pull #'el-get-rmdir
- #'el-get-hg-clone-hook nil #'el-get-hg-compute-checksum)
+(el-get-register-method :hg
+  :install #'el-get-hg-clone
+  :update #'el-get-hg-pull
+  :remove #'el-get-rmdir
+  :install-hook #'el-get-hg-clone-hook
+  :compute-checksum #'el-get-hg-compute-checksum)
 
 (provide 'el-get-hg)

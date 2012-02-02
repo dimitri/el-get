@@ -100,8 +100,11 @@ found."
                       (match-string 0 output))))
       hash)))
 
-(el-get-register-method
- :git #'el-get-git-clone #'el-get-git-pull #'el-get-rmdir
- #'el-get-git-clone-hook nil #'el-get-git-compute-checksum)
+(el-get-register-method :git
+  :install #'el-get-git-clone
+  :update #'el-get-git-pull
+  :remove #'el-get-rmdir
+  :install-hook #'el-get-git-clone-hook
+  :compute-checksum #'el-get-git-compute-checksum)
 
 (provide 'el-get-git)

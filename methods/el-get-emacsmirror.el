@@ -33,7 +33,7 @@
 	 (url     (or url (format el-get-emacsmirror-base-url pkgname))))
     (el-get-git-clone package url post-install-fun)))
 
-(el-get-register-derived-method
- :emacsmirror :git #'el-get-emacsmirror-clone)
+(el-get-register-derived-method :emacsmirror :git
+  :install #'el-get-emacsmirror-clone)
 
 (provide 'el-get-emacsmirror)
