@@ -94,8 +94,6 @@ into the package :localname option or its `file-name-nondirectory' part."
  :http #'el-get-http-install #'el-get-http-install #'el-get-rmdir
  #'el-get-http-install-hook nil #'el-get-http-compute-checksum)
 
-(el-get-register-method
- :ftp #'el-get-http-install #'el-get-http-install #'el-get-rmdir
- #'el-get-http-install-hook nil #'el-get-http-compute-checksum)
+(el-get-register-method-alias :ftp :http)
 
 (provide 'el-get-http)
