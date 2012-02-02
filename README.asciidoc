@@ -35,6 +35,11 @@ release.
 Please note that this versioning policy has been picked while backing
 1.2~dev, so 1.0 was a "stable" release in fact.  Ah, history.
 
+In addition to the version, you can also get the exact git revision by
+running M-x +el-get-self-checksum+. You should provide this checksum
+when seeking support or reporting a bug, so that the developers will
+know exactly which version you are using.
+
 == How to Install it?
 
 Here's the 'lazy installer':

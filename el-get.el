@@ -27,6 +27,11 @@
 ;;
 ;; Please note that this versioning policy has been picked while backing
 ;; 1.2~dev, so 1.0 was a "stable" release in fact.  Ah, history.
+;;
+;; In addition to the version, you can also get the exact git revision
+;; by running M-x `el-get-self-checksum'. You should provide this
+;; checksum when seeking support or reporting a bug, so that the
+;; developers will know exactly which version you are using.
 
 ;;; Change Log:
 ;;
@@ -700,8 +705,9 @@ entry which is not a symbol and is not already a known recipe."
       (error "package method %s does not support checksums" type))
     (when compute-checksum
       (let ((checksum (funcall compute-checksum package)))
-	(message "Checksum for package %s is: %s" package checksum)
-	(kill-new checksum)))))
+        (message "Checksum for package %s is: %s. It has been copied to the kill-ring."
+                 package checksum)
+        (kill-new checksum)))))
 
 (defun el-get-self-checksum ()
   "Compute the checksum of the running version of el-get itself.
