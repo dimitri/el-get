@@ -44,18 +44,24 @@ call for doing the named package action in the given method.")
   "Returns t if NAME is a known el-get install method backend, nil otherwise."
   (and (el-get-method name :install) t))
 
-(defun el-get-register-method (name install update remove
-				    &optional install-hook remove-hook compute-checksum)
+(defun* el-get-register-method (name &key install update remove
+                                     install-hook remove-hook compute-checksum)
   "Register the method for backend NAME, with given functions"
+  (loop for required-arg in '(install update remove)
+        unless (symbol-value required-arg)
+        do (error "Missing required argument: :%s" required-arg))
   (let ((def (list :install install :update update :remove remove)))
-    (when install-hook     (setq def (append def (list :install-hook install-hook))))
-    (when remove-hook      (setq def (append def (list :remove-hook remove-hook))))
-    (when compute-checksum (setq def (append def (list :compute-checksum compute-checksum))))
+    (when install-hook     (setq def (plist-put def :install-hook install-hook)))
+    (when remove-hook      (setq def (plist-put def :remove-hook remove-hook)))
+    (when compute-checksum (setq def (plist-put def :compute-checksum compute-checksum)))
     (setq el-get-methods (plist-put el-get-methods name def))))
 
-(defun el-get-register-derived-method (name derived-from-name
-                                            &optional install update remove
-                                            install-hook remove-hook compute-checksum)
+(put 'el-get-register-method 'lisp-indent-function
+     (get 'prog1 'lisp-indent-function))
+
+(defun* el-get-register-derived-method (name derived-from-name
+                                             &key install update remove
+                                             install-hook remove-hook compute-checksum)
   "Register the method for backend NAME.
 
 Defaults for all optional arguments are taken from
@@ -70,6 +76,9 @@ already-defined method DERIVED-FROM-NAME."
    (or install-hook     (el-get-method derived-from-name :install-hook))
    (or remove-hook      (el-get-method derived-from-name :remove-hook))
    (or compute-checksum (el-get-method derived-from-name :compute-checksum))))
+
+(put 'el-get-register-derived-method 'lisp-indent-function
+     (get 'prog2 'lisp-indent-function))
 
 (defun el-get-register-method-alias (name old-name)
   "Register NAME as an alias for install method OLD-NAME."
