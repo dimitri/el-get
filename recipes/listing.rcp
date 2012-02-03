@@ -1,7 +1,8 @@
 (:name listing
        :website "https://github.com/tarsius/listing"
        :description "Show columnized view of list elements"
-       :type git
-       :url "https://github.com/tarsius/listing.git"
+       :type github
+       :username "tarsius"
+       :reponame "listing"
        :depends (header-button map-progress)
        :compile "listing.el")

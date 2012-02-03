@@ -1,5 +1,6 @@
 (:name rspec-mode
        :description "Enhance ruby-mode for RSpec"
-       :type git
-       :url "https://github.com/pezra/rspec-mode.git"
+       :type github
+       :username "pezra"
+       :reponame "rspec-mode"
        :features rspec-mode)

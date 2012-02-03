@@ -1,7 +1,8 @@
 (:name scratch
        :description "Mode-specific scratch buffers"
-       :type git
-       :url "http://github.com/cbbrowne/scratch-el.git"
+       :type github
+       :username "cbbrowne"
+       :reponame "scratch-el"
        :info "."
        :build ("make")
        :load-path ".")

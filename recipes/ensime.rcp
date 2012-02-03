@@ -1,7 +1,8 @@
 (:name ensime
        :description "ENhanced Scala Interaction Mode for Emacs"
-       :type git
-       :url "https://github.com/aemoncannon/ensime.git"
+       :type github
+       :username "aemoncannon"
+       :reponame "ensime"
        :build ("sbt update stage")
        :depends scala-mode
        :features ensime

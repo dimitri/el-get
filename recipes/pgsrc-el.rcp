@@ -1,6 +1,7 @@
 (:name pgsrc-el
        :website "https://github.com/dimitri/pgsrc-el"
        :description "PostgreSQL source editing facilities for Emacs"
-       :type git
-       :url "https://github.com/dimitri/pgsrc-el.git"
+       :type github
+       :username "dimitri"
+       :reponame "pgsrc-el"
        :features pgsrc)

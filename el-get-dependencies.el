@@ -21,23 +21,23 @@
       (topological-sort
        (apply 'append (mapcar 'el-get-dependencies-graph (el-get-as-list packages))))
     (if all-sorted-p
-	plist
+        plist
       (error "Couldn't sort package dependencies for \"%s\"" package))))
 
 (defun el-get-dependencies-graph (package)
   "Return the graph of packages on which PACKAGE depends"
   (let* ((source (el-get-package-def (symbol-name package)))
-	 (method (el-get-package-method source))
+         (method (el-get-package-method source))
          (pdeps  (el-get-as-list (plist-get source :depends)))
-	 (alldeps
-	  ;; Make sure all elpa packages depend on the package `package'.
-	  ;; The package `package' is an elpa package, though, so exclude it
-	  ;; to avoid a circular dependency.
-	  (if (and (not (eq package 'package)) (eq method 'elpa))
-	      (cons 'package pdeps)
-	    pdeps)))
+         (alldeps
+          ;; Make sure all elpa packages depend on the package `package'.
+          ;; The package `package' is an elpa package, though, so exclude it
+          ;; to avoid a circular dependency.
+          (if (and (not (eq package 'package)) (eq method 'elpa))
+              (cons 'package pdeps)
+            pdeps)))
     (append (list (append (list package) alldeps))
-	    (loop for p in pdeps append (el-get-dependencies-graph p)))))
+            (loop for p in pdeps append (el-get-dependencies-graph p)))))
 
 ;;
 ;; topological sort, see
@@ -55,11 +55,11 @@ indicating whether all of the objects in the input graph are present
 in the topological ordering (i.e., the first value)."
   (let ((entries (make-hash-table :test test)))
     (flet ((entry (v)
-             "Return the entry for vertex.  Each entry is a cons whose
+                  "Return the entry for vertex.  Each entry is a cons whose
               car is the number of outstanding dependencies of vertex
               and whose cdr is a list of dependants of vertex."
-	     (or (gethash v entries)
-		 (puthash v (cons 0 '()) entries))))
+                  (or (gethash v entries)
+                      (puthash v (cons 0 '()) entries))))
       ;; populate entries initially
       (dolist (gvertex graph)
         (destructuring-bind (vertex &rest dependencies) gvertex
@@ -67,7 +67,7 @@ in the topological ordering (i.e., the first value)."
             (dolist (dependency dependencies)
               (let ((dentry (entry dependency)))
                 (unless (funcall test dependency vertex)
-		  (incf (car ventry))
+                  (incf (car ventry))
                   (push vertex (cdr dentry))))))))
       ;; L is the list of sorted elements, and S the set of vertices
       ;; with no outstanding dependencies.

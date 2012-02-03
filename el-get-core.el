@@ -41,7 +41,7 @@ properties. Those should be the elisp functions to call for doing
 the named package action in the given method.")
 
 (defun el-get-register-method (name install update remove
-				    &optional install-hook remove-hook compute-checksum)
+                                    &optional install-hook remove-hook compute-checksum)
   "Register the method for backend NAME, with given functions"
   (let ((def (list :install install :update update :remove remove)))
     (when install-hook     (setq def (append def (list :install-hook install-hook))))
@@ -111,10 +111,10 @@ entry."
 (defun el-get-duplicates (list)
   "Return duplicates found in list."
   (loop with dups and once
-	for elt in list
-	if (member elt once) collect elt into dups
-	else collect elt into once
-	finally return dups))
+        for elt in list
+        if (member elt once) collect elt into dups
+        else collect elt into once
+        finally return dups))
 
 (defun el-get-flatten (arg)
   "Return a version of ARG as a one-level list
@@ -129,7 +129,7 @@ entry."
   "Return the list of absolute directory names to be added to
 `load-path' by the named PACKAGE."
   (let* ((source   (el-get-package-def package))
-	 (el-path  (el-get-flatten (or (plist-get source :load-path) ".")))
+         (el-path  (el-get-flatten (or (plist-get source :load-path) ".")))
          (pkg-dir (el-get-package-directory package)))
     (mapcar (lambda (p) (expand-file-name p pkg-dir)) el-path)))
 
@@ -137,7 +137,7 @@ entry."
   "Return the function to call for doing action (e.g. install) in
 given method."
   (let* ((method  (intern (concat ":" (format "%s" method-name))))
-	 (actions (plist-get el-get-methods method)))
+         (actions (plist-get el-get-methods method)))
     (plist-get actions action)))
 
 (defun el-get-check-init ()
@@ -149,16 +149,16 @@ given method."
   "Return the absolute directory name of the named PACKAGE."
   (file-name-as-directory
    (expand-file-name (el-get-as-string package)
-		     (expand-file-name el-get-dir))))
+                     (expand-file-name el-get-dir))))
 
 (defun el-get-add-path-to-list (package list path)
   "(add-to-list LIST PATH) checking for path existence within
 given package directory."
   (let* ((pdir     (el-get-package-directory package))
-	 (fullpath (expand-file-name (or path ".") pdir)))
+         (fullpath (expand-file-name (or path ".") pdir)))
     (unless (file-directory-p fullpath)
       (error "el-get could not find directory `%s' for package %s, at %s"
-	     path package fullpath))
+             path package fullpath))
     (add-to-list list fullpath)))
 
 (defun el-get-package-exists-p (package)
@@ -167,7 +167,7 @@ directory or a symlink in el-get-dir."
   (let ((pdir (el-get-package-directory package)))
     ;; seems overkill as file-directory-p will always be true
     (or (file-directory-p pdir)
-	(file-symlink-p   pdir))))
+        (file-symlink-p   pdir))))
 
 
 ;;
@@ -289,64 +289,64 @@ Any other property will get put into the process object.
 "
   (condition-case err
       (if commands
-        (let* ((c       (car commands))
-               (next    (cdr commands))
-               (cdir    (plist-get c :default-directory))
-               (cname   (plist-get c :command-name))
-               (cbuf    (plist-get c :buffer-name))
-               (killed  (when (get-buffer cbuf) (kill-buffer cbuf)))
-               (filter  (plist-get c :process-filter))
-               (program (plist-get c :program))
-               (shell   (plist-get c :shell))
-               (args    (if shell
-			    (mapcar #'shell-quote-argument (plist-get c :args))
-			  (plist-get c :args)))
-               (sync    (if (plist-member c :sync) (plist-get c :sync)
-                          el-get-default-process-sync))
-	       (stdin   (plist-get c :stdin))
-               (default-directory (if cdir
-                                      (file-name-as-directory
-                                       (expand-file-name cdir))
-                                    default-directory)))
-          (if sync
-              (let* ((startf (if shell #'call-process-shell-command #'call-process))
-		     (infile (when stdin (make-temp-file "el-get")))
-		     (dummy  (when infile
-			       (with-temp-file infile
-				 (insert (prin1-to-string stdin)))))
-                     (dummy  (message "el-get is waiting for %S to complete" cname))
-		     (status (apply startf program infile cbuf t args))
-                     (message (plist-get c :message))
-                     (errorm  (plist-get c :error)))
-		(when el-get-verbose
-		  (message "%S" (with-current-buffer cbuf (buffer-string))))
-                (if (eq 0 status)
-                    (message "el-get: %s" message)
-                  (set-window-buffer (selected-window) cbuf)
-                  (error "el-get: %s %s" cname errorm))
-                (when cbuf (kill-buffer cbuf))
-                (if next
-                    (el-get-start-process-list package next final-func)
-                  (when (functionp final-func)
-                    (funcall final-func package))))
-            ;; async case
-            (let* ((startf (if shell #'start-process-shell-command #'start-process))
-                   (process-connection-type nil) ; pipe, don't pretend we're a pty
-                   (proc (apply startf cname cbuf program args)))
-              ;; add the properties to the process, then set the sentinel
-              (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
-              (process-put proc :el-get-sources el-get-sources)
-              (process-put proc :el-get-package package)
-              (process-put proc :el-get-final-func final-func)
-              (process-put proc :el-get-start-process-list next)
-	      (when stdin
-		(process-send-string proc (prin1-to-string stdin))
-		(process-send-eof proc))
-              (set-process-sentinel proc 'el-get-start-process-list-sentinel)
-              (when filter (set-process-filter proc filter)))))
-	;; no commands, still run the final-func
-	(when (functionp final-func)
-	  (funcall final-func package)))
+          (let* ((c       (car commands))
+                 (next    (cdr commands))
+                 (cdir    (plist-get c :default-directory))
+                 (cname   (plist-get c :command-name))
+                 (cbuf    (plist-get c :buffer-name))
+                 (killed  (when (get-buffer cbuf) (kill-buffer cbuf)))
+                 (filter  (plist-get c :process-filter))
+                 (program (plist-get c :program))
+                 (shell   (plist-get c :shell))
+                 (args    (if shell
+                              (mapcar #'shell-quote-argument (plist-get c :args))
+                            (plist-get c :args)))
+                 (sync    (if (plist-member c :sync) (plist-get c :sync)
+                            el-get-default-process-sync))
+                 (stdin   (plist-get c :stdin))
+                 (default-directory (if cdir
+                                        (file-name-as-directory
+                                         (expand-file-name cdir))
+                                      default-directory)))
+            (if sync
+                (let* ((startf (if shell #'call-process-shell-command #'call-process))
+                       (infile (when stdin (make-temp-file "el-get")))
+                       (dummy  (when infile
+                                 (with-temp-file infile
+                                   (insert (prin1-to-string stdin)))))
+                       (dummy  (message "el-get is waiting for %S to complete" cname))
+                       (status (apply startf program infile cbuf t args))
+                       (message (plist-get c :message))
+                       (errorm  (plist-get c :error)))
+                  (when el-get-verbose
+                    (message "%S" (with-current-buffer cbuf (buffer-string))))
+                  (if (eq 0 status)
+                      (message "el-get: %s" message)
+                    (set-window-buffer (selected-window) cbuf)
+                    (error "el-get: %s %s" cname errorm))
+                  (when cbuf (kill-buffer cbuf))
+                  (if next
+                      (el-get-start-process-list package next final-func)
+                    (when (functionp final-func)
+                      (funcall final-func package))))
+              ;; async case
+              (let* ((startf (if shell #'start-process-shell-command #'start-process))
+                     (process-connection-type nil) ; pipe, don't pretend we're a pty
+                     (proc (apply startf cname cbuf program args)))
+                ;; add the properties to the process, then set the sentinel
+                (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
+                (process-put proc :el-get-sources el-get-sources)
+                (process-put proc :el-get-package package)
+                (process-put proc :el-get-final-func final-func)
+                (process-put proc :el-get-start-process-list next)
+                (when stdin
+                  (process-send-string proc (prin1-to-string stdin))
+                  (process-send-eof proc))
+                (set-process-sentinel proc 'el-get-start-process-list-sentinel)
+                (when filter (set-process-filter proc filter)))))
+        ;; no commands, still run the final-func
+        (when (functionp final-func)
+          (funcall final-func package)))
     ((debug error)
      (el-get-installation-failed package err))))
 
@@ -368,7 +368,7 @@ Baring variable named \"el-get-NAME\", it will call
 `executable-find' on NAME and use the output of that, or error
 out if it's nil."
   (let ((fname (intern (format "el-get-%s-executable" name)))
-	(vname (intern (format "el-get-%s" name))))
+        (vname (intern (format "el-get-%s" name))))
     (cond
      ((fboundp fname)
       (funcall fname))
@@ -377,20 +377,20 @@ out if it's nil."
      ;; (bound-and-true-p vname) won't cut it
      ((ignore-errors (symbol-value vname))
       (let ((command (symbol-value vname)))
-	(unless (and (file-exists-p command)
-		     (file-executable-p command))
-	  (error
-	   (concat "The variable `%s' points to \"%s\", "
-		   "which is not an executable file name on your system.")
-	   name command))
-	command))
+        (unless (and (file-exists-p command)
+                     (file-executable-p command))
+          (error
+           (concat "The variable `%s' points to \"%s\", "
+                   "which is not an executable file name on your system.")
+           name command))
+        command))
 
      (t
       (let ((command (executable-find name)))
-	(unless command
-	  (error
-	   "The command named '%s' can not be found with `executable-find'"
-	   name))
-	command)))))
+        (unless command
+          (error
+           "The command named '%s' can not be found with `executable-find'"
+           name))
+        command)))))
 
 (provide 'el-get-core)

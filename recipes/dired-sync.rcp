@@ -1,5 +1,6 @@
 (:name dired-sync
        :description "Sync directories within dired"
-       :type git
-       :url "https://github.com/renard/dired-sync.git"
+       :type github
+       :username "renard"
+       :reponame "dired-sync"
        :features dired-sync)

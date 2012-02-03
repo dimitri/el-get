@@ -1,8 +1,9 @@
 (:name eclim
        :website "https://github.com/senny/emacs-eclim/"
        :description "This project brings some of the great eclipse features to emacs developers."
-       :type git
-       :url "https://github.com/senny/emacs-eclim.git"
+       :type github
+       :username "senny"
+       :reponame "emacs-eclim"
        :load-path ("." "vendor")
        :features eclim
        :post-init (lambda ()

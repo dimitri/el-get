@@ -1,8 +1,9 @@
 (:name yasnippet
        :website "https://github.com/capitaomorte/yasnippet.git"
        :description "YASnippet is a template system for Emacs."
-       :type git
-       :url "https://github.com/capitaomorte/yasnippet.git"
+       :type github
+       :username "capitaomorte"
+       :reponame "yasnippet"
        :features "yasnippet"
        :prepare (lambda ()
                       ;; Set up the default snippets directory

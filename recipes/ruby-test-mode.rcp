@@ -1,6 +1,7 @@
 (:name ruby-test-mode
-       :type git
-       :url "git://github.com/r0man/ruby-test-mode.git"
+       :type github
+       :username "r0man"
+       :reponame "ruby-test-mode"
        :description "Emacs minor mode for Behaviour and Test Driven Development in Ruby"
        :load "ruby-test-mode.el"
        :compile ("ruby-test-mode.el"))

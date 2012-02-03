@@ -9,7 +9,6 @@
 
 (let ((debug-on-error t))
   (setq el-get-byte-compile nil
-	el-get-verbose t)
+        el-get-verbose t)
   (require 'el-get)
   (el-get 'sync '(flymake-fringe-icons)))
-
