@@ -31,7 +31,7 @@
 
 (defcustom el-get-recipe-path
   (list (concat (file-name-directory el-get-script) "recipes")
-	el-get-recipe-path-emacswiki)
+        el-get-recipe-path-emacswiki)
   "Define where to look for the recipes, that's a list of directories"
   :group 'el-get
   :type '(repeat (directory)))
@@ -47,8 +47,8 @@ and to be found in `el-get-user-package-directory'.  Do nothing
 when this custom is nil."
   (when el-get-user-package-directory
     (let* ((init-file-name    (format "init-%s.el" package))
-	   (package-init-file
-	    (expand-file-name init-file-name el-get-user-package-directory)))
+           (package-init-file
+            (expand-file-name init-file-name el-get-user-package-directory)))
       (el-get-verbose-message "el-get: load %S" package-init-file)
       (load package-init-file 'noerror))))
 
@@ -80,18 +80,18 @@ Used to avoid errors when exploring the path for recipes"
 (defun el-get-recipe-filename (package)
   "Return the name of the file that contains the recipe for PACKAGE, if any."
   (let ((package-el  (concat (el-get-as-string package) ".el"))
-	(package-rcp (concat (el-get-as-string package) ".rcp")))
+        (package-rcp (concat (el-get-as-string package) ".rcp")))
     (loop for dir in el-get-recipe-path
-	  for recipe-el  = (expand-file-name package-el dir)
-	  for recipe-rcp = (expand-file-name package-rcp dir)
-	  if (file-exists-p recipe-el)  return recipe-el
-	  if (file-exists-p recipe-rcp) return recipe-rcp)))
+          for recipe-el  = (expand-file-name package-el dir)
+          for recipe-rcp = (expand-file-name package-rcp dir)
+          if (file-exists-p recipe-el)  return recipe-el
+          if (file-exists-p recipe-rcp) return recipe-rcp)))
 
 (defun el-get-read-recipe (package)
   "Return the source definition for PACKAGE, from the recipes."
   (let ((filename (el-get-recipe-filename package)))
     (if filename
-	(el-get-read-recipe-file filename)
+        (el-get-read-recipe-file filename)
       (error "el-get can not find a recipe for package \"%s\"." package))))
 
 (defun el-get-read-all-recipes ()
@@ -105,33 +105,33 @@ each directory listed in `el-get-recipe-path' in order."
     (append
      el-get-sources
      (loop for dir in (el-get-recipe-dirs)
-	   nconc (loop for recipe in (directory-files dir nil "^[^.].*\.\\(rcp\\|el\\)$")
-		       for filename = (concat (file-name-as-directory dir) recipe)
-		       for package = (file-name-sans-extension (file-name-nondirectory recipe))
-		       unless (member package packages)
-		       do (push package packages)
+           nconc (loop for recipe in (directory-files dir nil "^[^.].*\.\\(rcp\\|el\\)$")
+                       for filename = (concat (file-name-as-directory dir) recipe)
+                       for package = (file-name-sans-extension (file-name-nondirectory recipe))
+                       unless (member package packages)
+                       do (push package packages)
                        and collect (ignore-errors (el-get-read-recipe-file filename)))))))
 
 (defun el-get-package-def (package)
   "Return a single `el-get-sources' entry for PACKAGE."
   (let ((source (loop for src in el-get-sources
-		      when (string= package (el-get-source-name src))
-		      return src)))
+                      when (string= package (el-get-source-name src))
+                      return src)))
 
     (cond ((or (null source) (symbolp source))
-	   ;; not in `el-get-sources', or only mentioned by name
-	   ;; (compatibility from pre 3.1 era)
-	   (el-get-read-recipe package))
+           ;; not in `el-get-sources', or only mentioned by name
+           ;; (compatibility from pre 3.1 era)
+           (el-get-read-recipe package))
 
-	  ((null (plist-get source :type))
-	   ;; we got a list with no :type, that's an override plist
-	   (loop with def = (el-get-read-recipe package)
-		 for (prop override) on source by 'cddr
-		 do (plist-put def prop override)
-		 finally return def))
+          ((null (plist-get source :type))
+           ;; we got a list with no :type, that's an override plist
+           (loop with def = (el-get-read-recipe package)
+                 for (prop override) on source by 'cddr
+                 do (plist-put def prop override)
+                 finally return def))
 
-	  ;; none of the previous, must be a full definition
-	  (t source))))
+          ;; none of the previous, must be a full definition
+          (t source))))
 
 (defun el-get-package-method (package-or-source)
   "Return the :type property (called method) of PACKAGE-OR-SOURCE.
@@ -158,12 +158,12 @@ which defaults to installed, required and removed.  Example:
   (el-get-package-types-alist \"installed\" 'http 'cvs)
 "
   (loop for src in (apply 'el-get-list-package-names-with-status
-			  (cond ((stringp statuses) (list statuses))
-				((null statuses) '("installed" "required" "removed"))
-				(t statuses)))
-	for name = (el-get-as-symbol src)
-	for type = (el-get-package-type name)
-	when (or (null types) (memq 'all types) (memq type types))
-	collect (cons name type)))
+                          (cond ((stringp statuses) (list statuses))
+                                ((null statuses) '("installed" "required" "removed"))
+                                (t statuses)))
+        for name = (el-get-as-symbol src)
+        for type = (el-get-package-type name)
+        when (or (null types) (memq 'all types) (memq type types))
+        collect (cons name type)))
 
 (provide 'el-get-recipes)
