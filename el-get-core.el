@@ -59,23 +59,15 @@ call for doing the named package action in the given method.")
 (put 'el-get-register-method 'lisp-indent-function
      (get 'prog1 'lisp-indent-function))
 
-(defun* el-get-register-derived-method (name derived-from-name
-                                             &key install update remove
-                                             install-hook remove-hook compute-checksum)
+(defun* el-get-register-derived-method (name derived-from-name 
+                                             &rest keys &key &allow-other-keys)
   "Register the method for backend NAME.
 
 Defaults for all optional arguments are taken from
 already-defined method DERIVED-FROM-NAME."
   (unless (el-get-method-defined-p derived-from-name)
     (error "Cannot derive new el-get method from unknown method %s" derived-from-name))
-  (el-get-register-method
-   name
-   (or install          (el-get-method derived-from-name :install))
-   (or update           (el-get-method derived-from-name :update))
-   (or remove           (el-get-method derived-from-name :remove))
-   (or install-hook     (el-get-method derived-from-name :install-hook))
-   (or remove-hook      (el-get-method derived-from-name :remove-hook))
-   (or compute-checksum (el-get-method derived-from-name :compute-checksum))))
+  (apply #'el-get-register-method name (append keys (plist-get el-get-methods derived-from-name))))
 
 (put 'el-get-register-derived-method 'lisp-indent-function
      (get 'prog2 'lisp-indent-function))
