@@ -8,11 +8,11 @@
 
 (ert-deftest el-get-installation-test ()
   (let ((el-get-default-process-sync 'wait)
-         (user-emacs-directory testing-destination-dir)
-         (el-get-dir (concat (file-name-as-directory user-emacs-directory)
-                             "el-get"))
-         (el-get-status-file
-          (concat (file-name-as-directory el-get-dir) ".status.el")))
+        (user-emacs-directory testing-destination-dir)
+        (el-get-dir (concat (file-name-as-directory user-emacs-directory)
+                            "el-get"))
+        (el-get-status-file
+         (concat (file-name-as-directory el-get-dir) ".status.el")))
     (make-directory el-get-dir t)
     ;; Extract the instructions directly from the documentation
     (with-temp-buffer
@@ -61,7 +61,7 @@
                                   :features (,pkg)
                                   :type http
                                   :url ,(concat "file://" pkg-source))))
-	 (el-get-packages (mapcar 'el-get-source-name el-get-sources)))
+         (el-get-packages (mapcar 'el-get-source-name el-get-sources)))
     (make-directory el-get-dir t)
     (unwind-protect
         (progn

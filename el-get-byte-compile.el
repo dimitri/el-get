@@ -12,7 +12,7 @@
 ;; Install
 ;;     Please see the README.asciidoc file from the same distribution
 
-(require 'cl)				; yes I like loop
+(require 'cl)                           ; yes I like loop
 (require 'bytecomp)
 
 ;; byte-recompile-file:
@@ -33,14 +33,14 @@
 Specifically, if the compiled elc file already exists and is
 newer, then compilation is skipped."
   (let ((elc (concat (file-name-sans-extension el) ".elc"))
-	;; Byte-compile runs emacs-lisp-mode-hook; disable it
-	emacs-lisp-mode-hook byte-compile-warnings)
+        ;; Byte-compile runs emacs-lisp-mode-hook; disable it
+        emacs-lisp-mode-hook byte-compile-warnings)
     (when (or (not (file-exists-p elc))
-	      (file-newer-than-file-p el elc))
+              (file-newer-than-file-p el elc))
       (condition-case err
-	  (byte-compile-file el)
-	((debug error) ;; catch-all, allow for debugging
-	 (message "%S" (error-message-string err)))))))
+          (byte-compile-file el)
+        ((debug error) ;; catch-all, allow for debugging
+         (message "%S" (error-message-string err)))))))
 
 (defun el-get-byte-compile-file-or-directory (file)
   "Byte-compile FILE or all files within it if it is a directory."
@@ -60,10 +60,10 @@ newer, then compilation is skipped."
            ;; nocomp is true only if :compile is explicitly set to nil.
            (explicit-nocomp (and (plist-member source :compile)
                                  (not comp-prop)))
-	   (method   (el-get-package-method source))
-	   (pdir     (el-get-package-directory package))
-	   (el-path  (el-get-load-path package))
-	   (files '()))
+           (method   (el-get-package-method source))
+           (pdir     (el-get-package-directory package))
+           (el-path  (el-get-load-path package))
+           (files '()))
       (cond
        (compile
         ;; only byte-compile what's in the :compile property of the recipe
@@ -74,7 +74,7 @@ newer, then compilation is skipped."
                 (add-to-list 'files fullpath)
               ;; path is a regexp, so add matching file names in package dir
               (mapc (apply-partially 'add-to-list 'files)
-		    (directory-files pdir nil fullpath))))))
+                    (directory-files pdir nil fullpath))))))
 
        ;; If package has (:compile nil), or package has its own build
        ;; instructions, or package is already pre-compiled by the
@@ -98,35 +98,35 @@ written by `prin1-to-string' so that `read' is able to process
 it."
   (let ((files (read)))
     (loop for f in files
-	  do (progn
-	       (message "el-get-byte-compile-from-stdin: %s" f)
-	       (el-get-byte-compile-file-or-directory f)))))
+          do (progn
+               (message "el-get-byte-compile-from-stdin: %s" f)
+               (el-get-byte-compile-file-or-directory f)))))
 
 (defun el-get-byte-compile-process (package buffer working-dir sync files)
   "return the 'el-get-start-process-list' entry to byte compile PACKAGE"
   (let ((bytecomp-command
-	 (list el-get-emacs
-	       "-Q" "-batch" "-f" "toggle-debug-on-error"
-	       "-l" (file-name-sans-extension
+         (list el-get-emacs
+               "-Q" "-batch" "-f" "toggle-debug-on-error"
+               "-l" (file-name-sans-extension
                      (symbol-file 'el-get-byte-compile-from-stdin 'defun))
-	       "-f" "el-get-byte-compile-from-stdin")))
+               "-f" "el-get-byte-compile-from-stdin")))
     `(:command-name "byte-compile"
-		    :buffer-name ,buffer
-		    :default-directory ,working-dir
-		    :shell t
-		    :sync ,sync
-		    :stdin ,files
-		    :program ,(car bytecomp-command)
-		    :args ,(cdr bytecomp-command)
-		    :message ,(format "el-get-build %s: byte-compile ok." package)
-		    :error ,(format
-			     "el-get could not byte-compile %s" package))))
+                    :buffer-name ,buffer
+                    :default-directory ,working-dir
+                    :shell t
+                    :sync ,sync
+                    :stdin ,files
+                    :program ,(car bytecomp-command)
+                    :args ,(cdr bytecomp-command)
+                    :message ,(format "el-get-build %s: byte-compile ok." package)
+                    :error ,(format
+                             "el-get could not byte-compile %s" package))))
 
 (defun el-get-byte-compile (package)
   "byte compile files for given package"
   (let ((pdir  (el-get-package-directory package))
-	(buf   "*el-get-byte-compile*")
-	(files (el-get-assemble-files-for-byte-compilation package)))
+        (buf   "*el-get-byte-compile*")
+        (files (el-get-assemble-files-for-byte-compilation package)))
     (when files
       (el-get-start-process-list
        package

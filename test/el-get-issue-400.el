@@ -4,7 +4,7 @@
 
 (let ((debug-on-error t)
       (el-get-verbose t))
-      ;; (el-get-sources '((:name php-mode :features php-mode))))
+  ;; (el-get-sources '((:name php-mode :features php-mode))))
   (require 'el-get)
   (el-get 'sync 'php-mode)
   (message "auto-mode-alist: %S" (rassoc 'php-mode auto-mode-alist))
