@@ -1,6 +1,7 @@
 (:name inf-ruby-bond
        :description "Use Bond autocompletion from inf-ruby buffers"
-       :type git
-       :url "https://github.com/pd/inf-ruby-bond.git"
+       :type github
+       :username "pd"
+       :reponame "inf-ruby-bond"
        :depends inf-ruby
        :features inf-ruby-bond)

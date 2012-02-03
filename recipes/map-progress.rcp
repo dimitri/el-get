@@ -1,6 +1,7 @@
 (:name map-progress
        :website "https://github.com/tarsius/map-progress/"
        :description "Mapping macros that report progress"
-       :type git
-       :url "https://github.com/tarsius/map-progress.git"
+       :type github
+       :username "tarsius"
+       :reponame "map-progress"
        :compile "map-progress.el")

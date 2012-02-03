@@ -1,5 +1,6 @@
 (:name switch-window
        :description "A *visual* way to choose a window to switch to"
-       :type git
-       :url "https://github.com/dimitri/switch-window.git"
+       :type github
+       :username "dimitri"
+       :reponame "switch-window"
        :features switch-window)

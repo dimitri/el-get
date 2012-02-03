@@ -1,7 +1,8 @@
 (:name color-theme-chocolate-rain
        :description "Chocolate rain color theme for Emacs based on Ludvig Widman's Choco TextMate theme"
-       :type git
-       :url "https://github.com/marktran/color-theme-chocolate-rain.git"
+       :type github
+       :username "marktran"
+       :reponame "color-theme-chocolate-rain"
        :depends color-theme
        :post-init (lambda ()
                     (autoload 'color-theme-chocolate-rain "color-theme-chocolate-rain"

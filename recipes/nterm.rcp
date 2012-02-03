@@ -1,6 +1,7 @@
 (:name nterm
        :description "New TERMinal emulator"
-       :type git
-       :url "http://github.com/cbbrowne/nterm.git"
+       :type github
+       :username "cbbrowne"
+       :reponame "nterm"
        :info "."
        :build ("make"))

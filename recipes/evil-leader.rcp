@@ -2,7 +2,8 @@
        :website "http://github.com/cofi/evil-leader"
        :description "Add <leader> shortcuts to Evil, the extensible vim
        emulation layer"
-       :type git
-       :url "http://github.com/cofi/evil-leader.git"
+       :type github
+       :username "cofi"
+       :reponame "evil-leader"
        :features evil-leader
        :depends evil)

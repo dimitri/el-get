@@ -1,4 +1,5 @@
 (:name quick-buffer-switch
-       :type git
+       :type github
        :description "Quick switch to file or dir buffers."
-       :url "git://github.com/renard/quick-buffer-switch.git")
+       :username "renard"
+       :reponame "quick-buffer-switch")

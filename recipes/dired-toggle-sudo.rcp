@@ -1,4 +1,5 @@
 (:name dired-toggle-sudo
-       :type git
+       :type github
        :description "Browse directory with sudo privileges."
-       :url "git://github.com/renard/dired-toggle-sudo.git")
+       :username "renard"
+       :reponame "dired-toggle-sudo")

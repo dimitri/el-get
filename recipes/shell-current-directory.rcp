@@ -1,5 +1,6 @@
 (:name shell-current-directory
        :description "Create new shell based on buffer directory"
-       :type git
-       :url "https://github.com/metaperl/shell-current-directory.git"
+       :type github
+       :username "metaperl"
+       :reponame "shell-current-directory"
        :features shell-current-directory)

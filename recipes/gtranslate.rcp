@@ -1,6 +1,7 @@
 (:name gtranslate
        :description "Use google translate api to perform translations"
-       :type git
-       :url "git://github.com/emacsmirror/gtranslate.git"
+       :type github
+       :username "emacsmirror"
+       :reponame "gtranslate"
        :load "gtranslate.el")
 

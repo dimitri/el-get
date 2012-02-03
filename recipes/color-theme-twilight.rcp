@@ -1,7 +1,8 @@
 (:name color-theme-twilight
        :description "Twilight color theme for GNU Emacs inspired by TextMate."
-       :type git
-       :url "http://github.com/crafterm/twilight-emacs.git"
+       :type github
+       :username "crafterm"
+       :reponame "twilight-emacs"
        :depends color-theme
        :post-init (lambda ()
                     (autoload 'color-theme-twilight "color-theme-twilight"

@@ -1,5 +1,6 @@
 (:name xcscope
        :description "Cscope interface for (X)Emacs"
-       :type git
-       :url "git://github.com/To1ne/xcscope.git"
+       :type github
+       :username "To1ne"
+       :reponame "xcscope"
        :features xcscope)
