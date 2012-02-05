@@ -46,11 +46,38 @@
 and to be found in `el-get-user-package-directory'.  Do nothing
 when this custom is nil."
   (when el-get-user-package-directory
-    (let* ((init-file-name    (format "init-%s.el" package))
-	   (package-init-file
-	    (expand-file-name init-file-name el-get-user-package-directory)))
-      (el-get-verbose-message "el-get: load %S" package-init-file)
-      (load package-init-file 'noerror))))
+    (let* ((path (expand-file-name el-get-user-package-directory))
+           (load-it nil))
+      (mapc
+       (lambda(ext)
+         (unless load-it 
+           (let ((init
+                  (expand-file-name (concat "init-" package
+                                            "." ext)
+                                    el-get-user-package-directory)))
+             (when (file-exists-p init)
+               (condition-case err
+                   (progn
+                     (org-babel-load-file init)
+                     (setq load-it t))
+                 (error
+                  (el-get-verbose-message "el-get error loding %s for %s" init package)))))))
+       '("org" "org.gz" "org.bz2" "org.gpg" "org.gpg.gz" "org.gpg.bz2"))
+      (mapc
+       (lambda(ext)
+         (unless load-it
+           (let ((init
+                  (expand-file-name (concat "init-" package
+                                            "." ext)
+                                    el-get-user-package-directory)))
+             (when (file-exists-p init)
+               (condition-case err
+                   (progn
+                     (load init)
+                     (setq load-it t))
+                 (error
+                  (el-get-verbose-message "el-get error loding %s for %s" init package)))))))
+       '("el" "el.gz" "el.bz2" "el.gpg" "el.gpg.gz" ".el.gpg.bz2")))))
 
 (defun el-get-recipe-dirs ()
   "Return the elements of el-get-recipe-path that actually exist.
@@ -129,7 +156,7 @@ each directory listed in `el-get-recipe-path' in order."
 		 for (prop override) on source by 'cddr
 		 do (plist-put def prop override)
 		 finally return def))
-
+          
 	  ;; none of the previous, must be a full definition
 	  (t source))))
 
@@ -142,7 +169,7 @@ return 'builtin."
                   (el-get-package-def package-or-source)
                 package-or-source))
          (builtin (plist-get def :builtin)))
-
+    
     (if (and builtin (>= emacs-major-version builtin))
         'builtin
       (plist-get def :type))))
