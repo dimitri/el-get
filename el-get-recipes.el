@@ -52,8 +52,8 @@ when this custom is nil."
        (lambda(ext)
          (unless load-it 
            (let ((init
-                  (expand-file-name (concat "init-" package
-                                            "." ext)
+                  (expand-file-name (format "init-%s.%s" package
+                                            ext) 
                                     el-get-user-package-directory)))
              (when (file-exists-p init)
                (condition-case err
@@ -67,8 +67,8 @@ when this custom is nil."
        (lambda(ext)
          (unless load-it
            (let ((init
-                  (expand-file-name (concat "init-" package
-                                            "." ext)
+                  (expand-file-name (format "init-%s.%s" package
+                                            ext)
                                     el-get-user-package-directory)))
              (when (file-exists-p init)
                (condition-case err
@@ -78,6 +78,7 @@ when this custom is nil."
                  (error
                   (el-get-verbose-message "el-get error loding %s for %s" init package)))))))
        '("el" "el.gz" "el.bz2" "el.gpg" "el.gpg.gz" ".el.gpg.bz2")))))
+
 
 (defun el-get-recipe-dirs ()
   "Return the elements of el-get-recipe-path that actually exist.
