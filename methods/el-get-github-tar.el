@@ -25,9 +25,11 @@
                            (error "Recipe for Github tar package %s needs a username" package))))
             (reponame (el-get-as-string
                        (or (plist-get source :reponame)
-                           package))))
-       (format "https://github.com/%s/%s/tarball/master"
-               username reponame)))))
+                           package)))
+            (branch (or (plist-get source :branch)
+                        "master")))
+       (format "https://github.com/%s/%s/tarball/%s"
+               username reponame branch)))))
 
 (defun el-get-github-tar-install (package url post-install-fun)
   "Clone the given package from Github following the URL."
