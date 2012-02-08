@@ -39,6 +39,7 @@
 (require 'el-get-http-tar)
 (require 'el-get-http-zip)
 (require 'el-get-github-tar)
+(require 'el-get-github-zip)
 (require 'el-get-pacman)
 (require 'el-get-svn)
 
