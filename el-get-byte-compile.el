@@ -74,7 +74,7 @@ newer, then compilation is skipped."
                 (add-to-list 'files fullpath)
               ;; path is a regexp, so add matching file names in package dir
               (mapc (apply-partially 'add-to-list 'files)
-		    (directory-files pdir nil fullpath))))))
+		    (directory-files pdir nil path))))))
 
        ;; If package has (:compile nil), or package has its own build
        ;; instructions, or package is already pre-compiled by the
