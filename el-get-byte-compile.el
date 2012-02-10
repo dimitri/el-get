@@ -89,33 +89,47 @@ newer, then compilation is skipped."
         (mapc (apply-partially 'add-to-list 'files) el-path)))
       files)))
 
-(defun el-get-byte-compile-from-stdin ()
-  "byte compile files read on STDIN
+(defun el-get-byte-compile-for-subprocess (files)
+  "byte compile files"
+  (loop for f in files
+        do (progn
+             (message "el-get-byte-compile: %s" f)
+             (el-get-byte-compile-file-or-directory f))))
 
-This is run as a subprocess with an `emacs -Q -batch -f
-el-get-byte-compile` command and with the file list as stdin,
-written by `prin1-to-string' so that `read' is able to process
-it."
-  (let ((files (read)))
-    (loop for f in files
-	  do (progn
-	       (message "el-get-byte-compile-from-stdin: %s" f)
-	       (el-get-byte-compile-file-or-directory f)))))
+(defun el-get-all-symbol-files-1 (expr)
+  (cond ((null expr) nil)
+        ((symbolp expr)
+         (let ((f (symbol-file expr)))
+           (when f (list f))))
+        ((listp expr)
+         (mapcan 'all-symbol-files-1 expr))))
+
+(defun el-get-all-symbol-files (expr &optional sans-extension)
+  (remove-duplicates
+   (mapcar (if sans-extension
+               'file-name-sans-extension
+             'identity)
+           (el-get-all-symbol-files-1 expr))))
 
 (defun el-get-byte-compile-process (package buffer working-dir sync files)
   "return the 'el-get-start-process-list' entry to byte compile PACKAGE"
-  (let ((bytecomp-command
-	 (list el-get-emacs
-	       "-Q" "-batch" "-f" "toggle-debug-on-error"
-	       "-l" (file-name-sans-extension
-                     (symbol-file 'el-get-byte-compile-from-stdin 'defun))
-	       "-f" "el-get-byte-compile-from-stdin")))
+  (let* ((compile-expr
+          `(el-get-byte-compile-for-subprocess ',files))
+         (load-path-args
+          (list "--eval" (format "%S" `(setq load-path ',(cons "." load-path)))))
+         (load-file-args
+          (mapcan (lambda (f) (list "-l" f))
+                  (el-get-all-symbol-files compile-expr)))
+         (bytecomp-command
+          `(,el-get-emacs
+            "-Q" "-batch" "-f" "toggle-debug-on-error"
+            ,@load-path-args ,@load-file-args
+            "--eval" ,(prin1-to-string compile-expr))))
     `(:command-name "byte-compile"
 		    :buffer-name ,buffer
 		    :default-directory ,working-dir
 		    :shell t
 		    :sync ,sync
-		    :stdin ,files
 		    :program ,(car bytecomp-command)
 		    :args ,(cdr bytecomp-command)
 		    :message ,(format "el-get-build %s: byte-compile ok." package)
