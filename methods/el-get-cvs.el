@@ -14,55 +14,94 @@
 
 (require 'el-get-core)
 
-
-
 (defcustom el-get-cvs-checkout-hook nil
   "Hook run after cvs checkout."
   :group 'el-get
   :type 'hook)
 
-(defun el-get-cvs-checkout-proxy-url (url)
+(defcustom el-get-cvs-http-proxy-url nil
+  "HTTP Proxy URL for el-get to use when installing via CVS.
+
+  If the environment variable HTTP_PROXY is set, it will
+  override the value of this variable. "
+  :type '(choice (const :tag "None" nil)
+                 (string :tag "URL" ""))
+  :group 'el-get)
+
+(defcustom el-get-cvs-http-proxy-url-use-user-name nil
+  "Use user-name and password for CVS proxy.
+
+Some implementations of CVS do not support user and password
+proxy properties.
+
+Enable this if you want el-get to honor these settings"
+  :type 'boolean
+  :group 'el-get)
+
+(defun el-get-parse-proxy ()
+  "Parse HTTP_PROXY"
   (let ((proxy (or (getenv "HTTP_PROXY")
-                   (if (boundp 'http-proxy)
-                       (symbol-value 'http-proxy)
-                     nil)))
-        port
+                   el-get-cvs-http-proxy-url))
+        port ret
         (user "")
         (password "")
         (url-proxy url))
     (if (or (not proxy) (string= proxy ""))
-        (symbol-value 'url)
+        (symbol-value 'ret)
       (when (string-match "^https?://" proxy)
         (setq proxy (replace-match "" nil nil proxy)))
       (when (string-match "^\\(.*\\)@" proxy)
         (setq user (match-string 1 proxy))
         (setq proxy (replace-match "" nil nil proxy))
         (when (string-match "^\\([^:]*\\):\\(.*\\)$" user)
-          (setq password (concat ";proxypassword=" (match-string 2 user)))
-          (setq user (match-string 1 user)))
-        (setq user (concat ";proxyuser=" user password)))
+          (setq password (match-string 2 user))
+          (setq user (match-string 1 user))))
       (when (string-match "^\\(.*\\):\\([0-9]+\\)$" proxy)
         (setq port (match-string 2 proxy))
-        (setq proxy (match-string 1 proxy))
-        (when (string-match ":pserver:" url-proxy)
-          (setq url-proxy (replace-match
-                           (format ":pserver;proxy=%s;proxyport=%s%s:"
-                                   proxy port user) t t url-proxy))))
-      (symbol-value 'url-proxy))))
+        (setq proxy (match-string 1 proxy)))
+      (setq ret `(:user ,user
+			:password ,password
+			:proxy ,proxy
+			:port ,port))
+      (symbol-value 'ret))))
+
+(defun el-get-cvs-checkout-proxy-url (url)
+  "Checkout proxy URL"
+  (let ((proxy (el-get-parse-proxy))
+	(cvs-proxy "")
+	tmp
+	(ret url))
+    (when proxy
+      (setq cvs-proxy (plist-get proxy ':proxy))
+      (unless (string= "" cvs-proxy)
+	(setq cvs-proxy (concat ";proxy=" cvs-proxy))
+	(setq tmp (plist-get proxy ':port))
+	(unless (string= "" tmp)
+	  (setq cvs-proxy (concat cvs-proxy ";proxyport=" tmp)))
+        (when el-get-cvs-http-proxy-url-use-user-name
+	  (setq tmp (plist-get proxy ':user))
+	  (unless (string= "" tmp)
+	    (setq cvs-proxy (concat cvs-proxy ";proxyuser=" tmp)))
+	  (setq tmp (plist-get proxy ':password))
+	  (unless (string= "" tmp)
+	    (setq cvs-proxy (concat cvs-proxy ";proxypassword=" tmp))))
+	(when (string-match ":pserver:" ret)
+	  (setq ret (replace-match (concat ":pserver" cvs-proxy ":") t t ret)))))
+    (symbol-value 'ret)))
 
 (defun el-get-cvs-checkout-proxy-url-test ()
   "Tests the function for cvs proxy urls."
   (interactive)
-  (let ((http-proxy "")
+  (let ((el-get-cvs-http-proxy-url "")
+        (el-get-cvs-http-proxy-url-use-user-name nil)
         (url ":pserver:anonymous@cvs.namazu.org:/storage/cvsroot"))
-    (message "Proxy:%s\nURL:%s\n" http-proxy (el-get-cvs-checkout-proxy-url url))
-    (setq http-proxy "http://proxy.corporate.net:8080")
-    (message "Proxy:%s\nURL:%s\n" http-proxy (el-get-cvs-checkout-proxy-url url))
-    (setq http-proxy "http://user@proxy.corporate.net:8080")
-    (message "Proxy:%s\nURL:%s\n" http-proxy (el-get-cvs-checkout-proxy-url url))
-    (setq http-proxy "http://user:password@proxy.corporate.net:8080")
-    (message "Proxy:%s\nURL:%s\n" http-proxy (el-get-cvs-checkout-proxy-url url))))
-
+    (message "Proxy:%s\nURL:%s\n" el-get-cvs-http-proxy-url (el-get-cvs-checkout-proxy-url url))
+    (setq el-get-cvs-http-proxy-url "http://proxy.corporate.net:8080")
+    (message "Proxy:%s\nURL:%s\n" el-get-cvs-http-proxy-url (el-get-cvs-checkout-proxy-url url))
+    (setq el-get-cvs-http-proxy-url "http://user@proxy.corporate.net:8080")
+    (message "Proxy:%s\nURL:%s\n" el-get-cvs-http-proxy-url (el-get-cvs-checkout-proxy-url url))
+    (setq el-get-cvs-http-proxy-url "http://user:password@proxy.corporate.net:8080")
+    (message "Proxy:%s\nURL:%s\n" el-get-cvs-http-proxy-url (el-get-cvs-checkout-proxy-url url))))
 
 
 (defun el-get-cvs-checkout (package urlp post-install-fun)
@@ -79,7 +118,7 @@
     
     ;; (message "%S" `(:args ("-d" ,url "checkout" "-d" ,package ,module)))
     ;; (message "el-get-cvs-checkout: %S" (string= options "login"))
-
+    
     (el-get-start-process-list
      package
      `(,@(when (string= options "login")
