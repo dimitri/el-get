@@ -318,6 +318,7 @@ Any other property will get put into the process object.
 		     (status (apply startf program infile cbuf t args))
                      (message (plist-get c :message))
                      (errorm  (plist-get c :error)))
+                (el-get-verbose-message "Running commands synchronously: %S" commands)
 		(when el-get-verbose
 		  (message "%S" (with-current-buffer cbuf (buffer-string))))
                 (if (eq 0 status)
@@ -330,6 +331,7 @@ Any other property will get put into the process object.
                   (when (functionp final-func)
                     (funcall final-func package))))
             ;; async case
+            (el-get-verbose-message "Running commands asynchronously: %S" commands)
             (let* ((startf (if shell #'start-process-shell-command #'start-process))
                    (process-connection-type nil) ; pipe, don't pretend we're a pty
                    (proc (apply startf cname cbuf program args)))
