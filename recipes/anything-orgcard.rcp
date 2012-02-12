@@ -1,0 +1,6 @@
+(:name anything-orgcard
+       :description "browse the orgcard by anything"
+       :type git
+       :url "git://gist.github.com/1345100.git"
+       :depends anything
+       :features "anything-orgcard")
