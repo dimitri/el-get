@@ -36,9 +36,9 @@ filename.el ;;; filename.el --- description"
   (let ((url (or url (format "%s%s.el" el-get-emacswiki-base-url package))))
     (el-get-http-install package url post-install-fun)))
 
-(el-get-register-method
- :emacswiki #'el-get-emacswiki-install #'el-get-emacswiki-install #'el-get-rmdir
- #'el-get-http-install-hook nil #'el-get-http-compute-checksum)
+(el-get-register-derived-method :emacswiki :http
+  :install #'el-get-emacswiki-install
+  :update #'el-get-emacswiki-install)
 
 ;;;
 ;;; Functions to maintain a local recipe list from EmacsWiki

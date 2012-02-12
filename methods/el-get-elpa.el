@@ -134,8 +134,11 @@ the recipe, then return nil."
 
 (add-hook 'el-get-elpa-remove-hook 'el-get-elpa-post-remove)
 
-(el-get-register-method
- :elpa #'el-get-elpa-install #'el-get-elpa-update #'el-get-elpa-remove
- #'el-get-elpa-install-hook #'el-get-elpa-remove-hook)
+(el-get-register-method :elpa
+  :install #'el-get-elpa-install
+  :update #'el-get-elpa-update
+  :remove #'el-get-elpa-remove
+  :install-hook #'el-get-elpa-install-hook
+  :remove-hook #'el-get-elpa-remove-hook)
 
 (provide 'el-get-elpa)

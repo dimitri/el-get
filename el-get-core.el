@@ -36,19 +36,45 @@
 
 The methods list is a PLIST, each entry has a method name
 property which value is another PLIST, which must contain values
-for :install, :install-hook, :update, :remove and :checksum
-properties. Those should be the elisp functions to call for doing
-the named package action in the given method.")
+for :install, :install-hook, :update, :remove, :remove-hook
+and :checksum properties. Those should be the elisp functions to
+call for doing the named package action in the given method.")
 
-(defun el-get-register-method (name install update remove
-				    &optional install-hook remove-hook compute-checksum)
+(defun el-get-method-defined-p (name)
+  "Returns t if NAME is a known el-get install method backend, nil otherwise."
+  (and (el-get-method name :install) t))
+
+(defun* el-get-register-method (name &key install update remove
+                                     install-hook remove-hook compute-checksum)
   "Register the method for backend NAME, with given functions"
+  (loop for required-arg in '(install update remove)
+        unless (symbol-value required-arg)
+        do (error "Missing required argument: :%s" required-arg))
   (let ((def (list :install install :update update :remove remove)))
-    (when install-hook     (setq def (append def (list :install-hook install-hook))))
-    (when remove-hook      (setq def (append def (list :remove-hook remove-hook))))
-    (when compute-checksum (setq def (append def (list :compute-checksum compute-checksum))))
+    (when install-hook     (setq def (plist-put def :install-hook install-hook)))
+    (when remove-hook      (setq def (plist-put def :remove-hook remove-hook)))
+    (when compute-checksum (setq def (plist-put def :compute-checksum compute-checksum)))
     (setq el-get-methods (plist-put el-get-methods name def))))
 
+(put 'el-get-register-method 'lisp-indent-function
+     (get 'prog1 'lisp-indent-function))
+
+(defun* el-get-register-derived-method (name derived-from-name 
+                                             &rest keys &key &allow-other-keys)
+  "Register the method for backend NAME.
+
+Defaults for all optional arguments are taken from
+already-defined method DERIVED-FROM-NAME."
+  (unless (el-get-method-defined-p derived-from-name)
+    (error "Cannot derive new el-get method from unknown method %s" derived-from-name))
+  (apply #'el-get-register-method name (append keys (plist-get el-get-methods derived-from-name))))
+
+(put 'el-get-register-derived-method 'lisp-indent-function
+     (get 'prog2 'lisp-indent-function))
+
+(defun el-get-register-method-alias (name old-name)
+  "Register NAME as an alias for install method OLD-NAME."
+  (el-get-register-derived-method name old-name))
 
 
 ;;
@@ -136,8 +162,9 @@ entry."
 (defun el-get-method (method-name action)
   "Return the function to call for doing action (e.g. install) in
 given method."
-  (let* ((method  (intern (concat ":" (format "%s" method-name))))
-	 (actions (plist-get el-get-methods method)))
+  (let* ((method  (if (keywordp method-name) method-name
+                    (intern (concat ":" (format "%s" method-name)))))
+         (actions (plist-get el-get-methods method)))
     (plist-get actions action)))
 
 (defun el-get-check-init ()

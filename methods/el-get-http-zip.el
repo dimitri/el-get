@@ -60,11 +60,13 @@ the files up."
 				      :error ,ko))
 		     ,(symbol-function post-install-fun))))))
     (el-get-http-install package url post dest)))
-  
+
 (add-hook 'el-get-http-zip-install-hook 'el-get-http-zip-cleanup-extract-hook)
 
-(el-get-register-method
- :http-zip #'el-get-http-zip-install #'el-get-http-zip-install #'el-get-rmdir
-  #'el-get-http-zip-install-hook)
+(el-get-register-method :http-zip
+  :install #'el-get-http-zip-install
+  :update #'el-get-http-zip-install
+  :remove #'el-get-rmdir
+  :install-hook #'el-get-http-zip-install-hook)
 
 (provide 'el-get-http-zip)

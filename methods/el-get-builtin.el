@@ -25,8 +25,10 @@
       (make-directory pdir))
     (funcall post-install-fun package)))
 
-(el-get-register-method
- :builtin #'el-get-builtin-install #'el-get-builtin-install #'el-get-rmdir
- #'el-get-builtin-install-hook)
+(el-get-register-method :builtin
+  :install #'el-get-builtin-install
+  :update #'el-get-builtin-install
+  :remove #'el-get-rmdir
+  :install-hook #'el-get-builtin-install-hook)
 
 (provide 'el-get-builtin)
