@@ -313,7 +313,14 @@ properties:
    `process-send-string' for an asynchronous one.
 
 Any other property will get put into the process object.
+
+Any element of commands that is nil will simply be ignored. This
+makes it easier to conditionally splice a command into the list.
 "
+  ;; Skip nil elements of commands. This makes it easier for methods
+  ;; to conditionally splice commands into the list.
+  (while (and commands (null (car commands)))
+    (setq commands (cdr commands)))
   (condition-case err
       (if commands
         (let* ((c       (car commands))
