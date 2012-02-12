@@ -41,6 +41,7 @@
 ;;   - fix recipes :build commands, must be either lists of strings or expr
 ;;   - add support for el-get-reload and do that at update time
 ;;   - implement :checksum property for http kinds of files
+;;   - Add new command el-get-reinstall
 ;;
 ;;  3.1 - 2011-09-15 - Get a fix
 ;;
@@ -460,6 +461,12 @@ PACKAGE may be either a string or the corresponding symbol."
 	(message "el-get: `%s' package is already installed" package)
 	(el-get-init package)
 	(el-get-install-next-packages package)))))
+
+(defun el-get-reinstall (package)
+  "Remove PACKAGE and then install it again."
+  (interactive (list (el-get-read-package-name "Reinstall")))
+  (el-get-remove package)
+  (el-get-install package))
 
 (defun el-get-install-next-packages (current-package)
   "Run as part of `el-get-post-init-hooks' when dealing with dependencies."

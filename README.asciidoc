@@ -320,6 +320,12 @@ M-x el-get-remove::
     have to use external tools instead (+apt-get+, e.g.). No effort is made
     to unload the features.
 
+M-x el-get-reinstall::
+
+    This is just a shortcut for +el-get-remove+ followed by +el-get-install+
+    of the same package. It is primarily useful when a package has changed
+    types, so the normal +el-get-update+ process will not work correctly.
+
 M-x el-get-find-recipe-file::
 
     Will prompt for the name of a package, with completion, then +find-file+
