@@ -300,6 +300,14 @@ definition provided by `el-get' recipes locally.
     Currently this property only has meaning for `git' type
     recipes. Other VCS-based methods may implement support in the
     future.
+
+:shallow
+
+    If set to t in a git recipe, git-clone will be run with
+    `--depth 1', which will create a so-called shallow clone by
+    not downloading all the history of the repository. The
+    default is controlled by the variable
+    `el-get-git-shallow-clone', which is nil by default.
 "
   :group 'el-get
   :type
@@ -399,7 +407,9 @@ this is the name to fetch in that system"
               (const :format "" :before) (function :format "%v"))
        (group :inline t
               :format "`After' Function (`Post-Init' recommended instead): %v"
-              (const :format "" :after) (function :format "%v")))
+              (const :format "" :after) (function :format "%v"))
+       ;; TODO: `:checksum', `:checkout', `:shallow'
+       )
       (repeat
        :inline t :tag "System-Specific Build Recipes"
        (group :inline t
