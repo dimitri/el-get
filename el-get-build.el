@@ -113,7 +113,7 @@ recursion.
 				      :buffer-name ,buf
 				      :default-directory ,wdir
 				      :shell t
-				      :sync sync
+				      :sync ,sync
 				      :program ,program
 				      :args (,@args)
 				      :message ,(format "el-get-build %s: %s ok." package c)
