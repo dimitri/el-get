@@ -1,0 +1,6 @@
+(:name dizzee
+       :description "Utilities for managing subprocesses in Emacs"
+       :website "https://github.com/davidmiller/dizzee"
+       :type git
+       :url "git://github.com/davidmiller/dizzee.git"
+       :features "dizzee")

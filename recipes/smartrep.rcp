@@ -1,0 +1,6 @@
+(:name smartrep
+       :description "Support sequential operation which omitted prefix keys."
+       :website "http://sheephead.homelinux.org/2011/12/19/6930/"
+       :type git
+       :url "git://github.com/myuhe/smartrep.el.git"
+       :features "smartrep")

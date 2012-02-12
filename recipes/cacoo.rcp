@@ -1,0 +1,7 @@
+(:name cacoo
+       :description "Minor mode for Cacoo (http://cacoo.com)"
+       :website "https://github.com/kiwanami/emacs-cacoo"
+       :type git
+       :url "git://github.com/kiwanami/emacs-cacoo.git"
+       :depends (anything deferred)
+       :features "cacoo")
