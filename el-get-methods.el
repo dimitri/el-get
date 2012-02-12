@@ -11,7 +11,6 @@
 ;;
 ;; Install
 ;;     Please see the README.asciidoc file from the same distribution
-
 (require 'el-get-core)
 
 ;;
@@ -37,6 +36,7 @@
 (require 'el-get-hg)
 (require 'el-get-http)
 (require 'el-get-http-tar)
+(require 'el-get-http-zip)
 (require 'el-get-pacman)
 (require 'el-get-svn)
 
