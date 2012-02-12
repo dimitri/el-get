@@ -1,0 +1,6 @@
+(:name yascroll
+       :description "Yet Another Scroll Bar Mode"
+       :website "https://github.com/m2ym/yascroll-el"
+       :type git
+       :url "git://github.com/m2ym/yascroll-el.git"
+       :features "yascroll")

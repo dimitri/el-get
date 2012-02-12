@@ -1,0 +1,6 @@
+(:name quickrun
+       :description "Run commands quickly"
+       :website "https://github.com/syohex/emacs-quickrun"
+       :type git
+       :url "git://github.com/syohex/emacs-quickrun.git"
+       :features "quickrun")

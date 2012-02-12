@@ -1,0 +1,5 @@
+(:name shell-pop
+       :description "Helps you pop up and pop out shell buffer easily."
+       :website "http://www.emacswiki.org/emacs/ShellPop"
+       :type emacswiki
+       :features "shell-pop")

@@ -1,0 +1,4 @@
+(:name ipa
+       :description "In-place annotations"
+       :type emacswiki
+       :features "ipa")
