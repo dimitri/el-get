@@ -2,4 +2,13 @@
        :description "Interface between Emacs Lisp and Python"
        :type git
        :url "http://github.com/pinard/Pymacs.git"
+       :post-init
+       (lambda ()
+         ;; do PYTHONPATH=~/.emacs.d/el-get/pymacs/:$PYTHONPATH
+         (setenv
+          "PYTHONPATH"
+          (let ((pp (getenv "PYTHONPATH")))
+            (concat (expand-file-name  "~/.emacs.d/el-get/pymacs/")
+                    (unless (string-prefix-p ":" pp) ":")
+                    pp))))
        :build ("make"))
