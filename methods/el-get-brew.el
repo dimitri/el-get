@@ -89,8 +89,11 @@
 
 (add-hook 'el-get-brew-remove-hook 'el-get-dpkg-remove-symlink)
 
-(el-get-register-method
- :brew
- #'el-get-brew-install #'el-get-brew-update #'el-get-brew-remove #'el-get-brew-install-hook #'el-get-brew-remove-hook)
+(el-get-register-method :brew
+  :install #'el-get-brew-install
+  :update #'el-get-brew-update
+  :remove #'el-get-brew-remove
+  :install-hook #'el-get-brew-install-hook
+  :remove-hook #'el-get-brew-remove-hook)
 
 (provide 'el-get-brew)

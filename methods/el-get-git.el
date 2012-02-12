@@ -89,8 +89,22 @@ found."
 		      :error "Could not update git submodules"))
      post-update-fun)))
 
-(el-get-register-method
- :git #'el-get-git-clone #'el-get-git-pull #'el-get-rmdir
- #'el-get-git-clone-hook)
+(defun el-get-git-compute-checksum (package)
+  "Return the hash of the checked-out revision of PACKAGE."
+  (with-temp-buffer
+    (cd (el-get-package-directory package))
+    (let* ((args '("git" "show-ref" "HEAD"))
+           (cmd (mapconcat 'shell-quote-argument args " "))
+           (output (shell-command-to-string cmd))
+           (hash (and (string-match "^[[:space:]]*\\([^[:space:]]+\\)" output)
+                      (match-string 0 output))))
+      hash)))
+
+(el-get-register-method :git
+  :install #'el-get-git-clone
+  :update #'el-get-git-pull
+  :remove #'el-get-rmdir
+  :install-hook #'el-get-git-clone-hook
+  :compute-checksum #'el-get-git-compute-checksum)
 
 (provide 'el-get-git)

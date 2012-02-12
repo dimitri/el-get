@@ -66,8 +66,10 @@
 		      :error ,ko))
      post-update-fun)))
 
-(el-get-register-method
- :svn #'el-get-svn-checkout #'el-get-svn-update #'el-get-rmdir
- #'el-get-svn-checkout-hook)
+(el-get-register-method :svn
+  :install #'el-get-svn-checkout
+  :update #'el-get-svn-update
+  :remove #'el-get-rmdir
+  :install-hook #'el-get-svn-checkout-hook)
 
 (provide 'el-get-svn)
