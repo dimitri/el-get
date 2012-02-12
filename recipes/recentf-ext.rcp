@@ -1,0 +1,4 @@
+(:name recentf-ext
+       :description "Recentf extensions"
+       :type emacswiki
+       :features "recentf-ext")
