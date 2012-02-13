@@ -78,7 +78,7 @@ FROM is a literal string, not a regexp."
                     (or url (el-get-github-url package))
                     post-install-fun))
 
-(el-get-register-method
- :github #'el-get-github-clone #'el-get-git-pull #'el-get-rmdir)
+(el-get-register-derived-method :github :git
+  :install #'el-get-github-clone)
 
 (provide 'el-get-github)

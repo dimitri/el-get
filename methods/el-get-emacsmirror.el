@@ -27,7 +27,7 @@
          (el-get-sources (cons package-github-source el-get-sources)))
     (el-get-github-clone package url post-install-fun)))
 
-(el-get-register-derived-method :emacsmirror :git
+(el-get-register-derived-method :emacsmirror :github
   :install #'el-get-emacsmirror-clone)
 
 (provide 'el-get-emacsmirror)
