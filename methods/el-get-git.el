@@ -40,9 +40,19 @@ found."
 	 (name   (format "*git clone %s*" package))
 	 (source (el-get-package-def package))
 	 (branch (plist-get source :branch))
-	 (args   (if branch
-		     (list "--no-pager" "clone" "-b" branch url pname)
-		   (list "--no-pager" "clone" url pname)))
+	 (checkout (or (plist-get source :checkout)
+		       (plist-get source :checksum)))
+	 (clone-args (append '("--no-pager" "clone")
+			     (cond
+			      ;; With :checkout, the "git checkout"
+			      ;; command is a separate step, so don't
+			      ;; do it during cloning.
+			      (checkout '("--no-checkout"))
+			      ;; With a specified branch, check that branch out
+			      (branch (list "-b" branch))
+			      ;; Otherwise, just checkout the default branch
+			      (t nil))
+			     (list url pname)))
 	 (ok     (format "Package %s installed." package))
 	 (ko     (format "Could not install package %s." package)))
     (el-get-start-process-list
@@ -51,9 +61,17 @@ found."
 		      :buffer-name ,name
 		      :default-directory ,el-get-dir
 		      :program ,git-executable
-		      :args ,args
+		      :args ,clone-args
 		      :message ,ok
 		      :error ,ko)
+       ,(when checkout
+	  (list :command-name (format "*git checkout %s*" checkout)
+		:buffer-name name
+		:default-directory pdir
+		:program git-executable
+		:args (list "--no-pager" "checkout" checkout)
+		:message (format "git checkout %s ok" checkout)
+		:error (format "Could not checkout %s for package %s" checkout package)))
        (:command-name "*git submodule update*"
 		      :buffer-name ,name
 		      :default-directory ,pdir
@@ -68,18 +86,31 @@ found."
   (let* ((git-executable (el-get-executable-find "git"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*git pull %s*" package))
+	 (source (el-get-package-def package))
+	 (checkout (or (plist-get source :checkout)
+		       (plist-get source :checksum)))
+	 ;; When dealing with a specific checkout, we cannot use
+	 ;; "pull", but must instead use "fetch" and then "checkout".
+	 (pull-args (list "--no-pager" (if checkout "fetch" "pull")))
 	 (ok   (format "Pulled package %s." package))
 	 (ko   (format "Could not update package %s." package)))
-
     (el-get-start-process-list
      package
      `((:command-name ,name
 		      :buffer-name ,name
 		      :default-directory ,pdir
 		      :program ,git-executable
-		      :args ( "--no-pager" "pull")
+		      :args ,pull-args
 		      :message ,ok
 		      :error ,ko)
+       ,(when checkout
+	  (list :command-name (format "*git checkout %s*" checkout)
+		:buffer-name name
+		:default-directory pdir
+		:program git-executable
+		:args (list "--no-pager" "checkout" checkout)
+		:message (format "git checkout %s ok" checkout)
+		:error (format "Could not checkout %s for package %s" checkout package)))
        (:command-name "*git submodule update*"
 		      :buffer-name ,name
 		      :default-directory ,pdir
