@@ -102,7 +102,7 @@ newer, then compilation is skipped."
          (let ((f (symbol-file expr)))
            (when f (list f))))
         ((listp expr)
-         (mapcan 'all-symbol-files-1 expr))))
+         (mapcan 'el-get-all-symbol-files-1 expr))))
 
 (defun el-get-all-symbol-files (expr &optional sans-extension)
   (remove-duplicates
