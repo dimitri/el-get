@@ -19,6 +19,11 @@
   :group 'el-get
   :type 'hook)
 
+(defcustom el-get-git-shallow-clone nil
+  "If t, then run git-clone with `--depth 1'."
+  :group 'el-get
+  :type 'boolean)
+
 (defun el-get-git-executable ()
   "Return git executable to use, or signal an error when not
 found."
@@ -42,7 +47,11 @@ found."
 	 (branch (plist-get source :branch))
 	 (checkout (or (plist-get source :checkout)
 		       (plist-get source :checksum)))
+         (shallow (if (plist-member source :shallow)
+                      (plist-get source :shallow)
+                    el-get-git-shallow-clone))
 	 (clone-args (append '("--no-pager" "clone")
+                             (when shallow '("--depth" "1"))
 			     (cond
 			      ;; With :checkout, the "git checkout"
 			      ;; command is a separate step, so don't

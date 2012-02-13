@@ -48,6 +48,7 @@
 ;;   - implement :checksum property for http kinds of files
 ;;   - Add new command el-get-reinstall
 ;;   - implement :checkout property for git packages
+;;   - implement :shallow property for git packages
 ;;
 ;;  3.1 - 2011-09-15 - Get a fix
 ;;
