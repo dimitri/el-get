@@ -118,14 +118,14 @@ newer, then compilation is skipped."
          (files-to-load (el-get-all-symbol-files compile-expr))
          (full-expr
           `(progn
-             (setq load-path ,(cons "." load-path))
-             (mapc 'load ,files-to-load)
+             (setq load-path ',(cons "." load-path))
+             (mapc 'load ',files-to-load)
              ,compile-expr))
          (subproc-code (prin1-to-string '(eval (read))))
          (bytecomp-command
           `(,el-get-emacs
             "-Q" "-batch" "-f" "toggle-debug-on-error"
-            "--eval" subproc-code)))
+            "--eval" ,subproc-code)))
     `(:command-name "byte-compile"
 		    :buffer-name ,buffer
 		    :default-directory ,working-dir
