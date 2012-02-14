@@ -375,7 +375,8 @@ called by `el-get' (usually at startup) for each installed package."
              (after    (plist-get source :after))
              (pkgname  (plist-get source :pkgname))
              (library  (or (plist-get source :library) pkgname package))
-             (pdir     (el-get-package-directory package)))
+             (pdir     (el-get-package-directory package))
+             (default-directory pdir))
 
 	;; a builtin package initialisation is about calling recipe and user
 	;; code only, no load-path nor byte-compiling support needed here.
