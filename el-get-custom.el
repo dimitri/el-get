@@ -221,27 +221,32 @@ definition provided by `el-get' recipes locally.
     Intended for use from recipes, it will run once both the
     `Info-directory-list' and the `load-path' variables have been
     taken care of, but before any further action from
-    `el-get-init'.
+    `el-get-init'.  It will be run with `default-directory' set
+    to the package directory.
 
 :before
 
     A pre-init function to run once before `el-get-init' calls
     `load' and `require'.  It gets to run with `load-path'
     already set, and after :prepare has been called.  It's not
-    intended for use from recipes.
+    intended for use from recipes.  It will be run with
+    `default-directory' set to the package directory.
 
 :post-init
 
     Intended for use from recipes.  This function is registered
     for `eval-after-load' against the recipe library by
     `el-get-init' once the :load and :features have been setup.
+    It will be run with `default-directory' set to the package
+    directory.
 
 :after
 
     A function to register for `eval-after-load' against the
     recipe library, after :post-init, and after per-package
-    user-init-file (see `el-get-user-package-directory').  That's not
-    intended for recipe use.
+    user-init-file (see `el-get-user-package-directory').  That's
+    not intended for recipe use.  It will be run with
+    `default-directory' set to the package directory.
 
 :lazy
 
