@@ -105,21 +105,6 @@ in `:compile-files' will be byte-compiled.."
                (message "el-get-byte-compile: %s" f)
                (el-get-byte-compile-file-or-directory f)))))
 
-(defun el-get-all-symbol-files-1 (expr)
-  (cond ((null expr) nil)
-        ((symbolp expr)
-         (let ((f (symbol-file expr)))
-           (when f (list f))))
-        ((listp expr)
-         (mapcan 'el-get-all-symbol-files-1 expr))))
-
-(defun el-get-all-symbol-files (expr &optional sans-extension)
-  (remove-duplicates
-   (mapcar (if sans-extension
-               'file-name-sans-extension
-             'identity)
-           (el-get-all-symbol-files-1 expr))))
-
 (defun el-get-byte-compile-process (package buffer working-dir sync files)
   "return the 'el-get-start-process-list' entry to byte compile PACKAGE"
   (let* ((input-data
