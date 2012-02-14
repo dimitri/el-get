@@ -115,20 +115,22 @@ newer, then compilation is skipped."
   "return the 'el-get-start-process-list' entry to byte compile PACKAGE"
   (let* ((compile-expr
           `(el-get-byte-compile-for-subprocess ',files))
-         (load-path-args
-          (list "--eval" (format "%S" `(setq load-path ',(cons "." load-path)))))
-         (load-file-args
-          (mapcan (lambda (f) (list "-l" f))
-                  (el-get-all-symbol-files compile-expr)))
+         (files-to-load (el-get-all-symbol-files compile-expr))
+         (full-expr
+          `(progn
+             (setq load-path ,(cons "." load-path))
+             (mapc 'load ,files-to-load)
+             ,compile-expr))
+         (subproc-code (prin1-to-string '(eval (read))))
          (bytecomp-command
           `(,el-get-emacs
             "-Q" "-batch" "-f" "toggle-debug-on-error"
-            ,@load-path-args ,@load-file-args
-            "--eval" ,(prin1-to-string compile-expr))))
+            "--eval" subproc-code)))
     `(:command-name "byte-compile"
 		    :buffer-name ,buffer
 		    :default-directory ,working-dir
 		    :shell t
+                    :stdin ,full-expr
 		    :sync ,sync
 		    :program ,(car bytecomp-command)
 		    :args ,(cdr bytecomp-command)
