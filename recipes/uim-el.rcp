@@ -10,10 +10,9 @@
        :post-init (lambda ()
             (setq uim-el-agent (concat
                     (file-name-as-directory
-                     (el-get-package-directory "uim-el"))
+                     default-directory)
                     "emacs/uim-el-agent"))
             (setq uim-el-helper-agent (concat
                            (file-name-as-directory
-                        (el-get-package-directory "uim-el"))
+                        default-directory)
                            "emacs/uim-el-helper-agent"))))
-

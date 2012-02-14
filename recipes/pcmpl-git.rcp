@@ -5,4 +5,4 @@
        :features pcmpl-git
        :prepare (lambda ()
                   (setq pcmpl-git-options-file
-                        (expand-file-name "git-options" (el-get-package-directory 'pcmpl-git)))))
+                        (expand-file-name "git-options"))))
