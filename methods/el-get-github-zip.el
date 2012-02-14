@@ -24,7 +24,7 @@
                        (or (plist-get source :username)
                            (error "Recipe for Github zip package %s needs a username" package))))
             (reponame (el-get-as-string
-                       (or (plist-get source :reponame)
+                       (or (plist-get source :pkgname)
                            package)))
             (branch (or (plist-get source :branch)
                         "master")))
