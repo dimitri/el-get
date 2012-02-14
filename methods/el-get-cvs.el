@@ -19,15 +19,6 @@
   :group 'el-get
   :type 'hook)
 
-(defcustom el-get-cvs-http-proxy-url nil
-  "HTTP Proxy URL for el-get to use when installing via CVS.
-
-  If the environment variable HTTP_PROXY is set, it will
-  override the value of this variable. "
-  :type '(choice (const :tag "None" nil)
-                 (string :tag "URL" ""))
-  :group 'el-get)
-
 (defcustom el-get-cvs-http-proxy-url-use-user-name nil
   "Use user-name and password for CVS proxy.
 
@@ -39,9 +30,12 @@ Enable this if you want el-get to honor these settings"
   :group 'el-get)
 
 (defun el-get-parse-proxy ()
-  "Parse HTTP_PROXY"
+  "Parse HTTP_PROXY or use `url-proxy-services'"
   (let ((proxy (or (getenv "HTTP_PROXY")
-                   el-get-cvs-http-proxy-url))
+		   (if (and (featurep 'url-vars)
+			    (assoc "http" 'url-proxy-services))
+		       (cadr (assoc "http" 'url-proxy-services))
+		     nil)))
         port ret
         (user "")
         (password "")
