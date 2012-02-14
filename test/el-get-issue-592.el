@@ -11,11 +11,11 @@
                :type builtin
                :build ("echo 't' > test-pkg.el")
                :compile "."))
-       (recipe2
-        '(:name test-pkg
-                :type builtin
-                :build ("echo 't' > test-pkg.el")
-                :compile nil)))
+      (recipe2
+       '(:name test-pkg
+               :type builtin
+               :build ("echo 't' > test-pkg.el")
+               :compile nil)))
   ;; Install with recipe1, which does compilation
   (let ((el-get-sources (list recipe1)))
     (el-get 'sync 'test-pkg)

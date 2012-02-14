@@ -124,7 +124,7 @@ FROM is a literal string, not a regexp."
       url-format-string))))
 
 (el-get-register-derived-method :github :git
-  :install #'el-get-github-clone
-  :guess-website #'el-get-github-guess-website)
+                                :install #'el-get-github-clone
+                                :guess-website #'el-get-github-guess-website)
 
 (provide 'el-get-github)
