@@ -89,12 +89,21 @@ newer, then compilation is skipped."
         (mapc (apply-partially 'add-to-list 'files) el-path)))
       files)))
 
-(defun el-get-byte-compile-for-subprocess (files)
-  "byte compile files"
-  (loop for f in files
-        do (progn
-             (message "el-get-byte-compile: %s" f)
-             (el-get-byte-compile-file-or-directory f))))
+(defun el-get-byte-compile-from-stdin ()
+  "byte compile files from stdin.
+
+Standard input must be a property list with properties
+`:load-path' and `:compile-files', each of which should have a
+value that is a list of strings. The variable `load-path' will be
+set from the `:load-path' property, and then all the files listed
+in `:compile-files' will be byte-compiled.."
+  (let* ((input-data (read))
+         (load-path (append (plist-get input-data :load-path) load-path))
+         (files (plist-get input-data :compile-files)))
+    (loop for f in files
+          do (progn
+               (message "el-get-byte-compile: %s" f)
+               (el-get-byte-compile-file-or-directory f)))))
 
 (defun el-get-all-symbol-files-1 (expr)
   (cond ((null expr) nil)
@@ -116,21 +125,21 @@ newer, then compilation is skipped."
   (let* ((compile-expr
           `(el-get-byte-compile-for-subprocess ',files))
          (files-to-load (el-get-all-symbol-files compile-expr))
-         (full-expr
-          `(progn
-             (setq load-path ',(cons "." load-path))
-             (mapc 'load ',files-to-load)
-             ,compile-expr))
-         (subproc-code (prin1-to-string '(eval (read))))
+         (input-data
+          (list :load-path (cons "." load-path)
+                :compile-files files))
+         (subprocess-function 'el-get-byte-compile-from-stdin)
          (bytecomp-command
           `(,el-get-emacs
             "-Q" "-batch" "-f" "toggle-debug-on-error"
-            "--eval" ,subproc-code)))
+            "-l" ,(file-name-sans-extension
+                   (symbol-file subprocess-function 'defun))
+            "-f" ,(symbol-name subprocess-function))))
     `(:command-name "byte-compile"
 		    :buffer-name ,buffer
 		    :default-directory ,working-dir
 		    :shell t
-                    :stdin ,full-expr
+                    :stdin ,input-data
 		    :sync ,sync
 		    :program ,(car bytecomp-command)
 		    :args ,(cdr bytecomp-command)
