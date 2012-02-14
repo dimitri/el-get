@@ -59,7 +59,7 @@ call for doing the named package action in the given method.")
 (put 'el-get-register-method 'lisp-indent-function
      (get 'prog1 'lisp-indent-function))
 
-(defun* el-get-register-derived-method (name derived-from-name 
+(defun* el-get-register-derived-method (name derived-from-name
                                              &rest keys &key &allow-other-keys)
   "Register the method for backend NAME.
 
@@ -343,27 +343,28 @@ makes it easier to conditionally splice a command into the list.
                                        (expand-file-name cdir))
                                     default-directory)))
           (if sync
-              (let* ((startf (if shell #'call-process-shell-command #'call-process))
-		     (infile (when stdin (make-temp-file "el-get")))
-		     (dummy  (when infile
-			       (with-temp-file infile
-				 (insert (prin1-to-string stdin)))))
-                     (dummy  (message "el-get is waiting for %S to complete" cname))
-		     (status (apply startf program infile cbuf t args))
-                     (message (plist-get c :message))
-                     (errorm  (plist-get c :error)))
+              (progn
                 (el-get-verbose-message "Running commands synchronously: %S" commands)
-		(when el-get-verbose
-		  (message "%S" (with-current-buffer cbuf (buffer-string))))
-                (if (eq 0 status)
-                    (message "el-get: %s" message)
-                  (set-window-buffer (selected-window) cbuf)
-                  (error "el-get: %s %s" cname errorm))
-                (when cbuf (kill-buffer cbuf))
-                (if next
-                    (el-get-start-process-list package next final-func)
-                  (when (functionp final-func)
-                    (funcall final-func package))))
+                (let* ((startf (if shell #'call-process-shell-command #'call-process))
+                       (infile (when stdin (make-temp-file "el-get")))
+                       (dummy  (when infile
+                                 (with-temp-file infile
+                                   (insert (prin1-to-string stdin)))))
+                       (dummy  (message "el-get is waiting for %S to complete" cname))
+                       (status (apply startf program infile cbuf t args))
+                       (message (plist-get c :message))
+                       (errorm  (plist-get c :error)))
+                  (when el-get-verbose
+                    (message "%S" (with-current-buffer cbuf (buffer-string))))
+                  (if (eq 0 status)
+                      (message "el-get: %s" message)
+                    (set-window-buffer (selected-window) cbuf)
+                    (error "el-get: %s %s" cname errorm))
+                  (when cbuf (kill-buffer cbuf))
+                  (if next
+                      (el-get-start-process-list package next final-func)
+                    (when (functionp final-func)
+                      (funcall final-func package)))))
             ;; async case
             (el-get-verbose-message "Running commands asynchronously: %S" commands)
             (let* ((startf (if shell #'start-process-shell-command #'start-process))
