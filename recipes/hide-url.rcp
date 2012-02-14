@@ -1,0 +1,5 @@
+(:name hide-url
+       :website "https://github.com/tkf/hide-url.el"
+       :type git
+       :url "git://github.com/tkf/hide-url.el.git"
+       :features "hide-url")

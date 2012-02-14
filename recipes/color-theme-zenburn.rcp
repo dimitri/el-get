@@ -1,6 +1,6 @@
 (:name color-theme-zenburn
        :type emacsmirror
-       :pkgname "zenburn"
+       :pkgname "zenburn-theme"
        :description "Just some alien fruit salad to keep you in the zone"
        :post-init
        (lambda ()

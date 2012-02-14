@@ -35,6 +35,11 @@ release.
 Please note that this versioning policy has been picked while backing
 1.2~dev, so 1.0 was a "stable" release in fact.  Ah, history.
 
+In addition to the version, you can also get the exact git revision by
+running M-x +el-get-self-checksum+. You should provide this checksum
+when seeking support or reporting a bug, so that the developers will
+know exactly which version you are using.
+
 == How to Install it?
 
 Here's the 'lazy installer':
@@ -329,6 +334,12 @@ M-x el-get-remove::
     simply deleting the directory where the source package lies. Sometime we
     have to use external tools instead (+apt-get+, e.g.). No effort is made
     to unload the features.
+
+M-x el-get-reinstall::
+
+    This is just a shortcut for +el-get-remove+ followed by +el-get-install+
+    of the same package. It is primarily useful when a package has changed
+    types, so the normal +el-get-update+ process will not work correctly.
 
 M-x el-get-find-recipe-file::
 

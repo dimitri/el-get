@@ -3,4 +3,4 @@
        :type cvs
        :module "ecb"
        :url ":pserver:anonymous@ecb.cvs.sourceforge.net:/cvsroot/ecb"
-       :build `(,(concat  "make CEDET=" " EMACS=" el-get-emacs)))
+       :build `(("make" "CEDET=" ,(concat "EMACS=" (shell-quote-argument el-get-emacs)))))

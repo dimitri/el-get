@@ -1,0 +1,3 @@
+(:name ido-ubiquitous
+       :description "Use ido (nearly) everywhere"
+       :type elpa)

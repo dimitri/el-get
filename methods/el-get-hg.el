@@ -58,8 +58,22 @@
 		      :error ,ko))
      post-update-fun)))
 
-(el-get-register-method
- :hg #'el-get-hg-clone #'el-get-hg-pull #'el-get-rmdir
- #'el-get-hg-clone-hook)
+(defun el-get-hg-compute-checksum (package)
+  "Return the hash of the checked-out revision of PACKAGE."
+  (with-temp-buffer
+    (cd (el-get-package-directory package))
+    (let* ((args '("hg" "--debug" "tags"))
+           (cmd (mapconcat 'shell-quote-argument args " "))
+           (output (shell-command-to-string cmd))
+           (hash (and (string-match "^tip[[:space:]]+[0-9]+\\:\\([0-9A-Fa-f]+\\)" output)
+                      (match-string 0 output))))
+      hash)))
+
+(el-get-register-method :hg
+  :install #'el-get-hg-clone
+  :update #'el-get-hg-pull
+  :remove #'el-get-rmdir
+  :install-hook #'el-get-hg-clone-hook
+  :compute-checksum #'el-get-hg-compute-checksum)
 
 (provide 'el-get-hg)

@@ -1,4 +1,8 @@
 (:name sauron
-       :description "Sauron notification service"
+       :description
+       "enhanced tracking of the world inside and outside your emacs"
+       :website "https://github.com/djcb/sauron"
        :type git
-       :url "https://github.com/djcb/sauron.git")
+       :url "git://github.com/djcb/sauron.git"
+       :post-init (lambda ()
+                    (autoload 'sauron-start "sauron" "Start sauron." t)))

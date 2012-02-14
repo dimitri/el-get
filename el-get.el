@@ -27,6 +27,11 @@
 ;;
 ;; Please note that this versioning policy has been picked while backing
 ;; 1.2~dev, so 1.0 was a "stable" release in fact.  Ah, history.
+;;
+;; In addition to the version, you can also get the exact git revision
+;; by running M-x `el-get-self-checksum'. You should provide this
+;; checksum when seeking support or reporting a bug, so that the
+;; developers will know exactly which version you are using.
 
 ;;; Change Log:
 ;;
@@ -41,6 +46,9 @@
 ;;   - fix recipes :build commands, must be either lists of strings or expr
 ;;   - add support for el-get-reload and do that at update time
 ;;   - implement :checksum property for http kinds of files
+;;   - Add new command el-get-reinstall
+;;   - implement :checkout property for git packages
+;;   - implement :shallow property for git packages
 ;;
 ;;  3.1 - 2011-09-15 - Get a fix
 ;;
@@ -158,7 +166,7 @@
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
 
-(defconst el-get-version "4.0.6" "el-get version number")
+(defconst el-get-version "4.0.7" "el-get version number")
 
 (defconst el-get-script (or load-file-name buffer-file-name))
 
@@ -461,6 +469,12 @@ PACKAGE may be either a string or the corresponding symbol."
 	(el-get-init package)
 	(el-get-install-next-packages package)))))
 
+(defun el-get-reinstall (package)
+  "Remove PACKAGE and then install it again."
+  (interactive (list (el-get-read-package-name "Reinstall")))
+  (el-get-remove package)
+  (el-get-install package))
+
 (defun el-get-install-next-packages (current-package)
   "Run as part of `el-get-post-init-hooks' when dealing with dependencies."
   (let ((package (pop el-get-next-packages)))
@@ -693,8 +707,16 @@ entry which is not a symbol and is not already a known recipe."
       (error "package method %s does not support checksums" type))
     (when compute-checksum
       (let ((checksum (funcall compute-checksum package)))
-	(message "Checksum for package %s is: %s" package checksum)
-	(kill-new checksum)))))
+        (message "Checksum for package %s is: %s. It has been copied to the kill-ring."
+                 package checksum)
+        (kill-new checksum)))))
+
+(defun el-get-self-checksum ()
+  "Compute the checksum of the running version of el-get itself.
+
+Also put the checksum in the kill-ring."
+  (interactive)
+  (el-get-checksum 'el-get))
 
 
 ;;

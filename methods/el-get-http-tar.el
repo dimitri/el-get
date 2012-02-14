@@ -63,8 +63,10 @@ the files up."
 
 (add-hook 'el-get-http-tar-install-hook 'el-get-http-tar-cleanup-extract-hook)
 
-(el-get-register-method
- :http-tar #'el-get-http-tar-install #'el-get-http-tar-install #'el-get-rmdir
-  #'el-get-http-tar-install-hook)
+(el-get-register-method :http-tar
+  :install #'el-get-http-tar-install
+  :update #'el-get-http-tar-install
+  :remove #'el-get-rmdir
+  :install-hook #'el-get-http-tar-install-hook)
 
 (provide 'el-get-http-tar)

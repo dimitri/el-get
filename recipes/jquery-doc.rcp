@@ -1,0 +1,6 @@
+(:name jquery-doc
+       :website "https://github.com/ananthakumaran/jquery-doc.el"
+       :type git
+       :url "git://github.com/ananthakumaran/jquery-doc.el.git"
+       :features "jquery-doc"
+       :depends auto-complete)
