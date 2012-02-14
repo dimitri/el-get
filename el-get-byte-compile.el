@@ -122,10 +122,7 @@ in `:compile-files' will be byte-compiled.."
 
 (defun el-get-byte-compile-process (package buffer working-dir sync files)
   "return the 'el-get-start-process-list' entry to byte compile PACKAGE"
-  (let* ((compile-expr
-          `(el-get-byte-compile-for-subprocess ',files))
-         (files-to-load (el-get-all-symbol-files compile-expr))
-         (input-data
+  (let* ((input-data
           (list :load-path (cons "." load-path)
                 :compile-files files))
          (subprocess-function 'el-get-byte-compile-from-stdin)
