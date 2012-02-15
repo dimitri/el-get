@@ -1,0 +1,4 @@
+(:name sumatra-forward
+       :description "(X)Emacs frontend to forward search with SumatraPDF"
+       :type http
+       :url "http://william.famille-blum.org/software/sumatra/sumatra-forward.el")

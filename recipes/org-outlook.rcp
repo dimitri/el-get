@@ -1,0 +1,4 @@
+(:name org-outlook
+       :type git
+       :url "https://github.com/mlf176f2/org-outlook.el.git"
+       :description "Integrate Microsoft Outlook with org-mode")

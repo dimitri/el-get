@@ -1,0 +1,5 @@
+(:name r-autoyas
+       :website "https://github.com/mlf176f2/r-autoyas.el"
+       :description "Automatic yasnippet creation for emacs lisp."
+       :type git
+       :url "https://github.com/mlf176f2/r-autoyas.el.git")
