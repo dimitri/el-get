@@ -1,4 +1,5 @@
 (:name descbinds-anything
+       :description "Yet Another describe-bindings with anything"
        :type emacswiki
        :depends anything
        :features descbinds-anything)

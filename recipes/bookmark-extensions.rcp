@@ -1,4 +1,5 @@
 (:name bookmark-extensions
+       :description "Extensions to standard library bookmark.el."
        :website "http://www.emacswiki.org/emacs/BookmarkExtension"
        :type hg
        :url "http://mercurial.intuxication.org/hg/emacs-bookmark-extension/"

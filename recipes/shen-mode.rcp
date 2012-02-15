@@ -1,4 +1,5 @@
 (:name shen-mode
+       :description "Major mode for editing Shen source code"
        :website "http://shenlanguage.org"
        :type git
        :url "git://github.com/eschulte/shen-mode.git")
