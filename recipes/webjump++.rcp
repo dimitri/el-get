@@ -1,0 +1,4 @@
+(:name webjump++
+       :type git
+       :description "Easy search web on engines."
+       :url "git://github.com/renard/webjump-plus-plus.git")
