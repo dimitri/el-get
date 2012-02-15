@@ -1,0 +1,5 @@
+(:name tabbar
+       :type emacswiki
+       :description "Display a tab bar in the header line"
+       :lazy t
+       :load-path ".")

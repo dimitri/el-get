@@ -1,0 +1,4 @@
+(:name xahk-mode
+       :description "Major mode for editing AHK (AutoHotKey) scripts."
+       :type http
+       :url "http://ergoemacs.googlecode.com/svn/trunk/packages/xahk-mode.el")

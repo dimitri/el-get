@@ -1,0 +1,5 @@
+(:name linkd
+       :type http-tar
+       :description "Make hypertext with active links in any buffer"
+       :options ("xzvf")
+       :url "http://www.emacswiki.org/emacs/download/linkd.tar.gz")
