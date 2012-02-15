@@ -1,0 +1,4 @@
+(:name ac-R
+       :description ""
+       :type git
+       :url "https://github.com/mlf176f2/ac-R")

@@ -1,0 +1,7 @@
+(:name yas-jit
+       :website "https://github.com/mlf176f2/yas-jit.el"
+       :description "Just in time loading of yasnippets"
+       :type git
+       :depends yasnippet
+       :load-path "."
+       :url "https://github.com/mlf176f2/yas-jit.el.git")
