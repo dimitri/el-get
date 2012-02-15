@@ -1,4 +1,5 @@
 (:name jquery-doc
+       :description "jQuery api documentation interface for emacs"
        :website "https://github.com/ananthakumaran/jquery-doc.el"
        :type git
        :url "git://github.com/ananthakumaran/jquery-doc.el.git"
