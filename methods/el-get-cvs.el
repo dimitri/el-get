@@ -83,21 +83,6 @@ Enable this if you want el-get to honor these settings"
 	  (setq ret (replace-match (concat ":pserver" cvs-proxy ":") t t ret)))))
     (symbol-value 'ret)))
 
-(defun el-get-cvs-checkout-proxy-url-test ()
-  "Tests the function for cvs proxy urls."
-  (interactive)
-  (let ((el-get-cvs-http-proxy-url "")
-        (el-get-cvs-http-proxy-url-use-user-name nil)
-        (url ":pserver:anonymous@cvs.namazu.org:/storage/cvsroot"))
-    (message "Proxy:%s\nURL:%s\n" el-get-cvs-http-proxy-url (el-get-cvs-checkout-proxy-url url))
-    (setq el-get-cvs-http-proxy-url "http://proxy.corporate.net:8080")
-    (message "Proxy:%s\nURL:%s\n" el-get-cvs-http-proxy-url (el-get-cvs-checkout-proxy-url url))
-    (setq el-get-cvs-http-proxy-url "http://user@proxy.corporate.net:8080")
-    (message "Proxy:%s\nURL:%s\n" el-get-cvs-http-proxy-url (el-get-cvs-checkout-proxy-url url))
-    (setq el-get-cvs-http-proxy-url "http://user:password@proxy.corporate.net:8080")
-    (message "Proxy:%s\nURL:%s\n" el-get-cvs-http-proxy-url (el-get-cvs-checkout-proxy-url url))))
-
-
 (defun el-get-cvs-checkout (package urlp post-install-fun)
   "cvs checkout the package."
   (let* ((cvs-executable (el-get-executable-find "cvs"))
