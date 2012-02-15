@@ -90,32 +90,39 @@ newer, then compilation is skipped."
       files)))
 
 (defun el-get-byte-compile-from-stdin ()
-  "byte compile files read on STDIN
+  "byte compile files from stdin.
 
-This is run as a subprocess with an `emacs -Q -batch -f
-el-get-byte-compile` command and with the file list as stdin,
-written by `prin1-to-string' so that `read' is able to process
-it."
-  (let ((files (read)))
+Standard input must be a property list with properties
+`:load-path' and `:compile-files', each of which should have a
+value that is a list of strings. The variable `load-path' will be
+set from the `:load-path' property, and then all the files listed
+in `:compile-files' will be byte-compiled.."
+  (let* ((input-data (read))
+         (load-path (append (plist-get input-data :load-path) load-path))
+         (files (plist-get input-data :compile-files)))
     (loop for f in files
-	  do (progn
-	       (message "el-get-byte-compile-from-stdin: %s" f)
-	       (el-get-byte-compile-file-or-directory f)))))
+          do (progn
+               (message "el-get-byte-compile: %s" f)
+               (el-get-byte-compile-file-or-directory f)))))
 
 (defun el-get-byte-compile-process (package buffer working-dir sync files)
   "return the 'el-get-start-process-list' entry to byte compile PACKAGE"
-  (let ((bytecomp-command
-	 (list el-get-emacs
-	       "-Q" "-batch" "-f" "toggle-debug-on-error"
-	       "-l" (file-name-sans-extension
-                     (symbol-file 'el-get-byte-compile-from-stdin 'defun))
-	       "-f" "el-get-byte-compile-from-stdin")))
+  (let* ((input-data
+          (list :load-path (cons "." load-path)
+                :compile-files files))
+         (subprocess-function 'el-get-byte-compile-from-stdin)
+         (bytecomp-command
+          `(,el-get-emacs
+            "-Q" "-batch" "-f" "toggle-debug-on-error"
+            "-l" ,(file-name-sans-extension
+                   (symbol-file subprocess-function 'defun))
+            "-f" ,(symbol-name subprocess-function))))
     `(:command-name "byte-compile"
 		    :buffer-name ,buffer
 		    :default-directory ,working-dir
 		    :shell t
+                    :stdin ,input-data
 		    :sync ,sync
-		    :stdin ,files
 		    :program ,(car bytecomp-command)
 		    :args ,(cdr bytecomp-command)
 		    :message ,(format "el-get-build %s: byte-compile ok." package)
