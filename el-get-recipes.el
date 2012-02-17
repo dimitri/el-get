@@ -29,8 +29,16 @@
   :group 'el-get
   :type 'directory)
 
+(defcustom el-get-recipe-path-elpa
+  (concat (file-name-directory el-get-dir) "el-get/recipes/elpa/")
+  "Define where to keep a local copy of elpa recipes"
+  :group 'el-get
+  :type 'directory)
+
+
 (defcustom el-get-recipe-path
   (list (concat (file-name-directory el-get-script) "recipes")
+       el-get-recipe-path-elpa
 	el-get-recipe-path-emacswiki)
   "Define where to look for the recipes, that's a list of directories"
   :group 'el-get

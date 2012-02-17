@@ -138,4 +138,35 @@ the recipe, then return nil."
  :elpa #'el-get-elpa-install #'el-get-elpa-update #'el-get-elpa-remove
  #'el-get-elpa-install-hook #'el-get-elpa-remove-hook)
 
+;;;
+;;; Functions to maintain a local recipe list from ELPA
+;;;
+
+;;;###autoload
+(defun el-get-elpa-build-local-recipies (&optional target-dir)
+  "retrieves list of ELPA packages and turn them to local recipe set."
+  (interactive)
+  (unless package-archive-contents
+    (package-refresh-contents))
+  (let ((target-dir (or target-dir
+			(car command-line-args-left)
+                        el-get-recipe-path-elpa))
+        (coding-system-for-write 'utf-8)
+        pkg package description)
+    (unless (file-directory-p target-dir) (make-directory target-dir))
+    (mapc (lambda(pkg)
+	    (let* ((package (format "%s" (car pkg)))
+		   (pkg-desc (cdr pkg))
+		   (description (package-desc-doc pkg-desc))
+		   (repo (aref pkg-desc 4)))
+              (with-temp-file (expand-file-name (concat package ".rcp")
+						target-dir)
+		(message "%s:%s (%s)" package description repo)
+                (insert
+                 (format
+                  "(:name %s\n:type elpa\n:description \"%s\"\n:repo \"%s\")"
+                  package description repo))
+                (indent-region (point-min) (point-max)))))
+	  package-archive-contents)))
+
 (provide 'el-get-elpa)
