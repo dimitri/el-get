@@ -3,4 +3,5 @@
        :website "https://github.com/m2ym/popwin-el"
        :type git
        :url "git://github.com/m2ym/popwin-el.git"
+       :load-path ("." "misc")
        :features "popwin")
