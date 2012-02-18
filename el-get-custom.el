@@ -316,7 +316,7 @@ definition provided by `el-get' recipes locally.
 
 :submodule
 
-   If set to nil in a git recipe, submodules will not update.
+   If set to nil in a git recipe, submodules will not be updated.
 
 "
   :group 'el-get
