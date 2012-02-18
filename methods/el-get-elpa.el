@@ -141,4 +141,36 @@ the recipe, then return nil."
   :install-hook #'el-get-elpa-install-hook
   :remove-hook #'el-get-elpa-remove-hook)
 
+;;;
+;;; Functions to maintain a local recipe list from ELPA
+;;;
+
+;;;###autoload
+(defun el-get-elpa-build-local-recipies (&optional target-dir do-not-update)
+  "retrieves list of ELPA packages and turn them to local recipe set.
+TARGET-DIR is the target directory
+DO-NOT-UPDATE will not update the package archive contents before running this."
+  (interactive)
+  (let ((target-dir (or target-dir
+			(car command-line-args-left)
+                        el-get-recipe-path-elpa))
+        (coding-system-for-write 'utf-8)
+        pkg package description)
+    (when (or (not package-archive-contents) (and package-archive-contents (not do-not-update)))
+      (package-refresh-contents))
+    (unless (file-directory-p target-dir) (make-directory target-dir))
+    (mapc (lambda(pkg)
+	    (let* ((package (format "%s" (car pkg)))
+		   (pkg-desc (cdr pkg))
+		   (description (package-desc-doc pkg-desc)))
+              (with-temp-file (expand-file-name (concat package ".rcp")
+						target-dir)
+		(message "%s:%s" package description)
+                (insert
+                 (format
+                  "(:name %s\n:type elpa\n:description \"%s\")"
+                  package description repo))
+                (indent-region (point-min) (point-max)))))
+	  package-archive-contents)))
+
 (provide 'el-get-elpa)
