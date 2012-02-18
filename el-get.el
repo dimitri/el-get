@@ -286,7 +286,16 @@ force their evaluation on some packages only."
 (defun el-get-version ()
   "Message the current el-get version"
   (interactive)
-  (message "el-get version %s" el-get-version))
+  (let ((version
+	 (if (string= (cadr (split-string el-get-version "\\.")) "0")
+	     ;; devel version, add the current git sha1 (short form)
+	     (let ((default-directory (file-name-directory el-get-script)))
+	       (concat el-get-version "."
+		       (shell-command-to-string
+			"git --no-pager log -n1 --format=format:%h")))
+	   el-get-version)))
+    (kill-new version)
+    (message "el-get version %s" version)))
 
 (defun el-get-read-all-recipe-names ()
   "Return the list of all known recipe names.
