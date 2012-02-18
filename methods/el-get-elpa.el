@@ -143,16 +143,18 @@ the recipe, then return nil."
 ;;;
 
 ;;;###autoload
-(defun el-get-elpa-build-local-recipies (&optional target-dir)
-  "retrieves list of ELPA packages and turn them to local recipe set."
+(defun el-get-elpa-build-local-recipies (&optional target-dir do-not-update)
+  "retrieves list of ELPA packages and turn them to local recipe set.
+TARGET-DIR is the target directory
+DO-NOT-UPDATE will not update the package archive contents before running this."
   (interactive)
-  (unless package-archive-contents
-    (package-refresh-contents))
   (let ((target-dir (or target-dir
 			(car command-line-args-left)
                         el-get-recipe-path-elpa))
         (coding-system-for-write 'utf-8)
         pkg package description)
+    (when (or (not package-archive-contents) (and package-archive-contents (not do-not-update)))
+      (package-refresh-contents))
     (unless (file-directory-p target-dir) (make-directory target-dir))
     (mapc (lambda(pkg)
 	    (let* ((package (format "%s" (car pkg)))
