@@ -169,7 +169,7 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
                 (insert
                  (format
                   "(:name %s\n:type elpa\n:description \"%s\")"
-                  package description repo))
+                  package description))
                 (indent-region (point-min) (point-max)))))
 	  package-archive-contents)))
 
