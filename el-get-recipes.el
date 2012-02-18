@@ -22,6 +22,7 @@
 ;;
 
 (require 'el-get-core)
+(require 'el-get-byte-compile)
 
 (defcustom el-get-recipe-path-emacswiki
   (concat (file-name-directory el-get-dir) "el-get/recipes/emacswiki/")
@@ -52,13 +53,19 @@
 (defun el-get-load-package-user-init-file (package)
   "Load the user init file for PACKAGE, called init-package.el
 and to be found in `el-get-user-package-directory'.  Do nothing
-when this custom is nil."
+when this custom is nil.
+
+Will automatically compile the init file as needed and load the
+compiled version."
   (when el-get-user-package-directory
-    (let* ((init-file-name    (format "init-%s.el" package))
+    (let* ((init-file-name (format "init-%s.el" package))
 	   (package-init-file
-	    (expand-file-name init-file-name el-get-user-package-directory)))
-      (el-get-verbose-message "el-get: load %S" package-init-file)
-      (load package-init-file 'noerror))))
+	    (expand-file-name init-file-name el-get-user-package-directory))
+	   (compiled-init-file (concat (file-name-sans-extension package-init-file) ".elc")))
+      (when (file-exists-p package-init-file)
+	(el-get-byte-compile-file package-init-file)
+	(el-get-verbose-message "el-get: load %S" compiled-init-file)
+	(load compiled-init-file 'noerror)))))
 
 (defun el-get-recipe-dirs ()
   "Return the elements of el-get-recipe-path that actually exist.
