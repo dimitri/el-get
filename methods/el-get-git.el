@@ -45,7 +45,11 @@ found."
 	 (name   (format "*git clone %s*" package))
 	 (source (el-get-package-def package))
 	 (branch (plist-get source :branch))
-	 (checkout (or (plist-get source :checkout)
+         (submodule-prop (plist-get source :submodule))
+         ;; nosubmodule is true only if :submodules  is explicitly set to nil.
+         (explicit-nosubmodule (and (plist-member source :submodule)
+                                    (not submodule-prop)))
+         (checkout (or (plist-get source :checkout)
 		       (plist-get source :checksum)))
          (shallow (if (plist-member source :shallow)
                       (plist-get source :shallow)
@@ -81,13 +85,14 @@ found."
 		:args (list "--no-pager" "checkout" checkout)
 		:message (format "git checkout %s ok" checkout)
 		:error (format "Could not checkout %s for package %s" checkout package)))
-       (:command-name "*git submodule update*"
-		      :buffer-name ,name
-		      :default-directory ,pdir
-		      :program ,git-executable
-		      :args ("--no-pager" "submodule" "update" "--init" "--recursive")
-		      :message "git submodule update ok"
-		      :error "Could not update git submodules"))
+       ,(unless explicit-nosubmodule
+	  `(:command-name "*git submodule update*"
+			  :buffer-name ,name
+			  :default-directory ,pdir
+			  :program ,git-executable
+			  :args ("--no-pager" "submodule" "update" "--init" "--recursive")
+			  :message "git submodule update ok"
+			  :error "Could not update git submodules")))
      post-install-fun)))
 
 (defun el-get-git-pull (package url post-update-fun)
@@ -96,7 +101,11 @@ found."
 	 (pdir (el-get-package-directory package))
 	 (name (format "*git pull %s*" package))
 	 (source (el-get-package-def package))
-	 (checkout (or (plist-get source :checkout)
+         (submodule-prop (plist-get source :submodule))
+         ;; nosubmodule is true only if :submodules  is explicitly set to nil.
+         (explicit-nosubmodule (and (plist-member source :submodule)
+                                     (not submodule-prop)))
+         (checkout (or (plist-get source :checkout)
 		       (plist-get source :checksum)))
 	 ;; When dealing with a specific checkout, we cannot use
 	 ;; "pull", but must instead use "fetch" and then "checkout".
@@ -120,13 +129,14 @@ found."
 		:args (list "--no-pager" "checkout" checkout)
 		:message (format "git checkout %s ok" checkout)
 		:error (format "Could not checkout %s for package %s" checkout package)))
-       (:command-name "*git submodule update*"
+       ,(unless explicit-nosubmodule
+	  `(:command-name "*git submodule update*"
 		      :buffer-name ,name
 		      :default-directory ,pdir
 		      :program ,git-executable
 		      :args ("--no-pager" "submodule" "update" "--init" "--recursive")
 		      :message "git submodule update ok"
-		      :error "Could not update git submodules"))
+		      :error "Could not update git submodules")))
      post-update-fun)))
 
 (defun el-get-git-compute-checksum (package)
