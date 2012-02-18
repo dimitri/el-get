@@ -313,6 +313,11 @@ definition provided by `el-get' recipes locally.
     not downloading all the history of the repository. The
     default is controlled by the variable
     `el-get-git-shallow-clone', which is nil by default.
+
+:submodule
+
+   If set to nil in a git recipe, submodules will not update.
+
 "
   :group 'el-get
   :type
