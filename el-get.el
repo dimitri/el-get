@@ -471,7 +471,7 @@ PACKAGE may be either a string or the corresponding symbol."
       ;; once the first is installed
       (el-get-verbose-message "el-get-install %s: %S" package packages)
       (setq el-get-next-packages (cdr packages))
-      (add-hook 'el-get-post-install-hooks 'el-get-install-next-packages))
+      (add-hook 'el-get-post-init-hooks 'el-get-install-next-packages))
 
     (let ((package (car packages)))
       (if (not (el-get-package-is-installed package))
