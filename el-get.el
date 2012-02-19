@@ -355,12 +355,30 @@ which defaults to the first element in `el-get-recipe-path'."
 
 (defun el-get-funcall (func fname package)
   "`funcal' FUNC for PACKAGE and report about FNAME when `el-get-verbose'"
-  (when (and func (functionp func))
+  (let ((func
+         (cond
+          ;; Nil means do nothing
+          ((null func) nil)
+          ;; A function gets used unchanged
+          ((functionp func) func)
+          ;; A list is either a single function-call or a list of
+          ;; expressions. Either way, it gets wrapped into a function.
+          ((listp func)
+           (if (functionp (car func))
+               ;; Single function call
+               (append (lambda ()) (list func))
+             ;; List of expressions
+             (append '(lambda ()) func)))
+          ;; Anything else is an error
+          (t (error "Unknown :%s function for package %s: %S"
+                    fname package func)))))
+    (when func
+      (assert (functionp func))
       (el-get-verbose-message "el-get: Calling :%s function for package %s"
-			      fname package)
+                              fname package)
       ;; don't forget to make some variables available
       (let ((pdir (el-get-package-directory package)))
-	(funcall func))))
+        (funcall func)))))
 
 
 (defun el-get-init (package)
