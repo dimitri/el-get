@@ -498,13 +498,7 @@ PACKAGE may be either a string or the corresponding symbol."
 	(message "el-get: `%s' package is already installed" package)
 	(el-get-init package)))))
 
-(defun el-get-reinstall (package)
-  "Remove PACKAGE and then install it again."
-  (interactive (list (el-get-read-package-name "Reinstall")))
-  (el-get-remove package)
-  (el-get-install package))
-
-(defun el-get-install-next-packages (current-package)
+(defun el-get-install-next-packages (&rest ignored)
   "Run as part of `el-get-post-init-hooks' when dealing with dependencies."
   (let ((package (pop el-get-next-packages)))
     (el-get-verbose-message "el-get-install-next-packages: %s" package)
@@ -689,6 +683,12 @@ PACKAGE may be either a string or the corresponding symbol."
     (funcall remove package url 'el-get-post-remove)
     (el-get-save-package-status package "removed")
     (message "el-get remove %s" package)))
+
+(defun el-get-reinstall (package)
+  "Remove PACKAGE and then install it again."
+  (interactive (list (el-get-read-package-name "Reinstall")))
+  (el-get-remove package)
+  (el-get-install package))
 
 ;;;###autoload
 (defun el-get-cd (package)
