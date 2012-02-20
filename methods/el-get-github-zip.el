@@ -20,14 +20,21 @@
      ;; Use :url if provided
      (plist-get source :url)
      ;; Else generate URL from username, and reponame
-     (let* ((username (el-get-as-string
-                       (or (plist-get source :username)
-                           (error "Recipe for Github zip package %s needs a username" package))))
+     (let* ((username (plist-get source :username))
             (reponame (el-get-as-string
                        (or (plist-get source :pkgname)
                            package)))
             (branch (or (plist-get source :branch)
                         "master")))
+       ;; A slash in the repo name means that it is "user/repo"
+       (when (string-match-p "/" reponame)
+         (let* ((split (split-string reponame "[[:space:]]\\|/" 'omit-nulls)))
+           (assert (= (length split) 2) nil
+                   "Github pkgname %s must contain only one slash and no spaces" reponame)
+           (setq username (first split)
+                 reponame (second split))))
+       (unless username
+         (error "Recipe for Github-zip package %s needs a username" package))
        (format "https://github.com/%s/%s/zipball/%s"
                username reponame branch)))))
 
