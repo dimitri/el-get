@@ -1,6 +1,6 @@
 (:name q-mode
-       :type git
-       :url "git://github.com/little-arhat/q-mode.git"
+       :type github
+       :pkgname "little-arhat/q-mode"
        :description "kdbp-mode + q-minor-mode combined for easy installation and using."
        :load-path (".")
        :features (q-minor-mode kdbp-mode)

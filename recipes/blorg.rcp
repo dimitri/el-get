@@ -1,4 +1,4 @@
 (:name blorg
-       :type git
+       :type github
        :description "Blogging engine using Emacs Org-mode to create static pages"
-       :url "https://github.com/RolKau/blorg.git")
+       :pkgname "RolKau/blorg")

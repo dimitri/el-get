@@ -1,8 +1,8 @@
 (:name alert
        :description "Growl-style notification system for Emacs"
        :website "https://github.com/jwiegley/alert"
-       :type git
-       :url "git://github.com/jwiegley/alert.git"
+       :type github
+       :pkgname "jwiegley/alert"
        :post-init
        (lambda ()
          (autoload 'alert "alert"

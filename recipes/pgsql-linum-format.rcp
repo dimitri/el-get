@@ -1,5 +1,5 @@
 (:name pgsql-linum-format
        :description "A linum-mode hook to display PostgreSQL functions line numbers"
-       :type git
-       :url "https://github.com/dimitri/pgsql-linum-format.git"
+       :type github
+       :pkgname "dimitri/pgsql-linum-format"
        :features pgsql-linum-format)

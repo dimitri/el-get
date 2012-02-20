@@ -1,6 +1,6 @@
 (:name srep
        :description "the smart text repeater"
        :website "http://d.hatena.ne.jp/ken_m/20111219/1324318727"
-       :type git
-       :url "git://github.com/kmorimoto/srep.git"
+       :type github
+       :pkgname "kmorimoto/srep"
        :features "srep")
