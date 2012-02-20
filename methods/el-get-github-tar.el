@@ -40,9 +40,16 @@
 
 (defun el-get-github-tar-install (package url post-install-fun)
   "Clone the given package from Github following the URL."
-  (el-get-http-tar-install package
-                           (or url (el-get-github-tar-url package))
-                           post-install-fun))
+  ;; The recipe must have a `:url' property for
+  ;; `el-get-http-tar-install' to work. Also, since github tarballs
+  ;; are ".tar.gz", we know what the default tar options should be.
+  (let* ((old-pdef (el-get-package-def package))
+         (url (or url (el-get-github-tar-url package)))
+         (options (or (plist-get old-pdef :options) '("xzf")))
+         (new-pdef (append `(:url ,url :options ,options)
+                           (el-get-package-def package)))
+         (el-get-sources (cons new-pdef el-get-sources)))
+    (el-get-http-tar-install package url post-install-fun)))
 
 (el-get-register-derived-method :github-tar :http-tar
   :install #'el-get-github-tar-install
