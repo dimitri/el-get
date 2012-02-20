@@ -51,8 +51,8 @@ test_recipe () {
   ;(el-get-update pname)
   ;(el-get-remove pname)
   ;(el-get-install pname)
-  (unless (el-get-package-is-installed pname)
-    (error "Package %s should be installed right now" pname)))
+  (assert (el-get-package-is-installed pname) nil
+          "Package %s should be installed right now but isn't" pname))
 
 EOF
 
