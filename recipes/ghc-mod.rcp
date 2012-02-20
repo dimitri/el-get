@@ -1,0 +1,5 @@
+(:name ghc-mod
+       :description "Happy Haskell programming"
+       :type git
+       :url "https://github.com/kazu-yamamoto/ghc-mod.git"
+       :load-path "elisp")
