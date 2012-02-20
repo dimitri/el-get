@@ -1,6 +1,6 @@
 (:name textlint
-       :type git
-       :url "git://github.com/DamienCassou/textlint.git"
+       :type github
+       :pkgname "DamienCassou/textlint"
        :website "http://scg.unibe.ch/research/textlint"
        :description "Allows the integration of TextLint within Emacs"
        :load "textlint.el")

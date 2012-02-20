@@ -1,4 +1,4 @@
 (:name perspective
-       :type git
+       :type github
        :description "switch between named perspectives of the editor"
-       :url "git://github.com/nex3/perspective-el.git")
+       :pkgname "nex3/perspective-el")

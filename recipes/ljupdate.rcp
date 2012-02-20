@@ -1,5 +1,5 @@
 (:name ljupdate
        :description "LiveJournal client for Emacs"
-       :type git
-       :url "https://github.com/hober/ljupdate.git"
+       :type github
+       :pkgname "hober/ljupdate"
        :features ljupdate)

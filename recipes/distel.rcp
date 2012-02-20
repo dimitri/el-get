@@ -1,8 +1,8 @@
 (:name distel
        :website "https://github.com/massemanet/distel"
        :description "Distributed Emacs Lisp for Erlang."
-       :type git
-       :url "https://github.com/massemanet/distel.git"
+       :type github
+       :pkgname "massemanet/distel"
        :info "doc"
        :build `,(mapcar
                  (lambda (target)

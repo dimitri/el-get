@@ -1,4 +1,4 @@
 (:name rebox2
        :description "create, remove, edit boxes"
-       :type git
-       :url "https://github.com/lewang/rebox2.git")
+       :type github
+       :pkgname "lewang/rebox2")

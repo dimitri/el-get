@@ -1,5 +1,5 @@
 (:name mailq
        :description "A major mode for `mailq' interaction"
-       :type git
-       :url "https://github.com/dimitri/mailq-el.git"
+       :type github
+       :pkgname "dimitri/mailq-el"
        :load "mailq.el")
