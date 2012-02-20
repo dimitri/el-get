@@ -64,9 +64,7 @@ FROM is a literal string, not a regexp."
      ;; Use :url if provided
      (plist-get source :url)
      ;; Else generate URL from username, reponame, and url-type
-     (let* ((username (el-get-as-string
-                       (or (plist-get source :username)
-                           (error "Recipe for Github package %s needs a username" package))))
+     (let* ((username (el-get-as-string (plist-get source :username)))
             (reponame (el-get-as-string
                        (or (plist-get source :pkgname)
                            package)))
@@ -79,6 +77,15 @@ FROM is a literal string, not a regexp."
                (or (plist-get el-get-github-url-type-plist
                               url-type)
                    (error "Unknown Github URL type: %s" url-type)))))
+       ;; A slash in the repo name means that it is "user/repo"
+       (when (string-match-p "/" reponame)
+         (let* ((split (split-string reponame "[[:space:]]\\|/" 'omit-nulls)))
+           (assert (= (length split) 2) nil
+                   "Github pkgname %s must contain only one slash and no spaces" reponame)
+           (setq username (first split)
+                 reponame (second split))))
+       (unless username
+         (error "Recipe for Github package %s needs a username" package))
        (el-get-replace-string
         "%USER%" username
         (el-get-replace-string
