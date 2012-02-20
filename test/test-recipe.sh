@@ -41,16 +41,21 @@ test_recipe () {
   lisp_temp_file=`mktemp`
   cat >"$lisp_temp_file" <<EOF
 
-(let* ((debug-on-error t)
-       (el-get-verbose t)
-       (pdef (el-get-read-recipe-file "$recipe_file"))
-       (pname (plist-get pdef :name))
-       (el-get-sources
-        (list pdef)))
+(progn
+  (setq debug-on-error t
+        el-get-verbose t
+        el-get-default-process-sync t
+        pdef (el-get-read-recipe-file "$recipe_file")
+        pname (plist-get pdef :name)
+        el-get-sources (list pdef))
   (el-get (quote sync) pname)
-  ;(el-get-update pname)
-  ;(el-get-remove pname)
-  ;(el-get-install pname)
+  (message "*** Initial install successful ***")
+  (el-get-update pname)
+  (message "*** Update successful ***")
+  (el-get-remove pname)
+  (message "*** Removal successful ***")
+  (el-get-install pname)
+  (message "*** Second install successful ***")
   (assert (el-get-package-is-installed pname) nil
           "Package %s should be installed right now but isn't" pname))
 
