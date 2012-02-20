@@ -122,7 +122,7 @@ entry."
 ;;
 (defun el-get-rmdir (package &rest ignored)
   "Just rm -rf the package directory. If it is a symlink, delete it."
-  (let* ((pdir (el-get-package-directory package)))
+  (let* ((pdir (expand-file-name "." (el-get-package-directory package))))
     (cond ((file-symlink-p pdir)
            (delete-file pdir))
           ((file-directory-p pdir)
