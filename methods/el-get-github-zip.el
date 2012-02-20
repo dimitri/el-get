@@ -40,9 +40,14 @@
 
 (defun el-get-github-zip-install (package url post-install-fun)
   "Clone the given package from Github following the URL."
-  (el-get-http-zip-install package
-                           (or url (el-get-github-zip-url package))
-                           post-install-fun))
+  ;; The recipe must have a `:url' property for
+  ;; `el-get-http-zip-install' to work.
+  (let* ((old-pdef (el-get-package-def package))
+         (url (or url (el-get-github-zip-url package)))
+         (new-pdef (append `(:url ,url)
+                           (el-get-package-def package)))
+         (el-get-sources (cons new-pdef el-get-sources)))
+    (el-get-http-zip-install package url post-install-fun)))
 
 (el-get-register-derived-method :github-zip :http-zip
   :install #'el-get-github-zip-install
