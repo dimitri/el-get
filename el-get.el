@@ -364,8 +364,9 @@ which defaults to the first element in `el-get-recipe-path'."
           ;; A list is either a single function-call or a list of
           ;; expressions. Either way, it gets wrapped into a function.
           ((listp func)
-           (if (functionp (car func))
-               ;; Single function call
+           (if (or (functionp (car func))
+                   (symbol-function (car func)))
+               ;; Single function (or macro, or whatever) call
                (append (lambda ()) (list func))
              ;; List of expressions
              (append '(lambda ()) func)))
