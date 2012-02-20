@@ -64,7 +64,7 @@ FROM is a literal string, not a regexp."
      ;; Use :url if provided
      (plist-get source :url)
      ;; Else generate URL from username, reponame, and url-type
-     (let* ((username (el-get-as-string (plist-get source :username)))
+     (let* ((username (plist-get source :username))
             (reponame (el-get-as-string
                        (or (plist-get source :pkgname)
                            package)))
