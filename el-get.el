@@ -366,7 +366,8 @@ which defaults to the first element in `el-get-recipe-path'."
           ;; expressions. Either way, it gets wrapped into a function.
           ((listp func)
            (if (or (functionp (car func))
-                   (symbol-function (car func)))
+                   (and (symbolp (car func))
+                        (symbol-function (car func))))
                ;; Single function (or macro, or whatever) call
                (append (lambda ()) (list func))
              ;; List of expressions
