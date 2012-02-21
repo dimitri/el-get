@@ -96,25 +96,38 @@ definition provided by `el-get' recipes locally.
 
     The name of the package for the underlying package management
     system (`apt-get', `fink' or `pacman', also supported by
-    `emacsmirror'), which can be different from the Emacs package
-    name.
+    `github' and `emacsmirror'), which can be different from the
+    Emacs package name.
 
 :type
 
     The type of the package, currently el-get offers support for
-    `apt-get', `elpa', `git', `emacsmirror', `git-svn', `bzr' `svn',
-    `cvs', `darcs', `fink', `ftp', `emacswiki', `http-tar', `pacman',
-    `hg' and `http'. You can easily support your own types here,
-    see the variable `el-get-methods'.
+    `apt-get', `elpa', `git', `github', `emacsmirror', `git-svn',
+    `bzr' `svn', `cvs', `darcs', `fink', `ftp', `emacswiki',
+    `http-tar', `pacman', `hg' and `http'. You can easily support
+    your own types here, see the variable `el-get-methods'.
 
 :branch
 
-    Which branch to fetch when using `git'.  Also supported in
-    the installer in `el-get-install'.
+    Which branch to fetch when using `git' (and by extension,
+    `github' and `emacsmirror', which are derived form `git').
+    Also supported in the installer in `el-get-install'.
 
 :url
 
-    Where to fetch the package, only meaningful for `git' and `http' types.
+    Where to fetch the package, only meaningful for `git' and
+    `http' types.
+
+:username, :pkgname
+
+    For the `github' type, these specify the user name and repo
+    name to clone from Github. For example, for el-get, the user
+    name would be \"dimitri\", and the repo name would be
+    \"el-get\". As described above, the `:pkgname' property is
+    only required if the repo name on Github differs from the
+    Emacs package name. Note that the `emacsmirror' type is just
+    like the `github' type with `:username' set to
+    \"emacsmirror\".
 
 :build
 

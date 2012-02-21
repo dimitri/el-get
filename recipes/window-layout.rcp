@@ -1,6 +1,6 @@
 (:name window-layout
        :description "window layout manager"
        :website "https://github.com/kiwanami/emacs-window-layout"
-       :type git
-       :url "git://github.com/kiwanami/emacs-window-layout.git"
+       :type github
+       :pkgname "kiwanami/emacs-window-layout"
        :features "window-layout")

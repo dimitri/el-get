@@ -1,5 +1,5 @@
 (:name Enhanced-Ruby-Mode
        :description "Replacement for ruby-mode which uses ruby 1.9's Ripper to parse and indent"
-       :type git
-       :url "https://github.com/jacott/Enhanced-Ruby-Mode.git"
+       :type github
+       :pkgname "jacott/Enhanced-Ruby-Mode"
        :features ruby-mode)
