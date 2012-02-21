@@ -58,16 +58,33 @@ username and repo name should be substituted in."
 FROM is a literal string, not a regexp."
   (replace-regexp-in-string (regexp-quote from) to str 'fixedcase 'literal))
 
+(defun el-get-github-parse-user-and-repo (package)
+  "Returns a cons cell of `(USER . REPO)'."
+  (let* ((source (el-get-package-def package))
+         (type (el-get-package-method package))
+         (username (plist-get source :username))
+         (reponame (el-get-as-string
+                    (or (plist-get source :pkgname)
+                        package))))
+    (when (string-match-p "/" reponame)
+      (let* ((split (split-string reponame "[[:space:]]\\|/" 'omit-nulls)))
+        (assert (= (length split) 2) nil
+                "Github pkgname %s must contain only one slash and no spaces" reponame)
+        (setq username (first split)
+              reponame (second split))))
+    (unless username
+      (error "Recipe for %s package %s needs a username" type package))
+    (cons username reponame)))
+
 (defun el-get-github-url (package)
   (let* ((source (el-get-package-def package)))
     (or
      ;; Use :url if provided
      (plist-get source :url)
      ;; Else generate URL from username, reponame, and url-type
-     (let* ((username (plist-get source :username))
-            (reponame (el-get-as-string
-                       (or (plist-get source :pkgname)
-                           package)))
+     (let* ((user-and-repo (el-get-github-parse-user-and-repo package))
+            (username (car user-and-repo))
+            (reponame (cdr user-and-repo))
             (url-type (el-get-as-symbol
                        (or (plist-get source :url-type)
                            el-get-github-default-url-type)))
@@ -77,15 +94,6 @@ FROM is a literal string, not a regexp."
                (or (plist-get el-get-github-url-type-plist
                               url-type)
                    (error "Unknown Github URL type: %s" url-type)))))
-       ;; A slash in the repo name means that it is "user/repo"
-       (when (string-match-p "/" reponame)
-         (let* ((split (split-string reponame "[[:space:]]\\|/" 'omit-nulls)))
-           (assert (= (length split) 2) nil
-                   "Github pkgname %s must contain only one slash and no spaces" reponame)
-           (setq username (first split)
-                 reponame (second split))))
-       (unless username
-         (error "Recipe for Github package %s needs a username" package))
        (el-get-replace-string
         "%USER%" username
         (el-get-replace-string
