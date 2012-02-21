@@ -51,6 +51,7 @@
 ;;   - implement :shallow property for git packages
 ;;   - add support for auto-building of ELPA recipes
 ;;   - implement :submodule property for git packages (allow bypassing them)
+;;   - New package types: github, emacsmirror
 ;;
 ;;  3.1 - 2011-09-15 - Get a fix
 ;;
