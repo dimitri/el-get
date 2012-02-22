@@ -4,5 +4,5 @@
        :type git
        :url "https://github.com/emacsmirror/wb-line-number.git"
        :features wb-line-number
-       :post-init (lambda () (wb-line-number-enable))
+       :post-init (wb-line-number-enable)
        )

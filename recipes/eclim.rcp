@@ -5,6 +5,6 @@
        :url "https://github.com/senny/emacs-eclim.git"
        :load-path ("." "vendor")
        :features eclim
-       :post-init (lambda ()
-		    (setq eclim-auto-save t)
-		    (global-eclim-mode -1)))
+       :post-init (progn
+                    (setq eclim-auto-save t)
+                    (global-eclim-mode -1)))

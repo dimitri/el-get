@@ -14,7 +14,7 @@
                                    hs-sort-imports
                                    hs-string hs-tags hs-types hs-ui)
 
-       :post-init (lambda ()
+       :post-init (progn
                     (add-to-list 'auto-mode-alist
                                  (cons "\\.hs\\'" 'hs-mode))
                     (add-to-list 'auto-mode-alist

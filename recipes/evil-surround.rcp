@@ -5,5 +5,5 @@
        :type git
        :url "http://github.com/timcharper/evil-surround.git"
        :features surround
-       :post-init (lambda () (global-surround-mode 1))
+       :post-init (global-surround-mode 1)
        :depends evil)

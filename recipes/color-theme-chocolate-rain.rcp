@@ -3,6 +3,5 @@
        :type git
        :url "https://github.com/marktran/color-theme-chocolate-rain.git"
        :depends color-theme
-       :post-init (lambda ()
-                    (autoload 'color-theme-chocolate-rain "color-theme-chocolate-rain"
-                      "color-theme: chocolate-rain" t)))
+       :post-init (autoload 'color-theme-chocolate-rain "color-theme-chocolate-rain"
+                    "color-theme: chocolate-rain" t))

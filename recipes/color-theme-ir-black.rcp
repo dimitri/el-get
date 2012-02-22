@@ -3,6 +3,5 @@
        :type git
        :url "https://github.com/burke/color-theme-ir-black.git"
        :depends color-theme
-       :post-init (lambda ()
-                    (autoload 'color-theme-ir-black "color-theme-ir-black"
-                      "color-theme: ir-black" t)))
+       :post-init (autoload 'color-theme-ir-black "color-theme-ir-black"
+                    "color-theme: ir-black" t)))
