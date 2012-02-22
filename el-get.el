@@ -357,7 +357,7 @@ which defaults to the first element in `el-get-recipe-path'."
   "`eval' FORM for PACKAGE and report about FNAME when `el-get-verbose'"
   (let* (;; Auto-strip quoting from form before doing anything else
          (form (if (equal (car-safe form) 'quote)
-                   (prog1 (cdr form)
+                   (prog1 (eval form)
                      (warn "The :%s form for package %s is quoted unnecessarily."
                            fname package))
                  form))
