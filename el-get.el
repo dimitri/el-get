@@ -370,7 +370,7 @@ which defaults to the first element in `el-get-recipe-path'."
           ((symbolp form)
            ;; Convert it to a quoted call to that function
            (prog1 `(,form)
-             (warn "The :%s form for package %s uses the old-style function form instead of a lisp form. The value should be changed from %S to %S"
+             (warn "The :%s form for package %s uses the old-style function form instead of a lisp form. The value should be changed from `%S' to `%S'"
                    fname package form `(,form))
              (unless (symbol-function form)
                (warn "The function %s, which is called in the :%s form for package %s, does not seem to be defined. Calling it will probably fail."
@@ -392,7 +392,7 @@ which defaults to the first element in `el-get-recipe-path'."
           ;; directly to `eval'.
           ((listp form) form)
           ;; Anything else is an error
-          (t (error "Unknown :%s form for package %s: %S"
+          (t (error "Unknown :%s form for package %s: `%S'"
                     fname package form)))))
     (when form
       (assert (listp form))
