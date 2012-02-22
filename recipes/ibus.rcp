@@ -4,5 +4,5 @@
        :type http-tar
        :options ("xzf")
        :url "http://launchpad.net/ibus.el/0.3/0.3.1/+download/ibus-el-0.3.1.tar.gz"
-       :post-init (lambda () (add-hook 'after-init-hook 'ibus-mode-on))
+       :post-init (add-hook 'after-init-hook 'ibus-mode-on)
        :features "ibus")

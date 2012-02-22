@@ -5,5 +5,5 @@
        :type github
        :pkgname "timcharper/evil-surround"
        :features surround
-       :post-init (lambda () (global-surround-mode 1))
+       :post-init (global-surround-mode 1)
        :depends evil)

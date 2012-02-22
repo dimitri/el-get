@@ -1,5 +1,5 @@
 (:name sr-speedbar
        :type emacswiki
        :description "Same frame speedbar"
-       :post-init (lambda () (require 'sr-speedbar))
+       :post-init (require 'sr-speedbar)
        )

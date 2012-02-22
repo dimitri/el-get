@@ -3,6 +3,5 @@
        :type github
        :pkgname "wfarr/color-theme-tango-2"
        :depends color-theme
-       :post-init (lambda ()
-                    (autoload 'color-theme-tango-2 "color-theme-tango-2"
-                      "color-theme: tango-2" t)))
+       :post-init (autoload 'color-theme-tango-2 "color-theme-tango-2"
+                    "color-theme: tango-2" t))

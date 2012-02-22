@@ -4,8 +4,9 @@
        :type github
        :pkgname "m2ym/auto-complete"
        :load-path "."
-       :post-init (lambda ()
-		    (require 'auto-complete)
-		    (add-to-list 'ac-dictionary-directories (expand-file-name "dict"))
-		    (require 'auto-complete-config)
-		    (ac-config-default)))
+       :post-init (progn
+                    (require 'auto-complete)
+                    (add-to-list 'ac-dictionary-directories
+                                 (expand-file-name "dict"))
+                    (require 'auto-complete-config)
+                    (ac-config-default)))

@@ -4,5 +4,4 @@
        :url "https://raw.github.com/ipython/ipython/master/docs/emacs/ipython.el"
        :depends python-mode
        :features ipython
-       :post-init (lambda ()
-            (setq py-shell-name "ipython")))
+       :post-init (setq py-shell-name "ipython"))

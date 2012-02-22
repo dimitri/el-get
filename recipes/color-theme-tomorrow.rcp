@@ -3,7 +3,7 @@
        :type github
        :pkgname "ccharles/Tomorrow-Theme"
        :depends color-theme
-       :post-init (lambda ()
+       :post-init (progn
                     (autoload 'color-theme-tomorrow "GNU Emacs/color-theme-tomorrow"
                       "color-theme: tomorrow" t)
                     (autoload 'color-theme-tomorrow-night "GNU Emacs/color-theme-tomorrow"
