@@ -18,7 +18,6 @@
           ))
        (good-sources
         (append
-         real-recipes
          '(
            ;; These recipes should all be valid
            (:name post-init-function
@@ -46,7 +45,8 @@
                                (message "Post-init list of expressions")
                                (message "Post-init list of expressions 2")))
            (:name no-post-init
-                  :type builtin))))
+                  :type builtin))
+         real-recipes))
        (broken-sources
         '(
           ;; These recipes should fail to install
