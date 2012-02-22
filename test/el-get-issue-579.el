@@ -5,7 +5,7 @@
 (defun post-init-function ()
   (message "Post-init pre-defined function"))
 
-(let ((debug-on-error nil)
+(let ((debug-on-error t)
       ;; (el-get-verbose t)
       (el-get-sources
        '(
@@ -38,11 +38,18 @@
           'post-init-lambda
           'post-init-expr-list
           'post-init-single-funcall
-          'no-post-init)
+          'no-post-init
+
+          ;; Some actual recipes that use the list-of-expressions and
+          ;; single-funcall forms
+          'go-mode
+          'eclim
+          'theme-roller)
   (condition-case err
       (progn
         ;; Should fail
-        (el-get 'sync 'post-init-broken)
+        (let ((debug-on-error nil))
+          (el-get 'sync 'post-init-broken))
         (signal 'test-failure
                 '("The package\"post-init-broken\" should have caused an error, but it didn't.")))
     (error (message "Installing \"post-init-broken\" failed as expected"))))
