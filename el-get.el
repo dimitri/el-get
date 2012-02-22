@@ -353,34 +353,55 @@ which defaults to the first element in `el-get-recipe-path'."
                                          (car el-get-recipe-path)))))
     (find-file recipe-file)))
 
-(defun el-get-funcall (func fname package)
-  "`funcal' FUNC for PACKAGE and report about FNAME when `el-get-verbose'"
-  (let ((func
+(defun el-get-run-package-support (form fname package)
+  "`eval' FORM for PACKAGE and report about FNAME when `el-get-verbose'"
+  (let* (;; Auto-strip quoting from form before doing anything else
+         (form (if (equal (car-safe form) 'quote)
+                   (prog1 (cdr form)
+                     (warn "The :%s form for package %s is quoted unnecessarily."
+                           fname package))
+                 form))
+         ;; Allow either function (symbol or lambda) or single lisp form
+         (form
          (cond
           ;; Nil means do nothing
-          ((null func) nil)
-          ;; A function gets used unchanged
-          ((functionp func) func)
-          ;; A list is either a single function-call or a list of
-          ;; expressions. Either way, it gets wrapped into a function.
-          ((listp func)
-           (if (or (functionp (car func))
-                   (and (symbolp (car func))
-                        (symbol-function (car func))))
-               ;; Single function (or macro, or whatever) call
-               (append (lambda ()) (list func))
-             ;; List of expressions
-             (append '(lambda ()) func)))
+          ((null form) nil)
+          ;; A symbol is the name of a function to call
+          ((symbolp form)
+           ;; Convert it to a quoted call to that function
+           (prog1 `(,form)
+             (warn "The :%s form for package %s uses the old-style function form instead of a lisp form. The value should be changed from %S to %S"
+                   fname package form `(,form))
+             (unless (symbol-function form)
+               (warn "The function %s, which is called in the :%s form for package %s, does not seem to be defined. Calling it will probably fail."
+                     form fname package))))
+          ;; A non-symbol function (like a lambda or something)
+          ((functionp form)
+           ;; Convert it to a quoted call to that function
+           (prog1 `(,form)
+             (if (and (listp form)
+                      (equal (subseq form 0 2) '(lambda ())))
+                 ;; It's a zero-arg function, so it can be trivially
+                 ;; rewritten as a progn. Inform the user of such.
+                 (warn "The :%s form for package %s uses the old-style lambda form instead of a lisp form. The leading \"(lambda ()\" should be replaced with \"(progn\"."
+                       fname package)
+               ;; Otherwise, provide a less informative warning
+               (warn "The :%s form for package %s uses the old-style function form instead of a lisp form."
+                     fname package))))
+          ;; A list is interpreted as a single lisp form to be passed
+          ;; directly to `eval'.
+          ((listp form) form)
           ;; Anything else is an error
-          (t (error "Unknown :%s function for package %s: %S"
-                    fname package func)))))
-    (when func
-      (assert (functionp func))
-      (el-get-verbose-message "el-get: Calling :%s function for package %s"
+          (t (error "Unknown :%s form for package %s: %S"
+                    fname package form)))))
+    (when form
+      (assert (listp form))
+      (el-get-verbose-message "el-get: Evaluating :%s form for package %s"
                               fname package)
       ;; don't forget to make some variables available
-      (let ((pdir (el-get-package-directory package)))
-        (funcall func)))))
+      (let* ((pdir (el-get-package-directory package))
+             (default-directory pdir))
+        (eval form)))))
 
 
 (defun el-get-init (package)
@@ -406,8 +427,7 @@ called by `el-get' (usually at startup) for each installed package."
              (after    (plist-get source :after))
              (pkgname  (plist-get source :pkgname))
              (library  (or (plist-get source :library) pkgname package))
-             (pdir     (el-get-package-directory package))
-             (default-directory pdir))
+             (pdir     (el-get-package-directory package)))
 
 	;; a builtin package initialisation is about calling recipe and user
 	;; code only, no load-path nor byte-compiling support needed here.
@@ -434,10 +454,10 @@ called by `el-get' (usually at startup) for each installed package."
 	      (el-get-load-fast file))))
 
         ;; first, the :prepare function, usually defined in the recipe
-        (el-get-funcall prepare "prepare" package)
+        (el-get-run-package-support prepare "prepare" package)
 
         ;; now call the :before user function
-        (el-get-funcall before "before" package)
+        (el-get-run-package-support before "before" package)
 
         ;; loads and feature are skipped when el-get-is-lazy
         (unless (or lazy el-get-is-lazy)
@@ -457,7 +477,7 @@ called by `el-get' (usually at startup) for each installed package."
                 (el-get-verbose-message "require '%s" feature)
                 (require feature)))))
 
-        (el-get-funcall postinit "post-init" package)
+        (el-get-run-package-support postinit "post-init" package)
 
         ;; now handle the user configs and :after functions
         (if (or lazy el-get-is-lazy)
@@ -468,7 +488,7 @@ called by `el-get' (usually at startup) for each installed package."
 
           ;; el-get is not lazy here
 	  (el-get-load-package-user-init-file package)
-          (el-get-funcall after "after" package))
+          (el-get-run-package-support after "after" package))
 
         ;; and call the global init hooks
         (run-hook-with-args 'el-get-post-init-hooks package)
