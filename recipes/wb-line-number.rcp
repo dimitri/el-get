@@ -1,8 +1,8 @@
 (:name wb-line-number
        :website "https://github.com/emacsmirror/wb-line-number"
        :description "wb-line-number"
-       :type git
-       :url "https://github.com/emacsmirror/wb-line-number.git"
+       :type github
+       :pkgname "emacsmirror/wb-line-number"
        :features wb-line-number
        :post-init (lambda () (wb-line-number-enable))
        )

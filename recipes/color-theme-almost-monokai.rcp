@@ -1,7 +1,7 @@
 (:name color-theme-almost-monokai
        :description "A beautiful, fruity, calm, yet dark color theme for Emacs."
-       :type git
-       :url "git://github.com/lut4rp/almost-monokai.git"
+       :type github
+       :pkgname "lut4rp/almost-monokai"
        :depends color-theme
        :post-init (lambda ()
                     (autoload 'color-theme-almost-monokai "color-theme-almost-monokai"
