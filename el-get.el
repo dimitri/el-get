@@ -354,6 +354,20 @@ which defaults to the first element in `el-get-recipe-path'."
                                          (car el-get-recipe-path)))))
     (find-file recipe-file)))
 
+(defun el-get-eval-after-load (package form)
+  "Like `eval-after-load', but first arg is an el-get package name."
+  (let* ((package  (el-get-as-symbol package))
+         (source   (el-get-package-def package))
+         (pkgname  (plist-get source :pkgname))
+         (feats    (el-get-as-list (plist-get source :features)))
+         (library  (or (plist-get source :library)
+                       (car feats)
+                       pkgname
+                       package)))
+    (eval-after-load library form)))
+(put 'el-get-eval-after-load 'lisp-indent-function
+     (get 'eval-after-load 'lisp-indent-function))
+
 (defun el-get-funcall (func fname package)
   "`funcal' FUNC for PACKAGE and report about FNAME when `el-get-verbose'"
   (when (and func (functionp func))
@@ -362,6 +376,11 @@ which defaults to the first element in `el-get-recipe-path'."
       ;; don't forget to make some variables available
       (let ((pdir (el-get-package-directory package)))
 	(funcall func))))
+
+(defun el-get-lazy-funcall (func fname package)
+  "Like `el-get-funcall', but using `eval-after-load' to wait until PACKAGE is loaded."
+  (el-get-eval-after-load package
+    `(el-get-funcall ,func ,fname ,package)))
 
 
 (defun el-get-init (package)
