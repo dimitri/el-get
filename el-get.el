@@ -407,7 +407,7 @@ which defaults to the first element in `el-get-recipe-path'."
 (defun el-get-lazy-funcall (func fname package)
   "Like `el-get-funcall', but using `eval-after-load' to wait until PACKAGE is loaded."
   (el-get-eval-after-load package
-    `(el-get-funcall ,func ,fname ,package)))
+    `(el-get-funcall ,func ',fname ',package)))
 
 
 (defun el-get-init (package)
