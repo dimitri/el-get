@@ -335,7 +335,7 @@ makes it easier to conditionally splice a command into the list.
                (args    (if shell
 			    (mapcar #'shell-quote-argument (plist-get c :args))
 			  (plist-get c :args)))
-               (sync    (if (plist-member c :sync) (plist-get c :sync)
+               (sync    (el-get-plist-get-with-default c :sync
                           el-get-default-process-sync))
 	       (stdin   (plist-get c :stdin))
                (default-directory (if cdir
@@ -429,5 +429,17 @@ out if it's nil."
 	   "The command named '%s' can not be found with `executable-find'"
 	   name))
 	command)))))
+
+(defun el-get-plist-get-with-default (plist prop def)
+  "Same as (plist-get PLIST PROP), but falls back to DEF.
+
+Specifically, if (plist-member PLIST PROP) is nil, then returns
+DEF instead. Note that having a property set to nil is not the
+same as having it unset."
+  (if (plist-member plist prop)
+      (plist-get plist prop)
+    def))
+(put 'el-get-plist-get-with-default 'lisp-indent-function
+     (get 'prog2 'lisp-indent-function))
 
 (provide 'el-get-core)
