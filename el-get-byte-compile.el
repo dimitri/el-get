@@ -100,10 +100,12 @@ in `:compile-files' will be byte-compiled.."
   (let* ((input-data (read))
          (load-path (append (plist-get input-data :load-path) load-path))
          (files (plist-get input-data :compile-files)))
-    (loop for f in files
-          do (progn
-               (message "el-get-byte-compile: %s" f)
-               (el-get-byte-compile-file-or-directory f)))))
+    (if files
+        (loop for f in files
+              do (progn
+                   (message "el-get-byte-compile: %s" f)
+                   (el-get-byte-compile-file-or-directory f)))
+      (warn "Did not get a list of files to byte-compile. The input may have been corrupted."))))
 
 (defun el-get-byte-compile-process (package buffer working-dir sync files)
   "return the 'el-get-start-process-list' entry to byte compile PACKAGE"
