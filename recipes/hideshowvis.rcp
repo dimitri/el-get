@@ -1,0 +1,4 @@
+(:name hideshowvis
+       :description "Add markers to the fringe for regions foldable"
+       :type emacswiki)
+
