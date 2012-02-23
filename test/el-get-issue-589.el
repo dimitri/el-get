@@ -8,16 +8,20 @@
       (el-get-verbose t)
       (el-get-is-lazy t)
       (post-init-function-ran nil)
+      (prepare-function-ran nil)
       (el-get-sources
        '((:name test-pkg
                 :type builtin
                 :features ido
+                :prepare (lambda () (setq prepare-function-ran t))
                 :post-init (lambda () (setq post-init-function-ran t))
                 :lazy t))))
   (require 'el-get)
   (assert (not post-init-function-ran) nil
           "Post-init function should not run before installation")
   (el-get 'sync 'test-pkg)
+  (assert prepare-function-ran nil
+          "Prepare function should have run after package installation.")
   (assert (not post-init-function-ran) nil
           "Post-init function should not run during installation")
   (el-get-init 'test-pkg)
