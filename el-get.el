@@ -380,7 +380,8 @@ called by `el-get' (usually at startup) for each installed package."
              (autoloads (plist-get source :autoloads))
              (feats    (el-get-as-list (plist-get source :features)))
              (el-path  (el-get-as-list (el-get-load-path package)))
-             (lazy     (plist-get source :lazy))
+             (lazy     (el-get-plist-get-with-default source :lazy
+                         el-get-is-lazy))
              (prepare  (plist-get source :prepare))
              (before   (plist-get source :before))
              (postinit (plist-get source :post-init))
@@ -421,7 +422,7 @@ called by `el-get' (usually at startup) for each installed package."
         (el-get-funcall before "before" package)
 
         ;; loads and feature are skipped when el-get-is-lazy
-        (unless (or lazy el-get-is-lazy)
+        (unless lazy
           ;; loads
           (dolist (file loads)
             (let ((pfile (concat pdir file)))
@@ -441,7 +442,7 @@ called by `el-get' (usually at startup) for each installed package."
         (el-get-funcall postinit "post-init" package)
 
         ;; now handle the user configs and :after functions
-        (if (or lazy el-get-is-lazy)
+        (if lazy
             (let ((lazy-form
 		   `(progn (el-get-load-package-user-init-file ',package)
 			   ,(when after (list 'funcall after)))))
