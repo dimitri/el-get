@@ -380,7 +380,7 @@ which defaults to the first element in `el-get-recipe-path'."
 (defun el-get-lazy-funcall (func fname package)
   "Like `el-get-funcall', but using `eval-after-load' to wait until PACKAGE is loaded."
   (el-get-eval-after-load package
-    `(el-get-funcall ,func ,fname ,package)))
+    `(el-get-funcall ,func ',fname ',package)))
 
 
 (defun el-get-init (package)
@@ -461,12 +461,14 @@ called by `el-get' (usually at startup) for each installed package."
         (let ((el-get-maybe-lazy-funcall
                (if lazy
                    #'el-get-lazy-funcall
-                 #'el-get-funcall)))
+                 #'el-get-funcall))
+              (maybe-lazy-eval
+               (if lazy
+                   (apply-partially 'el-get-eval-after-load package)
+                 'eval)))
           (funcall el-get-maybe-lazy-funcall
                    postinit "post-init" package)
-          (funcall el-get-maybe-lazy-funcall
-                   `(lambda () (el-get-load-package-user-init-file ',package))
-                   "user-init" package)
+          (funcall maybe-lazy-eval `(el-get-load-package-user-init-file ',package))
           (funcall el-get-maybe-lazy-funcall
                    after "after" package))
 
