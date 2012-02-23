@@ -1,4 +1,4 @@
 (:name indirect-region
-       :type git
+       :type github
        :description "Act like indirect buffer for region."
-       :url "git://github.com/renard/indirect-region.git")
+       :pkgname "renard/indirect-region")

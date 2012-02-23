@@ -1,6 +1,6 @@
 (:name deferred
        :description "Simple asynchronous functions for emacs lisp"
        :website "https://github.com/kiwanami/emacs-deferred"
-       :type git
-       :url "git://github.com/kiwanami/emacs-deferred.git"
+       :type github
+       :pkgname "kiwanami/emacs-deferred"
        :features "deferred")

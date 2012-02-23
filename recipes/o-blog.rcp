@@ -1,4 +1,4 @@
 (:name o-blog
-       :type git
+       :type github
        :description "Stand alone org-mode blog exporter."
-       :url "git://github.com/renard/o-blog.git")
+       :pkgname "renard/o-blog")

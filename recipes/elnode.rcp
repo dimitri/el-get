@@ -1,6 +1,6 @@
 (:name elnode
        :website "http://emacswiki.org/wiki/Elnode"
        :description "Asynchronous HttpServer framework."
-       :type git
-       :url "git://github.com/nicferrier/elnode.git")
+       :type github
+       :pkgname "nicferrier/elnode")
 

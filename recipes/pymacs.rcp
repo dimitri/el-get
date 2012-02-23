@@ -1,7 +1,7 @@
 (:name pymacs
        :description "Interface between Emacs Lisp and Python"
-       :type git
-       :url "http://github.com/pinard/Pymacs.git"
+       :type github
+       :pkgname "pinard/Pymacs"
        :post-init
        (lambda ()
          ;; do PYTHONPATH=~/.emacs.d/el-get/pymacs/:$PYTHONPATH

@@ -1,7 +1,7 @@
 (:name pcmpl-git
        :description "pcomplete support for git"
-       :type git
-       :url "https://github.com/leoliu/pcmpl-git-el.git"
+       :type github
+       :pkgname "leoliu/pcmpl-git-el"
        :features pcmpl-git
        :prepare (lambda ()
                   (setq pcmpl-git-options-file

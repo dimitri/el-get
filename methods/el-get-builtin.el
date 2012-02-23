@@ -31,4 +31,6 @@
   :remove #'el-get-rmdir
   :install-hook #'el-get-builtin-install-hook)
 
+(el-get-register-method-alias :no-op :builtin)
+
 (provide 'el-get-builtin)

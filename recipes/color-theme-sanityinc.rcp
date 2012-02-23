@@ -1,7 +1,7 @@
 (:name color-theme-sanityinc
        :description "Two pleasant medium-contrast Emacs color themes in light and dark flavours"
-       :type git
-       :url "https://github.com/purcell/color-theme-sanityinc.git"
+       :type github
+       :pkgname "purcell/color-theme-sanityinc"
        :depends color-theme
        :post-init (progn
                     (autoload 'color-theme-sanityinc-light "color-theme-sanityinc"

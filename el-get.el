@@ -51,6 +51,7 @@
 ;;   - implement :shallow property for git packages
 ;;   - add support for auto-building of ELPA recipes
 ;;   - implement :submodule property for git packages (allow bypassing them)
+;;   - New package types: github, emacsmirror
 ;;
 ;;  3.1 - 2011-09-15 - Get a fix
 ;;
@@ -353,6 +354,20 @@ which defaults to the first element in `el-get-recipe-path'."
                                          (car el-get-recipe-path)))))
     (find-file recipe-file)))
 
+(defun el-get-eval-after-load (package form)
+  "Like `eval-after-load', but first arg is an el-get package name."
+  (let* ((package  (el-get-as-symbol package))
+         (source   (el-get-package-def package))
+         (pkgname  (plist-get source :pkgname))
+         (feats    (el-get-as-list (plist-get source :features)))
+         (library  (or (plist-get source :library)
+                       (car feats)
+                       pkgname
+                       package)))
+    (eval-after-load library form)))
+(put 'el-get-eval-after-load 'lisp-indent-function
+     (get 'eval-after-load 'lisp-indent-function))
+
 (defun el-get-run-package-support (form fname package)
   "`eval' FORM for PACKAGE and report about FNAME when `el-get-verbose'"
   (let* (;; Auto-strip quoting from form before doing anything else
@@ -403,6 +418,11 @@ which defaults to the first element in `el-get-recipe-path'."
              (default-directory pdir))
         (eval form)))))
 
+(defun el-get-lazy-run-package-support (form fname package)
+  "Like `el-get-run-package-support', but using `eval-after-load' to wait until PACKAGE is loaded."
+  (el-get-eval-after-load package
+    `(el-get-run-package-support ',form ',fname ',package)))
+
 
 (defun el-get-init (package)
   "Make the named PACKAGE available for use.
@@ -420,7 +440,8 @@ called by `el-get' (usually at startup) for each installed package."
              (autoloads (plist-get source :autoloads))
              (feats    (el-get-as-list (plist-get source :features)))
              (el-path  (el-get-as-list (el-get-load-path package)))
-             (lazy     (plist-get source :lazy))
+             (lazy     (el-get-plist-get-with-default source :lazy
+                         el-get-is-lazy))
              (prepare  (plist-get source :prepare))
              (before   (plist-get source :before))
              (postinit (plist-get source :post-init))
@@ -460,7 +481,7 @@ called by `el-get' (usually at startup) for each installed package."
         (el-get-run-package-support before "before" package)
 
         ;; loads and feature are skipped when el-get-is-lazy
-        (unless (or lazy el-get-is-lazy)
+        (unless lazy
           ;; loads
           (dolist (file loads)
             (let ((pfile (concat pdir file)))
@@ -477,18 +498,19 @@ called by `el-get' (usually at startup) for each installed package."
                 (el-get-verbose-message "require '%s" feature)
                 (require feature)))))
 
-        (el-get-run-package-support postinit "post-init" package)
-
-        ;; now handle the user configs and :after functions
-        (if (or lazy el-get-is-lazy)
-            (let ((lazy-form
-		   `(progn (el-get-load-package-user-init-file ',package)
-			   ,(when after (list 'funcall after)))))
-              (eval-after-load library lazy-form))
-
-          ;; el-get is not lazy here
-	  (el-get-load-package-user-init-file package)
-          (el-get-run-package-support after "after" package))
+        (let ((el-get-maybe-lazy-runsupp
+               (if lazy
+                   #'el-get-lazy-run-package-support
+                 #'el-get-run-package-support))
+              (maybe-lazy-eval
+               (if lazy
+                   (apply-partially 'el-get-eval-after-load package)
+                 'eval)))
+          (funcall el-get-maybe-lazy-runsupp
+                   postinit "post-init" package)
+          (funcall maybe-lazy-eval `(el-get-load-package-user-init-file ',package))
+          (funcall el-get-maybe-lazy-runsupp
+                   after "after" package))
 
         ;; and call the global init hooks
         (run-hook-with-args 'el-get-post-init-hooks package)
@@ -511,15 +533,14 @@ PACKAGE may be either a string or the corresponding symbol."
       ;; once the first is installed
       (el-get-verbose-message "el-get-install %s: %S" package packages)
       (setq el-get-next-packages (cdr packages))
-      (add-hook 'el-get-post-install-hooks 'el-get-install-next-packages))
+      (add-hook 'el-get-post-init-hooks 'el-get-install-next-packages))
 
     (let ((package (car packages)))
       (if (not (el-get-package-is-installed package))
 	  (el-get-do-install package)
 	;; if package is already installed, skip to the next
 	(message "el-get: `%s' package is already installed" package)
-	(el-get-init package)
-	(el-get-install-next-packages package)))))
+	(el-get-init package)))))
 
 (defun el-get-reinstall (package)
   "Remove PACKAGE and then install it again."
@@ -875,13 +896,3 @@ already installed packages is considered."
 (provide 'el-get)
 
 ;;; el-get.el ends here
-
-
-;; Local Variables:
-;; eval: (require 'whitespace)
-;; whitespace-line-column:80
-;; whitespace-style:(face trailing lines-tail)
-;; eval: (set-face-attribute 'whitespace-tab nil :background "red1" :foreground "yellow" :weight 'bold)
-;; eval: (set-face-attribute 'whitespace-line nil :background "red1" :foreground "yellow" :weight 'bold)
-;; eval: (whitespace-mode)
-;; End:

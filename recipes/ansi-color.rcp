@@ -1,5 +1,5 @@
 (:name ansi-color
        :description "translate ANSI escape sequences into faces"
-       :type git
-       :url "git://github.com/emacsattic/ansi-color.git"
+       :type github
+       :pkgname "emacsattic/ansi-color"
        :load "ansi-color.el")
