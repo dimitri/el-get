@@ -458,18 +458,17 @@ called by `el-get' (usually at startup) for each installed package."
                 (el-get-verbose-message "require '%s" feature)
                 (require feature)))))
 
-        (el-get-funcall postinit "post-init" package)
-
-        ;; now handle the user configs and :after functions
-        (if lazy
-            (let ((lazy-form
-		   `(progn (el-get-load-package-user-init-file ',package)
-			   ,(when after (list 'funcall after)))))
-              (eval-after-load library lazy-form))
-
-          ;; el-get is not lazy here
-	  (el-get-load-package-user-init-file package)
-          (el-get-funcall after "after" package))
+        (let ((el-get-maybe-lazy-funcall
+               (if lazy
+                   #'el-get-lazy-funcall
+                 #'el-get-funcall)))
+          (funcall el-get-maybe-lazy-funcall
+                   postinit "post-init" package)
+          (funcall el-get-maybe-lazy-funcall
+                   `(lambda () (el-get-load-package-user-init-file ',package))
+                   "user-init" package)
+          (funcall el-get-maybe-lazy-funcall
+                   after "after" package))
 
         ;; and call the global init hooks
         (run-hook-with-args 'el-get-post-init-hooks package)
