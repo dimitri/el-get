@@ -6,5 +6,4 @@
        :features simplenote
        :load    "simplenote.el"
        :compile "simplenote.el"
-       :post-init (lambda ()
-                    (simplenote-setup)))
+       :post-init (simplenote-setup))

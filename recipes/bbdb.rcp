@@ -8,5 +8,4 @@
        :build `("autoconf" ,(concat "./configure --with-emacs=" el-get-emacs) "make bbdb")
        :features bbdb-loaddefs
        :autoloads nil
-       :post-init (lambda () (bbdb-initialize)))
-
+       :post-init (bbdb-initialize))

@@ -1,6 +1,6 @@
 (:name textmate
-	   :description "TextMate minor mode for Emacs"
+       :description "TextMate minor mode for Emacs"
        :type git
        :url "https://github.com/defunkt/textmate.el.git"
        :features textmate
-       :post-init (lambda () (textmate-mode)))
+       :post-init (textmate-mode))

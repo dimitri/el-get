@@ -3,5 +3,5 @@
        :type github
        :pkgname "nex3/sass-mode"
        :features sass-mode
-       :post-init (lambda ()
-                    (add-to-list 'auto-mode-alist '("\\.scss$" . sass-mode))))
+       :post-init (add-to-list 'auto-mode-alist
+                               '("\\.scss$" . sass-mode)))

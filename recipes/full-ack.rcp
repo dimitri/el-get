@@ -2,8 +2,8 @@
        :description "A front-end for ack"
        :type github
        :pkgname "nschum/full-ack"
-       :post-init (lambda ()
-            (autoload 'ack "full-ack" nil t)
-            (autoload 'ack-find-file "full-ack" nil t)
-            (autoload 'ack-find-same-file "full-ack" nil t)
-            (autoload 'ack-same "full-ack" nil t)))
+       :post-init (progn
+                    (autoload 'ack "full-ack" nil t)
+                    (autoload 'ack-find-file "full-ack" nil t)
+                    (autoload 'ack-find-same-file "full-ack" nil t)
+                    (autoload 'ack-same "full-ack" nil t)))

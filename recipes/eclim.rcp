@@ -5,6 +5,6 @@
        :pkgname "senny/emacs-eclim"
        :load-path ("." "vendor")
        :features eclim
-       :post-init (lambda ()
-		    (setq eclim-auto-save t)
-		    (global-eclim-mode -1)))
+       :post-init (progn
+                    (setq eclim-auto-save t)
+                    (global-eclim-mode -1)))

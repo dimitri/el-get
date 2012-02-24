@@ -3,7 +3,7 @@
        :description "This is a Emacs major mode for editing CleverCSS files. It provides smart indentation, syntax highlighting and basic text manipulation commands."
        :type github
        :pkgname "jschaf/CleverCSS-Mode"
-       :post-init (lambda ()
-		    (autoload 'clevercss-mode "clevercss" nil t)
-		    (add-to-list 'auto-mode-alist
-				 '("\\.ccss\\'" . clevercss-mode))))
+       :post-init (progn
+                    (autoload 'clevercss-mode "clevercss" nil t)
+                    (add-to-list 'auto-mode-alist
+                                 '("\\.ccss\\'" . clevercss-mode))))
