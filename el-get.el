@@ -354,6 +354,20 @@ which defaults to the first element in `el-get-recipe-path'."
                                          (car el-get-recipe-path)))))
     (find-file recipe-file)))
 
+(defun el-get-eval-after-load (package form)
+  "Like `eval-after-load', but first arg is an el-get package name."
+  (let* ((package  (el-get-as-symbol package))
+         (source   (el-get-package-def package))
+         (pkgname  (plist-get source :pkgname))
+         (feats    (el-get-as-list (plist-get source :features)))
+         (library  (or (plist-get source :library)
+                       (car feats)
+                       pkgname
+                       package)))
+    (eval-after-load library form)))
+(put 'el-get-eval-after-load 'lisp-indent-function
+     (get 'eval-after-load 'lisp-indent-function))
+
 (defun el-get-funcall (func fname package)
   "`funcal' FUNC for PACKAGE and report about FNAME when `el-get-verbose'"
   (when (and func (functionp func))
@@ -362,6 +376,11 @@ which defaults to the first element in `el-get-recipe-path'."
       ;; don't forget to make some variables available
       (let ((pdir (el-get-package-directory package)))
 	(funcall func))))
+
+(defun el-get-lazy-funcall (func fname package)
+  "Like `el-get-funcall', but using `eval-after-load' to wait until PACKAGE is loaded."
+  (el-get-eval-after-load package
+    `(el-get-funcall ,func ',fname ',package)))
 
 
 (defun el-get-init (package)
@@ -380,7 +399,8 @@ called by `el-get' (usually at startup) for each installed package."
              (autoloads (plist-get source :autoloads))
              (feats    (el-get-as-list (plist-get source :features)))
              (el-path  (el-get-as-list (el-get-load-path package)))
-             (lazy     (plist-get source :lazy))
+             (lazy     (el-get-plist-get-with-default source :lazy
+                         el-get-is-lazy))
              (prepare  (plist-get source :prepare))
              (before   (plist-get source :before))
              (postinit (plist-get source :post-init))
@@ -421,7 +441,7 @@ called by `el-get' (usually at startup) for each installed package."
         (el-get-funcall before "before" package)
 
         ;; loads and feature are skipped when el-get-is-lazy
-        (unless (or lazy el-get-is-lazy)
+        (unless lazy
           ;; loads
           (dolist (file loads)
             (let ((pfile (concat pdir file)))
@@ -438,18 +458,19 @@ called by `el-get' (usually at startup) for each installed package."
                 (el-get-verbose-message "require '%s" feature)
                 (require feature)))))
 
-        (el-get-funcall postinit "post-init" package)
-
-        ;; now handle the user configs and :after functions
-        (if (or lazy el-get-is-lazy)
-            (let ((lazy-form
-		   `(progn (el-get-load-package-user-init-file ',package)
-			   ,(when after (list 'funcall after)))))
-              (eval-after-load library lazy-form))
-
-          ;; el-get is not lazy here
-	  (el-get-load-package-user-init-file package)
-          (el-get-funcall after "after" package))
+        (let ((el-get-maybe-lazy-funcall
+               (if lazy
+                   #'el-get-lazy-funcall
+                 #'el-get-funcall))
+              (maybe-lazy-eval
+               (if lazy
+                   (apply-partially 'el-get-eval-after-load package)
+                 'eval)))
+          (funcall el-get-maybe-lazy-funcall
+                   postinit "post-init" package)
+          (funcall maybe-lazy-eval `(el-get-load-package-user-init-file ',package))
+          (funcall el-get-maybe-lazy-funcall
+                   after "after" package))
 
         ;; and call the global init hooks
         (run-hook-with-args 'el-get-post-init-hooks package)
