@@ -3,6 +3,5 @@
        :type github
        :pkgname "olegshaldybin/color-theme-railscasts"
        :depends color-theme
-       :post-init (lambda ()
-                    (autoload 'color-theme-railscasts "color-theme-railscasts"
-                      "color-theme: railscasts" t)))
+       :post-init (autoload 'color-theme-railscasts "color-theme-railscasts"
+                    "color-theme: railscasts" t))

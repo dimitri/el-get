@@ -3,6 +3,5 @@
        :type github
        :pkgname "crafterm/twilight-emacs"
        :depends color-theme
-       :post-init (lambda ()
-                    (autoload 'color-theme-twilight "color-theme-twilight"
-                      "color-theme: twilight" t)))
+       :post-init (autoload 'color-theme-twilight "color-theme-twilight"
+                    "color-theme: twilight" t))

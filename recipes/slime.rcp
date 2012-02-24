@@ -7,5 +7,5 @@
        :load-path ("." "contrib")
        :compile (".")
        :build ("make -C doc")
-       :post-init slime-setup
+       :post-init (slime-setup)
        )

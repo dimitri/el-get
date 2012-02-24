@@ -2,6 +2,6 @@
        :description "Major mode for editing RHTML files"
        :type github
        :pkgname "eschulte/rhtml"
-       :post-init (lambda ()
-            (autoload 'rhtml-mode "rhtml-mode" nil t)
-            (add-to-list 'auto-mode-alist '("\\.html\.erb$" . rhtml-mode))))
+       :post-init (progn
+                    (autoload 'rhtml-mode "rhtml-mode" nil t)
+                    (add-to-list 'auto-mode-alist '("\\.html\.erb$" . rhtml-mode))))

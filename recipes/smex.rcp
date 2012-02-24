@@ -3,6 +3,4 @@
        :type github
        :pkgname "nonsequitur/smex"
        :features smex
-       :post-init (lambda ()
-            (smex-initialize)))
-
+       :post-init (smex-initialize))

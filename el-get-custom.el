@@ -231,35 +231,34 @@ definition provided by `el-get' recipes locally.
 
 :prepare
 
-    Intended for use from recipes, it will run once both the
+    This should be a lisp form to evaluate after both the
     `Info-directory-list' and the `load-path' variables have been
-    taken care of, but before any further action from
-    `el-get-init'.  It will be run with `default-directory' set
-    to the package directory.
+    taken care of, but before loading the package or any further
+    action from `el-get-init'.  It will be run with
+    `default-directory' set to the package directory.
 
 :before
 
-    A pre-init function to run once before `el-get-init' calls
-    `load' and `require'.  It gets to run with `load-path'
-    already set, and after :prepare has been called.  It's not
-    intended for use from recipes.  It will be run with
-    `default-directory' set to the package directory.
+    This exactly like `:prepare' property, but is reserved for
+    user customizations in `el-get-sources'.  Recipe files should
+    not use this property.  It will be run just after `:prepare'.
 
 :post-init
 
-    Intended for use from recipes.  This function is registered
-    for `eval-after-load' against the recipe library by
-    `el-get-init' once the :load and :features have been setup.
-    It will be run with `default-directory' set to the package
-    directory.
+    This should be a lisp form to evaluate after loading the
+    package.  Intended for use from recipes.  This function is
+    registered for `eval-after-load' against the recipe library
+    by `el-get-init' once the :load and :features have been
+    setup.  Like `:prepare', it will be run with
+    `default-directory' set to the package directory.
 
 :after
 
-    A function to register for `eval-after-load' against the
-    recipe library, after :post-init, and after per-package
-    user-init-file (see `el-get-user-package-directory').  That's
-    not intended for recipe use.  It will be run with
-    `default-directory' set to the package directory.
+    This exactly like the `:post-init' property, but is reserved
+    for user customizations in `el-get-sources'.  Recipe files
+    should not use this property.  It will be run just after
+    `:post-init' and after any per-package user-init-file (see
+    `el-get-user-package-directory').
 
 :lazy
 
