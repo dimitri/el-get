@@ -364,7 +364,7 @@ which defaults to the first element in `el-get-recipe-path'."
                        (car feats)
                        pkgname
                        package)))
-    (eval-after-load library form)))
+    (eval-after-load (el-get-as-string library) form)))
 (put 'el-get-eval-after-load 'lisp-indent-function
      (get 'eval-after-load 'lisp-indent-function))
 
