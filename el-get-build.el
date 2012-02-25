@@ -126,6 +126,7 @@ recursion.
 	  (append
 	   (when bytecomp-files
 	     (list
+              (el-get-clean-stale-process package buf wdir sync)
 	      (el-get-byte-compile-process package buf wdir sync bytecomp-files)))
 	   process-list))
 	 ;; unless installing-info, post-build-fun should take care of

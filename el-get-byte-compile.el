@@ -108,7 +108,7 @@ in `:compile-files' will be byte-compiled.."
       (warn "Did not get a list of files to byte-compile. The input may have been corrupted."))))
 
 (defun el-get-byte-compile-process (package buffer working-dir sync files)
-  "return the 'el-get-start-process-list' entry to byte compile PACKAGE"
+  "return the `el-get-start-process-list' entry to byte compile PACKAGE"
   (let* ((input-data
           (list :load-path (cons "." load-path)
                 :compile-files files))
@@ -131,6 +131,52 @@ in `:compile-files' will be byte-compiled.."
 		    :error ,(format
 			     "el-get could not byte-compile %s" package))))
 
+(defun el-get-clean-stale-compiled-files (dir &optional recursive)
+  "In DIR, delete all elc files older than their corresponding el files.
+
+With optional arg RECURSIVE, do so in all subdirectories as well."
+  ;; Process elc files in this dir
+  (let ((elc-files (directory-files dir 'full "\\.elc$")))
+    (loop for elc in elc-files
+          with el = (concat (file-name-sans-extension elc) ".el")
+          if (and (file-exists-p elc)
+                  (not (file-directory-p elc))
+                  (file-newer-than-file-p el elc))
+          do (progn
+               (message "el-get-byte-compile: Cleaning stale compiled file %S" elc)
+               (delete-file elc nil)))
+  ;; Process subdirectories recursively
+  (when recursive
+    (loop for dir in (directory-files dir 'full)
+          if (file-directory-p dir)
+          unless (member* dir '("." "..") :test 'string=)
+          do (el-get-clean-stale-compiled-files dir recursive))))
+
+(defun el-get-clean-stale-from-stdin ()
+  (let ((dir (read)))
+    (el-get-clean-stale-compiled-files dir 'recursive)))
+
+(defun el-get-clean-stale-process (pacakge buffer working-dir sync)
+  "return the `el-get-start-process-list' entry to clean stale compiled files for PACKAGE"
+  (let* ((subprocess-function 'el-get-clean-stale-from-stdin)
+         (clean-command
+          `(,el-get-emacs
+            "-Q" "-batch" "-f" "toggle-debug-on-error"
+            "-l" ,(file-name-sans-extension
+                   (symbol-file subprocess-function 'defun))
+            "-f" ,(symbol-name subprocess-function))))
+    `(:command-name "clean-stale-compiled"
+		    :buffer-name ,buffer
+		    :default-directory ,working-dir
+		    :shell t
+                    :stdin ,working-dir
+		    :sync ,sync
+		    :program ,(car clean-command)
+		    :args ,(cdr clean-command)
+		    :message ,(format "el-get-build %s: clean-stale ok." package)
+		    :error ,(format
+			     "el-get could not clean stale elc files for %s" package))))
+
 (defun el-get-byte-compile (package)
   "byte compile files for given package"
   (let ((pdir  (el-get-package-directory package))
@@ -139,7 +185,8 @@ in `:compile-files' will be byte-compiled.."
     (when files
       (el-get-start-process-list
        package
-       (list (el-get-byte-compile-process package buf pdir t files))
+       (list (el-get-clean-stale-process package buf pdir t)
+             (el-get-byte-compile-process package buf pdir t files))
        nil))))
 
 
