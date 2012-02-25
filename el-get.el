@@ -354,6 +354,21 @@ which defaults to the first element in `el-get-recipe-path'."
                                          (car el-get-recipe-path)))))
     (find-file recipe-file)))
 
+(defun el-get-eval-after-load (package form)
+  "Like `eval-after-load', but first arg is an el-get package name."
+  (let* ((package  (el-get-as-symbol package))
+         (source   (el-get-package-def package))
+         (pkgname  (plist-get source :pkgname))
+         (feats    (el-get-as-list (plist-get source :features)))
+         (library  (or (plist-get source :library)
+                       (car feats)
+                       pkgname
+                       package)))
+    (eval-after-load (el-get-as-string library) form)))
+(put 'el-get-eval-after-load 'lisp-indent-function
+     (get 'eval-after-load 'lisp-indent-function))
+
+>>>>>>> Give "eval-after-load" a string
 (defun el-get-run-package-support (form fname package)
   "`eval' FORM for PACKAGE and report about FNAME when `el-get-verbose'"
   (let* (;; Auto-strip quoting from form before doing anything else
