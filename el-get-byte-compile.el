@@ -96,10 +96,18 @@ Standard input must be a property list with properties
 `:load-path' and `:compile-files', each of which should have a
 value that is a list of strings. The variable `load-path' will be
 set from the `:load-path' property, and then all the files listed
-in `:compile-files' will be byte-compiled.."
+in `:compile-files' will be byte-compiled.
+
+Standard input can also contain a `:clean-directory' property,
+whose value is a directory to be cleared of stale elc files."
   (let* ((input-data (read))
          (load-path (append (plist-get input-data :load-path) load-path))
-         (files (plist-get input-data :compile-files)))
+         (files (plist-get input-data :compile-files))
+         (dir-to-clean (plist-get input-data :clean-directory)))
+    (when dir-to-clean
+      (assert (stringp dir-to-clean) nil
+              "The value of `:clean-directory' must be a string.")
+      (el-get-clean-stale-compiled-files dir-to-clean 'recursive))
     (if files
         (loop for f in files
               do (progn
@@ -111,7 +119,8 @@ in `:compile-files' will be byte-compiled.."
   "return the `el-get-start-process-list' entry to byte compile PACKAGE"
   (let* ((input-data
           (list :load-path (cons "." load-path)
-                :compile-files files))
+                :compile-files files
+                :clean-directory (el-get-package-directory package)))
          (subprocess-function 'el-get-byte-compile-from-stdin)
          (bytecomp-command
           `(,el-get-emacs
@@ -152,31 +161,6 @@ With optional arg RECURSIVE, do so in all subdirectories as well."
           unless (member* dir '("." "..") :test 'string=)
           do (el-get-clean-stale-compiled-files dir recursive))))
 
-(defun el-get-clean-stale-from-stdin ()
-  (let ((dir (read)))
-    (el-get-clean-stale-compiled-files dir 'recursive)))
-
-(defun el-get-clean-stale-process (pacakge buffer working-dir sync)
-  "return the `el-get-start-process-list' entry to clean stale compiled files for PACKAGE"
-  (let* ((subprocess-function 'el-get-clean-stale-from-stdin)
-         (clean-command
-          `(,el-get-emacs
-            "-Q" "-batch" "-f" "toggle-debug-on-error"
-            "-l" ,(file-name-sans-extension
-                   (symbol-file subprocess-function 'defun))
-            "-f" ,(symbol-name subprocess-function))))
-    `(:command-name "clean-stale-compiled"
-		    :buffer-name ,buffer
-		    :default-directory ,working-dir
-		    :shell t
-                    :stdin ,working-dir
-		    :sync ,sync
-		    :program ,(car clean-command)
-		    :args ,(cdr clean-command)
-		    :message ,(format "el-get-build %s: clean-stale ok." package)
-		    :error ,(format
-			     "el-get could not clean stale elc files for %s" package))))
-
 (defun el-get-byte-compile (package)
   "byte compile files for given package"
   (let ((pdir  (el-get-package-directory package))
@@ -185,8 +169,7 @@ With optional arg RECURSIVE, do so in all subdirectories as well."
     (when files
       (el-get-start-process-list
        package
-       (list (el-get-clean-stale-process package buf pdir t)
-             (el-get-byte-compile-process package buf pdir t files))
+       (list (el-get-byte-compile-process package buf pdir t files))
        nil))))
 
 
