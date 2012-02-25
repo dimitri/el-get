@@ -89,6 +89,27 @@ newer, then compilation is skipped."
         (mapc (apply-partially 'add-to-list 'files) el-path)))
       files)))
 
+(defun el-get-clean-stale-compiled-files (dir &optional recursive)
+  "In DIR, delete all elc files older than their corresponding el files.
+
+With optional arg RECURSIVE, do so in all subdirectories as well."
+  ;; Process elc files in this dir
+  (let ((elc-files (directory-files dir 'full "\\.elc$")))
+    (loop for elc in elc-files
+          with el = (concat (file-name-sans-extension elc) ".el")
+          if (and (file-exists-p elc)
+                  (not (file-directory-p elc))
+                  (file-newer-than-file-p el elc))
+          do (progn
+               (message "el-get-byte-compile: Cleaning stale compiled file %S" elc)
+               (delete-file elc nil)))
+    ;; Process subdirectories recursively
+    (when recursive
+      (loop for dir in (directory-files dir 'full)
+            if (file-directory-p dir)
+            unless (member* dir '("." "..") :test 'string=)
+            do (el-get-clean-stale-compiled-files dir recursive))))
+
 (defun el-get-byte-compile-from-stdin ()
   "byte compile files from stdin.
 
@@ -139,27 +160,6 @@ whose value is a directory to be cleared of stale elc files."
 		    :message ,(format "el-get-build %s: byte-compile ok." package)
 		    :error ,(format
 			     "el-get could not byte-compile %s" package))))
-
-(defun el-get-clean-stale-compiled-files (dir &optional recursive)
-  "In DIR, delete all elc files older than their corresponding el files.
-
-With optional arg RECURSIVE, do so in all subdirectories as well."
-  ;; Process elc files in this dir
-  (let ((elc-files (directory-files dir 'full "\\.elc$")))
-    (loop for elc in elc-files
-          with el = (concat (file-name-sans-extension elc) ".el")
-          if (and (file-exists-p elc)
-                  (not (file-directory-p elc))
-                  (file-newer-than-file-p el elc))
-          do (progn
-               (message "el-get-byte-compile: Cleaning stale compiled file %S" elc)
-               (delete-file elc nil)))
-  ;; Process subdirectories recursively
-  (when recursive
-    (loop for dir in (directory-files dir 'full)
-          if (file-directory-p dir)
-          unless (member* dir '("." "..") :test 'string=)
-          do (el-get-clean-stale-compiled-files dir recursive))))
 
 (defun el-get-byte-compile (package)
   "byte compile files for given package"
