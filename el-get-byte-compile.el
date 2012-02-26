@@ -116,7 +116,7 @@ With optional arg RECURSIVE, do so in all subdirectories as well."
                                   "~.nib" ".pc" "~.plst" "RCS" "SCCS"
                                   "_sgbak" ".svn")
                             :test 'string=)
-            do (el-get-clean-stale-compiled-files dir recursive))))
+            do (el-get-clean-stale-compiled-files dir recursive)))))
 
 (defun el-get-byte-compile-from-stdin ()
   "byte compile files from stdin.
