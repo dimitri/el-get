@@ -134,12 +134,13 @@ recursion.
              (let ((bytecomp-files
                     (when el-get-byte-compile
                       (el-get-assemble-files-for-byte-compilation package))))
-               (if bytecomp-files
-                   (el-get-start-process-list
-                    package
-                    (list (el-get-byte-compile-process package ,buf ,wdir ,sync bytecomp-files))
-                    ,post-build-fun)
-                 (funcall ,post-build-fun package)))))
+               ;; The byte-compilation command needs to run even if
+               ;; `bytecomp-files' is empty, because it also cleans up
+               ;; stale compiled files if it finds any.
+               (el-get-start-process-list
+                package
+                (list (el-get-byte-compile-process package ,buf ,wdir ,sync bytecomp-files))
+                ,post-build-fun))))
 	 ;; unless installing-info, post-build-fun should take care of
 	 ;; building info too
          (build-info-then-post-build-fun
