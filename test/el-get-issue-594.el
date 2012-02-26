@@ -1,6 +1,6 @@
-;; https://github.com/dimitri/el-get/issues/586
+;; https://github.com/dimitri/el-get/issues/594
 ;;
-;; Many recipes use git-emacs github repo
+;; handle empty/missing PYTHONPATH correctly in pymacs
 
 (let ((debug-on-error t)
       ;; (el-get-byte-compile nil)
