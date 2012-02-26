@@ -101,7 +101,7 @@ With optional arg RECURSIVE, do so in all subdirectories as well."
                   (not (file-directory-p elc))
                   (file-newer-than-file-p el elc))
           do (progn
-               (message "el-get-byte-compile: Cleaning stale compiled file %S" elc)
+               (message "el-get-byte-compile: Cleaning stale compiled file %s" elc)
                (delete-file elc nil)))
     ;; Process subdirectories recursively
     (when recursive
