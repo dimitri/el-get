@@ -89,6 +89,35 @@ newer, then compilation is skipped."
         (mapc (apply-partially 'add-to-list 'files) el-path)))
       files)))
 
+(defun el-get-clean-stale-compiled-files (dir &optional recursive)
+  "In DIR, delete all elc files older than their corresponding el files.
+
+With optional arg RECURSIVE, do so in all subdirectories as well."
+  ;; Process elc files in this dir
+  (let ((elc-files (directory-files dir 'full "\\.elc$")))
+    (loop for elc in elc-files
+          with el = (concat (file-name-sans-extension elc) ".el")
+          if (and (file-exists-p elc)
+                  (not (file-directory-p elc))
+                  (file-newer-than-file-p el elc))
+          do (progn
+               (message "el-get-byte-compile: Cleaning stale compiled file %S" elc)
+               (delete-file elc nil)))
+    ;; Process subdirectories recursively
+    (when recursive
+      (loop for dir in (directory-files dir 'full)
+            if (file-directory-p dir)
+            unless (member* dir '("." ".."
+                                  ;; This list of dirs to ignore courtesy of ack
+                                  ;; http://betterthangrep.com/
+                                  "autom4te.cache" "blib" "_build"
+                                  ".bzr" ".cdv" "cover_db" "CVS" "_darcs"
+                                  "~.dep" "~.dot" ".git" ".hg" "_MTN"
+                                  "~.nib" ".pc" "~.plst" "RCS" "SCCS"
+                                  "_sgbak" ".svn")
+                            :test 'string=)
+            do (el-get-clean-stale-compiled-files dir recursive))))
+
 (defun el-get-byte-compile-from-stdin ()
   "byte compile files from stdin.
 
@@ -96,10 +125,18 @@ Standard input must be a property list with properties
 `:load-path' and `:compile-files', each of which should have a
 value that is a list of strings. The variable `load-path' will be
 set from the `:load-path' property, and then all the files listed
-in `:compile-files' will be byte-compiled.."
+in `:compile-files' will be byte-compiled.
+
+Standard input can also contain a `:clean-directory' property,
+whose value is a directory to be cleared of stale elc files."
   (let* ((input-data (read))
          (load-path (append (plist-get input-data :load-path) load-path))
-         (files (plist-get input-data :compile-files)))
+         (files (plist-get input-data :compile-files))
+         (dir-to-clean (plist-get input-data :clean-directory)))
+    (when dir-to-clean
+      (assert (stringp dir-to-clean) nil
+              "The value of `:clean-directory' must be a string.")
+      (el-get-clean-stale-compiled-files dir-to-clean 'recursive))
     (if files
         (loop for f in files
               do (progn
@@ -108,10 +145,11 @@ in `:compile-files' will be byte-compiled.."
       (warn "Did not get a list of files to byte-compile. The input may have been corrupted."))))
 
 (defun el-get-byte-compile-process (package buffer working-dir sync files)
-  "return the 'el-get-start-process-list' entry to byte compile PACKAGE"
+  "return the `el-get-start-process-list' entry to byte compile PACKAGE"
   (let* ((input-data
           (list :load-path (cons "." load-path)
-                :compile-files files))
+                :compile-files files
+                :clean-directory (el-get-package-directory package)))
          (subprocess-function 'el-get-byte-compile-from-stdin)
          (bytecomp-command
           `(,el-get-emacs
