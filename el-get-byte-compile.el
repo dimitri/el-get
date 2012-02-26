@@ -175,11 +175,9 @@ whose value is a directory to be cleared of stale elc files."
   (let ((pdir  (el-get-package-directory package))
 	(buf   "*el-get-byte-compile*")
 	(files (el-get-assemble-files-for-byte-compilation package)))
-    (when files
-      (el-get-start-process-list
-       package
-       (list (el-get-byte-compile-process package buf pdir t files))
-       nil))))
-
+    (el-get-start-process-list
+     package
+     (list (el-get-byte-compile-process package buf pdir t files))
+     nil)))
 
 (provide 'el-get-byte-compile)
