@@ -144,10 +144,10 @@ recursion.
 	 ;; unless installing-info, post-build-fun should take care of
 	 ;; building info too
          (build-info-then-post-build-fun
-	  (if installing-info post-build-fun
+	  (if installing-info byte-compile-then-post-build-fun
 	    `(lambda (package)
 	       (el-get-install-or-init-info package 'build)
-	       (funcall byte-compile-then-post-build-fun package)))))
+	       (funcall ,byte-compile-then-post-build-fun package)))))
     (el-get-start-process-list
      package process-list build-info-then-post-build-fun)))
 
