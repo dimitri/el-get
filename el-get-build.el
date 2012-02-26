@@ -120,26 +120,35 @@ recursion.
 				      :error ,(format
 					       "el-get could not build %s [%s]" package c))))
 		  commands))
-	 (bytecomp-files (when el-get-byte-compile
-			   (el-get-assemble-files-for-byte-compilation package)))
-	 (full-process-list ;; includes byte compiling
-	  (append
-	   (when bytecomp-files
-	     (list (el-get-byte-compile-process package buf wdir sync bytecomp-files)))
-	   process-list))
+         ;; This ensures that post-build-fun is always a lambda, not a
+         ;; symbol, which simplifies the following code.
+         (post-build-fun
+          (if (symbolp post-build-fun)
+              `(lambda (&rest args)
+                 (apply ,(symbol-function post-build-fun) args))
+            ;; Must already be a lambda
+            post-build-fun))
+         ;; Do byte-compilation after building, if needed
+	 (byte-compile-then-post-build-fun
+          `(lambda (package)
+             (let ((bytecomp-files
+                    (when el-get-byte-compile
+                      (el-get-assemble-files-for-byte-compilation package))))
+               (if bytecomp-files
+                   (el-get-start-process-list
+                    package
+                    (list (el-get-byte-compile-process package ,buf ,wdir ,sync bytecomp-files))
+                    ,post-build-fun)
+                 (funcall ,post-build-fun package)))))
 	 ;; unless installing-info, post-build-fun should take care of
 	 ;; building info too
-	 (build-info-then-post-build-fun
+         (build-info-then-post-build-fun
 	  (if installing-info post-build-fun
 	    `(lambda (package)
 	       (el-get-install-or-init-info package 'build)
-	       (funcall ,(if (symbolp post-build-fun)
-			     (symbol-function post-build-fun)
-			   ;; it must be a lambda, just inline its value
-			   post-build-fun)
-			package)))))
+	       (funcall byte-compile-then-post-build-fun package)))))
     (el-get-start-process-list
-     package full-process-list build-info-then-post-build-fun)))
+     package process-list build-info-then-post-build-fun)))
 
 (defun el-get-set-info-path (package infodir-rel)
   (require 'info)
