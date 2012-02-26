@@ -99,7 +99,7 @@ With optional arg RECURSIVE, do so in all subdirectories as well."
           for el = (concat (file-name-sans-extension elc) ".el")
           if (and (file-exists-p elc)
                   (not (file-directory-p elc))
-                  (file-newer-than-file-p el elc))
+                  (not (file-newer-than-file-p elc el)))
           do (progn
                (message "el-get-byte-compile: Cleaning stale compiled file %s" elc)
                (delete-file elc nil)))
