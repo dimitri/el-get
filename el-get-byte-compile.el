@@ -107,7 +107,15 @@ With optional arg RECURSIVE, do so in all subdirectories as well."
     (when recursive
       (loop for dir in (directory-files dir 'full)
             if (file-directory-p dir)
-            unless (member* dir '("." "..") :test 'string=)
+            unless (member* dir '("." ".."
+                                  ;; This list of dirs to ignore courtesy of ack
+                                  ;; http://betterthangrep.com/
+                                  "autom4te.cache" "blib" "_build"
+                                  ".bzr" ".cdv" "cover_db" "CVS" "_darcs"
+                                  "~.dep" "~.dot" ".git" ".hg" "_MTN"
+                                  "~.nib" ".pc" "~.plst" "RCS" "SCCS"
+                                  "_sgbak" ".svn")
+                            :test 'string=)
             do (el-get-clean-stale-compiled-files dir recursive))))
 
 (defun el-get-byte-compile-from-stdin ()
