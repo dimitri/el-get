@@ -133,16 +133,17 @@ whose value is a directory to be cleared of stale elc files."
          (load-path (append (plist-get input-data :load-path) load-path))
          (files (plist-get input-data :compile-files))
          (dir-to-clean (plist-get input-data :clean-directory)))
+    (unless (or dir-to-clean files)
+      (warn "Did not get a list of files to byte-compile or a directory to clean. The input may have been corrupted."))
     (when dir-to-clean
       (assert (stringp dir-to-clean) nil
               "The value of `:clean-directory' must be a string.")
+      (message "el-get-byte-compile: Cleaning stale compiled files in %s" dir-to-clean)
       (el-get-clean-stale-compiled-files dir-to-clean 'recursive))
-    (if files
-        (loop for f in files
-              do (progn
-                   (message "el-get-byte-compile: %s" f)
-                   (el-get-byte-compile-file-or-directory f)))
-      (warn "Did not get a list of files to byte-compile. The input may have been corrupted."))))
+    (loop for f in files
+          do (progn
+               (message "el-get-byte-compile: %s" f)
+               (el-get-byte-compile-file-or-directory f)))))
 
 (defun el-get-byte-compile-process (package buffer working-dir sync files)
   "return the `el-get-start-process-list' entry to byte compile PACKAGE"
