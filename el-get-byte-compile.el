@@ -96,7 +96,7 @@ With optional arg RECURSIVE, do so in all subdirectories as well."
   ;; Process elc files in this dir
   (let ((elc-files (directory-files dir 'full "\\.elc$")))
     (loop for elc in elc-files
-          with el = (concat (file-name-sans-extension elc) ".el")
+          for el = (concat (file-name-sans-extension elc) ".el")
           if (and (file-exists-p elc)
                   (not (file-directory-p elc))
                   (file-newer-than-file-p el elc))
@@ -106,16 +106,16 @@ With optional arg RECURSIVE, do so in all subdirectories as well."
     ;; Process subdirectories recursively
     (when recursive
       (loop for dir in (directory-files dir 'full)
+            for localdir = (file-name-nondirectory dir)
             if (file-directory-p dir)
-            unless (member* dir '("." ".."
+            unless (member localdir '("." ".."
                                   ;; This list of dirs to ignore courtesy of ack
                                   ;; http://betterthangrep.com/
                                   "autom4te.cache" "blib" "_build"
                                   ".bzr" ".cdv" "cover_db" "CVS" "_darcs"
                                   "~.dep" "~.dot" ".git" ".hg" "_MTN"
                                   "~.nib" ".pc" "~.plst" "RCS" "SCCS"
-                                  "_sgbak" ".svn")
-                            :test 'string=)
+                                  "_sgbak" ".svn"))
             do (el-get-clean-stale-compiled-files dir recursive)))))
 
 (defun el-get-byte-compile-from-stdin ()
