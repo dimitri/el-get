@@ -4,7 +4,7 @@
        :type github
        :pkgname "jwiegley/alert"
        :post-init
-       (lambda ()
+       (progn
          (autoload 'alert "alert"
            "Alert the user that something has happened.")
          (autoload 'alert-add-rule "alert"
