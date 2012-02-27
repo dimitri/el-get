@@ -6,7 +6,6 @@
       ;; (el-get-byte-compile nil)
       (el-get-verbose t)
       (el-get-default-process-sync t))
-  (require 'el-get)
   ;; Test Pymacs recipe with unset PYTHONPATH
   (setenv "PYTHONPATH" nil)
   (el-get 'sync 'pymacs)

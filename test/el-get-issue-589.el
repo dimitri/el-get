@@ -16,7 +16,6 @@
                 :prepare (lambda () (setq prepare-function-ran t))
                 :post-init (lambda () (setq post-init-function-ran t))
                 :lazy t))))
-  (require 'el-get)
   (assert (not post-init-function-ran) nil
           "Post-init function should not run before installation")
   (el-get 'sync 'test-pkg)

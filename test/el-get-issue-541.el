@@ -4,7 +4,6 @@
 
 (let ((debug-on-error t)
       (el-get-verbose t))
-  (require 'el-get)
   (el-get 'sync 'js2-mode))
 
 (let ((compiled-file (concat (file-name-as-directory (el-get-package-directory 'js2-mode)) "js2-mode.elc")))
