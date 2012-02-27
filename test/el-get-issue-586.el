@@ -5,7 +5,6 @@
 (let ((debug-on-error t)
       ;; (el-get-byte-compile nil)
       (el-get-verbose t))
-  (require 'el-get)
   (el-get 'sync 'git-blame 'git-modeline)
   (assert (reduce '(lambda (a b) (and a b))
                   (mapcar 'el-get-package-is-installed '(git-emacs git-blame git-modeline)))

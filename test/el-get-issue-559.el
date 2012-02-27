@@ -19,7 +19,6 @@
                 :type github-zip
                 :description "Act like indirect buffer for region."
                 :pkgname "renard/indirect-region"))))
-  (require 'el-get)
   ;; Install a http-tar recipe
   (el-get 'sync 'indirect-region-http-tar)
   ;; Install a github-tar recipe

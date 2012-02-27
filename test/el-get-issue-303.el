@@ -13,5 +13,4 @@
 		(unichars)
 		:type http :url "http://nwalsh.com/emacs/xmlchars/xmlunicode.el")
 	 (:name unichars :type http :url "http://nwalsh.com/emacs/xmlchars/unichars.el"))))
-  (require 'el-get)
   (el-get-install "xmlunicode"))
