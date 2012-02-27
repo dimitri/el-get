@@ -5,7 +5,7 @@
        :load-path (".")
        :features (q-minor-mode kdbp-mode)
        :post-init
-       (lambda ()
+       (progn
          (add-to-list 'auto-mode-alist '("\\.[kq]$" . kdbp-mode))
          (autoload 'q-mode "q-mode")
          (autoload 'q-help "q-mode")

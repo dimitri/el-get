@@ -2,7 +2,7 @@
        :description "Make Japanese whitespaces visible"
        :url "http://homepage3.nifty.com/satomii/software/jaspace.el"
        :features jaspace
-       :post-init (lambda()
+       :post-init (progn
                     (global-font-lock-mode t)
                     (setq jaspace-alternate-jaspace-string "?")
                     (setq jaspace-alternate-eol-string "\n")
