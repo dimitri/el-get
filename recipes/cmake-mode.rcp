@@ -4,6 +4,6 @@
        :type http
        :url "http://www.cmake.org/CMakeDocs/cmake-mode.el"
        :features "cmake-mode"
-       :post-init (lambda()
+       :post-init (progn
                     (add-to-list 'auto-mode-alist '("CMakeLists\\.txt\\'" . cmake-mode))
                     (add-to-list 'auto-mode-alist '("\\.cmake\\'" . cmake-mode))))
