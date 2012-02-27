@@ -2,6 +2,6 @@
        :description "Google's C/C++ style for c-mode"
        :url "http://google-styleguide.googlecode.com/svn/trunk/google-c-style.el"
        :features google-c-style
-       :post-init (lambda()
+       :post-init (progn
                     (add-hook 'c-mode-common-hook 'google-set-c-style)
                     (add-hook 'c-mode-common-hook 'google-make-newline-indent)))
