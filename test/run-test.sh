@@ -27,7 +27,8 @@ run_test () {
   echo "*** Running el-get test $testfile ***"
   mkdir -p "$TEST_HOME"/.emacs.d
   rm -rf "$TEST_HOME"/.emacs.d/el-get/
-  HOME="$TEST_HOME" "$EMACS" -Q -batch -L "$EL_GET_LIB_DIR" -l "$testfile"
+  HOME="$TEST_HOME" "$EMACS" -Q -batch -L "$EL_GET_LIB_DIR" \
+    -l "$EL_GET_LIB_DIR/el-get.el" -l "$testfile"
   result="$?"
   if [ "$result" = 0 ]; then
     echo "*** SUCCESS $testfile ***"
