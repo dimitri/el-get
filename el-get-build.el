@@ -123,11 +123,12 @@ recursion.
          ;; This ensures that post-build-fun is always a lambda, not a
          ;; symbol, which simplifies the following code.
          (post-build-fun
-          (if (symbolp post-build-fun)
-              `(lambda (&rest args)
-                 (apply ,(symbol-function post-build-fun) args))
-            ;; Must already be a lambda
-            post-build-fun))
+          (cond ((null post-build-fun) (lambda (&rest args) nil))
+                ((symbolp post-build-fun)
+                 `(lambda (&rest args)
+                    (apply ,(symbol-function post-build-fun) args)))
+                (t (assert (functionp post-build-fun) 'show-args)
+                   post-build-fun)))
          ;; Do byte-compilation after building, if needed
 	 (byte-compile-then-post-build-fun
           `(lambda (package)
