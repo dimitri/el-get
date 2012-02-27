@@ -18,6 +18,10 @@ set_default TMPDIR "$(dirname "$(mktemp --dry-run)")"
 set_default TEST_HOME "$TMPDIR/el-get-test-home"
 set_default EMACS "$(which emacs)"
 
+# 5 seconds in between tests to avoid accidental DoS from running too
+# many tests in a short time
+set_default DELAY_BETWEEN_TESTS 5
+
 run_test () {
   testfile="$1"
   echo "*** Running el-get test $testfile ***"
@@ -34,4 +38,5 @@ run_test () {
 
 for t in "$@"; do
   run_test "$t"
+  sleep "$DELAY_BETWEEN_TESTS"
 done

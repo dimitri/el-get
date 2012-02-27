@@ -18,7 +18,11 @@ set_default TMPDIR "$(dirname "$(mktemp --dry-run)")"
 set_default TEST_HOME "$TMPDIR/el-get-test-home"
 set_default EMACS "$(which emacs)"
 
-RECIPE_DIR="$EL_GET_LIB_DIR/recipes"
+# 5 seconds in between tests to avoid accidental DoS from running too
+# many tests in a short time
+set_default DELAY_BETWEEN_TESTS 5
+
+set_default RECIPE_DIR "$EL_GET_LIB_DIR/recipes"
 
 get_recipe_file () {
   for x in "$1" "$RECIPE_DIR/$1" "$RECIPE_DIR/$1.rcp" "$RECIPE_DIR/$1.el"; do
@@ -73,4 +77,5 @@ EOF
 
 for r in "$@"; do
   test_recipe "$r"
+  sleep "$DELAY_BETWEEN_TESTS"
 done
