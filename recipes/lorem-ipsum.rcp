@@ -2,7 +2,7 @@
        :description "Lorem Ipsum Generator"
        :type emacswiki
        :features lorem-ipsum
-       :post-init (lambda()
+       :post-init (progn
 		    (autoload 'Lorem-ipsum-insert-paragraphs "lorem-ipsum")
 		    (autoload 'Lorem-ipsum-insert-sentences "lorem-ipsum")
 		    (autoload 'Lorem-ipsum-insert-list "lorem-ipsum")))

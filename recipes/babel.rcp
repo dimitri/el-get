@@ -4,7 +4,7 @@
        :type github
        :pkgname "juergenhoetzel/babel"
        :prepare
-       (lambda ()
+       (progn
          (autoload 'babel "babel"
            "Use a web translation service to translate the message MSG." t)
          (autoload 'babel-region "babel"

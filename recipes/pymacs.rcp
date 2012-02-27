@@ -3,7 +3,7 @@
        :type github
        :pkgname "pinard/Pymacs"
        :post-init
-       (lambda ()
+       (progn
          ;; do PYTHONPATH=~/.emacs.d/el-get/pymacs/:$PYTHONPATH
          (setenv
           "PYTHONPATH"

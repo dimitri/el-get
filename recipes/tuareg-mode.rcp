@@ -4,7 +4,7 @@
        :description "A  GOOD Emacs mode to edit Objective Caml code."
        :load-path (".")
        :post-init
-       (lambda ()
+       (progn
          (add-to-list 'auto-mode-alist '("\\.ml[iylp]?" . tuareg-mode))
          (autoload 'tuareg-mode "tuareg" "Major mode for editing Caml code" t)
          (autoload 'camldebug "camldebug" "Run the Caml debugger" t)
