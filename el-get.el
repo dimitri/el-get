@@ -565,7 +565,8 @@ PACKAGE may be either a string or the corresponding symbol."
   "Function to call after building the package while installing it."
   (el-get-save-package-status package "installed")
   (el-get-invalidate-autoloads package)	; that will also update them
-  (el-get-init package))
+  (el-get-init package)
+  (run-hook-with-args 'el-get-post-install-hooks package))
 
 (defun el-get-post-install (package)
   "Post install PACKAGE. This will get run by a sentinel."
@@ -597,8 +598,7 @@ PACKAGE may be either a string or the corresponding symbol."
 
     ;; el-get-post-build will care about autoloads and initializing the
     ;; package, and will change the status to "installed"
-    (el-get-build package commands nil sync 'el-get-post-install-build))
-  (run-hook-with-args 'el-get-post-install-hooks package))
+    (el-get-build package commands nil sync 'el-get-post-install-build)))
 
 (defun el-get-do-install (package)
   "Install any PACKAGE for which you have a recipe."
