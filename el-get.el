@@ -668,19 +668,22 @@ PACKAGE may be either a string or the corresponding symbol."
                 missing-features)
           (setq features (append missing-features features)))))))
 
-
+(defun el-get-post-update-build (package)
+  "Function to call after building the package while updating it."
+  ;; fix trailing failed installs
+  (when (string= (el-get-read-package-status package) "required")
+    (el-get-save-package-status package "installed"))
+  (el-get-invalidate-autoloads package)
+  (el-get-init package)
+  (el-get-reload package)
+  (run-hook-with-args 'el-get-post-update-hooks package))
+
 (defun el-get-post-update (package)
   "Post update PACKAGE. This will get run by a sentinel."
-  (let* ((source   (el-get-package-def package))
+  (let* ((sync el-get-default-process-sync)
+         (source   (el-get-package-def package))
 	 (commands (el-get-build-commands package)))
-    (el-get-build package commands nil el-get-default-process-sync
-		  (lambda (package)
-		    (el-get-init package)
-		    ;; fix trailing failed installs
-		    (when (string= (el-get-read-package-status package) "required")
-		      (el-get-save-package-status package "installed"))
-                    (el-get-reload package)
-                    (run-hook-with-args 'el-get-post-update-hooks package)))))
+    (el-get-build package commands nil sync 'el-get-post-update-build)))
 
 (defun el-get-update-requires-reinstall (package)
   "Returns true if updating PACKAGE would require a reinstall.
