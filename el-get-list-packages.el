@@ -99,7 +99,10 @@ matching REGEX with TYPE and ARGS as parameter."
     (princ ".\n\n")
 
     (let ((website (or website
-                       (and (eq 'git type) (el-get-guess-github-website url)))))
+                       (and (eq 'git type) (el-get-guess-github-website url))
+                       (and (eq 'github type)
+                            (el-get-guess-github-website
+                             (el-get-github-url package))))))
       (when website
         (el-get-describe-princ-button (format "Website: %s\n" website)
                                       ": \\(.+\\)" 'help-url website)))
