@@ -2,5 +2,4 @@
        :description "Yet Another RI interface for Emacs"
        :type github
        :pkgname "hron/yari.el"
-       :url "http://github.com/hron/yari.el.git"
        :features yari)
