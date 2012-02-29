@@ -670,7 +670,7 @@ PACKAGE may be either a string or the corresponding symbol."
     (el-get-build package commands nil el-get-default-process-sync
 		  (lambda (package)
                     (when (el-get-want-autoloads-p package)
-                      (el-get-update-autoloads package))
+                      (el-get-invalidate-autoloads package))
 		    (el-get-init package)
 		    ;; fix trailing failed installs
 		    (when (string= (el-get-read-package-status package) "required")
