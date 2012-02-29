@@ -3,9 +3,9 @@
        :type github
        :pkgname "sellout/emacs-color-theme-solarized"
        :depends color-theme
-       :post-init (progn
-                    (add-to-list 'custom-theme-load-path default-directory)
-                    (autoload 'color-theme-solarized-light "color-theme-solarized"
-                      "color-theme: solarized-light" t)
-                    (autoload 'color-theme-solarized-dark "color-theme-solarized"
-                      "color-theme: solarized-dark" t)))
+       :prepare (progn
+                  (add-to-list 'custom-theme-load-path default-directory)
+                  (autoload 'color-theme-solarized-light "color-theme-solarized"
+                    "color-theme: solarized-light" t)
+                  (autoload 'color-theme-solarized-dark "color-theme-solarized"
+                    "color-theme: solarized-dark" t)))

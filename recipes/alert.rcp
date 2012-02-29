@@ -3,7 +3,7 @@
        :website "https://github.com/jwiegley/alert"
        :type github
        :pkgname "jwiegley/alert"
-       :post-init
+       :prepare
        (progn
          (autoload 'alert "alert"
            "Alert the user that something has happened.")

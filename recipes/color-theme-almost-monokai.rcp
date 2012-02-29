@@ -3,5 +3,5 @@
        :type github
        :pkgname "lut4rp/almost-monokai"
        :depends color-theme
-       :post-init (autoload 'color-theme-almost-monokai "color-theme-almost-monokai"
-                    "color-theme: almost-monokai" t))
+       :prepare (autoload 'color-theme-almost-monokai "color-theme-almost-monokai"
+                  "color-theme: almost-monokai" t))

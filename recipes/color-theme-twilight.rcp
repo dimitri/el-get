@@ -3,5 +3,5 @@
        :type github
        :pkgname "crafterm/twilight-emacs"
        :depends color-theme
-       :post-init (autoload 'color-theme-twilight "color-theme-twilight"
-                    "color-theme: twilight" t))
+       :prepare (autoload 'color-theme-twilight "color-theme-twilight"
+                  "color-theme: twilight" t))
