@@ -52,6 +52,8 @@
 ;;   - add support for auto-building of ELPA recipes
 ;;   - implement :submodule property for git packages (allow bypassing them)
 ;;   - New package types: github, emacsmirror
+;;   - Support for installing CVS packages through non-transparent
+;;     http proxy servers
 ;;
 ;;  3.1 - 2011-09-15 - Get a fix
 ;;
