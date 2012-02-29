@@ -54,6 +54,7 @@
 ;;   - New package types: github, emacsmirror
 ;;   - Support for installing CVS packages through non-transparent
 ;;     http proxy servers
+;;   - `el-get-update-all' now prompts before updating packages
 ;;
 ;;  3.1 - 2011-09-15 - Get a fix
 ;;
@@ -695,10 +696,13 @@ PACKAGE may be either a string or the corresponding symbol."
       (message "el-get update %s" package))))
 
 ;;;###autoload
-(defun el-get-update-all ()
+(defun el-get-update-all (&optional no-prompt)
   "Performs update of all installed packages."
   (interactive)
-  (mapc 'el-get-update (el-get-list-package-names-with-status "installed")))
+  (when (or no-prompt
+            (yes-or-no-p
+             "Do you really want to update all installed packages?"))
+    (mapc 'el-get-update (el-get-list-package-names-with-status "installed"))))
 
 ;;;###autoload
 (defun el-get-self-update ()
