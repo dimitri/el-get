@@ -2,6 +2,6 @@
        :description "A major mode for editing ledger .dat files"
        :type http
        :url "https://raw.github.com/jwiegley/ledger/next/lisp/ledger.el"
-       :post-init (lambda ()
-                    (autoload 'ledger-mode "ledger" "Major mode for editing ledger files" t)
-                    (add-to-list 'auto-mode-alist '("\\.dat$" . ledger-mode))))
+       :prepare (lambda ()
+                  (autoload 'ledger-mode "ledger" "Major mode for editing ledger files" t)
+                  (add-to-list 'auto-mode-alist '("\\.dat$" . ledger-mode))))

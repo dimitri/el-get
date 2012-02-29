@@ -2,7 +2,7 @@
        :description "Simple major mode to edit YAML file for emacs"
        :type github
        :pkgname "yoshiki/yaml-mode"
-       :post-init (progn
-                    (autoload 'yaml-mode "yaml-mode" nil t)
-                    (add-to-list 'auto-mode-alist
-                                 '("\\.ya?ml\\'" . yaml-mode))))
+       :prepare (progn
+                  (autoload 'yaml-mode "yaml-mode" nil t)
+                  (add-to-list 'auto-mode-alist
+                               '("\\.ya?ml\\'" . yaml-mode))))

@@ -3,5 +3,5 @@
        :type github
        :pkgname "juba/color-theme-tangotango"
        :depends color-theme
-       :post-init (autoload 'color-theme-tangotango "color-theme-tangotango"
-                    "color-theme: tangotango" t))
+       :prepare (autoload 'color-theme-tangotango "color-theme-tangotango"
+                  "color-theme: tangotango" t))
