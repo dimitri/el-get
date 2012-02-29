@@ -786,7 +786,8 @@ entry which is not a symbol and is not already a known recipe."
       (let ((checksum (funcall compute-checksum package)))
         (message "Checksum for package %s is: %s. It has been copied to the kill-ring."
                  package checksum)
-        (kill-new checksum)))))
+        (kill-new checksum)
+        checksum))))
 
 (defun el-get-self-checksum ()
   "Compute the checksum of the running version of el-get itself.
