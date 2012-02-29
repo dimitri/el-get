@@ -51,9 +51,6 @@
 	 (name (format "*hg pull %s*" package))
          (checkout (or (plist-get source :checkout)
                        (plist-get source :checksum)))
-	 ;; When dealing with a specific checkout, we should not use
-	 ;; "--update"
-	 (pull-args (list "pull" (unless checkout "--update")))
 	 (ok   (format "Pulled package %s." package))
 	 (ko   (format "Could not update package %s." package)))
 
@@ -63,18 +60,18 @@
 		      :buffer-name ,name
 		      :default-directory ,pdir
 		      :program ,hg-executable
-		      :args ,pull-args
+		      :args ("pull")
 		      :message ,ok
 		      :error ,ko)
-       ,(when checkout
-          (list :command-name (format "*hg checkout %s*" checkout)
-		:buffer-name name
-		:default-directory pdir
-		:program hg-executable
-		:args (list "update" "--rev" checkout)
-		:message (format "hg checkout %s ok" checkout)
-		:error (format "Could not checkout %s for package %s"
-                               checkout package))))
+       ,(list :command-name (format "*hg checkout %s*" checkout)
+              :buffer-name name
+              :default-directory pdir
+              :program hg-executable
+              :args (append '("update")
+                            (when checkout (list "--rev" checkout)))
+              :message (format "hg checkout %s ok" checkout)
+              :error (format "Could not checkout %s for package %s"
+                             checkout package)))
      post-update-fun)))
 
 (defun el-get-hg-compute-checksum (package)
