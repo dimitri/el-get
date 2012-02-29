@@ -696,10 +696,12 @@ PACKAGE may be either a string or the corresponding symbol."
       (message "el-get update %s" package))))
 
 ;;;###autoload
-(defun el-get-update-all ()
+(defun el-get-update-all (&optional no-prompt)
   "Performs update of all installed packages."
   (interactive)
-  (when (yes-or-no-p "Do you really want to update all installed packages?")
+  (when (or no-prompt
+            (yes-or-no-p
+             "Do you really want to update all installed packages?"))
     (mapc 'el-get-update (el-get-list-package-names-with-status "installed"))))
 
 ;;;###autoload
