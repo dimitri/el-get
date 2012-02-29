@@ -63,7 +63,7 @@
 		      :buffer-name ,name
 		      :default-directory ,pdir
 		      :program ,hg-executable
-		      :args ("pull" "--update")
+		      :args ,pull-args
 		      :message ,ok
 		      :error ,ko)
        ,(when checkout
