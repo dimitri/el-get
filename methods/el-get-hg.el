@@ -25,6 +25,11 @@
 	 (pdir  (el-get-package-directory package))
 	 (pname (el-get-as-string package))
 	 (name  (format "*hg clone %s*" package))
+         (checkout (or (plist-get source :checkout)
+                       (plist-get source :checksum)))
+         (clone-args (append '("clone")
+                             (when checkout (list "--updaterev" checkout))
+                             (list url pname)))
 	 (ok    (format "Package %s installed." package))
 	 (ko    (format "Could not install package %s." package)))
 
@@ -34,7 +39,7 @@
 		      :buffer-name ,name
 		      :default-directory ,el-get-dir
 		      :program ,hg-executable
-		      :args ("clone" ,url ,pname)
+		      :args ,clone-args
 		      :message ,ok
 		      :error ,ko))
      post-install-fun)))
@@ -44,6 +49,11 @@
   (let* ((hg-executable (el-get-executable-find "hg"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*hg pull %s*" package))
+         (checkout (or (plist-get source :checkout)
+                       (plist-get source :checksum)))
+	 ;; When dealing with a specific checkout, we should not use
+	 ;; "--update"
+	 (pull-args (list "pull" (unless checkout "--update")))
 	 (ok   (format "Pulled package %s." package))
 	 (ko   (format "Could not update package %s." package)))
 
@@ -55,7 +65,16 @@
 		      :program ,hg-executable
 		      :args ("pull" "--update")
 		      :message ,ok
-		      :error ,ko))
+		      :error ,ko)
+       ,(when checkout
+          (list :command-name (format "*hg checkout %s*" checkout)
+		:buffer-name name
+		:default-directory pdir
+		:program hg-executable
+		:args (list "update" "--rev" checkout)
+		:message (format "hg checkout %s ok" checkout)
+		:error (format "Could not checkout %s for package %s"
+                               checkout package))))
      post-update-fun)))
 
 (defun el-get-hg-compute-checksum (package)
