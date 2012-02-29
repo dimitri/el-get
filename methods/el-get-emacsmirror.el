@@ -16,18 +16,32 @@
 (require 'el-get-git)
 (require 'el-get-github)
 
+(defun el-get-emacsmirror-get-github-source (package)
+  "Return a github-type source equivalent to emacsmirror PACKAGE."
+  (assert (equal (el-get-package-type package) 'emacsmirror) nil
+          "Need an emacsmirror package")
+  (append '(:type github :username "emacsmirror")
+          (el-get-package-def package)))
+
 ;;
 ;; emacsmirror support
 ;;
 (defun el-get-emacsmirror-clone (package url post-install-fun)
   ;; Override the package def with an equivalent github-type package,
   ;; then run the github method.
-  (let* ((package-github-source (append '(:type github :username "emacsmirror")
-                                (el-get-package-def package)))
+  (let* ((package-github-source
+          (el-get-emacsmirror-get-github-source package))
          (el-get-sources (cons package-github-source el-get-sources)))
     (el-get-github-clone package url post-install-fun)))
 
+(defun el-get-emacsmirror-guess-website (package)
+  (let* ((package-github-source
+          (el-get-emacsmirror-get-github-source package))
+         (el-get-sources (cons package-github-source el-get-sources)))
+    (el-get-github-guess-website package)))
+
 (el-get-register-derived-method :emacsmirror :github
-  :install #'el-get-emacsmirror-clone)
+  :install #'el-get-emacsmirror-clone
+  :guess-website #'el-get-emacsmirror-guess-website)
 
 (provide 'el-get-emacsmirror)
