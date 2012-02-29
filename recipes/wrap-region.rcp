@@ -1,7 +1,7 @@
 (:name wrap-region
        :description "Wrap text with punctation or tag"
        :type elpa
-       :post-init
+       :prepare
        (progn
          (autoload 'wrap-region-mode "wrap-region" nil t)
          (autoload 'turn-on-wrap-region-mode "wrap-region" nil t)
