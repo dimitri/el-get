@@ -54,6 +54,7 @@
 ;;   - New package types: github, emacsmirror
 ;;   - Support for installing CVS packages through non-transparent
 ;;     http proxy servers
+;;   - `el-get-update-all' now prompts before updating packages
 ;;
 ;;  3.1 - 2011-09-15 - Get a fix
 ;;
