@@ -16,7 +16,6 @@
                 :type builtin
                 :build ("echo 't' > test-pkg.el")
                 :compile nil)))
-  (require 'el-get)
   ;; Install with recipe1, which does compilation
   (let ((el-get-sources (list recipe1)))
     (el-get 'sync 'test-pkg)

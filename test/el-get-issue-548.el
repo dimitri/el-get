@@ -5,7 +5,6 @@
 (let ((debug-on-error t)
       ;; (el-get-byte-compile nil)
       (el-get-verbose t))
-  (require 'el-get)
   (el-get 'sync 'pcmpl-git)
   (el-get-init 'pcmpl-git)
   ;; Verify that the option in :post-init was set correctly

@@ -60,7 +60,6 @@
                  )))
        (el-get-sources
         (append good-sources broken-sources)))
-  (require 'el-get)
   ;; Should succeed
   (message "Good recipes: %S" (mapcar 'el-get-source-name good-sources))
   (apply 'el-get 'sync (mapcar 'el-get-source-name good-sources))

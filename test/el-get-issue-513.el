@@ -5,7 +5,6 @@
 (let ((debug-on-error t)
       ;; (el-get-byte-compile nil)
       (el-get-verbose t))
-  (require 'el-get)
   ;; Install a github-type recipe
   (el-get 'sync 'window-layout)
   ;; Install an emacsmirror-type recipe

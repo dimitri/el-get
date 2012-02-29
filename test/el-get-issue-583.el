@@ -1,7 +1,7 @@
 ;; https://github.com/dimitri/el-get/issues/583
 ;;
 ;; Installing, removing, and installing a package doesn't
-;; 
+;;
 ;; Also related: https://github.com/dimitri/el-get/issues/576
 
 (let ((el-get-default-process-sync t)
@@ -20,7 +20,6 @@
                 :type builtin)
          (:name f
                 :type builtin))))
-  (require 'el-get)
   ;; Ensure a is uninstalled
   (ignore-errors (el-get-remove 'a))
   ;; Install a and all deps
