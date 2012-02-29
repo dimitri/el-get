@@ -3,5 +3,5 @@
        :type github
        :pkgname "superbobry/color-theme-desert"
        :depends color-theme
-       :post-init (autoload 'color-theme-desert "color-theme-desert"
-                    "color-theme: desert" t))
+       :prepare (autoload 'color-theme-desert "color-theme-desert"
+                  "color-theme: desert" t))

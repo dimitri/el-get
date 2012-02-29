@@ -4,10 +4,10 @@
        :description "kdbp-mode + q-minor-mode combined for easy installation and using."
        :load-path (".")
        :features (q-minor-mode kdbp-mode)
-       :post-init
+       :prepare
        (progn
-         (add-to-list 'auto-mode-alist '("\\.[kq]$" . kdbp-mode))
          (autoload 'q-mode "q-mode")
          (autoload 'q-help "q-mode")
          (autoload 'run-q "q-mode")
-         (autoload 'kdbp-mode "kdbp-mode")))
+         (autoload 'kdbp-mode "kdbp-mode")
+         (add-to-list 'auto-mode-alist '("\\.[kq]$" . kdbp-mode))))

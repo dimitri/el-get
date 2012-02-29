@@ -2,7 +2,7 @@
        :description "Emacs mode for searching python documents with convenience"
        :type github
        :pkgname "tsgates/pylookup"
-       :post-init
+       :prepare
        (progn
          (setq pylookup-program (expand-file-name "pylookup.py")
                pylookup-db-file (expand-file-name "pylookup.db"))
