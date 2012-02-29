@@ -698,7 +698,8 @@ PACKAGE may be either a string or the corresponding symbol."
 (defun el-get-update-all ()
   "Performs update of all installed packages."
   (interactive)
-  (mapc 'el-get-update (el-get-list-package-names-with-status "installed")))
+  (when (yes-or-no-p "Do you really want to update all installed packages?")
+    (mapc 'el-get-update (el-get-list-package-names-with-status "installed"))))
 
 ;;;###autoload
 (defun el-get-self-update ()
