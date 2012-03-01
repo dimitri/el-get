@@ -113,6 +113,9 @@ definition provided by `el-get' recipes locally.
     `github' and `emacsmirror', which are derived form `git').
     Also supported in the installer in `el-get-install'.
 
+    For a `hg' recipe, `:checkout' can be used to specify a
+    branch to use.
+
 :url
 
     Where to fetch the package, only meaningful for `git' and
@@ -301,12 +304,14 @@ definition provided by `el-get' recipes locally.
     with the following meaning:
 
       * `http', `ftp' and `emacswiki' with the SHA1 of the downloaded file
-      * `git' in which it is an alias for `:checkout' (see below)
+      * `git' and `hg' in which it is an alias for `:checkout' (see below)
 
 :checkout
 
-    A git refspec (branch, tag, commit hash) that should be
-    checked out after cloning the git repository. If provided,
+    A git refspec or hg revision specifier.
+
+    For a git recipe, this is a refspec (branch, tag, commit hash) that
+    should be checked out after cloning the git repository. If provided,
     this overrides any value for the `:branch' property. Unlike
     the `:branch' property, this can be any valid argument to
     `git checkout', including a tag name or a commit hash. The
@@ -314,7 +319,13 @@ definition provided by `el-get' recipes locally.
     a particular revision, regardless of what happens to the repo
     upstream.
 
-    Currently this property only has meaning for `git' type
+    For a hg recipe, this is a revision specifier (branch, tag,
+    changeset id, \"tip\") that can be given to the `hg update'
+    command.  Although the revision number can be used, it is
+    recommended not to because it can point to a different
+    revision in another clone of the package repository.
+
+    Currently this property only has meaning for `git' and `hg' type
     recipes. Other VCS-based methods may implement support in the
     future.
 

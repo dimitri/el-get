@@ -47,7 +47,7 @@
 ;;   - add support for el-get-reload and do that at update time
 ;;   - implement :checksum property for http kinds of files
 ;;   - Add new command el-get-reinstall
-;;   - implement :checkout property for git packages
+;;   - implement :checkout property for git and hg packages
 ;;   - implement :shallow property for git packages
 ;;   - add support for auto-building of ELPA recipes
 ;;   - implement :submodule property for git packages (allow bypassing them)
