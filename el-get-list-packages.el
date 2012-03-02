@@ -16,6 +16,9 @@
 ;;
 ;; Description of packages.  (Code based on `describe-function').
 ;;
+(require 'el-get-core)
+(require 'cl)
+
 (define-button-type 'el-get-help-package-def
   :supertype 'help-xref
   'help-function (lambda (package) (find-file (el-get-recipe-filename package)))
@@ -64,11 +67,11 @@ matching REGEX with TYPE and ARGS as parameter."
       (re-search-backward regex nil t)
       (apply #'help-xref-button 1 type args))))
 
-(defun el-get-guess-github-website (url)
-  "If a package's URL is on Github, return the project's Github URL."
-  (when (and url (string-match "github\\.com/" url))
-    (replace-regexp-in-string "\\.git$" ""
-                              (replace-regexp-in-string "\\(git\\|https\\)://" "http://" url))))
+(defun el-get-guess-website (package)
+  (let* ((type (el-get-package-type package))
+         (guesser (el-get-method type :guess-website)))
+    (when guesser
+      (funcall guesser package))))
 
 (defun el-get-describe-1 (package)
   (let* ((psym (el-get-as-symbol package))
@@ -99,7 +102,7 @@ matching REGEX with TYPE and ARGS as parameter."
     (princ ".\n\n")
 
     (let ((website (or website
-                       (and (eq 'git type) (el-get-guess-github-website url)))))
+                       (el-get-guess-website package))))
       (when website
         (el-get-describe-princ-button (format "Website: %s\n" website)
                                       ": \\(.+\\)" 'help-url website)))
