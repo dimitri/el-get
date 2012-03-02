@@ -45,16 +45,25 @@ call for doing the named package action in the given method.")
   (and (el-get-method name :install) t))
 
 (defun* el-get-register-method (name &key install update remove
-                                     install-hook remove-hook compute-checksum)
+                                     install-hook remove-hook compute-checksum
+                                     guess-website)
   "Register the method for backend NAME, with given functions"
-  (loop for required-arg in '(install update remove)
-        unless (symbol-value required-arg)
-        do (error "Missing required argument: :%s" required-arg))
-  (let ((def (list :install install :update update :remove remove)))
-    (when install-hook     (setq def (plist-put def :install-hook install-hook)))
-    (when remove-hook      (setq def (plist-put def :remove-hook remove-hook)))
-    (when compute-checksum (setq def (plist-put def :compute-checksum compute-checksum)))
-    (setq el-get-methods (plist-put el-get-methods name def))))
+  (let (method-def)
+    (loop for required-arg in '(install update remove)
+          unless (symbol-value required-arg)
+          do (error "Missing required argument: :%s" required-arg)
+          do (setq method-def
+                   (plist-put method-def
+                              (intern (format ":%s" required-arg))
+                              (symbol-value required-arg))))
+    (loop for optional-arg in '(install-hook remove-hook
+                                compute-checksum guess-website)
+        if (symbol-value optional-arg)
+        do (setq method-def
+                 (plist-put method-def
+                            (intern (format ":%s" optional-arg))
+                            (symbol-value optional-arg))))
+    (setq el-get-methods (plist-put el-get-methods name method-def))))
 
 (put 'el-get-register-method 'lisp-indent-function
      (get 'prog1 'lisp-indent-function))
