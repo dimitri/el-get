@@ -3,5 +3,5 @@
        :type http
        :url "http://jblevins.org/git/misc.git/plain/color-theme-subdued.el"
        :depends color-theme
-       :post-init (autoload 'color-theme-subdued "color-theme-subdued"
-                    "color-theme: subdued" t))
+       :prepare (autoload 'color-theme-subdued "color-theme-subdued"
+                  "color-theme: subdued" t))
