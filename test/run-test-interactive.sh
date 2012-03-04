@@ -19,13 +19,21 @@ set_default TEST_HOME "$TMPDIR/el-get-test-home"
 set_default EMACS "$(which emacs)"
 
 run_test () {
-  testfile="$1"
-  echo "*** Running el-get test $testfile interactively ***"
-  mkdir -p "$TEST_HOME"/.emacs.d
-  rm -rf "$TEST_HOME"/.emacs.d/el-get/
-  HOME="$TEST_HOME" "$EMACS" -Q -L "$EL_GET_LIB_DIR" \
-    -f toggle-debug-on-error -l "$EL_GET_LIB_DIR/el-get.el" \
-    -l "$testfile"
+  for x in "$1" "$TEST_DIR/$1" "$TEST_DIR/$1.el" "$TEST_DIR/el-get-issue-$1.el"; do
+    if [ -f "$x" ]; then
+      testfile="$x"
+    fi
+  done
+  if [ -z "$testfile" ]; then
+    echo "*** ERROR $1: Could not find test file ***"
+  else
+    echo "*** Running el-get test $testfile interactively ***"
+    mkdir -p "$TEST_HOME"/.emacs.d
+    rm -rf "$TEST_HOME"/.emacs.d/el-get/
+    HOME="$TEST_HOME" "$EMACS" -Q -L "$EL_GET_LIB_DIR" \
+      -f toggle-debug-on-error -l "$EL_GET_LIB_DIR/el-get.el" \
+      -l "$testfile"
+  fi
 }
 
 for t in "$@"; do
