@@ -55,13 +55,12 @@ fallback."
 (defun el-get-notify (title message)
   "Notify the user using either the dbus based API or the `growl' one"
   (when (not (eq el-get-notify-type 'message))
-    (if (fboundp 'dbus-register-signal)
-        ;; avoid a bug in Emacs 24.0 under darwin
-        (require 'notifications nil t)
+    (unless (and (fboundp 'dbus-register-signal)
+                 ;; avoid a bug in Emacs 24.0 under darwin
+                 (ignore-errors (require 'notifications nil t)))
       ;; else try notify.el, there's a recipe for it
       (unless (fboundp 'notify)
-        (when (featurep 'notify)
-          (require 'notify)))))
+        (ignore-errors (require 'notify nil 'noerror)))))
 
   (condition-case nil
       (progn
