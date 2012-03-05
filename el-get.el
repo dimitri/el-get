@@ -430,7 +430,7 @@ which defaults to the first element in `el-get-recipe-path'."
     `(el-get-funcall ,func ',fname ',package)))
 
 
-(defun el-get-init (package)
+(defun el-get-init (package &optional package-status-alist)
   "Make the named PACKAGE available for use.
 
 Add PACKAGE's directory (or `:load-path' if specified) to the
@@ -440,7 +440,8 @@ called by `el-get' (usually at startup) for each installed package."
   (interactive (list (el-get-read-package-name "Init")))
   (el-get-verbose-message "el-get-init: %s" package)
   (condition-case err
-      (let* ((source   (el-get-package-def package))
+      (let* ((source
+              (el-get-read-package-status-recipe package package-status-alist))
              (method   (el-get-package-method source))
              (loads    (el-get-as-list (plist-get source :load)))
              (autoloads (plist-get source :autoloads))
@@ -810,8 +811,9 @@ Also put the checksum in the kill-ring."
 When PACKAGES is non-nil, only process entries from this list.
 Those packages from the list we don't know the status of are
 considered \"required\"."
-  (let* ((required    (el-get-list-package-names-with-status "required"))
-	 (installed   (el-get-list-package-names-with-status "installed"))
+  (let* ((p-s-alist   (el-get-read-status-file))
+         (required    (el-get-filter-package-alist-with-status p-s-alist "required"))
+         (installed   (el-get-filter-package-alist-with-status p-s-alist "installed"))
 	 (to-init     (if packages
 			  (loop for p in packages
 				when (member (el-get-as-string p) installed)
@@ -876,7 +878,6 @@ already installed packages is considered."
   (let* ((packages
 	  ;; (el-get 'sync 'a 'b my-package-list)
 	  (loop for p in packages when (listp p) append p else collect p))
-	 (p-status    (el-get-read-all-packages-status))
          (total       (length packages))
          (installed   (el-get-count-packages-with-status packages "installed"))
          (progress (and (eq sync 'wait)
