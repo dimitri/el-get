@@ -13,6 +13,7 @@
         (add-hook 'write-contents-functions
                   (lambda ()
                     (delete-trailing-whitespace (point-min) (point-max))
+                    (untabify (point-min) (point-max))
                     nil))
         (require 'whitespace)
         "Sometimes the mode needs to be toggled off and on."
