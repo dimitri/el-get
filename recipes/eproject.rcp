@@ -1,7 +1,7 @@
 (:name eproject
        :description "File grouping (\"project\") extension for emacs"
-       :type git
-       :url "https://github.com/jrockway/eproject.git"
+       :type github
+       :pkgname "jrockway/eproject"
        :load-path ("." "lang")
        ;; the core functionality needs to be present.
        ;; eproject-extras, otoh, has autoload cookies.
