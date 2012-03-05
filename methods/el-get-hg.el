@@ -78,12 +78,9 @@
   "Return the hash of the checked-out revision of PACKAGE."
   (with-temp-buffer
     (cd (el-get-package-directory package))
-    (let* ((args '("hg" "id" "--id"))
+    (let* ((args '("hg" "log" "--rev" "." "--template" "{node}"))
            (cmd (mapconcat 'shell-quote-argument args " "))
-           (output (shell-command-to-string cmd))
-           ;; strip tailing "+" if exists
-           (hash (and (string-match "^\\([0-9A-Fa-f]+\\)" output)
-                      (match-string 0 output))))
+           (hash (shell-command-to-string cmd)))
       hash)))
 
 (el-get-register-method :hg
