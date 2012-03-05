@@ -24,8 +24,8 @@
            (member (file-name-as-directory (el-get-package-directory pkg))
                    normalized-load-path))))
     (assert (not (funcall pkg-in-load-path pkg1))
-            nil "Package directory of %s should not be the `load-path'"
+            nil "Package directory of %s should not be in `load-path'"
             pkg1)
     (assert (funcall pkg-in-load-path pkg2)
-            nil "Package directory of %s should be the `load-path'"
+            nil "Package directory of %s should be in `load-path'"
             pkg2)))
