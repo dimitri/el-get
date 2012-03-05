@@ -7,7 +7,7 @@
        (el-get-verbose t)
        ;; Just need to install something
        (pkg 'qmake-mode)
-       (checksum "a3f9655f346c")
+       (checksum "a3f9655f346c6efe54e3ffc000adb3435c99f90b")
        (el-get-sources
         (list
          `(:name ,pkg
