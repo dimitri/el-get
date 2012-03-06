@@ -81,35 +81,33 @@ would force the package statuses to be re-read from disk.")
   (let ((p-alist (or package-status-alist (el-get-read-status-file))))
     (plist-get (cdr (assq package p-alist)) 'recipe)))
 
-(defun el-get-list-package-names-with-status (&rest status)
-  "Return package names that are currently in given status"
-  (loop for (p . prop) in (el-get-read-status-file)
-        for s = (plist-get prop 'status)
-	when (member s status)
-        collect (el-get-as-string p)))
-
-(defun el-get-filter-package-alist-with-status (package-status-alist &rest status)
+(defun el-get-filter-package-alist-with-status (package-status-alist &rest statuses)
   "Return package names that are currently in given status"
   (loop for (p . prop) in package-status-alist
         for s = (plist-get prop 'status)
-	when (member s status)
+	when (member s statuses)
         collect (el-get-as-string p)))
 
-(defun el-get-read-package-with-status (action &rest status)
+(defun el-get-list-package-names-with-status (&rest statuses)
+  "Return package names that are currently in given status"
+  (apply #'el-get-filter-package-alist-with-status
+         (el-get-read-status-file)
+         statuses))
+
+(defun el-get-read-package-with-status (action &rest statuses)
   "Read a package name in given status"
   (completing-read (format "%s package: " action)
-                   (apply 'el-get-list-package-names-with-status status)))
+                   (apply 'el-get-list-package-names-with-status statuses)))
 
-(defun el-get-count-package-with-status (&rest status)
+(defun el-get-count-package-with-status (&rest statuses)
   "Return how many packages are currently in given status"
-  (loop for (p . prop) in (el-get-read-status-file)
-	count (member (plist-get prop 'status) status)))
+  (length (apply #'el-get-list-package-names-with-status statuses)))
 
-(defun el-get-count-packages-with-status (packages &rest status)
+(defun el-get-count-packages-with-status (packages &rest statuses)
   "Return how many packages are currently in given status in PACKAGES"
-  (loop for (p . prop) in (el-get-read-status-file)
-	count (and (member (el-get-as-symbol p) packages)
-                   (member (plist-get prop 'status) status))))
+  (length (loop for p in (apply #'el-get-list-package-names-with-status statuses)
+                when (member (el-get-as-symbol p) packages)
+                collect p)))
 
 (defun el-get-extra-packages (&rest packages)
   "Return installed or required packages that are not in given package list"
