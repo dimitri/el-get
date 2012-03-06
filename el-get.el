@@ -319,8 +319,10 @@ package names."
       (error "el-get: package `%s' has incomplete recipe (no :type)" package))))
 
 (defun el-get-package-is-installed (package)
-  "Raise an error if PACKAGE is already installed"
-  (string= "installed" (el-get-package-status (el-get-as-string package))))
+  "Return whether package is installed"
+  (and (file-directory-p (el-get-package-directory package))
+       (string= "installed"
+                (el-get-read-package-status (el-get-as-string package)))))
 
 (defun el-get-read-package-name (action &optional filtered)
   "Ask user for a package name in minibuffer, with completion.
@@ -601,7 +603,7 @@ PACKAGE may be either a string or the corresponding symbol."
 (defun el-get-do-install (package)
   "Install any PACKAGE for which you have a recipe."
   (el-get-error-unless-package-p package)
-  (if (string= (el-get-package-status package) "installed")
+  (if (el-get-package-is-installed package)
       (el-get-init package)
     (let* ((status   (el-get-read-package-status package))
 	   (source   (el-get-package-def package))
