@@ -19,6 +19,7 @@
 ;; miserably.
 ;;
 
+(require 'cl)
 (require 'el-get-core)
 
 (defvar el-get-status-file-cache nil
@@ -29,7 +30,8 @@ would force the package statuses to be re-read from disk.")
 
 (defun el-get-save-package-status (package status)
   "Save given package status"
-  (let* ((recipe (el-get-package-def package))
+  (let* ((package (el-get-as-symbol package))
+         (recipe (el-get-package-def package))
          (package-status-alist
           (assq-delete-all package (el-get-read-status-file)))
          (new-package-status-alist
@@ -74,14 +76,14 @@ would force the package statuses to be re-read from disk.")
 (defun el-get-read-package-status (package &optional package-status-alist)
   "return current status for PACKAGE"
   (let ((p-alist (or package-status-alist (el-get-read-status-file))))
-    (plist-get (cdr (assq package p-alist)) 'status)))
+    (plist-get (cdr (assq (el-get-as-symbol package) p-alist)) 'status)))
 
 (define-obsolete-function-alias 'el-get-package-status 'el-get-read-package-status)
 
 (defun el-get-read-package-status-recipe (package &optional package-status-alist)
   "return current status for PACKAGE"
   (let ((p-alist (or package-status-alist (el-get-read-status-file))))
-    (plist-get (cdr (assq package p-alist)) 'recipe)))
+    (plist-get (cdr (assq (el-get-as-symbol package) p-alist)) 'recipe)))
 
 (defun el-get-filter-package-alist-with-status (package-status-alist &rest statuses)
   "Return package names that are currently in given status"
@@ -107,9 +109,9 @@ would force the package statuses to be re-read from disk.")
 
 (defun el-get-count-packages-with-status (packages &rest statuses)
   "Return how many packages are currently in given status in PACKAGES"
-  (length (loop for p in (apply #'el-get-list-package-names-with-status statuses)
-                when (member (el-get-as-symbol p) packages)
-                collect p)))
+  (length (intersection
+           (mapcar #'el-get-as-symbol (apply #'el-get-list-package-names-with-status statuses))
+           (mapcar #'el-get-as-symbol packages))))
 
 (defun el-get-extra-packages (&rest packages)
   "Return installed or required packages that are not in given package list"
