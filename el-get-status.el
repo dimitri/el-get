@@ -76,6 +76,8 @@ would force the package statuses to be re-read from disk.")
   (let ((p-alist (or package-status-alist (el-get-read-status-file))))
     (plist-get (cdr (assq package p-alist)) 'status)))
 
+(define-obsolete-function-alias 'el-get-package-status 'el-get-read-package-status)
+
 (defun el-get-read-package-status-recipe (package &optional package-status-alist)
   "return current status for PACKAGE"
   (let ((p-alist (or package-status-alist (el-get-read-status-file))))
