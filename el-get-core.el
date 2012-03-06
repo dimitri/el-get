@@ -176,6 +176,8 @@ given method."
   (let* ((method  (if (keywordp method-name) method-name
                     (intern (concat ":" (format "%s" method-name)))))
          (actions (plist-get el-get-methods method)))
+    (assert actions nil
+            "Unknown recipe type: %s" method)
     (plist-get actions action)))
 
 (defun el-get-check-init ()
