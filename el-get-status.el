@@ -21,6 +21,12 @@
 
 (require 'el-get-core)
 
+(defvar el-get-status-file-cache nil
+  "Cache variable used to avoid re-reading status file from disk.
+
+This variable may safely be set to nil at any time. Doing so
+would force the package statuses to be re-read from disk.")
+
 (defun el-get-save-package-status (package status)
   "Save given package status"
   (let* ((recipe (el-get-package-def package))
@@ -35,24 +41,29 @@
                            (el-get-as-string (car p2)))))))
     (with-temp-file el-get-status-file
       (pp new-package-status-alist (current-buffer)))
-    new-package-status-alist))
+    ;; Cache and return the new alist
+    (setq el-get-status-file-cache
+          new-package-status-alist)))
 
 (defun el-get-read-status-file ()
   "read `el-get-status-file' and return an alist of plist like:
    (PACKAGE . (status \"status\" recipe (:name ...)))"
-  (let ((ps
-         (when (file-exists-p el-get-status-file)
-           (car (with-temp-buffer
-                  (insert-file-contents-literally el-get-status-file)
-                  (read-from-string (buffer-string)))))))
-    (if (consp (car ps))                ; check for an alist, new format
-        ps
-      ;; convert to the new format, fetching recipes as we go
-      (loop for (p s) on ps by 'cddr
-            for x = (el-get-as-symbol (el-get-package-name p))
-            when x
-            collect (cons x (list 'status s
-                                  'recipe (el-get-package-def x)))))))
+  (or el-get-status-file-cache
+      (setq
+       el-get-status-file-cache
+       (let ((ps
+              (when (file-exists-p el-get-status-file)
+                (car (with-temp-buffer
+                       (insert-file-contents-literally el-get-status-file)
+                       (read-from-string (buffer-string)))))))
+         (if (consp (car ps))         ; check for an alist, new format
+             ps)
+         ;; convert to the new format, fetching recipes as we go
+         (loop for (p s) on ps by 'cddr
+               for x = (el-get-as-symbol (el-get-package-name p))
+               when x
+               collect (cons x (list 'status s
+                                     'recipe (el-get-package-def x))))))))
 
 (defun el-get-package-status-alist (&optional package-status-alist)
   "return an alist of (PACKAGE . STATUS)"
