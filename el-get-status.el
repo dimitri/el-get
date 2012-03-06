@@ -68,7 +68,7 @@ would force the package statuses to be re-read from disk.")
 (defun el-get-package-status-alist (&optional package-status-alist)
   "return an alist of (PACKAGE . STATUS)"
   (loop for (p . prop) in (or package-status-alist
-                              (el-get-convert-status-format))
+                              (el-get-read-status-file))
         collect (cons p (plist-get prop 'status))))
 
 (defun el-get-read-package-status (package &optional package-status-alist)
