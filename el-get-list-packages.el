@@ -303,7 +303,7 @@ matching REGEX with TYPE and ARGS as parameter."
 					   ((string= el-get-package-menu-sort-key "Status")
 						#'(lambda (package)
 							(let ((package-name (el-get-as-string (plist-get package :name))))
-							  (el-get-package-status package-name))))
+							  (el-get-read-package-status package-name))))
 					   ((string= el-get-package-menu-sort-key "Description")
 						#'(lambda (package)
 							(plist-get package :description)))
@@ -319,7 +319,7 @@ matching REGEX with TYPE and ARGS as parameter."
 	  (mapc (lambda (package)
 			  (let ((package-name (el-get-as-string (plist-get package :name))))
 				(el-get-print-package package-name
-									  (el-get-package-status package-name)
+									  (el-get-read-package-status package-name)
 									  (plist-get package :description))))
 			packages))
 	(goto-char (point-min))

@@ -64,7 +64,7 @@
     ;; make sure we can actually byte-compile it
     (el-get-ensure-byte-compilable-autoload-file generated-autoload-file)
 
-    (when (string= (el-get-package-status package) "installed")
+    (when (el-get-package-is-installed package)
       (apply 'update-directory-autoloads (el-get-load-path package)))
 
     (el-get-save-and-kill el-get-autoload-file)
