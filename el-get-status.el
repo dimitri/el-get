@@ -22,14 +22,38 @@
 (require 'cl)
 (require 'el-get-core)
 
+(defvar el-get-status-file-cache-timestamp nil
+  "Variable used to detect when the status file has changed on disk.
+
+It holds the modification time of the status file as of the last
+time *this* emacs process touched it. If the actual modification
+time of the file does not match this, the cache is invalidated
+and pacakge statuses are re-read from the file.")
+
 (defvar el-get-status-file-cache nil
   "Cache variable used to avoid re-reading status file from disk.
 
 This variable may safely be set to nil at any time. Doing so
 would force the package statuses to be re-read from disk.")
 
+(defun el-get-check-status-cache ()
+  "Check if status file modtime has changed since last access.
+
+If so, invalidate the cache. Returns the cache if still valid,
+else nil."
+  (let ((current-modtime (nth 5 (file-attributes el-get-status-file)))
+        (cached-modtime el-get-status-file-cache-timestamp))
+    (when (or (null cached-modtime)
+              (not (equal current-modtime cached-modtime)))
+      ;; Invalidate the cache, update the timestamp
+      (setq el-get-status-file-cache-timestamp current-modtime
+            el-get-status-file-cache nil)))
+  ;; Return the cache, which may now be nil
+  el-get-status-file-cache)
+
 (defun el-get-save-package-status (package status)
   "Save given package status"
+  (el-get-check-status-cache)
   (let* ((package (el-get-as-symbol package))
          (recipe (el-get-package-def package))
          (package-status-alist
@@ -43,13 +67,16 @@ would force the package statuses to be re-read from disk.")
                            (el-get-as-string (car p2)))))))
     (with-temp-file el-get-status-file
       (pp new-package-status-alist (current-buffer)))
-    ;; Cache and return the new alist
-    (setq el-get-status-file-cache
+    ;; Cache and return the new alist, also updating the timestamp
+    (setq el-get-status-file-cache-timestamp
+          (nth 5 (file-attributes el-get-status-file))
+          el-get-status-file-cache
           new-package-status-alist)))
 
 (defun el-get-read-status-file ()
   "read `el-get-status-file' and return an alist of plist like:
    (PACKAGE . (status \"status\" recipe (:name ...)))"
+  (el-get-check-status-cache)
   (or el-get-status-file-cache
       (setq
        el-get-status-file-cache
