@@ -47,12 +47,6 @@
       package-name
     (intern (format ":%s" package-name))))
 
-(defvar el-get-status-file-cache nil
-  "Cache variable used to avoid re-reading status file from disk.
-
-This variable may safely be set to nil at any time. Doing so
-would force the package statuses to be re-read from disk.")
-
 (defun el-get-save-package-status (package status)
   "Save given package status"
   (let* ((package (el-get-as-symbol package))
