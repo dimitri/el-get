@@ -69,29 +69,30 @@ found."
 	 (ko     (format "Could not install package %s." package)))
     (el-get-start-process-list
      package
-     `((:command-name ,name
+     (list
+      `(:command-name ,name
 		      :buffer-name ,name
 		      :default-directory ,el-get-dir
 		      :program ,git-executable
 		      :args ,clone-args
 		      :message ,ok
 		      :error ,ko)
-       ,(when checkout
-	  (list :command-name (format "*git checkout %s*" checkout)
-		:buffer-name name
-		:default-directory pdir
-		:program git-executable
-		:args (list "--no-pager" "checkout" checkout)
-		:message (format "git checkout %s ok" checkout)
-		:error (format "Could not checkout %s for package %s" checkout package)))
-       ,(unless explicit-nosubmodule
-	  `(:command-name "*git submodule update*"
-			  :buffer-name ,name
-			  :default-directory ,pdir
-			  :program ,git-executable
-			  :args ("--no-pager" "submodule" "update" "--init" "--recursive")
-			  :message "git submodule update ok"
-			  :error "Could not update git submodules")))
+      (when checkout
+        (list :command-name (format "*git checkout %s*" checkout)
+              :buffer-name name
+              :default-directory pdir
+              :program git-executable
+              :args (list "--no-pager" "checkout" checkout)
+              :message (format "git checkout %s ok" checkout)
+              :error (format "Could not checkout %s for package %s" checkout package)))
+      (unless explicit-nosubmodule
+        (list :command-name "*git submodule update*"
+              :buffer-name name
+              :default-directory pdir
+              :program git-executable
+              :args (list "--no-pager" "submodule" "update" "--init" "--recursive")
+              :message "git submodule update ok"
+              :error "Could not update git submodules")))
      post-install-fun)))
 
 (defun el-get-git-pull (package url post-update-fun)
