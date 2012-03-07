@@ -129,6 +129,8 @@ in `:compile-files' will be byte-compiled.
 
 Standard input can also contain a `:clean-directory' property,
 whose value is a directory to be cleared of stale elc files."
+  (assert noninteractive nil
+          "`el-get-byte-compile-from-stdin' is to be used only with -batch")
   (let* ((input-data (read-minibuffer ""))
          (load-path (append (plist-get input-data :load-path) load-path))
          (files (plist-get input-data :compile-files))
