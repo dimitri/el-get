@@ -110,8 +110,9 @@ definition provided by `el-get' recipes locally.
 :branch
 
     Which branch to pull when using `git' (and by extension,
-    `github' and `emacsmirror', which are derived form `git').
-    Also supported in the installer in `el-get-install'.
+    `github' and `emacsmirror', which are derived form `git') and
+    `hg' backends.  Also supported when installing el-get using
+    `el-get-install'.
 
 :url
 
