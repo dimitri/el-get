@@ -68,29 +68,25 @@ would force the package statuses to be re-read from disk.")
                            (el-get-as-string (car p2)))))))
     (with-temp-file el-get-status-file
       (pp new-package-status-alist (current-buffer)))
-    ;; Cache and return the new alist
-    (setq el-get-status-file-cache
-          new-package-status-alist)))
+    ;; Return the new alist
+    new-package-status-alist))
 
 (defun el-get-read-status-file ()
   "read `el-get-status-file' and return an alist of plist like:
    (PACKAGE . (status \"status\" recipe (:name ...)))"
-  (or el-get-status-file-cache
-      (setq
-       el-get-status-file-cache
-       (let ((ps
-              (when (file-exists-p el-get-status-file)
-                (car (with-temp-buffer
-                       (insert-file-contents-literally el-get-status-file)
-                       (read-from-string (buffer-string)))))))
-         (if (consp (car ps))         ; check for an alist, new format
-             ps
-           ;; convert to the new format, fetching recipes as we go
-           (loop for (p s) on ps by 'cddr
-                 for x = (el-get-package-symbol p)
-                 when x
-                 collect (cons x (list 'status s
-                                       'recipe (el-get-package-def x)))))))))
+  (let ((ps
+         (when (file-exists-p el-get-status-file)
+           (car (with-temp-buffer
+                  (insert-file-contents-literally el-get-status-file)
+                  (read-from-string (buffer-string)))))))
+    (if (consp (car ps))         ; check for an alist, new format
+        ps
+      ;; convert to the new format, fetching recipes as we go
+      (loop for (p s) on ps by 'cddr
+            for x = (el-get-as-symbol (el-get-strip-keyword-colon p))
+            when x
+            collect (cons x (list 'status s
+                                  'recipe (el-get-package-def x)))))))
 
 (defun el-get-package-status-alist (&optional package-status-alist)
   "return an alist of (PACKAGE . STATUS)"
