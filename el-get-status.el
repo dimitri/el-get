@@ -22,6 +22,31 @@
 (require 'cl)
 (require 'el-get-core)
 
+(defun el-get-package-name (package-symbol)
+  "Returns a package name as a string."
+  (cond ((keywordp package-symbol)
+         (substring (symbol-name package-symbol) 1))
+        ((symbolp package-symbol)
+         (symbol-name package-symbol))
+        ((stringp package-symbol)
+         package-symbol)
+        (t (error "Unknown package: %s"))))
+
+(defun el-get-package-symbol (package)
+  "Returns a package name as a non-keyword symbol"
+  (cond ((keywordp package)
+         (intern (substring (symbol-name package) 1)))
+        ((symbolp package)
+         package)
+        ((stringp package) (intern package))
+        (t (error "Unknown package: %s"))))
+
+(defun el-get-package-keyword (package-name)
+  "Returns a package name as a keyword :package."
+  (if (keywordp package-name)
+      package-name
+    (intern (format ":%s" package-name))))
+
 (defvar el-get-status-file-cache nil
   "Cache variable used to avoid re-reading status file from disk.
 
@@ -47,19 +72,6 @@ would force the package statuses to be re-read from disk.")
     (setq el-get-status-file-cache
           new-package-status-alist)))
 
-(defun el-get-strip-keyword-colon (kwd)
-  "Strip the leading colon from a keyword.
-
-A keyword is any symbol starting with a colon. If KWD is a
-keyword, this returns the symbol obtained by removing the leading
-colon. Otherwise, KWD is returned unchanged."
-  (assert (or (symbolp kwd)
-              (stringp kwd))
-          t)
-  (if (keywordp kwd)
-      (intern (substring (symbol-name kwd) 1))
-    kwd))
-
 (defun el-get-read-status-file ()
   "read `el-get-status-file' and return an alist of plist like:
    (PACKAGE . (status \"status\" recipe (:name ...)))"
@@ -75,7 +87,7 @@ colon. Otherwise, KWD is returned unchanged."
              ps
            ;; convert to the new format, fetching recipes as we go
            (loop for (p s) on ps by 'cddr
-                 for x = (el-get-as-symbol (el-get-strip-keyword-colon p))
+                 for x = (el-get-package-symbol p)
                  when x
                  collect (cons x (list 'status s
                                        'recipe (el-get-package-def x)))))))))
@@ -136,7 +148,7 @@ colon. Otherwise, KWD is returned unchanged."
     (when packages
       (loop for (p . prop) in (el-get-read-status-file)
             for s = (plist-get prop 'status)
-            for x = (el-get-as-symbol (el-get-strip-keyword-colon p))
+            for x = (el-get-package-symbol p)
             unless (member x packages)
             unless (equal s "removed")
             collect (list x s)))))
