@@ -308,7 +308,9 @@ definition provided by `el-get' recipes locally.
     `:checkout' will accept other things like branches, tags, and
     so forth,`:checksum' must only be given a commit hash. This
     will effectively lock the repository at a particular
-    revision.
+    revision. Note also that `:checksum' must be set to the full
+    hash, not just the first 6 or 8 characters (this restriction
+    may be removed in the future).
 
 :checkout
 
