@@ -682,6 +682,17 @@ PACKAGE may be either a string or the corresponding symbol."
                     (el-get-reload package)
                     (run-hook-with-args 'el-get-post-update-hooks package)))))
 
+(defun el-get-update-requires-reinstall (package)
+  "Returns true if updating PACKAGE would require a reinstall.
+
+This happens if the cached recipe and the current one have
+different install methods."
+  (let* ((source   (el-get-package-def package))
+         (old-source (el-get-read-package-status-recipe package))
+	 (method   (el-get-package-method source))
+         (old-method (el-get-package-method old-source)))
+    (not (eq method old-method))))
+
 (defun el-get-update (package)
   "Update PACKAGE."
   (interactive
@@ -692,11 +703,13 @@ PACKAGE may be either a string or the corresponding symbol."
 	 (update   (el-get-method method :update))
 	 (url      (plist-get source :url))
 	 (commands (plist-get source :build)))
-    ;; update the package now
-    (if (plist-get source :checksum)
-	(error "el-get: remove checksum from package %s to update it." package)
-      (funcall update package url 'el-get-post-update)
-      (message "el-get update %s" package))))
+    (if (el-get-update-requires-reinstall package)
+        (el-get-reinstall package)
+      ;; update the package now
+      (if (plist-get source :checksum)
+          (error "el-get: remove checksum from package %s to update it." package)
+        (funcall update package url 'el-get-post-update)
+        (message "el-get update %s" package)))))
 
 ;;;###autoload
 (defun el-get-update-all (&optional no-prompt)
