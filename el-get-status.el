@@ -47,6 +47,19 @@ would force the package statuses to be re-read from disk.")
     (setq el-get-status-file-cache
           new-package-status-alist)))
 
+(defun el-get-strip-keyword-colon (kwd)
+  "Strip the leading colon from a keyword.
+
+A keyword is any symbol starting with a colon. If KWD is a
+keyword, this returns the symbol obtained by removing the leading
+colon. Otherwise, KWD is returned unchanged."
+  (assert (or (symbolp kwd)
+              (stringp kwd))
+          t)
+  (if (keywordp kwd)
+      (intern (substring (symbol-name kwd) 1))
+    kwd))
+
 (defun el-get-read-status-file ()
   "read `el-get-status-file' and return an alist of plist like:
    (PACKAGE . (status \"status\" recipe (:name ...)))"
@@ -59,13 +72,13 @@ would force the package statuses to be re-read from disk.")
                        (insert-file-contents-literally el-get-status-file)
                        (read-from-string (buffer-string)))))))
          (if (consp (car ps))         ; check for an alist, new format
-             ps)
-         ;; convert to the new format, fetching recipes as we go
-         (loop for (p s) on ps by 'cddr
-               for x = (el-get-as-symbol (el-get-package-name p))
-               when x
-               collect (cons x (list 'status s
-                                     'recipe (el-get-package-def x))))))))
+             ps
+           ;; convert to the new format, fetching recipes as we go
+           (loop for (p s) on ps by 'cddr
+                 for x = (el-get-as-symbol (el-get-strip-keyword-colon p))
+                 when x
+                 collect (cons x (list 'status s
+                                       'recipe (el-get-package-def x)))))))))
 
 (defun el-get-package-status-alist (&optional package-status-alist)
   "return an alist of (PACKAGE . STATUS)"
@@ -121,11 +134,11 @@ would force the package statuses to be re-read from disk.")
 	       when (listp p) append (mapcar 'el-get-as-symbol p)
 	       else collect (el-get-as-symbol p))))
     (when packages
-	(loop for (p . prop) in (el-get-read-status-file)
-              for s = (plist-get prop 'status)
-	      for x = (el-get-as-symbol (el-get-package-name p))
-	      unless (member x packages)
-	      unless (equal s "removed")
-	      collect (list x s)))))
+      (loop for (p . prop) in (el-get-read-status-file)
+            for s = (plist-get prop 'status)
+            for x = (el-get-as-symbol (el-get-strip-keyword-colon p))
+            unless (member x packages)
+            unless (equal s "removed")
+            collect (list x s)))))
 
 (provide 'el-get-status)
