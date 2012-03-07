@@ -142,12 +142,17 @@ found."
   "Return the hash of the checked-out revision of PACKAGE."
   (with-temp-buffer
     (cd (el-get-package-directory package))
-    (let* ((args '("git" "show-ref" "HEAD"))
-           (cmd (mapconcat 'shell-quote-argument args " "))
-           (output (shell-command-to-string cmd))
-           (hash (and (string-match "^[[:space:]]*\\([^[:space:]]+\\)" output)
-                      (match-string 0 output))))
-      hash)))
+    ;; We cannot simply check the recipe for `:type git' because it
+    ;; could also be github, emacsmirror, or any other unknown git-ish
+    ;; type. Instead, we check for the existence of a ".git" directory
+    ;; in the package directory. A better approach might be to call
+    ;; "git status" and check that it returns success.
+    (assert (file-directory-p ".git") nil
+            "Package %s is not a git package" package)
+    (let* ((git-executable (el-get-executable-find "git"))
+           (args (list git-executable "log" "--pretty=format:%H" "-n1"))
+           (cmd (mapconcat 'shell-quote-argument args " ")))
+      (shell-command-to-string cmd))))
 
 (el-get-register-method :git
   :install #'el-get-git-clone
