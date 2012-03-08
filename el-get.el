@@ -715,7 +715,11 @@ different install methods."
     (message "el-get update %s" package)))
 
 (defvar el-get-update-post-dependency-fun nil
-  "Helper variable for updating after dependencies are installed.")
+  "Helper variable for updating after dependencies are installed.
+
+This variable exists because the function that it holds is a
+dynamically-generated lambda, but it needs to be able to refer to
+itself.")
 
 (defun el-get-update (package)
   "Update PACKAGE."
@@ -741,13 +745,15 @@ different install methods."
                 ;; Ensure previous value is removed
                 (remove-hook 'el-get-post-init-hooks
                              el-get-update-post-dependency-fun))
-              ;; Set up hook to run the update after all dependencies
-              ;; are installed, and then disable itself.
+              ;; Set up hook to run the update only once after all
+              ;; dependencies are installed, and then have the hook
+              ;; disable itself.
               (setq el-get-update-post-dependency-fun
                     `(lambda (&rest ignored)
                        (when (null el-get-next-packages)
                          (remove-hook 'el-get-post-init-hooks
                                       el-get-update-post-dependency-fun)
+                         (setq el-get-update-post-dependency-fun nil)
                          (el-get-do-update ',package))))
               ;; Add the hook at the *END* so that it runs after
               ;; `el-get-install-next-packages' and therefore sees the
