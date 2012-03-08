@@ -25,8 +25,10 @@
 	 (pdir  (el-get-package-directory package))
 	 (pname (el-get-as-string package))
 	 (name  (format "*hg clone %s*" package))
+         (branch   (plist-get source :branch))
          (checkout (or (plist-get source :checkout)
-                       (plist-get source :checksum)))
+                       (plist-get source :checksum)
+                       (plist-get source :branch)))
          (clone-args (append '("clone")
                              (when checkout (list "--updaterev" checkout))
                              (list url pname)))
@@ -49,6 +51,8 @@
   (let* ((hg-executable (el-get-executable-find "hg"))
 	 (pdir (el-get-package-directory package))
 	 (name (format "*hg pull %s*" package))
+         ;; Don't put :branch here, because by default `hg update'
+         ;; updates to tip of current branch.
          (checkout (or (plist-get source :checkout)
                        (plist-get source :checksum)))
 	 (ok   (format "Pulled package %s." package))
