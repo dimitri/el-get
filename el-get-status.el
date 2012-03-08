@@ -88,6 +88,12 @@
                               (el-get-read-status-file))
         collect (cons p (plist-get prop 'status))))
 
+(defun el-get-package-status-recipes (&optional package-status-alist)
+  "return the list of recipes stored in the status file"
+  (loop for (p . prop) in (or package-status-alist
+                              (el-get-read-status-file))
+        collect (plist-get prop 'recipe)))
+
 (defun el-get-read-package-status (package &optional package-status-alist)
   "return current status for PACKAGE"
   (let ((p-alist (or package-status-alist (el-get-read-status-file))))
@@ -142,5 +148,12 @@
             unless (member x packages)
             unless (equal s "removed")
             collect (list x s)))))
+
+(defmacro el-get-with-status-sources (&rest body)
+  "Evaluate BODY with `el-get-sources' bound to recipes from status file."
+  `(let ((el-get-sources (el-get-package-status-recipes)))
+     (progn ,@body)))
+(put 'el-get-with-status-recipes 'lisp-indent-function
+     (get 'progn 'lisp-indent-function))
 
 (provide 'el-get-status)
