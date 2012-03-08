@@ -315,7 +315,7 @@ definition provided by `el-get' recipes locally.
 :checkout
 
     For `git' or `hg' recipes, a branch name, tag, or other valid
-    argument to `git checkout'/`hg checkout'. If provided, this
+    argument to `git checkout'/`hg update'. If provided, this
     overrides any value for the `:branch' property. Unlike the
     `:branch' property, this can be any valid argument to
     `checkout', including a tag name or a commit hash.
