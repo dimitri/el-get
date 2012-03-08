@@ -696,23 +696,69 @@ different install methods."
          (old-method (el-get-package-method old-source)))
     (not (eq method old-method))))
 
+(defun el-get-do-update (package)
+  "Update "
+  (el-get-error-unless-package-p package)
+  (assert (el-get-package-is-installed package) nil
+          "Package %s cannot be updated because it is not installed.")
+  (let* ((package (el-get-as-symbol package))
+         (source   (el-get-package-def package))
+	 (method   (el-get-package-method source))
+	 (update   (el-get-method method :update))
+	 (url      (plist-get source :url)))
+    (assert (null (remove-if 'el-get-package-is-installed
+                             (el-get-dependencies package)))
+            nil
+            "Dependencies of package %s should already be installed before updating"
+            package)
+    (funcall update package url 'el-get-post-update)
+    (message "el-get update %s" package)))
+
+(defvar el-get-update-post-dependency-fun nil
+  "Helper variable for updating after dependencies are installed.")
+
 (defun el-get-update (package)
   "Update PACKAGE."
   (interactive
    (list (el-get-read-package-with-status "Update" "required" "installed")))
   (el-get-error-unless-package-p package)
-  (let* ((source   (el-get-package-def package))
-	 (method   (el-get-package-method source))
-	 (update   (el-get-method method :update))
-	 (url      (plist-get source :url))
-	 (commands (plist-get source :build)))
-    (if (el-get-update-requires-reinstall package)
-        (el-get-reinstall package)
-      ;; update the package now
+  (if (el-get-update-requires-reinstall package)
+      (el-get-reinstall package)
+    (let* ((package (el-get-as-symbol package))
+           (new-dependencies (remove-if 'el-get-package-is-installed
+                                        (el-get-dependencies package)))
+           (source   (el-get-package-def package)))
       (if (plist-get source :checksum)
           (error "el-get: remove checksum from package %s to update it." package)
-        (funcall update package url 'el-get-post-update)
-        (message "el-get update %s" package)))))
+        (if new-dependencies
+            ;; Package has gained new dependencies, so we need to
+            ;; install them before updating.
+            (progn
+              ;; Prepare to install dependencies
+              (setq el-get-next-packages new-dependencies)
+              (add-hook 'el-get-post-init-hooks 'el-get-install-next-packages)
+              (when el-get-update-post-dependency-fun
+                ;; Ensure previous value is removed
+                (remove-hook 'el-get-post-init-hooks
+                             el-get-update-post-dependency-fun))
+              ;; Set up hook to run the update after all dependencies
+              ;; are installed, and then disable itself.
+              (setq el-get-update-post-dependency-fun
+                    `(lambda (&rest ignored)
+                       (when (null el-get-next-packages)
+                         (remove-hook 'el-get-post-init-hooks
+                                      el-get-update-post-dependency-fun)
+                         (el-get-do-update ',package))))
+              ;; Add the hook at the *END* so that it runs after
+              ;; `el-get-install-next-packages' and therefore sees the
+              ;; empty dependency list.
+              (add-hook 'el-get-post-init-hooks
+                        el-get-update-post-dependency-fun
+                        'append)
+              ;; Set the update process in motion
+              (el-get-install-next-packages))
+          ;; update the package now
+          (el-get-do-update package))))))
 
 ;;;###autoload
 (defun el-get-update-all (&optional no-prompt)
