@@ -187,12 +187,13 @@ updating the package..")
 
 This function takes either a package name or a full package
 source. The named package must already be installed. If given a
-package name, the source is retrieved from `el-get-sources'. The
-given source is compared to the cached source for the same
-package. If it differs only in updatable properties (see
-`el-get-status-recipe-updatable-properties'), then the updated
-values from the given source will be saved to the recipe in the
-status file, overwriting the old values stored there.
+package name, the source is retrieved using
+`el-get-package-def'. The given source is compared to the cached
+source for the same package. If it differs only in updatable
+properties (see `el-get-status-recipe-updatable-properties'),
+then the updated values from the given source will be saved to
+the recipe in the status file, overwriting the old values stored
+there.
 
 If any non-updatable properties differ, then an error is raised,
 unless the optional second argument is non-nil, in which case
@@ -211,13 +212,7 @@ updated recipe is always saved to the status file."
           (if (listp package-or-source)
               (or package-or-source
                   (error "package-or-source cannot be nil"))
-            ;; Not using `el-get-package-def' here, because we only
-            ;; want what is listed in `el-get-sources', not what is in
-            ;; the recipe file.
-            (loop for src in el-get-sources
-                  when (string= package-or-source (el-get-source-name src))
-                  if (symbolp src) return (list :name src)
-                  else return src)))
+            (el-get-package-def package-or-source)))
          (pkg (el-get-as-symbol (el-get-source-name source)))
          (cached-recipe (or (el-get-read-package-status-recipe
                              pkg
