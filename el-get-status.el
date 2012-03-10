@@ -161,7 +161,7 @@
   "Evaluate BODY with `el-get-sources' bound to recipes from status file."
   `(let ((el-get-sources (el-get-package-status-recipes)))
      (progn ,@body)))
-(put 'el-get-with-status-recipes 'lisp-indent-function
+(put 'el-get-with-status-sources 'lisp-indent-function
      (get 'progn 'lisp-indent-function))
 
 (defvar el-get-status-recipe-updatable-properties
@@ -216,8 +216,8 @@ updated recipe is always saved to the status file."
             ;; the recipe file.
             (loop for src in el-get-sources
                   when (string= package-or-source (el-get-source-name src))
-                  if (symbolp src) (list :name src)
-                  else src)))
+                  if (symbolp src) return (list :name src)
+                  else return src)))
          (pkg (el-get-as-symbol (el-get-source-name source)))
          (cached-recipe (or (el-get-read-package-status-recipe
                              pkg
@@ -263,7 +263,7 @@ updated recipe is always saved to the status file."
                 (plist-put (cdr (assq package package-status-alist))
                            'recipe updated-recipe)
               ;; Else save to status file
-              (el-get-save-package-status pkg "installed" updated-recipe)))
+              (el-get-save-package-status pkg "installed" updated-recipe))))
       (el-get-verbose-message "No properties to update on package %s" pkg))))
 
 (provide 'el-get-status)
