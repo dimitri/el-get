@@ -76,6 +76,7 @@ matching REGEX with TYPE and ARGS as parameter."
 (defun el-get-describe-1 (package)
   (let* ((psym (el-get-as-symbol package))
          (pname (symbol-name psym))
+  (assert (symbolp package))
          (status (el-get-read-package-status package))
          (def (el-get-package-def pname))
          (name (plist-get def :name))

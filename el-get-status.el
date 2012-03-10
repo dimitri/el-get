@@ -96,6 +96,7 @@
 
 (defun el-get-read-package-status (package &optional package-status-alist)
   "return current status for PACKAGE"
+  (assert (symbolp package))
   (let ((p-alist (or package-status-alist (el-get-read-status-file))))
     (plist-get (cdr (assq (el-get-as-symbol package) p-alist)) 'status)))
 
@@ -103,12 +104,14 @@
 
 (defun el-get-read-package-status-recipe (package &optional package-status-alist)
   "return current status for PACKAGE"
+  (assert (symbolp package))
   (let ((p-alist (or package-status-alist (el-get-read-status-file))))
     (plist-get (cdr (assq (el-get-as-symbol package) p-alist)) 'recipe)))
 
 (defun el-get-filter-package-alist-with-status (package-status-alist &rest statuses)
   "Return package names that are currently in given status"
   (loop for (p . prop) in package-status-alist
+        do (assert (symbolp p))
         for s = (plist-get prop 'status)
 	when (member s statuses)
         collect (el-get-as-string p)))
@@ -130,12 +133,16 @@
 
 (defun el-get-count-packages-with-status (packages &rest statuses)
   "Return how many packages are currently in given status in PACKAGES"
+  (assert (null (remove-if 'symbolp packages)))
   (length (intersection
            (mapcar #'el-get-as-symbol (apply #'el-get-list-package-names-with-status statuses))
            (mapcar #'el-get-as-symbol packages))))
 
 (defun el-get-extra-packages (&rest packages)
   "Return installed or required packages that are not in given package list"
+  (loop for p in packages
+        when (listp p) do (assert (null (remove-if 'symbolp p)))
+        else do (assert (symbolp p)))
   (let ((packages
 	 ;; &rest could contain both symbols and lists
 	 (loop for p in packages

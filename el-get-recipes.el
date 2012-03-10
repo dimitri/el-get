@@ -172,13 +172,13 @@ which defaults to installed, required and removed.  Example:
 
   (el-get-package-types-alist \"installed\" 'http 'cvs)
 "
-  (loop for src in (apply 'el-get-list-package-names-with-status
+  (loop for pkg in (apply 'el-get-list-package-names-with-status
 			  (cond ((stringp statuses) (list statuses))
 				((null statuses) '("installed" "required" "removed"))
 				(t statuses)))
-	for name = (el-get-as-symbol src)
-	for type = (el-get-package-type name)
+        do (assert (symbolp pkg))
+	for type = (el-get-package-type pkg)
 	when (or (null types) (memq 'all types) (memq type types))
-	collect (cons name type)))
+	collect (cons pkg type)))
 
 (provide 'el-get-recipes)

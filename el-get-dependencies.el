@@ -26,6 +26,7 @@
 
 (defun el-get-dependencies-graph (package)
   "Return the graph of packages on which PACKAGE depends"
+  (assert (symbolp package))
   (let* ((source (el-get-package-def (symbol-name package)))
 	 (method (el-get-package-method source))
          (pdeps  (el-get-as-list (plist-get source :depends)))

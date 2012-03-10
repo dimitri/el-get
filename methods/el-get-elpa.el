@@ -89,6 +89,7 @@ the recipe, then return nil."
 
 (defun el-get-elpa-install (package url post-install-fun)
   "Ask elpa to install given PACKAGE."
+  (assert (symbolp package))
   (let* ((elpa-dir (el-get-elpa-package-directory package))
          (elpa-repo (el-get-elpa-package-repo package))
          ;; Set `package-archive-base' to elpa-repo for old package.el
@@ -116,6 +117,7 @@ the recipe, then return nil."
 
 (defun el-get-elpa-update (package url post-update-fun)
   "Ask elpa to update given PACKAGE."
+  (assert (symbolp package))
   (el-get-elpa-remove package url nil)
   (package-refresh-contents)
   (package-install (el-get-as-symbol package))

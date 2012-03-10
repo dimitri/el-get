@@ -363,6 +363,7 @@ which defaults to the first element in `el-get-recipe-path'."
   "Like `eval-after-load', but first arg is an el-get package name."
   (let* ((package  (el-get-as-symbol package))
          (source   (el-get-package-def package))
+  (assert (symbolp package))
          (pkgname  (plist-get source :pkgname))
          (feats    (el-get-as-list (plist-get source :features)))
          (library  (or (plist-get source :library)
@@ -602,6 +603,7 @@ PACKAGE may be either a string or the corresponding symbol."
 
 (defun el-get-do-install (package)
   "Install any PACKAGE for which you have a recipe."
+  (assert (symbolp package))
   (el-get-error-unless-package-p package)
   (if (el-get-package-is-installed package)
       (el-get-init package)
@@ -699,6 +701,7 @@ different install methods."
 
 (defun el-get-do-update (package)
   "Update "
+  (assert (symbolp package))
   (el-get-error-unless-package-p package)
   (assert (el-get-package-is-installed package) nil
           "Package %s cannot be updated because it is not installed.")
@@ -726,6 +729,7 @@ itself.")
   "Update PACKAGE."
   (interactive
    (list (el-get-read-package-with-status "Update" "required" "installed")))
+  (assert (symbolp package))
   (el-get-error-unless-package-p package)
   (if (el-get-update-requires-reinstall package)
       (el-get-reinstall package)
@@ -884,6 +888,7 @@ Also put the checksum in the kill-ring."
 When PACKAGES is non-nil, only process entries from this list.
 Those packages from the list we don't know the status of are
 considered \"required\"."
+  (assert (null (remove-if 'symbolp packages)))
   (let* ((p-s-alist   (el-get-read-status-file))
          (required    (el-get-filter-package-alist-with-status p-s-alist "required"))
          (installed   (el-get-filter-package-alist-with-status p-s-alist "installed"))
