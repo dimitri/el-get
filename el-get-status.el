@@ -197,6 +197,8 @@ If any non-updatable properties differ, then an error is raised,
 unless the optional second argument is non-nil, in which case
 only a message is issued and the non-updatable properties are
 simply ignored."
+  (interactive
+   (list (el-get-read-package-with-status "Update recipe" "installed")))
   (let* ((source
           (if (listp package-or-source)
               (or package-or-source
