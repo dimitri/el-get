@@ -625,7 +625,7 @@ PACKAGE may be either a string or the corresponding symbol."
 (defun el-get-reload (package)
   "Reload PACKAGE."
   (interactive
-   (list (el-get-read-package-with-status "Update" "installed")))
+   (list (el-get-read-package-with-status "Reload" "installed")))
   (el-get-verbose-message "el-get-reload: %s" package)
   (el-get-with-status-sources
    (let* ((all-features features)
