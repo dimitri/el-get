@@ -45,6 +45,7 @@
                              (message "After A2"))))
       (invalid-update-source
        '(:name a
+               :features a
                :post-init (message "New post-init A"))))
   ;; Install a and b
   (el-get-install 'a)
@@ -59,9 +60,15 @@
         (el-get-merge-updatable-properties invalid-update-source)
         (signal 'test-failure "Failed to raise error when trying to update non-updatable property."))
     (error (message "Got error as expected. Error was:\n%S" err)))
-  ;; Try the no-error option. Obviously, it shouldn't throw an error.
-  (el-get-merge-updatable-properties invalid-update-source 'noerror)
-
+  ;; Try the no-error option. Obviously, it shouldn't throw an error,
+  ;; and it also shouldn't update anything.
+  (el-get-merge-updatable-properties invalid-update-source :noerror t)
+  (assert (null (plist-get (el-get-read-package-status-recipe 'a) :features)) nil
+          "New values should be force-merged into cached recipe")
+  ;; This should update things
+  (el-get-merge-updatable-properties invalid-update-source :skip-non-updatable t)
+  (assert (plist-get (el-get-read-package-status-recipe 'a) :features) nil
+          "New values should be force-merged into cached recipe")
   ;; Now make sure `el-get-init' updates things.from `el-get-sources'
   (let ((el-get-sources (list update-source-2)))
     (el-get-init 'a))
