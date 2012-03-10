@@ -181,7 +181,8 @@ used to replace the cached values without reinstalling or
 updating the package..")
 
 (defun el-get-merge-updatable-properties (package-or-source
-                                          &optional ignore-non-updatable)
+                                          &optional ignore-non-updatable
+                                          package-status-alist)
   "Merge updatable properties from package source into status file.
 
 This function takes either a package name or a full package
@@ -196,9 +197,16 @@ status file, overwriting the old values stored there.
 If any non-updatable properties differ, then an error is raised,
 unless the optional second argument is non-nil, in which case
 only a message is issued and the non-updatable properties are
-simply ignored."
+simply ignored.
+
+Normally, the updated recipe is written back to the status
+file. However, a package status alist may be provided as an
+optional third argument. If this is non-nil the recipe will be
+updated in place by modifying the alist (it is not returned), and
+the status file will not be modified. When run interactively, the
+updated recipe is always saved to the status file."
   (interactive
-   (list (el-get-read-package-with-status "Update recipe" "installed")))
+   (list (el-get-read-package-with-status "Update cached recipe" "installed")))
   (let* ((source
           (if (listp package-or-source)
               (or package-or-source
@@ -211,7 +219,11 @@ simply ignored."
                   if (symbolp src) (list :name src)
                   else src)))
          (pkg (el-get-as-symbol (el-get-source-name source)))
-         (cached-recipe (el-get-read-package-status-recipe pkg))
+         (cached-recipe (or (el-get-read-package-status-recipe
+                             pkg
+                             package-status-alist)
+                            (error "Could not retrieve cached recipe for package %s"
+                                   package)))
          ;; Subset of properties that cannot be updated without a
          ;; package update or reinstall. If this is non-nil, then we
          ;; will abort with an error message.
@@ -246,7 +258,12 @@ simply ignored."
           (let ((updated-recipe (el-get-read-package-status-recipe pkg)))
             (loop for (k v) on update-plist by 'cddr
                   do (plist-put updated-recipe k v))
-            (el-get-save-package-status pkg "installed" updated-recipe)))
+            (if package-status-alist
+                ;; If alist was provided, modify it in place
+                (plist-put (cdr (assq package package-status-alist))
+                           'recipe updated-recipe)
+              ;; Else save to status file
+              (el-get-save-package-status pkg "installed" updated-recipe)))
       (el-get-verbose-message "No properties to update on package %s" pkg))))
 
 (provide 'el-get-status)
