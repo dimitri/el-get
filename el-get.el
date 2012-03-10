@@ -438,95 +438,96 @@ Add PACKAGE's directory (or `:load-path' if specified) to the
 `load-path', add any its `:info' directory to
 `Info-directory-list', and `require' its `:features'.  Will be
 called by `el-get' (usually at startup) for each installed package."
-  (interactive (list (el-get-read-package-name "Init")))
+  (interactive (list (el-get-read-package-with-status "Init" "installed")))
   (el-get-verbose-message "el-get-init: %s" package)
-  (condition-case err
-      (let* ((source
-              (el-get-read-package-status-recipe package package-status-alist))
-             (method   (el-get-package-method source))
-             (loads    (el-get-as-list (plist-get source :load)))
-             (autoloads (plist-get source :autoloads))
-             (feats    (el-get-as-list (plist-get source :features)))
-             (el-path  (el-get-as-list (el-get-load-path package)))
-             (lazy     (el-get-plist-get-with-default source :lazy
-                         el-get-is-lazy))
-             (prepare  (plist-get source :prepare))
-             (before   (plist-get source :before))
-             (postinit (plist-get source :post-init))
-             (after    (plist-get source :after))
-             (pkgname  (plist-get source :pkgname))
-             (library  (or (plist-get source :library) pkgname package))
-             (pdir     (el-get-package-directory package)))
+  (el-get-with-status-sources
+   (condition-case err
+       (let* ((source
+               (el-get-read-package-status-recipe package package-status-alist))
+              (method   (el-get-package-method source))
+              (loads    (el-get-as-list (plist-get source :load)))
+              (autoloads (plist-get source :autoloads))
+              (feats    (el-get-as-list (plist-get source :features)))
+              (el-path  (el-get-as-list (el-get-load-path package)))
+              (lazy     (el-get-plist-get-with-default source :lazy
+                                                       el-get-is-lazy))
+              (prepare  (plist-get source :prepare))
+              (before   (plist-get source :before))
+              (postinit (plist-get source :post-init))
+              (after    (plist-get source :after))
+              (pkgname  (plist-get source :pkgname))
+              (library  (or (plist-get source :library) pkgname package))
+              (pdir     (el-get-package-directory package)))
 
-	;; a builtin package initialisation is about calling recipe and user
-	;; code only, no load-path nor byte-compiling support needed here.
-	(unless (eq method 'builtin)
-	  ;; append entries to load-path and Info-directory-list
-	  (unless (member method '(apt-get fink pacman))
-	    ;; append entries to load-path
-	    (dolist (path el-path)
-	      (el-get-add-path-to-list package 'load-path path))
-	    ;;  and Info-directory-list
-	    (el-get-install-or-init-info package 'init))
+         ;; a builtin package initialisation is about calling recipe and user
+         ;; code only, no load-path nor byte-compiling support needed here.
+         (unless (eq method 'builtin)
+           ;; append entries to load-path and Info-directory-list
+           (unless (member method '(apt-get fink pacman))
+             ;; append entries to load-path
+             (dolist (path el-path)
+               (el-get-add-path-to-list package 'load-path path))
+             ;;  and Info-directory-list
+             (el-get-install-or-init-info package 'init))
 
-	  (when el-get-byte-compile-at-init
-	    ;; If the package has been updated outside el-get, the .el files will be
-	    ;; out of date, so just check if we need to recompile them.
-	    ;;
-	    ;; when using el-get-update to update packages, though, there's no
-	    ;; need to byte compile at init.
-	    (el-get-byte-compile package))
+           (when el-get-byte-compile-at-init
+             ;; If the package has been updated outside el-get, the .el files will be
+             ;; out of date, so just check if we need to recompile them.
+             ;;
+             ;; when using el-get-update to update packages, though, there's no
+             ;; need to byte compile at init.
+             (el-get-byte-compile package))
 
-	  ;; load any autoloads file if needed
-	  (unless (eq autoloads t)
-	    (dolist (file (el-get-as-list autoloads))
-	      (el-get-load-fast file))))
+           ;; load any autoloads file if needed
+           (unless (eq autoloads t)
+             (dolist (file (el-get-as-list autoloads))
+               (el-get-load-fast file))))
 
-        ;; first, the :prepare function, usually defined in the recipe
-        (el-get-run-package-support prepare "prepare" package)
+         ;; first, the :prepare function, usually defined in the recipe
+         (el-get-run-package-support prepare "prepare" package)
 
-        ;; now call the :before user function
-        (el-get-run-package-support before "before" package)
+         ;; now call the :before user function
+         (el-get-run-package-support before "before" package)
 
-        ;; loads and feature are skipped when el-get-is-lazy
-        (unless lazy
-          ;; loads
-          (dolist (file loads)
-            (let ((pfile (concat pdir file)))
-              (unless (file-exists-p pfile)
-                (error "el-get could not find file '%s'" pfile))
-              (el-get-verbose-message "el-get: load '%s'" pfile)
-              (el-get-load-fast pfile)))
+         ;; loads and feature are skipped when el-get-is-lazy
+         (unless lazy
+           ;; loads
+           (dolist (file loads)
+             (let ((pfile (concat pdir file)))
+               (unless (file-exists-p pfile)
+                 (error "el-get could not find file '%s'" pfile))
+               (el-get-verbose-message "el-get: load '%s'" pfile)
+               (el-get-load-fast pfile)))
 
-          ;; features, only ELPA will handle them on its own
-          (unless (eq method 'elpa)
-            ;; if a feature is provided, require it now
-            (dolist (feat feats)
-              (let ((feature (el-get-as-symbol feat)))
-                (el-get-verbose-message "require '%s" feature)
-                (require feature)))))
+           ;; features, only ELPA will handle them on its own
+           (unless (eq method 'elpa)
+             ;; if a feature is provided, require it now
+             (dolist (feat feats)
+               (let ((feature (el-get-as-symbol feat)))
+                 (el-get-verbose-message "require '%s" feature)
+                 (require feature)))))
 
-        (let ((el-get-maybe-lazy-runsupp
-               (if lazy
-                   #'el-get-lazy-run-package-support
-                 #'el-get-run-package-support))
-              (maybe-lazy-eval
-               (if lazy
-                   (apply-partially 'el-get-eval-after-load package)
-                 'eval)))
-          (funcall el-get-maybe-lazy-runsupp
-                   postinit "post-init" package)
-          (funcall maybe-lazy-eval `(el-get-load-package-user-init-file ',package))
-          (funcall el-get-maybe-lazy-runsupp
-                   after "after" package))
+         (let ((el-get-maybe-lazy-runsupp
+                (if lazy
+                    #'el-get-lazy-run-package-support
+                  #'el-get-run-package-support))
+               (maybe-lazy-eval
+                (if lazy
+                    (apply-partially 'el-get-eval-after-load package)
+                  'eval)))
+           (funcall el-get-maybe-lazy-runsupp
+                    postinit "post-init" package)
+           (funcall maybe-lazy-eval `(el-get-load-package-user-init-file ',package))
+           (funcall el-get-maybe-lazy-runsupp
+                    after "after" package))
 
-        ;; and call the global init hooks
-        (run-hook-with-args 'el-get-post-init-hooks package)
+         ;; and call the global init hooks
+         (run-hook-with-args 'el-get-post-init-hooks package)
 
-        ;; return the package
-        package)
-    (debug error
-     (el-get-installation-failed package err))))
+         ;; return the package
+         package)
+     (debug error
+            (el-get-installation-failed package err)))))
 
 
 (defun el-get-install (package)
