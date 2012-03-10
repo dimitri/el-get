@@ -439,7 +439,7 @@ Add PACKAGE's directory (or `:load-path' if specified) to the
 `load-path', add any its `:info' directory to
 `Info-directory-list', and `require' its `:features'.  Will be
 called by `el-get' (usually at startup) for each installed package."
-  (interactive (list (el-get-read-package-name "Init")))
+  (interactive (list (el-get-read-package-with-status "Init" "installed")))
   (el-get-verbose-message "el-get-init: %s" package)
   (condition-case err
       (let* ((source
