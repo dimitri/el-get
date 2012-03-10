@@ -454,7 +454,7 @@ called by `el-get' (usually at startup) for each installed package."
   (interactive (list (el-get-read-package-with-status "Init" "installed")))
   (el-get-verbose-message "el-get-init: %s" package)
   (when el-get-auto-update-cached-recipes
-    (el-get-merge-updatable-properties package t package-status-alist))
+    (el-get-merge-updatable-properties package package-status-alist :noerror t))
   (el-get-with-status-sources
    (condition-case err
        (let* ((source
