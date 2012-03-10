@@ -48,11 +48,13 @@
       package-name
     (intern (format ":%s" package-name))))
 
-(defun el-get-save-package-status (package status)
+(defun el-get-save-package-status (package status &optional recipe)
   "Save given package status"
   (let* ((package (el-get-as-symbol package))
-         (recipe (when (string= status "installed")
-                   (el-get-package-def package)))
+         (recipe
+          (or recipe
+              (when (string= status "installed")
+                (el-get-package-def package)))
          (package-status-alist
           (assq-delete-all package (el-get-read-status-file)))
          (new-package-status-alist
@@ -161,5 +163,88 @@
      (progn ,@body)))
 (put 'el-get-with-status-recipes 'lisp-indent-function
      (get 'progn 'lisp-indent-function))
+
+(defvar el-get-status-recipe-updatable-properties
+  '(:load-path
+    :info
+    :load
+    :features
+    :library
+    :before
+    :after
+    :lazy)
+  "Whitelist of properties that may be updated in cached recipes.
+
+If you any have these properties set on a package in your
+`el-get-sources', then the values from `el-get-sources' can be
+used to replace the cached values without reinstalling or
+updating the package..")
+
+(defun el-get-merge-updatable-properties (package-or-source
+                                          &optional ignore-non-updatable)
+  "Merge updatable properties from package source into status file.
+
+This function takes either a package name or a full package
+source. The named package must already be installed. If given a
+package name, the source is retrieved from `el-get-sources'. The
+given source is compared to the cached source for the same
+package. If it differs only in updatable properties (see
+`el-get-status-recipe-updatable-properties'), then the updated
+values from the given source will be saved to the recipe in the
+status file, overwriting the old values stored there.
+
+If any non-updatable properties differ, then an error is raised,
+unless the optional second argument is non-nil, in which case
+only a message is issued and the non-updatable properties are
+simply ignored."
+  (let* ((source
+          (if (listp package-or-source)
+              (or package-or-source
+                  (error "package-or-source cannot be nil"))
+            ;; Not using `el-get-package-def' here, because we only
+            ;; want what is listed in `el-get-sources', not what is in
+            ;; the recipe file.
+            (loop for src in el-get-sources
+                  when (string= package-or-source (el-get-source-name src))
+                  if (symbolp src) (list :name src)
+                  else src)))
+         (pkg (el-get-as-symbol (el-get-source-name source)))
+         (cached-recipe (el-get-read-package-status-recipe pkg))
+         ;; Subset of properties that cannot be updated without a
+         ;; package update or reinstall. If this is non-nil, then we
+         ;; will abort with an error message.
+         (noupdate-plist
+          (loop for (k v) on source by 'cddr
+                unless (eq k :name)
+                unless (memq k el-get-status-recipe-updatable-properties)
+                ;; We only care about non-updatable properties if they
+                ;; don't match the cached value
+                unless (equal v (plist-get cached-recipe k))
+                append (list k v)))
+         ;; Subset of properties that are updatable. If this is nil,
+         ;; then there's nothing to update.
+         (update-plist
+          (loop for (k v) on source by 'cddr
+                when (memq k el-get-status-recipe-updatable-properties)
+                append (list k v))))
+    (unless (el-get-package-is-installed pkg)
+      (error "Package %s is not installed. Cannot update recipe." pkg))
+    (when noupdate-plist
+      (funcall
+       (if ignore-non-updatable
+           'el-get-verbose-message
+         'error)
+       "Cannot update the following properties on package %s:\n%s\n(Maybe you should use `el-get-update' or `el-get-reinstall' instead?)"
+       pkg (pp-to-string noupdate-plist)))
+    (if update-plist
+        (progn
+          (el-get-verbose-message
+           "Updating the following properties on package %s:\n%s"
+           pkg (pp-to-string update-plist))
+          (let ((updated-recipe (el-get-read-package-status-recipe pkg)))
+            (loop for (k v) on update-plist by 'cddr
+                  do (plist-put updated-recipe k v))
+            (el-get-save-package-status pkg "installed" updated-recipe)))
+      (el-get-verbose-message "No properties to update on package %s" pkg))))
 
 (provide 'el-get-status)
