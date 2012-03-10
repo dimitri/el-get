@@ -596,7 +596,7 @@ PACKAGE may be either a string or the corresponding symbol."
   (el-get-error-unless-package-p package)
   (if (el-get-package-is-installed package)
       (progn
-        (message "el-get: `%s' package is already installed" package)
+        (el-get-verbose-message "el-get: `%s' package is already installed" package)
         (el-get-init package))
     (let* ((status   (el-get-read-package-status package))
 	   (source   (el-get-package-def package))
