@@ -39,34 +39,38 @@
                :lazy t))
       (update-source-2
        '(:name a
+               :type test
                :lazy nil
                :before (message "Before A2")
                :after (progn (setq second-update-succeeded t)
                              (message "After A2"))))
       (invalid-update-source
        '(:name a
+               :type test
                :features a
+               ;; Not allowed to update this
                :post-init (message "New post-init A"))))
-  ;; Install a and b
-  (el-get-install 'a)
+  ;; Install A
+  (el-get 'sync 'a)
+  (require 'a)
   (assert (featurep 'a) nil
           "Package A should be installed and loaded")
-  (el-get-merge-updatable-properties update-source)
+  (el-get-merge-properties-into-status update-source)
   (assert (plist-get (el-get-read-package-status-recipe 'a) :lazy) nil
           "New values should be merged into cached recipe")
 
   (condition-case err
       (progn
-        (el-get-merge-updatable-properties invalid-update-source)
+        (el-get-merge-properties-into-status invalid-update-source)
         (signal 'test-failure "Failed to raise error when trying to update non-updatable property."))
     (error (message "Got error as expected. Error was:\n%S" err)))
   ;; Try the no-error option. Obviously, it shouldn't throw an error,
   ;; and it also shouldn't update anything.
-  (el-get-merge-updatable-properties invalid-update-source :noerror t)
+  (el-get-merge-properties-into-status invalid-update-source nil :noerror t)
   (assert (null (plist-get (el-get-read-package-status-recipe 'a) :features)) nil
           "New values should be force-merged into cached recipe")
   ;; This should update things
-  (el-get-merge-updatable-properties invalid-update-source :skip-non-updatable t)
+  (el-get-merge-properties-into-status invalid-update-source nil :skip-non-updatable t)
   (assert (plist-get (el-get-read-package-status-recipe 'a) :features) nil
           "New values should be force-merged into cached recipe")
   ;; Now make sure `el-get-init' updates things.from `el-get-sources'

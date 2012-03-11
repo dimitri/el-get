@@ -63,8 +63,9 @@
                          (cons package (list 'status status 'recipe recipe))))
                 (lambda (p1 p2)
                   (string< (el-get-as-string (car p1))
-                           (el-get-as-string (car p2))))))
-         print-level print-length)
+                           (el-get-as-string (car p2)))))))
+    (assert (listp recipe) nil
+            "Recipe must be a list")
     (with-temp-file el-get-status-file
       (insert (el-get-print-to-string new-package-status-alist 'pretty)))
     ;; Return the new alist
@@ -201,13 +202,13 @@ To see which properties are whitelisted, see
                ;; whitelisted
                if (memq k whitelist) do (plist-put updated-source k v)
                ;; Not a change, so ignore it
-               else if (equal v (plist-get source k)) do nil
+               else if (equal v (plist-get source k)) do (ignore)
                ;; Trying to change non-whitelisted property
-               else do append (list k v))))
+               else append (list k v))))
     ;; Raise an error if we tried to set any disallowed
     ;; properties. (We wait until now so we can report the full list.)
     (when disallowed-props
-      (error "Tried to merge non-whitelisted properties:
+      (error (format "Tried to merge non-whitelisted properties:
 
 %s
 
@@ -215,15 +216,15 @@ into source:
 
 %s
 
-(Maybe you should use `el-get-update' or `el-get-reinstall' on %s instead?)"
-             (pp-to-string disallowed-props)
-             (pp-to-string source)
-             (el-get-source-name source)))
+Maybe you should use `el-get-update' or `el-get-reinstall' on %s instead?"
+                     (pp-to-string disallowed-props)
+                     (pp-to-string source)
+                     (el-get-source-name source))))
     updated-source))
 
-(defun* el-get-merge-updatable-properties (package-or-source
-                                           &optional package-status-alist
-                                           &key noerror skip-non-updatable)
+(defun* el-get-merge-properties-into-status (package-or-source
+                                             &optional package-status-alist
+                                             &key noerror skip-non-updatable)
   "Merge updatable properties for package into pacakge status alist (or status file).
 
 The first argument is either a package source or a pacakge name,
@@ -271,17 +272,22 @@ non-whitelisted changes, and no error will be raised.
       (setq source
             (loop for (k v) on source by 'cddr
                   when (memq k el-get-status-recipe-update-whitelist)
-                  do append (list k v))))
-    (condition-case err
-        (let ((merged-recipe
-               (el-get-merge-whitelisted-properties cached-recipe source)))
-          (if save-to-file
-              (el-get-save-package-status package "installed" merged-recipe)
-            (plist-put (cdr (assq package package-status-alist))
-                       'recipe merged-recipe)))
-      ;; Suppress the error if `noerror' arg is t
-      (error (if noerror
-                 (el-get-verbose-message (cadr err))
-               (error (cadr err)))))))
+                  append (list k v))))
+    (let ((merged-recipe
+           (condition-case err
+               (el-get-merge-whitelisted-properties cached-recipe source)
+             ;; Convert the error to a verbose message if `noerror' is
+             ;; t (but still quit the function).
+             (error
+              (progn
+                (apply (if noerror 'el-get-verbose-message 'error)
+                       (cdr err))
+                ;; Return from the function even if no error was thrown
+                (return-from el-get-merge-properties-into-status)))
+             )))
+      (if save-to-file
+          (el-get-save-package-status package "installed" merged-recipe)
+        (plist-put (cdr (assq package package-status-alist))
+                   'recipe merged-recipe)))))
 
 (provide 'el-get-status)
