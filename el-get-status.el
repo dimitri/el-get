@@ -211,11 +211,9 @@ To see which properties are whitelisted, see
       (error (format "Tried to merge non-whitelisted properties:
 
 %s
-
 into source:
 
 %s
-
 Maybe you should use `el-get-update' or `el-get-reinstall' on %s instead?"
                      (pp-to-string disallowed-props)
                      (pp-to-string source)
