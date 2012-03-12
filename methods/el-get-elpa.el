@@ -103,15 +103,27 @@ the recipe, then return nil."
     (el-get-elpa-symlink-package package))
   (funcall post-install-fun package))
 
+(defun el-get-elpa-update-available-p (package)
+  "Returns t if PACKAGE has an update available in ELPA."
+  (let ((installed-version
+         (package-desc-vers (assq pkg package-alist)))
+        (available-version
+         (package-desc-vers (assq pkg package-archive-contents))))
+    (version-list-< installed-version available-version)))
+
 (defun el-get-elpa-update (package url post-update-fun)
   "Ask elpa to update given PACKAGE."
-  (el-get-elpa-remove package url nil)
   (package-refresh-contents)
-  (package-install (el-get-as-symbol package))
+  (when (el-get-elpa-update-available-p package)
+    (el-get-elpa-remove package url nil)
+    (package-install (el-get-as-symbol package))
   (funcall post-update-fun package))
 
 (defun el-get-elpa-remove (package url post-remove-fun)
   "Remove the right directory where ELPA did install the package."
+  ;; This just removes the symlink from el-get's directory. Look in
+  ;; `el-get-elpa-post-remove' for the piece that actually removes the
+  ;; package.
   (el-get-rmdir package url post-remove-fun))
 
 (defun el-get-elpa-post-remove (package)
