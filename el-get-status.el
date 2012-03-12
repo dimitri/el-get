@@ -20,6 +20,7 @@
 ;;
 
 (require 'cl)
+(require 'pp)
 (require 'el-get-core)
 
 (defun el-get-package-name (package-symbol)
