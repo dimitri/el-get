@@ -55,6 +55,12 @@
           (print-quoted t))
       (prin1 object (current-buffer)))
     (goto-char (point-min))
+    ;; The `(ignore-errors (while t ...))' pattern is guaranteed not
+    ;; to loop infinitely because the movement commands `down-list',
+    ;; `up-list', and `forward-sexp' will keep moving forward until
+    ;; the hit the end of the status list (outer loop) or end of the
+    ;; recipe (inner loop), at which point they will throw errors and
+    ;; break out of the loop.
     (ignore-errors
       ;; Descend into status list
       (down-list 1)
@@ -64,6 +70,9 @@
         ;; Put a newline after each property value (except the last one)
         (ignore-errors
           (while t
+            ;; We want to move forward by 2 sexps, but we also want to
+            ;; make sure that there's another sexp after point before
+            ;; inserting a newline.
             (forward-sexp 3)
             (backward-sexp 1)
             (delete-region (point) (progn (skip-chars-backward " \t\n") (point)))
