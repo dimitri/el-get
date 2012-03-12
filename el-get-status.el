@@ -20,6 +20,7 @@
 ;;
 
 (require 'cl)
+(require 'pp)
 (require 'el-get-core)
 
 (defun el-get-package-name (package-symbol)
@@ -47,6 +48,49 @@
       package-name
     (intern (format ":%s" package-name))))
 
+(defun el-get-pp-status-alist-to-string (object)
+  (with-temp-buffer
+    (lisp-mode-variables nil)
+    (set-syntax-table emacs-lisp-mode-syntax-table)
+    (let ((print-escape-newlines pp-escape-newlines)
+          (print-quoted t))
+      (prin1 object (current-buffer)))
+    (goto-char (point-min))
+    ;; Each (apparently-infinite) loop constantly moves forward
+    ;; through the element it is processing (via `down-list`,
+    ;; `up-list`, and `forward-sexp` and finally throws a scan-error
+    ;; when it reaches the end of the element, which breaks out of the
+    ;; loop and is caught by `condition-case`.
+    (condition-case err
+        ;; Descend into status list
+        (progn
+          (down-list 1)
+          (while t
+            ;; Descend into recipe
+            (down-list 2)
+            ;; Put a newline after each property value (except the
+            ;; last one)
+            (condition-case err
+                (while t
+                  ;; We want to move forward by 2 sexps, but we also
+                  ;; want to make sure that there's another sexp after
+                  ;; point before inserting a newline. Thus we go
+                  ;; forward 3 and then back 1.
+                  (forward-sexp 3)
+                  (backward-sexp 1)
+                  (delete-region (point) (progn (skip-chars-backward " \t\n") (point)))
+                  (insert ?\n))
+              (scan-error nil))
+            ;; Exit from status entry for this package
+            (up-list 2)))
+      (scan-error nil))
+    (pp-buffer)
+    (goto-char (point-min))
+    ;; Make sure we didn't change the value. That would be bad.
+    (assert (equal object (read (current-buffer))) nil
+            "Pretty-printing status changes its value. Your pretty-printing function is messed up.")
+    (buffer-string)))
+
 (defun el-get-save-package-status (package status)
   "Save given package status"
   (let* ((package (el-get-as-symbol package))
@@ -61,7 +105,7 @@
                   (string< (el-get-as-string (car p1))
                            (el-get-as-string (car p2)))))))
     (with-temp-file el-get-status-file
-      (pp new-package-status-alist (current-buffer)))
+      (insert (el-get-pp-status-alist-to-string new-package-status-alist)))
     ;; Return the new alist
     new-package-status-alist))
 
