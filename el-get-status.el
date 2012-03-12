@@ -56,30 +56,34 @@
           (print-quoted t))
       (prin1 object (current-buffer)))
     (goto-char (point-min))
-    ;; The `(ignore-errors (while t ...))' pattern is guaranteed not
-    ;; to loop infinitely because the movement commands `down-list',
-    ;; `up-list', and `forward-sexp' will keep moving forward until
-    ;; the hit the end of the status list (outer loop) or end of the
-    ;; recipe (inner loop), at which point they will throw errors and
-    ;; break out of the loop.
-    (ignore-errors
-      ;; Descend into status list
-      (down-list 1)
-      (while t
-        ;; Descend into recipe
-        (down-list 2)
-        ;; Put a newline after each property value (except the last one)
-        (ignore-errors
+    ;; Each (apparently-infinite) loop constantly moves forward
+    ;; through the element it is processing (via `down-list`,
+    ;; `up-list`, and `forward-sexp` and finally throws a scan-error
+    ;; when it reaches the end of the element, which breaks out of the
+    ;; loop and is caught by `condition-case`.
+    (condition-case err
+        ;; Descend into status list
+        (progn
+          (down-list 1)
           (while t
-            ;; We want to move forward by 2 sexps, but we also want to
-            ;; make sure that there's another sexp after point before
-            ;; inserting a newline.
-            (forward-sexp 3)
-            (backward-sexp 1)
-            (delete-region (point) (progn (skip-chars-backward " \t\n") (point)))
-            (insert ?\n)))
-        ;; Exit from status entry for this package
-        (up-list 2)))
+            ;; Descend into recipe
+            (down-list 2)
+            ;; Put a newline after each property value (except the
+            ;; last one)
+            (condition-case err
+                (while t
+                  ;; We want to move forward by 2 sexps, but we also
+                  ;; want to make sure that there's another sexp after
+                  ;; point before inserting a newline. Thus we go
+                  ;; forward 3 and then back 1.
+                  (forward-sexp 3)
+                  (backward-sexp 1)
+                  (delete-region (point) (progn (skip-chars-backward " \t\n") (point)))
+                  (insert ?\n))
+              (scan-error nil))
+            ;; Exit from status entry for this package
+            (up-list 2)))
+      (scan-error nil))
     (pp-buffer)
     (goto-char (point-min))
     ;; Make sure we didn't change the value. That would be bad.
