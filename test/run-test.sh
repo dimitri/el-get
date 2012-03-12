@@ -46,7 +46,10 @@ run_test () {
   fi
 }
 
-for t in "$@"; do
-  run_test "$t"
-  sleep "$DELAY_BETWEEN_TESTS"
+while [ -n "$1" ]; do
+  run_test "$1"
+  shift
+  if [ -n "$1" ]; then
+    sleep "$DELAY_BETWEEN_TESTS"
+  fi
 done

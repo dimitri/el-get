@@ -75,7 +75,10 @@ EOF
   fi
 }
 
-for r in "$@"; do
-  test_recipe "$r"
-  sleep "$DELAY_BETWEEN_TESTS"
+while [ -n "$1" ]; do
+  test_recipe "$1"
+  shift
+  if [ -n "$1" ]; then
+    sleep "$DELAY_BETWEEN_TESTS"
+  fi
 done
