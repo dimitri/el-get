@@ -54,24 +54,105 @@ should be placed last in this list."
   :group 'el-get
   :type '(choice (const :tag "Off" nil) directory))
 
+(defcustom el-get-user-package-org-type
+  (list "org.gpg.bz2" "org.gpg.gz" "org.gpg" "org.bz2" "org.gz" "org")
+  "Define the .org* file extensions to look for when loading user init
+files.  The extensions are matched in the order listed and the first
+one found is used."
+  :group 'el-get
+  :type '(repeat (string)))
+
+(defcustom el-get-user-package-el-type
+  (list "el.gpg.bz2" "el.gpg.gz" "el.gpg" "el.bz2" "el.gz" "el")
+  "Define the .el* file extensions to look for when loading user
+init files.  The extensions are matched in the order listed and
+the first one found is used."
+  :group 'el-get
+  :type '(repeat (string)))
+
+(defvar el-get-user-package-org-pending 'nil
+  "Used to track whether org needs to be loaded for user
+  init files to finish being initialized.")
+
+(defun el-get-user-package-org-load (package-init-file)
+  "Function for loading user init files stored as .org*"
+  (condition-case nil
+      (org-babel-load-file package-init-file)
+    (error (eval-after-load 'org-install `(org-babel-load-file
+                                           ,package-init-file))
+           (setq el-get-user-package-org-pending 't))))
+
+(defun el-get-user-package-org-check ()
+  "Check to see if any user init files are waiting on org-install.
+
+If 'nil then either `org-babel-load-file' is available, or no
+user init files are .org*.  If 't then notify user that
+org is not yet loaded."
+  (when el-get-user-package-org-pending
+    ;; Check to see if org-install was required after (eval-after-load
+    ;; 'org-install) was called.
+    (unless (featurep 'org-install)
+      (el-get-notify "Loading of user init files incomplete"
+                     "Add Org-Mode to path and run `(require 'org-install)' to complete initialization."))))
+
+(defun el-get-user-package-el-load (package-init-file)
+  "Function for loading user init files stored as .el*.
+
+This also respects the settings for `el-get-byte-compile'."
+  (if el-get-byte-compile
+      ;; Determine what the compiled filename will be.  Since the
+      ;; package could have multiple extensions due to archiving and
+      ;; encrypting you cannot simply remove the last extension.
+      (let ((compile-name (byte-compile-dest-file package-init-file)))
+        (el-get-byte-compile package-init-file)
+        ;; Load the compiled file.  This ensures you do not
+        ;; accidentally load a non .el/.elc file if there is such
+        ;; present in the directory.
+        (load-file compile-name))
+    ;; Otherwise load the uncompiled file.
+    (load-file package-init-file)))
+
 (defun el-get-load-package-user-init-file (package)
   "Load the user init file for PACKAGE, called init-package.el
 and to be found in `el-get-user-package-directory'.  Do nothing
 when this custom is nil.
 
-Will automatically compile the init file as needed and load the
-compiled version."
+If the file is a literate file create in Org Mode it will
+automatically create a .el as needed based on file modification
+times and load it.  If the file is a traditional elisp file it
+will load it directly."
   (when el-get-user-package-directory
-    (let* ((init-file-name (format "init-%s.el" package))
-	   (package-init-file
-	    (expand-file-name init-file-name el-get-user-package-directory))
-	   (file-name-no-extension (file-name-sans-extension package-init-file))
-	   (compiled-init-file (concat file-name-no-extension ".elc")))
-      (when (file-exists-p package-init-file)
-	(when el-get-byte-compile
-	  (el-get-byte-compile-file package-init-file))
-	(el-get-verbose-message "el-get: load %S" file-name-no-extension)
-	(load file-name-no-extension 'noerror)))))
+    ;; Match the package against the extension to determine which
+    ;; command to use when loading it.  This returns the first
+    ;; matching filename+extension to be loaded, as well as the method
+    ;; to load it (org or elisp).
+    (flet ((package-load (base ext-type command)
+             (catch 'exists
+               (loop for ext in ext-type do
+                     (let ((filename (format "%s.%s" base ext)))
+                       (if (file-exists-p filename)
+                           (throw 'exists `(,command ,filename)))))
+               nil)))
+      (let* ((package-name (format "init-%s" package))
+             (base (expand-file-name package-name
+                                     el-get-user-package-directory))
+             ;; By preferring .org files over .el files you ensure
+             ;; that changes to the .org files will be taken into
+             ;; account and a new .el file will be tangled to reflect
+             ;; those changes.
+             (load-method (or
+                           (package-load base
+                                         el-get-user-package-org-type
+                                         el-get-user-package-org-load)
+                           (package-load base
+                                         el-get-user-package-el-type
+                                         el-get-user-package-el-load))))
+        ;; Perform load evalation here
+        (if load-method
+            (progn
+              (el-get-verbose-message "el-get: load %S" (cdr load-method))
+              (eval load-method))
+          (el-get-verbose-message "el-get: No init file for %S" package))))))
 
 (defun el-get-recipe-dirs ()
   "Return the elements of el-get-recipe-path that actually exist.
