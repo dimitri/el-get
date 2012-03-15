@@ -1,0 +1,4 @@
+(:name webjump++
+       :type github
+       :description "Easy search web on engines."
+       :pkgname "renard/webjump-plus-plus")

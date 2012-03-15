@@ -2,7 +2,6 @@
        :description
        "enhanced tracking of the world inside and outside your emacs"
        :website "https://github.com/djcb/sauron"
-       :type git
-       :url "git://github.com/djcb/sauron.git"
-       :post-init (lambda ()
-                    (autoload 'sauron-start "sauron" "Start sauron." t)))
+       :type github
+       :pkgname "djcb/sauron"
+       :prepare (autoload 'sauron-start "sauron" "Start sauron." t))

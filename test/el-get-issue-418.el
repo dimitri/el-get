@@ -6,6 +6,5 @@
       (el-get-default-process-sync t)
       (el-get-verbose t)
       (debug-ignored-errors '()))
-  (require 'el-get)
   (el-get 'sync 'magit)
   (message "%S" (symbol-function 'magit-status)))

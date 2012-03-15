@@ -1,5 +1,4 @@
 (:name js2-mode
        :type emacsmirror
        :description "An improved JavaScript editing mode"
-       :post-init (lambda ()
-            (autoload 'js2-mode "js2-mode" nil t)))
+       :prepare (autoload 'js2-mode "js2-mode" nil t))

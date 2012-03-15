@@ -1,0 +1,3 @@
+(:name smart-operator
+       :type emacswiki
+       :description "Beautify the operators in codes")

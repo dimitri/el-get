@@ -93,6 +93,9 @@ recursion.
 	 (wdir   (if subdir (concat (file-name-as-directory pdir) subdir) pdir))
 	 (buf    (format "*el-get-build: %s*" package))
 	 (default-directory (file-name-as-directory wdir))
+         (shell-file-name (or (and (eq system-type 'windows-nt)
+                              (executable-find "cmdproxy.exe"))
+                          shell-file-name))
 	 (process-list
 	  (mapcar (lambda (c)
 		    (let* ((split    (cond ((stringp c)
@@ -125,20 +128,24 @@ recursion.
 	 (full-process-list ;; includes byte compiling
 	  (append
 	   (when bytecomp-files
-	     (list
-	      (el-get-byte-compile-process package buf wdir sync bytecomp-files)))
+	     (list (el-get-byte-compile-process package buf wdir sync bytecomp-files)))
 	   process-list))
+         ;; This ensures that post-build-fun is always a lambda, not a
+         ;; symbol, which simplifies the following code.
+         (post-build-fun
+          (cond ((null post-build-fun) (lambda (&rest args) nil))
+                ((symbolp post-build-fun)
+                 `(lambda (&rest args)
+                    (apply ,(symbol-function post-build-fun) args)))
+                (t (assert (functionp post-build-fun) 'show-args)
+                   post-build-fun)))
 	 ;; unless installing-info, post-build-fun should take care of
 	 ;; building info too
 	 (build-info-then-post-build-fun
 	  (if installing-info post-build-fun
 	    `(lambda (package)
 	       (el-get-install-or-init-info package 'build)
-	       (funcall ,(if (symbolp post-build-fun)
-			     (symbol-function post-build-fun)
-			   ;; it must be a lambda, just inline its value
-			   post-build-fun)
-			package)))))
+	       (funcall ,post-build-fun package)))))
     (el-get-start-process-list
      package full-process-list build-info-then-post-build-fun)))
 

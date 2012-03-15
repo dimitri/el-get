@@ -2,7 +2,6 @@
        :description "search refinement of ack result with anything"
        :website "http://www.emacswiki.org/emacs-fr/anything-ack.el"
        :type emacswiki
-       :post-init (lambda ()
-                    (autoload 'anything-ack "anything-ack"
-                      "Run ack in `anything' buffer to narrow results." t))
+       :prepare (autoload 'anything-ack "anything-ack"
+                  "Run ack in `anything' buffer to narrow results." t)
        :depends anything)

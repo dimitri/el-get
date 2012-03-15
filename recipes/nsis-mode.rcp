@@ -1,5 +1,5 @@
 (:name nsis-mode
-       :description "NSIS(Nullsoft Scriptable Install System)-mode"
-       :type emacswiki
-       :features nsis-mode
-       :post-init (lambda nil (add-to-list (quote auto-mode-alist) (quote ("\\.[Nn][Ss][IiHh]$" . nsis-mode)))))
+       :website "https://github.com/mlf176f2/nsis-mode"
+       :description "A major mode for editing NSIS files"
+       :type github
+       :pkgname "mlf176f2/nsis-mode")

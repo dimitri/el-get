@@ -4,6 +4,6 @@
        :description "A minor mode to guide art writers"
        :url "https://gitorious.org/robmyers/scripts/blobs/raw/master/artbollocks-mode.el"
        :features artbollocks-mode
-       :post-init (lambda ()
-		    (add-hook 'text-mode-hook 'turn-on-artbollocks-mode)
-		    (add-hook 'org-mode-hook 'turn-on-artbollocks-mode)))
+       :post-init (progn
+                    (add-hook 'text-mode-hook 'turn-on-artbollocks-mode)
+                    (add-hook 'org-mode-hook 'turn-on-artbollocks-mode)))

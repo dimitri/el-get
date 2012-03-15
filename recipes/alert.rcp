@@ -1,10 +1,10 @@
 (:name alert
        :description "Growl-style notification system for Emacs"
        :website "https://github.com/jwiegley/alert"
-       :type git
-       :url "git://github.com/jwiegley/alert.git"
-       :post-init
-       (lambda ()
+       :type github
+       :pkgname "jwiegley/alert"
+       :prepare
+       (progn
          (autoload 'alert "alert"
            "Alert the user that something has happened.")
          (autoload 'alert-add-rule "alert"

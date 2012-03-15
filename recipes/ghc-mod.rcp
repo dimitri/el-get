@@ -1,0 +1,5 @@
+(:name ghc-mod
+       :description "Happy Haskell programming"
+       :type github
+       :pkgname "kazu-yamamoto/ghc-mod"
+       :load-path "elisp")

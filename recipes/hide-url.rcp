@@ -1,5 +1,6 @@
 (:name hide-url
+       :description "Hide annoyingly long URLs"
        :website "https://github.com/tkf/hide-url.el"
-       :type git
-       :url "git://github.com/tkf/hide-url.el.git"
+       :type github
+       :pkgname "tkf/hide-url.el"
        :features "hide-url")

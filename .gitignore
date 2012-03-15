@@ -2,3 +2,4 @@
 *~
 .lock
 recipes/emacswiki/*
+recipes/elpa/*

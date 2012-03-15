@@ -1,0 +1,4 @@
+(:name hideshow-org
+       :description "Provides org-mode like hide and show for hideshow.el"
+       :type github
+       :pkgname "secelis/hideshow-org")

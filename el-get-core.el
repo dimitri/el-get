@@ -45,16 +45,25 @@ call for doing the named package action in the given method.")
   (and (el-get-method name :install) t))
 
 (defun* el-get-register-method (name &key install update remove
-                                     install-hook remove-hook compute-checksum)
+                                     install-hook remove-hook compute-checksum
+                                     guess-website)
   "Register the method for backend NAME, with given functions"
-  (loop for required-arg in '(install update remove)
-        unless (symbol-value required-arg)
-        do (error "Missing required argument: :%s" required-arg))
-  (let ((def (list :install install :update update :remove remove)))
-    (when install-hook     (setq def (plist-put def :install-hook install-hook)))
-    (when remove-hook      (setq def (plist-put def :remove-hook remove-hook)))
-    (when compute-checksum (setq def (plist-put def :compute-checksum compute-checksum)))
-    (setq el-get-methods (plist-put el-get-methods name def))))
+  (let (method-def)
+    (loop for required-arg in '(install update remove)
+          unless (symbol-value required-arg)
+          do (error "Missing required argument: :%s" required-arg)
+          do (setq method-def
+                   (plist-put method-def
+                              (intern (format ":%s" required-arg))
+                              (symbol-value required-arg))))
+    (loop for optional-arg in '(install-hook remove-hook
+                                compute-checksum guess-website)
+        if (symbol-value optional-arg)
+        do (setq method-def
+                 (plist-put method-def
+                            (intern (format ":%s" optional-arg))
+                            (symbol-value optional-arg))))
+    (setq el-get-methods (plist-put el-get-methods name method-def))))
 
 (put 'el-get-register-method 'lisp-indent-function
      (get 'prog1 'lisp-indent-function))
@@ -122,7 +131,7 @@ entry."
 ;;
 (defun el-get-rmdir (package &rest ignored)
   "Just rm -rf the package directory. If it is a symlink, delete it."
-  (let* ((pdir (el-get-package-directory package)))
+  (let* ((pdir (expand-file-name "." (el-get-package-directory package))))
     (cond ((file-symlink-p pdir)
            (delete-file pdir))
           ((file-directory-p pdir)
@@ -155,7 +164,9 @@ entry."
   "Return the list of absolute directory names to be added to
 `load-path' by the named PACKAGE."
   (let* ((source   (el-get-package-def package))
-	 (el-path  (el-get-flatten (or (plist-get source :load-path) ".")))
+	 (el-path  (if (plist-member source :load-path)
+                       (el-get-flatten (plist-get source :load-path))
+                     '(".")))
          (pkg-dir (el-get-package-directory package)))
     (mapcar (lambda (p) (expand-file-name p pkg-dir)) el-path)))
 
@@ -165,6 +176,8 @@ given method."
   (let* ((method  (if (keywordp method-name) method-name
                     (intern (concat ":" (format "%s" method-name)))))
          (actions (plist-get el-get-methods method)))
+    (assert actions nil
+            "Unknown recipe type: %s" method)
     (plist-get actions action)))
 
 (defun el-get-check-init ()
@@ -335,7 +348,7 @@ makes it easier to conditionally splice a command into the list.
                (args    (if shell
 			    (mapcar #'shell-quote-argument (plist-get c :args))
 			  (plist-get c :args)))
-               (sync    (if (plist-member c :sync) (plist-get c :sync)
+               (sync    (el-get-plist-get-with-default c :sync
                           el-get-default-process-sync))
 	       (stdin   (plist-get c :stdin))
                (default-directory (if cdir
@@ -429,5 +442,17 @@ out if it's nil."
 	   "The command named '%s' can not be found with `executable-find'"
 	   name))
 	command)))))
+
+(defun el-get-plist-get-with-default (plist prop def)
+  "Same as (plist-get PLIST PROP), but falls back to DEF.
+
+Specifically, if (plist-member PLIST PROP) is nil, then returns
+DEF instead. Note that having a property set to nil is not the
+same as having it unset."
+  (if (plist-member plist prop)
+      (plist-get plist prop)
+    def))
+(put 'el-get-plist-get-with-default 'lisp-indent-function
+     (get 'prog2 'lisp-indent-function))
 
 (provide 'el-get-core)
