@@ -1,0 +1,6 @@
+(:name auto-complete-chunk
+       :description "Auto-completion for dot.separated.words."
+       :type github
+       :pkgname "tkf/auto-complete-chunk"
+       :features auto-complete-chunk
+       :depends auto-complete)
