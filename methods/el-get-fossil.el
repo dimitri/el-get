@@ -46,15 +46,16 @@ are stored in the package directory"
          ;; are all treated equally
          (checkout (or (plist-get source :checkout)
                        (plist-get source :branch)
-                       (plsit-get source :tag)
-                       ""))
+                       (plist-get source :tag)
+                       "trunk"))
          (clone-args (list "clone" url fossil-name))
          ;; Allow per-recipe overrides for .fossil location
          (fossil-dir (or (plist-get source :fossil-dir)
                          el-get-fossil-dir
-                         pdir)))
+                         pdir))
+         (open-args (list "open" (expand-file-name fossil-name fossil-dir) checkout))
          (ok (format "Package %s installed." package))
-         (ko (format "Could not install package %s." package))
+         (ko (format "Could not install package %s." package)))
     (el-get-start-process-list
      package
      (list
@@ -79,9 +80,7 @@ are stored in the package directory"
             :buffer-name name
             :default-directory pdir
             :program fossil-executable
-            :args (list "open" (format "%s %s"
-                                       (expand-file-name fossil-name fossil-dir)
-                                       checkout))
+            :args open-args
             :message ok
             :error ko))
      post-install-fun)))

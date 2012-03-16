@@ -42,5 +42,6 @@
 (require 'el-get-github-zip)
 (require 'el-get-pacman)
 (require 'el-get-svn)
+(require 'el-get-fossil)
 
 (provide 'el-get-methods)
