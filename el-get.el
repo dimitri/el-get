@@ -361,8 +361,8 @@ which defaults to the first element in `el-get-recipe-path'."
 
 (defun el-get-eval-after-load (package form)
   "Like `eval-after-load', but first arg is an el-get package name."
-  (let* ((package  (el-get-as-symbol package))
-         (source   (el-get-package-def package))
+  (assert (symbolp package))
+  (let* ((source   (el-get-package-def package))
          (pkgname  (plist-get source :pkgname))
          (feats    (el-get-as-list (plist-get source :features)))
          (library  (or (plist-get source :library)
@@ -557,7 +557,7 @@ PACKAGE may be either a string or the corresponding symbol."
     (if package
 	;; el-get-do-install will either init the package, installing it
 	;; first only when necessary to do so
-	(el-get-do-install (el-get-as-string package))
+	(el-get-do-install package)
       ;; no more packages to install in the dependency walk, clean up
       (remove-hook 'el-get-post-init-hooks 'el-get-install-next-packages))))
 
@@ -602,6 +602,7 @@ PACKAGE may be either a string or the corresponding symbol."
 
 (defun el-get-do-install (package)
   "Install any PACKAGE for which you have a recipe."
+  (assert (symbolp package))
   (el-get-error-unless-package-p package)
   (if (el-get-package-is-installed package)
       (el-get-init package)
@@ -699,11 +700,11 @@ different install methods."
 
 (defun el-get-do-update (package)
   "Update "
+  (assert (symbolp package))
   (el-get-error-unless-package-p package)
   (assert (el-get-package-is-installed package) nil
           "Package %s cannot be updated because it is not installed.")
-  (let* ((package (el-get-as-symbol package))
-         (source   (el-get-package-def package))
+  (let* ((source   (el-get-package-def package))
 	 (method   (el-get-package-method source))
 	 (update   (el-get-method method :update))
 	 (url      (plist-get source :url)))
@@ -726,11 +727,11 @@ itself.")
   "Update PACKAGE."
   (interactive
    (list (el-get-read-package-with-status "Update" "required" "installed")))
+  (assert (symbolp package))
   (el-get-error-unless-package-p package)
   (if (el-get-update-requires-reinstall package)
       (el-get-reinstall package)
-    (let* ((package (el-get-as-symbol package))
-           (new-dependencies (remove-if 'el-get-package-is-installed
+    (let* ((new-dependencies (remove-if 'el-get-package-is-installed
                                         (el-get-dependencies package)))
            (source   (el-get-package-def package)))
       (if (plist-get source :checksum)
@@ -884,20 +885,21 @@ Also put the checksum in the kill-ring."
 When PACKAGES is non-nil, only process entries from this list.
 Those packages from the list we don't know the status of are
 considered \"required\"."
+  (assert (null (remove-if 'symbolp packages)))
   (let* ((p-s-alist   (el-get-read-status-file))
          (required    (el-get-filter-package-alist-with-status p-s-alist "required"))
          (installed   (el-get-filter-package-alist-with-status p-s-alist "installed"))
 	 (to-init     (if packages
 			  (loop for p in packages
-				when (member (el-get-as-string p) installed)
+				when (member p installed)
 				collect p)
-			(mapcar 'el-get-as-symbol installed)))
+			installed))
 	 (init-deps   (el-get-dependencies to-init))
 	 (to-install  (if packages
 			  (loop for p in packages
 				unless (member p init-deps)
 				collect p)
-			(mapcar 'el-get-as-symbol required)))
+			required))
 	 (install-deps (el-get-dependencies to-install))
 	 done)
     (el-get-verbose-message "el-get-init-and-install: install %S" install-deps)
@@ -951,6 +953,7 @@ already installed packages is considered."
   (let* ((packages
 	  ;; (el-get 'sync 'a 'b my-package-list)
 	  (loop for p in packages when (listp p) append p else collect p))
+         (packages (mapcar 'el-get-as-symbol packages))
          (total       (length packages))
          (installed   (el-get-count-packages-with-status packages "installed"))
          (progress (and (eq sync 'wait)
@@ -962,7 +965,7 @@ already installed packages is considered."
     ;; keep the result of `el-get-init-and-install' to return it even in the
     ;; 'wait case
     (prog1
-	(el-get-init-and-install (mapcar 'el-get-as-symbol packages))
+	(el-get-init-and-install packages)
 
       ;; el-get-install is async, that's now ongoing.
       (when progress
