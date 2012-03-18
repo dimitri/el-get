@@ -122,10 +122,12 @@
         ps
       ;; convert to the new format, fetching recipes as we go
       (loop for (p s) on ps by 'cddr
-            for x = (el-get-package-symbol p)
-            when x
-            collect (cons x (list 'status s
-                                  'recipe (el-get-package-def x)))))))
+            for psym = (el-get-package-symbol p)
+            when psym
+            collect (cons psym
+                          (list 'status s
+                                'recipe (when (string= s "installed")
+                                          (el-get-package-def psym))))))))
 
 (defun el-get-package-status-alist (&optional package-status-alist)
   "return an alist of (PACKAGE . STATUS)"
