@@ -10,19 +10,19 @@
 (el-get-register-derived-method :builtin-with-checksum :builtin
   :compute-checksum #'el-get-builtin-compute-checksum)
 
-(let ((debug-on-error t)
-      ;; (el-get-byte-compile nil)
-      (el-get-verbose t)
-      (el-get-default-process-sync t))
-  ;; Install pkg with type builtin
-  (let ((el-get-sources
-         (list `(:name pkg
-                       :type builtin-with-checksum
-                       :checksum "0"))))
-    (el-get 'sync 'pkg))
-  ;; Now, with the recipe no longer in `el-get-sources', do a bunch of
-  ;; things that require the recipe, to make sure that they obtain it
-  ;; from the status file.
-  (el-get-checksum 'pkg)
-  (el-get-reload 'pkg)
-  (el-get-remove 'pkg))
+(setq debug-on-error t
+      el-get-verbose t
+      el-get-default-process-sync t)
+
+;; Install pkg with type builtin
+(let ((el-get-sources
+       (list `(:name pkg
+                     :type builtin-with-checksum
+                     :checksum "0"))))
+  (el-get 'sync 'pkg))
+;; Now, with the recipe no longer in `el-get-sources', do a bunch of
+;; things that require the recipe, to make sure that they obtain it
+;; from the status file.
+(el-get-checksum 'pkg)
+(el-get-reload 'pkg)
+(el-get-remove 'pkg)

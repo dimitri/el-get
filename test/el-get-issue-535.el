@@ -5,8 +5,8 @@
 ;; Run this test with the environment variable HTTP_PROXY set
 ;; appropriately!
 
-(let ((debug-on-error t)
-      ;; (el-get-byte-compile nil)
-      (el-get-verbose t))
-  (require 'el-get)
-  (el-get 'sync 'mailcrypt))
+(setq debug-on-error t
+      el-get-verbose t)
+
+(require 'el-get)
+(el-get 'sync 'mailcrypt)
