@@ -18,6 +18,6 @@
                  target
                  "prefix" "site-lisp" "site-lisp"))
          '("compile-semi" "install-semi")))
-        :load-path ("site-lisp/semi/")
+       :load-path ("site-lisp/semi/")
        )
 

@@ -10,7 +10,7 @@
       (el-get-default-process-sync t)
       (el-get-sources
        '((:name xmlunicode :depends
-		(unichars)
-		:type http :url "http://nwalsh.com/emacs/xmlchars/xmlunicode.el")
-	 (:name unichars :type http :url "http://nwalsh.com/emacs/xmlchars/unichars.el"))))
+                (unichars)
+                :type http :url "http://nwalsh.com/emacs/xmlchars/xmlunicode.el")
+         (:name unichars :type http :url "http://nwalsh.com/emacs/xmlchars/unichars.el"))))
   (el-get-install "xmlunicode"))

@@ -6,7 +6,7 @@
        :load-path ("./lisp")
        ;; if using vm, add `--with-vm-dir=DIR' after ./configure
        :build `("autoconf" "make clean" "rm -f lisp/bbdb-autoloads.el"
-		,(concat "./configure --with-emacs=" el-get-emacs) "make bbdb")
+                ,(concat "./configure --with-emacs=" el-get-emacs) "make bbdb")
        :features bbdb-loaddefs
        :autoloads nil
        :post-init (bbdb-initialize))
