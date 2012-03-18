@@ -3,7 +3,8 @@
         "unix:abstract=/tmpX/Xdbus-oBU7t7f9Pv,guid=X7bb736a5c60b6c3be8a1312800000064X")
 
 ;; Trigger a notification
-(let ((el-get-sources
-       (list '(:name pkg
-                     :type builtin))))
-  (el-get 'sync 'pkg))
+(setq el-get-sources
+      (list
+       '(:name pkg :type builtin)))
+
+(el-get 'sync 'pkg)

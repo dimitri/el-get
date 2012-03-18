@@ -2,11 +2,17 @@
 ;;
 ;; Pass load-path to byte-compiling child process
 
-(let ((debug-on-error t)
-      (el-get-verbose t))
-  (el-get 'sync 'js2-mode))
+(setq debug-on-error t
+      el-get-verbose t)
 
-(let ((compiled-file (concat (file-name-as-directory (el-get-package-directory 'js2-mode)) "js2-mode.elc")))
-  (if (file-exists-p compiled-file)
-      (message "Byte-compiling succeeded.")
-    (error "Byte-compiling failed.")))
+(el-get 'sync 'js2-mode)
+
+(setq compiled-file
+      (concat
+       (file-name-as-directory
+        (el-get-package-directory 'js2-mode))
+       "js2-mode.elc"))
+
+(if (file-exists-p compiled-file)
+    (message "Byte-compiling succeeded.")
+  (error "Byte-compiling failed."))
