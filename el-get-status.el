@@ -62,27 +62,32 @@
     ;; when it reaches the end of the element, which breaks out of the
     ;; loop and is caught by `condition-case`.
     (condition-case err
-        ;; Descend into status list
         (progn
+          ;; Descend into status list"
           (down-list 1)
           (while t
-            ;; Descend into recipe
-            (down-list 2)
-            ;; Put a newline after each property value (except the
-            ;; last one)
+            ;; Descend into status entry for next package
+            (down-list 1)
             (condition-case err
-                (while t
-                  ;; We want to move forward by 2 sexps, but we also
-                  ;; want to make sure that there's another sexp after
-                  ;; point before inserting a newline. Thus we go
-                  ;; forward 3 and then back 1.
-                  (forward-sexp 3)
-                  (backward-sexp 1)
-                  (delete-region (point) (progn (skip-chars-backward " \t\n") (point)))
-                  (insert ?\n))
+                (progn
+                  ;; Get to the beginning of the recipe
+                  (down-list 1)
+                  (up-list -1)
+                  ;; Kill the recipe
+                  (kill-sexp)
+                  ;; Reprint the recipe with newlines between
+                  ;; key-value pairs
+                  (insert "(")
+                  (let ((recipe (car (read-from-string (car kill-ring)))))
+                    (loop for (prop val) on recipe by 'cddr
+                          do (insert
+                              (format "%s %s\n"
+                                      (prin1-to-string prop)
+                                      (prin1-to-string val)))))
+                  (insert ")"))
               (scan-error nil))
             ;; Exit from status entry for this package
-            (up-list 2)))
+            (up-list 1)))
       (scan-error nil))
     (pp-buffer)
     (goto-char (point-min))
