@@ -2,9 +2,10 @@
 ;;
 ;; info installation broken
 
-(let ((debug-on-error t)
-      (el-get-default-process-sync t)
-      (el-get-verbose t)
-      (debug-ignored-errors '()))
-  (el-get 'sync 'magit)
-  (message "%S" (symbol-function 'magit-status)))
+(setq debug-on-error t
+      el-get-default-process-sync t
+      el-get-verbose t
+      debug-ignored-errors 'nil)
+
+(el-get 'sync 'magit)
+(message "%S" (symbol-function 'magit-status))
