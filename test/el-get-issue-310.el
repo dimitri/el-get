@@ -2,8 +2,9 @@
 ;;
 ;; el-get refuses to compile
 
-(let ((debug-on-error t)
-      (debug-ignored-errors '()))
-  (setq el-get-default-process-sync t
-	el-get-verbose t)
-  (el-get-install "mailq"))
+(setq debug-on-error t
+      debug-ignored-errors 'nil)
+
+(setq el-get-default-process-sync t
+      el-get-verbose t)
+(el-get-install "mailq")
