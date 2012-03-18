@@ -94,7 +94,8 @@
 (defun el-get-save-package-status (package status)
   "Save given package status"
   (let* ((package (el-get-as-symbol package))
-         (recipe (el-get-package-def package))
+         (recipe (when (string= status "installed")
+                   (el-get-package-def package)))
          (package-status-alist
           (assq-delete-all package (el-get-read-status-file)))
          (new-package-status-alist
@@ -121,10 +122,12 @@
         ps
       ;; convert to the new format, fetching recipes as we go
       (loop for (p s) on ps by 'cddr
-            for x = (el-get-package-symbol p)
-            when x
-            collect (cons x (list 'status s
-                                  'recipe (el-get-package-def x)))))))
+            for psym = (el-get-package-symbol p)
+            when psym
+            collect (cons psym
+                          (list 'status s
+                                'recipe (when (string= s "installed")
+                                          (el-get-package-def psym))))))))
 
 (defun el-get-package-status-alist (&optional package-status-alist)
   "return an alist of (PACKAGE . STATUS)"
@@ -136,6 +139,7 @@
   "return the list of recipes stored in the status file"
   (loop for (p . prop) in (or package-status-alist
                               (el-get-read-status-file))
+        when (string= (plist-get prop 'status) "installed")
         collect (plist-get prop 'recipe)))
 
 (defun el-get-read-package-status (package &optional package-status-alist)
@@ -146,7 +150,7 @@
 (define-obsolete-function-alias 'el-get-package-status 'el-get-read-package-status)
 
 (defun el-get-read-package-status-recipe (package &optional package-status-alist)
-  "return current status for PACKAGE"
+  "return current status recipe for PACKAGE"
   (let ((p-alist (or package-status-alist (el-get-read-status-file))))
     (plist-get (cdr (assq (el-get-as-symbol package) p-alist)) 'recipe)))
 
