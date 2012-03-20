@@ -1,0 +1,4 @@
+(:name cdlatex-mode
+       :description "a minor mode which re-implements many features also found in the AUCTeX LaTeX mode."
+       :type http
+       :url "http://staff.science.uva.nl/~dominik/Tools/cdlatex/cdlatex.el")
