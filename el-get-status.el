@@ -92,9 +92,15 @@
     (pp-buffer)
     (goto-char (point-min))
     ;; Make sure we didn't change the value. That would be bad.
-    (assert (equal object (read (current-buffer))) nil
-            "Pretty-printing status changes its value. Your pretty-printing function is messed up.")
-    (buffer-string)))
+    (if (equal object (read (current-buffer)))
+        (buffer-string)
+      ;; If the pretty-printing function *did* change the value, just
+      ;; use the built-in pretty-printing instead. It's not as good,
+      ;; but at least it's correct.
+      (warn "The custom pretty-printer for the .status.el failed. The original value and pretty-printed-value are shown below. You can try to see where they differ and report a bug.\n---BEGIN ORIGINAL VALUE---\n%s\n---END ORIGINAL VALUE---\n\n---BEGIN PRETTY-PRINTED VALUE---\n%s\n---END PRETTY-PRINTED VALUE---\n"
+            (pp-to-string object)
+            (buffer-string))
+      (pp-to-string object))))
 
 (defun el-get-save-package-status (package status)
   "Save given package status"
