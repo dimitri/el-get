@@ -1,0 +1,6 @@
+(:name fic-mode
+       :website "https://github.com/lewang/fic-mode#readme"
+       :description "Show FIXME/TODO/BUG(...) in special face only in comments and strings"
+       :type github
+       :pkgname "lewang/fic-mode"
+       :features fic-mode)
