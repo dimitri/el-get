@@ -33,8 +33,8 @@ Enable this if you want el-get to honor these settings"
   "Parse HTTP_PROXY or use `url-proxy-services'"
   (let ((proxy (or (getenv "HTTP_PROXY")
 		   (if (and (featurep 'url-vars)
-			    (assoc "http" 'url-proxy-services))
-		       (cadr (assoc "http" 'url-proxy-services))
+			    (assoc "http" url-proxy-services))
+		       (cadr (assoc "http" url-proxy-services))
 		     nil)))
         port ret
         (user "")
@@ -94,10 +94,10 @@ Enable this if you want el-get to honor these settings"
 	 (name    (format "*cvs checkout %s*" package))
 	 (ok      (format "Checked out package %s." package))
 	 (ko      (format "Could not checkout package %s." package)))
-    
+
     ;; (message "%S" `(:args ("-d" ,url "checkout" "-d" ,package ,module)))
     ;; (message "el-get-cvs-checkout: %S" (string= options "login"))
-    
+
     (el-get-start-process-list
      package
      `(,@(when (string= options "login")
@@ -127,7 +127,7 @@ Enable this if you want el-get to honor these settings"
 	 (name (format "*cvs update %s*" package))
 	 (ok   (format "Updated package %s." package))
 	 (ko   (format "Could not update package %s." package)))
-    
+
     (el-get-start-process-list
      package
      `((:command-name ,name
