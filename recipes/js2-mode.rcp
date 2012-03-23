@@ -1,4 +1,6 @@
 (:name js2-mode
-       :type emacsmirror
+       :website "https://github.com/mooz/js2-mode#readme"
        :description "An improved JavaScript editing mode"
+       :type github
+       :pkgname "mooz/js2-mode"
        :prepare (autoload 'js2-mode "js2-mode" nil t))
