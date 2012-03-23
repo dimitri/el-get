@@ -3,6 +3,7 @@
        :description "The most intelligent auto-completion extension."
        :type git
        :url "http://github.com/m2ym/auto-complete.git"
+       :depends popup
        :load-path "."
        :post-init (lambda ()
 		    (require 'auto-complete)
