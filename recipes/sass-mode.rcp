@@ -2,6 +2,6 @@
        :description "Major mode for editing Sass files"
        :type github
        :pkgname "nex3/sass-mode"
-       :features sass-mode
+       :depends haml-mode
        :post-init (add-to-list 'auto-mode-alist
                                '("\\.scss$" . sass-mode)))
