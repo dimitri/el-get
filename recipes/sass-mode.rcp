@@ -3,6 +3,5 @@
        :type github
        :pkgname "nex3/sass-mode"
        :depends haml-mode
-       :features sass-mode
        :post-init (add-to-list 'auto-mode-alist
                                '("\\.scss$" . sass-mode)))
