@@ -48,60 +48,6 @@
       package-name
     (intern (format ":%s" package-name))))
 
-(defun el-get-pp-status-alist-to-string (object)
-  (with-temp-buffer
-    (lisp-mode-variables nil)
-    (set-syntax-table emacs-lisp-mode-syntax-table)
-    (let ((print-escape-newlines pp-escape-newlines)
-          (print-quoted t))
-      (prin1 object (current-buffer)))
-    (goto-char (point-min))
-    ;; Each (apparently-infinite) loop constantly moves forward
-    ;; through the element it is processing (via `down-list`,
-    ;; `up-list`, and `forward-sexp` and finally throws a scan-error
-    ;; when it reaches the end of the element, which breaks out of the
-    ;; loop and is caught by `condition-case`.
-    (condition-case err
-        (progn
-          ;; Descend into status list"
-          (down-list 1)
-          (while t
-            ;; Descend into status entry for next package
-            (down-list 1)
-            (condition-case err
-                (progn
-                  ;; Get to the beginning of the recipe
-                  (down-list 1)
-                  (up-list -1)
-                  ;; Kill the recipe
-                  (kill-sexp)
-                  ;; Reprint the recipe with newlines between
-                  ;; key-value pairs
-                  (insert "(")
-                  (let ((recipe (car (read-from-string (car kill-ring)))))
-                    (loop for (prop val) on recipe by 'cddr
-                          do (insert
-                              (format "%s %s\n"
-                                      (prin1-to-string prop)
-                                      (prin1-to-string val)))))
-                  (insert ")"))
-              (scan-error nil))
-            ;; Exit from status entry for this package
-            (up-list 1)))
-      (scan-error nil))
-    (pp-buffer)
-    (goto-char (point-min))
-    ;; Make sure we didn't change the value. That would be bad.
-    (if (equal object (read (current-buffer)))
-        (buffer-string)
-      ;; If the pretty-printing function *did* change the value, just
-      ;; use the built-in pretty-printing instead. It's not as good,
-      ;; but at least it's correct.
-      (warn "The custom pretty-printer for the .status.el failed. The original value and pretty-printed-value are shown below. You can try to see where they differ and report a bug.\n---BEGIN ORIGINAL VALUE---\n%s\n---END ORIGINAL VALUE---\n\n---BEGIN PRETTY-PRINTED VALUE---\n%s\n---END PRETTY-PRINTED VALUE---\n"
-            (pp-to-string object)
-            (buffer-string))
-      (pp-to-string object))))
-
 (defun el-get-save-package-status (package status)
   "Save given package status"
   (let* ((package (el-get-as-symbol package))
@@ -117,7 +63,7 @@
                   (string< (el-get-as-string (car p1))
                            (el-get-as-string (car p2)))))))
     (with-temp-file el-get-status-file
-      (insert (el-get-pp-status-alist-to-string new-package-status-alist)))
+      (insert (pp-to-string new-package-status-alist)))
     ;; Return the new alist
     new-package-status-alist))
 
