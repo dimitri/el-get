@@ -13,7 +13,7 @@
       `((:name a :type test :compile "." :features a :build
                (("sh" "-c" ,(format "echo %s > a.el"
                                     (shell-quote-argument
-                                     (mapconcat #'pp-to-string
+                                     (mapconcat #'el-get-print-to-string
                                                 '((require 'b)
                                                   (provide 'a))
                                                 "\n")))))
@@ -21,7 +21,7 @@
         (:name b :type test :compile "." :features nil :build
                (("sh" "-c" ,(format "echo %s > b.el"
                                     (shell-quote-argument
-                                     (pp-to-string
+                                     (el-get-print-to-string
                                       '(provide 'b)))))))))
 
 ;; Ensure both are uninstalled

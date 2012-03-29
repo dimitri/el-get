@@ -130,7 +130,7 @@ matching REGEX with TYPE and ARGS as parameter."
         (el-get-describe-princ-button (format " in `%s':\n" file)
                                       "`\\([^`']+\\)"
                                       'el-get-help-package-def package)))
-    (prin1 def)))
+    (princ (el-get-print-to-string def))))
 
 (defun el-get-describe (package)
   "Generate a description for PACKAGE."
