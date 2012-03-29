@@ -29,7 +29,10 @@
   ;; Unload features
   (loop for feat in features
         if (string-prefix-p "el-get" (symbol-name feat))
-        do (unload-feature feat 'force))
+        do (progn
+             (unload-feature feat 'force)
+             (assert (not (require feat nil t)) Nil
+                     "%s should not be loadable now" feat)))
   (assert (not (require 'el-get nil t)) nil
           "el-get should not be loadable now"))
 
