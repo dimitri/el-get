@@ -24,6 +24,17 @@
 (require 'bytecomp)
 (require 'autoload)
 
+(defun el-get-print-to-string (object &optional pretty)
+  "Return string representation of lisp object.
+
+Unlike the Emacs builtin printing functions, this ignores
+`print-level' and `print-length', ensuring that as much as
+possible the returned string will be a complete representation of
+the original object."
+  (let (print-level print-length)
+    (funcall (if pretty #'pp-to-string #'prin1-to-string)
+             object)))
+
 (defun el-get-verbose-message (format &rest arguments)
   (when el-get-verbose (apply 'message format arguments)))
 
@@ -362,7 +373,7 @@ makes it easier to conditionally splice a command into the list.
                        (infile (when stdin (make-temp-file "el-get")))
                        (dummy  (when infile
                                  (with-temp-file infile
-                                   (insert (prin1-to-string stdin)))))
+                                   (insert (el-get-print-to-string stdin)))))
                        (dummy  (message "el-get is waiting for %S to complete" cname))
                        (status (apply startf program infile cbuf t args))
                        (message (plist-get c :message))
@@ -390,7 +401,7 @@ makes it easier to conditionally splice a command into the list.
               (process-put proc :el-get-final-func final-func)
               (process-put proc :el-get-start-process-list next)
 	      (when stdin
-		(process-send-string proc (prin1-to-string stdin))
+		(process-send-string proc (el-get-print-to-string stdin))
 		(process-send-eof proc))
               (set-process-sentinel proc 'el-get-start-process-list-sentinel)
               (when filter (set-process-filter proc filter)))))

@@ -61,9 +61,10 @@
                          (cons package (list 'status status 'recipe recipe))))
                 (lambda (p1 p2)
                   (string< (el-get-as-string (car p1))
-                           (el-get-as-string (car p2)))))))
+                           (el-get-as-string (car p2))))))
+         print-level print-length)
     (with-temp-file el-get-status-file
-      (insert (pp-to-string new-package-status-alist)))
+      (insert (el-get-print-to-string new-package-status-alist 'pretty)))
     ;; Return the new alist
     new-package-status-alist))
 

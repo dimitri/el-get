@@ -851,7 +851,7 @@ itself.")
     ;; Filepath is dir/file
     (let ((filepath (format "%s/%s" dir filename)))
       (with-temp-file filepath
-	(insert (prin1-to-string source))))))
+	(insert (el-get-print-to-string source))))))
 
 ;;;###autoload
 (defun el-get-make-recipes (&optional dir)
