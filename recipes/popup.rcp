@@ -1,0 +1,6 @@
+(:name popup
+       :description "Visual Popup Interface Library for Emacs"
+       :website "https://github.com/m2ym/popup-el"
+       :type github
+       :pkgname "m2ym/popup-el"
+       :features "popup")

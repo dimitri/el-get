@@ -2,11 +2,12 @@
        :website "http://cx4a.org/software/auto-complete/"
        :description "The most intelligent auto-completion extension."
        :type github
+       :branch "1.3"
        :pkgname "m2ym/auto-complete"
        :load-path "."
        :post-init (progn
-                    (require 'auto-complete)
-                    (add-to-list 'ac-dictionary-directories
-                                 (expand-file-name "dict"))
-                    (require 'auto-complete-config)
-                    (ac-config-default)))
+		    (require 'auto-complete)
+		    (add-to-list 'ac-dictionary-directories
+				 (expand-file-name "dict"))
+		    (require 'auto-complete-config)
+		    (ac-config-default)))
