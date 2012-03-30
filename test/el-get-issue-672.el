@@ -13,7 +13,7 @@
 ;; Set up the status file with a removed package that has no current
 ;; recipe available.
 (with-temp-buffer
-  (insert (prin1-to-string
+  (insert (el-get-print-to-string
            '(:nonexistent-package "removed")))
   (write-file el-get-status-file))
 

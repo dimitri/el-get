@@ -12,7 +12,7 @@
                    (append
                 '("apel" "flim" "semi")
                 (when (el-get-package-exists-p "bbdb") (list "bbdb"))))
-               "--eval" (prin1-to-string
+               "--eval" (el-get-print-to-string
                  '(progn (setq wl-install-utils t)
                      (setq wl-info-lang "en")
                      (setq wl-news-lang "en")))
