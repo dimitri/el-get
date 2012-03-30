@@ -368,14 +368,14 @@ this is the name to fetch in that system"
                      (if (symbolp e)
                          (cons
                           (list 'const
-                                (intern (substring (prin1-to-string e) 1)))
+                                (intern (substring (el-get-print-to-string e) 1)))
                           r)
                        r))
                    el-get-methods
                    :initial-value nil)
                   (lambda (x y)
-                    (string< (prin1-to-string (cadr x))
-                             (prin1-to-string (cadr y)))))))
+                    (string< (el-get-print-to-string (cadr x))
+                             (el-get-print-to-string (cadr y)))))))
 
        (group :inline t :format "Source URL: %v"
               (const :format "" :url) (string :format "%v"))
@@ -436,7 +436,7 @@ this is the name to fetch in that system"
        :inline t :tag "System-Specific Build Recipes"
        (group :inline t
               (symbol :value ,(concat ":build/"
-                                      (prin1-to-string system-type))
+                                      (el-get-print-to-string system-type))
                       :format "Build Tag: %v%h"
                       :doc "Must be of the form `:build/<system-type>',
 where `<system-type>' is the value of `system-type' on
