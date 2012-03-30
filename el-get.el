@@ -812,7 +812,7 @@ itself.")
   ;; everything, but it's better than nothing.
   (let ((fallback-source
          (or (ignore-errors (el-get-package-def package))
-             (list :name package :type builtin))))
+             (list :name package :type 'builtin))))
     (el-get-with-status-sources
      (let* ((source   (or (ignore-errors (el-get-package-def package))
                           fallback-source))
