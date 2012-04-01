@@ -278,13 +278,17 @@ force their evaluation on some packages only."
 (defcustom el-get-auto-update-cached-recipes t
   "When non-nil, auto-update certain properties in cached recipes.
 
-El-get caches recipes of installed packages so it can use those
-same recipes to init the package later. Normally, these cached
-recipes are only updated when the package itself is updated (or
-reinstalled). However, if this is non-nil, the properties listed
-in `el-get-status-recipe-updatable-properties' will be taken from
-`el-get-sources' and merged into cached recipes whenever packages
-are initialized."
+When El-get installs a package, it stores a copy of the package's
+recipe that becomes independent from the recipe in
+`el-get-sources'. The cached copy is updated only when the
+package itself is updated or reinstalled. However, if this
+preference is t (the default), select properties of the cached
+recipe copy will be updated from `el-get-sources' whenever the
+package is initialized (see
+`el-get-status-recipe-updatable-properties').
+
+If this is set to nil, then the cached copy will *only* be
+updated when the package itself is."
   :group 'el-get
   :type 'boolean)
 
