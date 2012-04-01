@@ -68,7 +68,7 @@
   ;; and it also shouldn't update anything.
   (el-get-merge-properties-into-status invalid-update-source nil :noerror t)
   (assert (null (plist-get (el-get-read-package-status-recipe 'a) :features)) nil
-          "New values should be force-merged into cached recipe")
+          "Cached recipe should not be updated")
   ;; This should update things
   (el-get-merge-properties-into-status invalid-update-source nil :skip-non-updatable t)
   (assert (plist-get (el-get-read-package-status-recipe 'a) :features) nil
@@ -76,5 +76,5 @@
   ;; Now make sure `el-get-init' updates things.from `el-get-sources'
   (let ((el-get-sources (list update-source-2)))
     (el-get-init 'a))
-  (assert second-update-succeeded nil
+  (assert (bound-and-true-p second-update-succeeded) nil
           "el-get-init should auto-update the recipe"))
