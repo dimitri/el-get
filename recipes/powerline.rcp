@@ -1,0 +1,4 @@
+(:name powerline
+       :description "modify mode-line to display things like in the VIM powerline"
+       :type emacswiki
+       :features powerline)
