@@ -28,7 +28,9 @@ Yet it might be useful.
 In the test directory, there is a simple bash script called
 +run-test.sh+ that attempts to automate the manual steps detailed
 above. The script creates a temporary home directory and runs emacs in
-batch mode, first loading el-get and then the specified test file. An invocation equivalent to the above would look like this (starting from the main el-get directory):
+batch mode, first loading el-get and then the specified test file. An
+invocation equivalent to the above would look like this (starting from
+the main el-get directory):
 
   test/run-test.sh el-get-issue-303.el
 
@@ -38,7 +40,8 @@ or even just
 
 The script takes care of cleaning up the temporary directory after the
 test, so you can run tests one after the other without previous tests
-causing problems for later ones. The bahavior of the +run-test.sh+ script can be customized with a few environment variables:
+causing problems for later ones. The bahavior of the +run-test.sh+
+script can be customized with a few environment variables:
 
 - +TMPDIR+ and +TEST_HOME+, for controlling where the temporary home
   directory is created;
@@ -47,7 +50,8 @@ causing problems for later ones. The bahavior of the +run-test.sh+ script can be
   your +PATH+, or to provide one if there is no emacs in your +PATH+
   or it is installed under a nonstandard name.
 
-You can run multiple tests by simply providing multiple test files to +run-test.sh+:
+You can run multiple tests by simply providing multiple test files to
++run-test.sh+:
 
   test/run-test.sh 200 303 310
 
