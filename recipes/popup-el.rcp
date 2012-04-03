@@ -1,0 +1,5 @@
+(:name popup-el
+       :website "https://github.com/m2ym/popup-el"
+       :description "Visual Popup User Interface"
+       :type github
+       :pkgname "m2ym/popup-el")
