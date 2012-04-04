@@ -1,4 +1,4 @@
-(:name popup
+(:name popup.el
        :website "https://github.com/m2ym/popup-el"
        :description "Visual Popup Interface Library for Emacs"
        :type github

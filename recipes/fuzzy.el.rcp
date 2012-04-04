@@ -1,4 +1,4 @@
-(:name fuzzy
+(:name fuzzy.el
        :website "https://github.com/m2ym/fuzzy-el"
        :description "Fuzzy matching utilities for GNU Emacs"
        :type github
