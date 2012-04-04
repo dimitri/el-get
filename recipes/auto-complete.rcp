@@ -3,7 +3,7 @@
        :description "The most intelligent auto-completion extension."
        :type github
        :pkgname "m2ym/auto-complete"
-       :depends (popup fuzzy)
+       :depends (popup.el fuzzy.el)
        :load-path "."
        :post-init (progn
                     (require 'auto-complete)
