@@ -1,0 +1,6 @@
+(:name load-directory
+       :description "Load all the elisp files from a directory"
+       :website "http://www.cb1.com/~john/computing/emacs/lisp/basics/"
+       :type emacsmirror
+       :pkgname "load-directory"
+       :features load-directory)
