@@ -1,9 +1,10 @@
 (:name apel
        :website "http://www.kanji.zinbun.kyoto-u.ac.jp/~tomo/elisp/APEL/"
        :description "APEL (A Portable Emacs Library) is a library to support to write portable Emacs Lisp programs."
-       :type cvs
+       :type http-tar
        :module "apel"
-       :url ":pserver:anonymous@cvs.m17n.org:/cvs/root"
+       :url "http://kanji.zinbun.kyoto-u.ac.jp/~tomo/lemi/dist/apel/apel-10.8.tar.gz"
+       :options ("xzf")
        :build
         (mapcar
          (lambda (target)
@@ -13,4 +14,3 @@
                  "prefix" "site-lisp" "site-lisp"))
          '("compile-apel" "install-apel"))
         :load-path ("site-lisp/apel" "site-lisp/emu"))
-
