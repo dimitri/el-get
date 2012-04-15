@@ -1,6 +1,6 @@
-(:name popup
-       :website "https://github.com/m2ym/popup-el"
-       :description "Visual Popup User Interface for Emacs."
+(:name fuzzy
+       :website "https://github.com/m2ym/fuzzy-el"
+       :description "Fuzzy Matching for Emacs"
        :type github
-       :pkgname "m2ym/popup-el"
+       :pkgname "m2ym/fuzzy-el"
        :load-path ".")
