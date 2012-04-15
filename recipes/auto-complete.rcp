@@ -4,6 +4,7 @@
        :type github
        :pkgname "m2ym/auto-complete"
        :depends (popup fuzzy)
+       :depends popup
        :load-path "."
        :post-init (progn
                     (require 'auto-complete)
