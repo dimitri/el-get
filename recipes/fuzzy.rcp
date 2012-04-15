@@ -1,13 +1,7 @@
 (:name fuzzy
        :website "https://github.com/m2ym/fuzzy-el"
-<<<<<<< HEAD
        :description "Fuzzy Matching for Emacs"
        :type github
        :pkgname "m2ym/fuzzy-el"
        :load-path ".")
-=======
-       :description "Fuzzy matching utilities for GNU Emacs"
-       :type github
-       :pkgname "m2ym/fuzzy-el"
        :features fuzzy)
->>>>>>> c7e53f5695ca3b1af775805ea7b3e25356ce99a4
