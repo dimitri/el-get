@@ -18,7 +18,11 @@ set_default TMPDIR "$(dirname "$(mktemp --dry-run)")"
 set_default TEST_HOME "$TMPDIR/el-get-test-home"
 set_default EMACS "$(which emacs)"
 
-RECIPE_DIR="$EL_GET_LIB_DIR/recipes"
+# 5 seconds in between tests to avoid accidental DoS from running too
+# many tests in a short time
+set_default DELAY_BETWEEN_TESTS 5
+
+set_default RECIPE_DIR "$EL_GET_LIB_DIR/recipes"
 
 get_recipe_file () {
   for x in "$1" "$RECIPE_DIR/$1" "$RECIPE_DIR/$1.rcp" "$RECIPE_DIR/$1.el"; do
@@ -42,9 +46,7 @@ test_recipe () {
   cat >"$lisp_temp_file" <<EOF
 
 (progn
-  (setq debug-on-error t
-        el-get-verbose t
-        el-get-default-process-sync t
+  (setq el-get-default-process-sync t
         pdef (el-get-read-recipe-file "$recipe_file")
         pname (plist-get pdef :name)
         el-get-sources (list pdef))
@@ -62,7 +64,8 @@ test_recipe () {
 EOF
 
   HOME="$TEST_HOME" "$EMACS" -Q -batch -L "$EL_GET_LIB_DIR" \
-    -l "$EL_GET_LIB_DIR/el-get.el" -l "$lisp_temp_file"
+    -l "$EL_GET_LIB_DIR/el-get.el" -l "$EL_GET_LIB_DIR/test/test-setup.el" \
+    -l "$lisp_temp_file"
   result="$?"
   if [ "$result" = 0 ]; then
     echo "*** SUCCESS $recipe_file ***"
@@ -71,6 +74,10 @@ EOF
   fi
 }
 
-for r in "$@"; do
-  test_recipe "$r"
+while [ -n "$1" ]; do
+  test_recipe "$1"
+  shift
+  if [ -n "$1" ]; then
+    sleep "$DELAY_BETWEEN_TESTS"
+  fi
 done

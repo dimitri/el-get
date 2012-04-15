@@ -2,8 +2,8 @@
        :description "Interface between Emacs Lisp and Python"
        :type github
        :pkgname "pinard/Pymacs"
-       :post-init
-       (lambda ()
+       :prepare
+       (progn
          ;; do PYTHONPATH=~/.emacs.d/el-get/pymacs/:$PYTHONPATH
          (setenv
           "PYTHONPATH"

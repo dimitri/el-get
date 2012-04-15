@@ -1,0 +1,8 @@
+(:name fastnav
+       :website "https://github.com/gleber/fastnav.el"
+       :description "Fast navigation and editing routines."
+       :type github
+       :pkgname "gleber/fastnav.el"
+       :load-path "."
+       :post-init (progn
+            (require 'fastnav)))

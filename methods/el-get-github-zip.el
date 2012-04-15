@@ -42,6 +42,7 @@
 
 (el-get-register-derived-method :github-zip :http-zip
   :install #'el-get-github-zip-install
-  :update #'el-get-github-zip-install)
+  :update #'el-get-github-zip-install
+  :guess-website #'el-get-github-guess-website)
 
 (provide 'el-get-github-zip)

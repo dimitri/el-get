@@ -4,5 +4,4 @@
        :type git
        :url "http://ch.ristopher.com/r/ampc"
        :features ampc
-       :post-init (lambda ()
-                    (autoload 'ampc "ampc" nil t)))
+       :prepare (autoload 'ampc "ampc" nil t))

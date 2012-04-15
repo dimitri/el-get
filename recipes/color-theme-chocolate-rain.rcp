@@ -3,5 +3,5 @@
        :type github
        :pkgname "marktran/color-theme-chocolate-rain"
        :depends color-theme
-       :post-init (autoload 'color-theme-chocolate-rain "color-theme-chocolate-rain"
-                    "color-theme: chocolate-rain" t))
+       :prepare (autoload 'color-theme-chocolate-rain "color-theme-chocolate-rain"
+                  "color-theme: chocolate-rain" t))

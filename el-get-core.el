@@ -24,6 +24,17 @@
 (require 'bytecomp)
 (require 'autoload)
 
+(defun el-get-print-to-string (object &optional pretty)
+  "Return string representation of lisp object.
+
+Unlike the Emacs builtin printing functions, this ignores
+`print-level' and `print-length', ensuring that as much as
+possible the returned string will be a complete representation of
+the original object."
+  (let (print-level print-length)
+    (funcall (if pretty #'pp-to-string #'prin1-to-string)
+             object)))
+
 (defun el-get-verbose-message (format &rest arguments)
   (when el-get-verbose (apply 'message format arguments)))
 
@@ -45,16 +56,25 @@ call for doing the named package action in the given method.")
   (and (el-get-method name :install) t))
 
 (defun* el-get-register-method (name &key install update remove
-                                     install-hook remove-hook compute-checksum)
+                                     install-hook remove-hook compute-checksum
+                                     guess-website)
   "Register the method for backend NAME, with given functions"
-  (loop for required-arg in '(install update remove)
-        unless (symbol-value required-arg)
-        do (error "Missing required argument: :%s" required-arg))
-  (let ((def (list :install install :update update :remove remove)))
-    (when install-hook     (setq def (plist-put def :install-hook install-hook)))
-    (when remove-hook      (setq def (plist-put def :remove-hook remove-hook)))
-    (when compute-checksum (setq def (plist-put def :compute-checksum compute-checksum)))
-    (setq el-get-methods (plist-put el-get-methods name def))))
+  (let (method-def)
+    (loop for required-arg in '(install update remove)
+          unless (symbol-value required-arg)
+          do (error "Missing required argument: :%s" required-arg)
+          do (setq method-def
+                   (plist-put method-def
+                              (intern (format ":%s" required-arg))
+                              (symbol-value required-arg))))
+    (loop for optional-arg in '(install-hook remove-hook
+                                compute-checksum guess-website)
+        if (symbol-value optional-arg)
+        do (setq method-def
+                 (plist-put method-def
+                            (intern (format ":%s" optional-arg))
+                            (symbol-value optional-arg))))
+    (setq el-get-methods (plist-put el-get-methods name method-def))))
 
 (put 'el-get-register-method 'lisp-indent-function
      (get 'prog1 'lisp-indent-function))
@@ -155,7 +175,9 @@ entry."
   "Return the list of absolute directory names to be added to
 `load-path' by the named PACKAGE."
   (let* ((source   (el-get-package-def package))
-	 (el-path  (el-get-flatten (or (plist-get source :load-path) ".")))
+	 (el-path  (if (plist-member source :load-path)
+                       (el-get-flatten (plist-get source :load-path))
+                     '(".")))
          (pkg-dir (el-get-package-directory package)))
     (mapcar (lambda (p) (expand-file-name p pkg-dir)) el-path)))
 
@@ -165,6 +187,8 @@ given method."
   (let* ((method  (if (keywordp method-name) method-name
                     (intern (concat ":" (format "%s" method-name)))))
          (actions (plist-get el-get-methods method)))
+    (assert actions nil
+            "Unknown recipe type: %s" method)
     (plist-get actions action)))
 
 (defun el-get-check-init ()
@@ -349,7 +373,7 @@ makes it easier to conditionally splice a command into the list.
                        (infile (when stdin (make-temp-file "el-get")))
                        (dummy  (when infile
                                  (with-temp-file infile
-                                   (insert (prin1-to-string stdin)))))
+                                   (insert (el-get-print-to-string stdin)))))
                        (dummy  (message "el-get is waiting for %S to complete" cname))
                        (status (apply startf program infile cbuf t args))
                        (message (plist-get c :message))
@@ -377,7 +401,7 @@ makes it easier to conditionally splice a command into the list.
               (process-put proc :el-get-final-func final-func)
               (process-put proc :el-get-start-process-list next)
 	      (when stdin
-		(process-send-string proc (prin1-to-string stdin))
+		(process-send-string proc (el-get-print-to-string stdin))
 		(process-send-eof proc))
               (set-process-sentinel proc 'el-get-start-process-list-sentinel)
               (when filter (set-process-filter proc filter)))))

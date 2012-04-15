@@ -3,5 +3,5 @@
        :type github
        :pkgname "irfn/zen-and-art"
        :depends color-theme
-       :post-init (autoload 'color-theme-zen-and-art "zen-and-art"
-                    "color-theme: zen-and-art" t))
+       :prepare (autoload 'color-theme-zen-and-art "zen-and-art"
+                  "color-theme: zen-and-art" t))

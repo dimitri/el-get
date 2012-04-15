@@ -8,11 +8,13 @@
  (emacs-lisp-mode
   (whitespace-style face trailing lines-tail)
   (whitespace-line-column . 80)
-  (eval progn
-        (add-hook 'before-save-hook 'delete-trailing-whitespace)
-        (set-face-attribute 'whitespace-line nil :background "red1" :foreground "yellow" :weight 'bold)
-        (set-face-attribute 'whitespace-tab nil :background "red1" :foreground "yellow" :weight 'bold)
+  (eval ignore-errors
+        "Write-contents-functions is a buffer-local alternative to before-save-hook"
+        (add-hook 'write-contents-functions
+                  (lambda ()
+                    (delete-trailing-whitespace (point-min) (point-max))
+                    nil))
         (require 'whitespace)
-        "Need to ensure that whitespace mode is turned off and on again. This guaranteees that the new values of the whitespace-related variables will take effect."
+        "Sometimes the mode needs to be toggled off and on."
         (whitespace-mode 0)
         (whitespace-mode 1))))
