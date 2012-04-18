@@ -8,6 +8,11 @@
        :build `(,(format "EMACS=%s ./configure" el-get-emacs)
                 "make wget"
                 ,(concat "make EMACS=" el-get-emacs)
-                "ln -nfs ansicl ansicl.info"))
-
-
+                ;; info file is generated without extension
+                "ln -nfs ansicl ansicl.info")
+       :prepare (eval-after-load "info-look"
+                  '(info-lookup-add-help
+                    :mode 'lisp-mode
+                    :regexp "[^][()'\" \t\n]+"
+                    :ignore-case t
+                    :doc-spec '(("(ansicl)Symbol Index" nil nil nil)))))
