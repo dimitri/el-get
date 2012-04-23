@@ -12,7 +12,7 @@
         "Write-contents-functions is a buffer-local alternative to before-save-hook"
         (add-hook 'write-contents-functions
                   (lambda ()
-                    (delete-trailing-whitespace (point-min) (point-max))
+                    (delete-trailing-whitespace)
                     nil))
         (require 'whitespace)
         "Sometimes the mode needs to be toggled off and on."
