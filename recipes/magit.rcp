@@ -4,6 +4,5 @@
        :type github
        :pkgname "magit/magit"
        :info "."
-       ;; that used to be how to build it :build ("./autogen.sh" "./configure" "make")
        :build ("make all")
-       :build/darwin `(,(concat "PATH=" (shell-quote-argument invocation-directory) ":$PATH make all")))
+       :build/darwin `(,(concat "make EMACS=" el-get-emacs " all")))
