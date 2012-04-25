@@ -3,11 +3,4 @@
        :description "The most intelligent auto-completion extension."
        :type github
        :pkgname "m2ym/auto-complete"
-       :depends (popup fuzzy)
-       :load-path "."
-       :post-init (progn
-                    (require 'auto-complete)
-                    (add-to-list 'ac-dictionary-directories
-                                 (expand-file-name "dict"))
-                    (require 'auto-complete-config)
-                    (ac-config-default)))
+       :depends (popup fuzzy))
