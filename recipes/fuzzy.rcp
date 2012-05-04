@@ -2,5 +2,4 @@
        :website "https://github.com/m2ym/fuzzy-el"
        :description "Fuzzy matching utilities for GNU Emacs"
        :type github
-       :pkgname "m2ym/fuzzy-el"
-       :features fuzzy)
+       :pkgname "m2ym/fuzzy-el")
