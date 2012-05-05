@@ -13,4 +13,5 @@
                    (list "make" target (concat "EMACS=" (shell-quote-argument el-get-emacs))))
                  '("oldorg"))
        :load-path ("." "lisp" "contrib/lisp")
-       :autoloads nil)
+       :autoloads nil
+       :features org-install)
