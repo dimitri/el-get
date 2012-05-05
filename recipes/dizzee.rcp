@@ -2,5 +2,4 @@
        :description "Utilities for managing subprocesses in Emacs"
        :website "https://github.com/davidmiller/dizzee"
        :type github
-       :pkgname "davidmiller/dizzee"
-       :features "dizzee")
+       :pkgname "davidmiller/dizzee")

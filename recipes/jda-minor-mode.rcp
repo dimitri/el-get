@@ -3,6 +3,4 @@
        :description "Jong-Gyu Development Assistant minor mode for Developers(such as emacs-textmate or VisualAssist)"
        :type github
        :pkgname "jglee1027/jda-minor-mode"
-       :features jda
-       :load    "jda.el"
        :compile "jda.el")

@@ -2,8 +2,4 @@
        :website "https://github.com/cefstat/simplenote.el#readme"
        :description "Helper functions for simple-note.appspot.com"
        :type github
-       :pkgname "cefstat/simplenote.el"
-       :features simplenote
-       :load    "simplenote.el"
-       :compile "simplenote.el"
-       :post-init (simplenote-setup))
+       :pkgname "cefstat/simplenote.el")

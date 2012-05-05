@@ -2,5 +2,4 @@
        :website "https://github.com/dimitri/pgsrc-el"
        :description "PostgreSQL source editing facilities for Emacs"
        :type github
-       :pkgname "dimitri/pgsrc-el"
-       :features pgsrc)
+       :pkgname "dimitri/pgsrc-el")

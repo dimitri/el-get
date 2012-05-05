@@ -4,5 +4,4 @@
        :type git
        :url "http://repo.or.cz/r/anything-config.git"
        :shallow nil
-       :load-path ("." "extensions" "contrib")
-       :features anything)
+       :load-path ("." "extensions" "contrib"))

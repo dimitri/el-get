@@ -1,4 +1,3 @@
 (:name header2
        :description "Support for creation and update of file headers."
-       :type emacswiki
-       :features "header2")
+       :type emacswiki)

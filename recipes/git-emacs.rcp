@@ -1,5 +1,4 @@
 (:name git-emacs
        :description "Yet another git emacs mode for newbies"
        :type github
-       :pkgname "tsgates/git-emacs"
-       :features git-emacs)
+       :pkgname "tsgates/git-emacs")

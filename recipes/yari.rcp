@@ -1,5 +1,4 @@
 (:name yari
        :description "Yet Another RI interface for Emacs"
        :type github
-       :pkgname "hron/yari.el"
-       :features yari)
+       :pkgname "hron/yari.el")

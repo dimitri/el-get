@@ -1,5 +1,4 @@
 (:name zencoding-mode
        :description "Unfold CSS-selector-like expressions to markup"
        :type github
-       :pkgname "rooney/zencoding"
-       :features zencoding-mode)
+       :pkgname "rooney/zencoding")

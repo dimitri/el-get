@@ -3,5 +3,4 @@
        :description "Just in time loading of yasnippets"
        :type github
        :depends yasnippet
-       :load-path "."
        :pkgname "mlf176f2/yas-jit.el")

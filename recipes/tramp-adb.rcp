@@ -3,5 +3,4 @@
        :website "https://github.com/juergenhoetzel/tramp-adb"
 
        :type github
-       :pkgname "juergenhoetzel/tramp-adb"
-       :features tramp-adb)
+       :pkgname "juergenhoetzel/tramp-adb")

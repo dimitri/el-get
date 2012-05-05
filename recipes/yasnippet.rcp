@@ -3,7 +3,6 @@
        :description "YASnippet is a template system for Emacs."
        :type github
        :pkgname "capitaomorte/yasnippet"
-       :features "yasnippet"
        ;; Set up the default snippets directory
        ;;
        ;; Principle: don't override any user settings for

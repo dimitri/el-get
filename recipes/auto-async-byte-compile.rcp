@@ -3,5 +3,4 @@
        :website "http://www.emacswiki.org/emacs/AutoAsyncByteCompile"
        :type emacswiki
        :post-init
-       (add-hook 'emacs-lisp-mode-hook 'enable-auto-async-byte-compile-mode)
-       :features "auto-async-byte-compile")
+       (add-hook 'emacs-lisp-mode-hook 'enable-auto-async-byte-compile-mode))

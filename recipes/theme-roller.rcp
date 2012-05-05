@@ -1,6 +1,4 @@
 (:name theme-roller
        :description "A collection of activly maintained emacs themes"
        :type github
-       :features theme-roller
-       :pkgname "senny/theme-roller.el"
-       :post-init (theme-roller-activate))
+       :pkgname "senny/theme-roller.el")

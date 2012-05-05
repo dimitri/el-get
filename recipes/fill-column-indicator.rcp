@@ -2,5 +2,4 @@
        :type github
        :website "https://github.com/alpaker/Fill-Column-Indicator#readme"
        :description "An Emacs minor mode that graphically indicates the fill column."
-       :pkgname "alpaker/Fill-Column-Indicator"
-       :features fill-column-indicator)
+       :pkgname "alpaker/Fill-Column-Indicator")

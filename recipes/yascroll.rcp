@@ -2,5 +2,4 @@
        :description "Yet Another Scroll Bar Mode"
        :website "https://github.com/m2ym/yascroll-el"
        :type github
-       :pkgname "m2ym/yascroll-el"
-       :features "yascroll")
+       :pkgname "m2ym/yascroll-el")

@@ -2,5 +2,4 @@
        :description "Major mode for Twitter"
        :type github
        :pkgname "hayamiz/twittering-mode"
-       :features twittering-mode
        :compile "twittering-mode.el")

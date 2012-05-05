@@ -1,9 +1,7 @@
 (:name python-mode
        :type emacsmirror
        :description "Major mode for editing Python programs"
-       :features (python-mode doctest-mode)
        :compile nil
-       :load "test/doctest-mode.el"
        :prepare (progn
                   (autoload 'python-mode "python-mode"
                     "Python editing mode." t)

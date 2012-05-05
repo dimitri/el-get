@@ -3,5 +3,4 @@
        :website "https://github.com/kiwanami/emacs-cacoo"
        :type github
        :pkgname "kiwanami/emacs-cacoo"
-       :depends (anything deferred)
-       :features "cacoo")
+       :depends (anything deferred))

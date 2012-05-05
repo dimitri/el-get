@@ -1,5 +1,4 @@
 (:name skype
        :description "Skype UI for emacs users."
        :type github
-       :pkgname "buzztaiki/emacs-skype"
-       :features skype)
+       :pkgname "buzztaiki/emacs-skype")

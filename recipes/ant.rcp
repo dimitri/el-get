@@ -2,5 +2,4 @@
        :website "https://github.com/apgwoz/ant-el#readme"
        :description "Helpers for using ant with emacs."
        :type github
-       :pkgname "apgwoz/ant-el"
-       :features ant)
+       :pkgname "apgwoz/ant-el")

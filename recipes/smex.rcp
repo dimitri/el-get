@@ -1,6 +1,4 @@
 (:name smex
        :description "M-x interface with Ido-style fuzzy matching."
        :type github
-       :pkgname "nonsequitur/smex"
-       :features smex
-       :post-init (smex-initialize))
+       :pkgname "nonsequitur/smex")

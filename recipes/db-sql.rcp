@@ -2,5 +2,4 @@
        :website "https://github.com/renard/db-sql-el"
        :description "Connect to SQL server using tramp syntax"
        :type github
-       :pkgname "renard/db-sql-el"
-       :features (db-sql))
+       :pkgname "renard/db-sql-el")

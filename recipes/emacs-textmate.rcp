@@ -1,6 +1,4 @@
 (:name emacs-textmate
        :description "TextMate behaviour in Emacs"
        :type github
-       :pkgname "ramblex/emacs-textmate"
-       :features textmate
-       :post-init 'tm/initialize)
+       :pkgname "ramblex/emacs-textmate")

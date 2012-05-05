@@ -1,5 +1,4 @@
 (:name mailq
        :description "A major mode for `mailq' interaction"
        :type github
-       :pkgname "dimitri/mailq-el"
-       :load "mailq.el")
+       :pkgname "dimitri/mailq-el")

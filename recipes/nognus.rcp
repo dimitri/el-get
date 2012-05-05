@@ -6,5 +6,4 @@
        :build/windows-nt `(,(concat "\"make.bat " invocation-directory "\""))
        :info "texi"
        :load-path ("lisp")
-       :autoloads nil
-       :features gnus-load)
+       :autoloads nil)

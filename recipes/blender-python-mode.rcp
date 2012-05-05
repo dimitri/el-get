@@ -4,5 +4,4 @@
        :type bzr
        :url "http://bazaar.launchpad.net/~diresu/blender-python-mode/blender-python-mode/"
        :prepare (setq blender-python-mode-installation-dir
-                      (el-get-package-directory "blender-python-mode"))
-       :features blender-python-mode)
+                      (el-get-package-directory "blender-python-mode")))

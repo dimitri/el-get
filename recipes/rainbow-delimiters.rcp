@@ -2,5 +2,4 @@
        :website "https://github.com/jlr/rainbow-delimiters#readme"
        :description "Color nested parentheses, brackets, and braces according to their depth."
        :type github
-       :pkgname "jlr/rainbow-delimiters"
-       :features rainbow-delimiters)
+       :pkgname "jlr/rainbow-delimiters")

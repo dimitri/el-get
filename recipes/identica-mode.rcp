@@ -1,5 +1,4 @@
 (:name identica-mode
        :description "An identi.ca/status.net client"
        :type git
-       :url "http://git.savannah.gnu.org/cgit/identica-mode.git"
-       :features identica-mode)
+       :url "http://git.savannah.gnu.org/cgit/identica-mode.git")

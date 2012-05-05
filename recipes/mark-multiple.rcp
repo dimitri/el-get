@@ -2,5 +2,4 @@
        :description "mark several regions at once"
        :website "http://emacsrocks.com/e08.html"
        :type github
-       :pkgname "magnars/mark-multiple.el"
-       :features "mark-more-like-this")
+       :pkgname "magnars/mark-multiple.el")

@@ -3,5 +3,4 @@
        :website "https://github.com/kiwanami/emacs-anything-books/"
        :type github
        :pkgname "kiwanami/emacs-anything-books"
-       :depends (anything deferred)
-       :features "anything-books")
+       :depends (anything deferred))

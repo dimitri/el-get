@@ -3,6 +3,4 @@
        :description "Convert buffer text and decorations to HTML."
        :type http
        :url "http://fly.srk.fer.hr/~hniksic/emacs/htmlize.el.cgi"
-       :localname "htmlize.el"
-       :feature htmlize
-       )
+       :localname "htmlize.el")

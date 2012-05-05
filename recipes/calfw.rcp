@@ -1,6 +1,5 @@
 (:name calfw
        :type github
        :pkgname "kiwanami/emacs-calfw"
-       :load-path "."
        :description "A calendar framework for Emacs (with support for `org-mode', `howm' and iCal files)"
        :website "https://github.com/kiwanami/emacs-calfw")
