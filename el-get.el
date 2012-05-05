@@ -442,7 +442,7 @@ called by `el-get' (usually at startup) for each installed package."
   (el-get-verbose-message "el-get-init: %s" package)
   (condition-case err
       (let* ((source
-              (el-get-read-package-status-recipe package package-status-alist))
+              (el-get-package-def package))
              (method   (el-get-package-method source))
              (loads    (el-get-as-list (plist-get source :load)))
              (autoloads (plist-get source :autoloads))
