@@ -72,6 +72,7 @@ EOF
   else
     echo "*** FAILED $recipe_file ***"
   fi
+  rm -f "$lisp_temp_file"
 }
 
 while [ -n "$1" ]; do

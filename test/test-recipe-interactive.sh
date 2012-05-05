@@ -64,6 +64,7 @@ EOF
   HOME="$TEST_HOME" "$EMACS" -Q -L "$EL_GET_LIB_DIR" \
     -l "$EL_GET_LIB_DIR/el-get.el" -l "$EL_GET_LIB_DIR/test/test-setup.el" \
     -l "$lisp_temp_file"
+  rm -f "$lisp_temp_file"
 }
 
 for r in "$@"; do
