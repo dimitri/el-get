@@ -15,10 +15,15 @@
 (require 'el-get-http)
 
 (defcustom el-get-emacswiki-base-url
-  "http://www.emacswiki.org/emacs/download/"
+  "https://raw.github.com/emacsmirror/emacswiki.org/master/"
   "The base URL where to fetch :emacswiki packages"
   :group 'el-get
-  :type 'string)
+  :type '(radio
+          (const :tag "Github mirror (recommended): https://raw.github.com/emacsmirror/emacswiki.org/master/"
+                 "https://raw.github.com/emacsmirror/emacswiki.org/master/")
+          (const :tag "Main EmacsWiki site: http://www.emacswiki.org/emacs/download/"
+                 "http://www.emacswiki.org/emacs/download/")
+          (string :tag "Other URL")))
 
 (defcustom el-get-emacswiki-elisp-file-list-url
   "http://www.emacswiki.org/cgi-bin/wiki?action=elisp"
