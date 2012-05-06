@@ -28,25 +28,14 @@
 (defun el-get-elpa-package-directory (package)
   "Return the directory where ELPA stores PACKAGE, or nil if
 PACKAGE isn't currently installed by ELPA."
-  (let* ((pname (format "%s" package))  ; easy way to cope with symbols etc.
-
-	 (l
-	  ;; we use try-completion to find the realname of the directory
-	  ;; ELPA used, and this wants an alist, we trick ls -i -1 into
-	  ;; that.
-	  (mapcar 'split-string
-		  (split-string
-		   (shell-command-to-string
-		    (concat
-		     "ls -i1 "
-                     (shell-quote-argument
-                      (expand-file-name
-                       (file-name-as-directory package-user-dir))))))))
-
-	 (realname (try-completion pname l)))
-
-    (if realname (concat (file-name-as-directory package-user-dir) realname)
-      realname)))
+  (when (package-installed-p package)
+    (let ((package-name (el-get-as-string package))
+          (package-version (package-desc-vers (assq package package-alist))))
+      ;; See `package-unpack-single'
+      (expand-file-name (concat package-name "-"
+                                (package-version-join
+                                 (version-to-list package-version)))
+                        package-user-dir))))
 
 (defun el-get-elpa-package-repo (package)
   "Get the ELPA repository cons cell for PACKAGE.
@@ -114,15 +103,27 @@ the recipe, then return nil."
     (el-get-elpa-symlink-package package))
   (funcall post-install-fun package))
 
+(defun el-get-elpa-update-available-p (package)
+  "Returns t if PACKAGE has an update available in ELPA."
+  (let ((installed-version
+         (package-desc-vers (assq pkg package-alist)))
+        (available-version
+         (package-desc-vers (assq pkg package-archive-contents))))
+    (version-list-< installed-version available-version)))
+
 (defun el-get-elpa-update (package url post-update-fun)
   "Ask elpa to update given PACKAGE."
-  (el-get-elpa-remove package url nil)
   (package-refresh-contents)
-  (package-install (el-get-as-symbol package))
+  (when (el-get-elpa-update-available-p package)
+    (el-get-elpa-remove package url nil)
+    (package-install (el-get-as-symbol package))
   (funcall post-update-fun package))
 
 (defun el-get-elpa-remove (package url post-remove-fun)
   "Remove the right directory where ELPA did install the package."
+  ;; This just removes the symlink from el-get's directory. Look in
+  ;; `el-get-elpa-post-remove' for the piece that actually removes the
+  ;; package.
   (el-get-rmdir package url post-remove-fun))
 
 (defun el-get-elpa-post-remove (package)

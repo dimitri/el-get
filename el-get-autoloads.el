@@ -12,6 +12,7 @@
 ;; Install
 ;;     Please see the README.asciidoc file from the same distribution
 
+(require 'cl)
 (require 'el-get-core)
 (require 'autoload)
 
@@ -65,7 +66,9 @@
     (el-get-ensure-byte-compilable-autoload-file generated-autoload-file)
 
     (when (el-get-package-is-installed package)
-      (apply 'update-directory-autoloads (el-get-load-path package)))
+      (mapc 'update-directory-autoloads
+             (remove-if-not #'file-directory-p
+                            (el-get-load-path package))))
 
     (el-get-save-and-kill el-get-autoload-file)
 
