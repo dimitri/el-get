@@ -767,7 +767,23 @@ itself.")
   (when (or no-prompt
             (yes-or-no-p
              "Do you really want to update all installed packages?"))
-    (mapc 'el-get-update (el-get-list-package-names-with-status "installed"))))
+    ;; The let and flet forms here ensure that
+    ;; `package-refresh-contents' is only called once, regardless of
+    ;; how many ELPA-type packages need to be installed. Without this,
+    ;; a refresh would happen for every ELPA package, which is totally
+    ;; unnecessary when updating them all at once.
+    (let ((refreshed nil)
+          (orig-package-refresh-contents
+           (ignore-errors (symbol-function 'package-refresh-contents))))
+      (flet ((package-refresh-contents
+              ;; This is the only way to get sane auto-indentation
+              (cdr (lambda (&rest args)
+                     (unless refreshed
+                       (apply orig-package-refresh-contents args)
+                       (setq refreshed t))))))
+        ;; This is the only line that really matters
+        (mapc 'el-get-update (el-get-list-package-names-with-status "installed"))))))
+
 
 ;;;###autoload
 (defun el-get-self-update ()
