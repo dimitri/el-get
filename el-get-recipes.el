@@ -181,4 +181,22 @@ which defaults to installed, required and removed.  Example:
 	when (or (null types) (memq 'all types) (memq type types))
 	collect (cons name type)))
 
+(defun el-get-package-required-emacs-version (package-or-source)
+  (let* ((def (if (or (symbolp package-or-source) (stringp package-or-source))
+                  (el-get-package-def package-or-source)
+                package-or-source)))
+    (el-get-plist-get-with-default
+        def :from-emacs-version
+      0)))
+
+(defun el-get-error-unless-required-emacs-version (package-or-source)
+  "Raise an error if `emacs-major-version' is less than package's requirement.
+
+Second argument PACKAGE is optional and only used to construct the error message."
+  (let ((pname (el-get-source-name package-or-source))
+        (required-version (el-get-package-required-emacs-version package-or-source)))
+    (when (< emacs-major-version required-version)
+      (error "Package %s requires Emacs version %s, but current emacs is only version %s"
+             pname required-version emacs-major-version))))
+
 (provide 'el-get-recipes)
