@@ -459,6 +459,8 @@ called by `el-get' (usually at startup) for each installed package."
              (library  (or (plist-get source :library) pkgname package))
              (pdir     (el-get-package-directory package)))
 
+        (el-get-error-unless-required-emacs-version source)
+
 	;; a builtin package initialisation is about calling recipe and user
 	;; code only, no load-path nor byte-compiling support needed here.
 	(unless (eq method 'builtin)
@@ -604,6 +606,8 @@ PACKAGE may be either a string or the corresponding symbol."
 	   (install  (el-get-method method :install))
 	   (url      (plist-get source :url))
            (pdir     (el-get-package-directory package)))
+
+      (el-get-error-unless-required-emacs-version source)
 
       (cond ((string= "installed" status)
              (error "Package %s is already installed." package))
