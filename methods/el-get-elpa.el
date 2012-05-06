@@ -116,7 +116,7 @@ the recipe, then return nil."
   (package-refresh-contents)
   (when (el-get-elpa-update-available-p package)
     (el-get-elpa-remove package url nil)
-    (package-install (el-get-as-symbol package))
+    (package-install (el-get-as-symbol package)))
   (funcall post-update-fun package))
 
 (defun el-get-elpa-remove (package url post-remove-fun)
