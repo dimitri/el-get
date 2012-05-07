@@ -147,7 +147,7 @@ the recipe, then return nil."
 ;;;
 
 ;;;###autoload
-(defun el-get-elpa-build-local-recipies (&optional target-dir do-not-update)
+(defun el-get-elpa-build-local-recipes (&optional target-dir do-not-update)
   "retrieves list of ELPA packages and turn them to local recipe set.
 TARGET-DIR is the target directory
 DO-NOT-UPDATE will not update the package archive contents before running this."
