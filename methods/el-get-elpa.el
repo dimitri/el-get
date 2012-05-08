@@ -159,7 +159,7 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
         pkg package description)
     (when (or (not package-archive-contents) (and package-archive-contents (not do-not-update)))
       (package-refresh-contents))
-    (unless (file-directory-p target-dir) (make-directory target-dir))
+    (unless (file-directory-p target-dir) (make-directory target-dir 'recursive))
     (mapc (lambda(pkg)
 	    (let* ((package (format "%s" (car pkg)))
 		   (pkg-desc (cdr pkg))
