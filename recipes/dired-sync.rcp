@@ -1,5 +1,4 @@
 (:name dired-sync
        :description "Sync directories within dired"
        :type github
-       :pkgname "renard/dired-sync"
-       :features dired-sync)
+       :pkgname "renard/dired-sync")

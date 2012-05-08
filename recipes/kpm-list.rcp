@@ -1,5 +1,4 @@
 (:name kpm-list
        :description "An emacs buffer list that tries to intelligently group together buffers."
        :type github
-       :features kpm-list
        :pkgname "KMahoney/kpm-list")

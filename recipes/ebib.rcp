@@ -4,5 +4,4 @@
        :description "Application to manage BibTeX database"
        :url "http://repo.or.cz/r/ebib.git"
        :shallow nil
-       :load-path ("src")
-       :autoloads t)
+       :load-path ("src"))

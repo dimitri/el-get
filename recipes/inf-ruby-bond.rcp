@@ -2,5 +2,4 @@
        :description "Use Bond autocompletion from inf-ruby buffers"
        :type github
        :pkgname "pd/inf-ruby-bond"
-       :depends inf-ruby
-       :features inf-ruby-bond)
+       :depends inf-ruby)

@@ -1,5 +1,4 @@
 (:name switch-window
        :description "A *visual* way to choose a window to switch to"
        :type github
-       :pkgname "dimitri/switch-window"
-       :features switch-window)
+       :pkgname "dimitri/switch-window")

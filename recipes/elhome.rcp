@@ -4,5 +4,4 @@
        :type github
        :pkgname "dabrahams/elhome"
        :depends (initsplit byte-code-cache)
-       :features elhome
        :compile nil)

@@ -3,6 +3,4 @@
        :type git
        :url "http://repo.or.cz/r/planner-el.git"
        :shallow nil
-       :build ("make")
-       :features planner-autoloads
-       )
+       :build ("make"))

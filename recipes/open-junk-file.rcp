@@ -1,4 +1,3 @@
 (:name open-junk-file
        :description "Open a junk (memo) file to try-and-error"
-       :type emacswiki
-       :features "open-junk-file")
+       :type emacswiki)

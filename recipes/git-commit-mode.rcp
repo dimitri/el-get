@@ -1,5 +1,4 @@
 (:name git-commit-mode
        :description "Major mode for editing git commit messages"
        :type github
-       :pkgname "rafl/git-commit-mode"
-       :features git-commit)
+       :pkgname "rafl/git-commit-mode")

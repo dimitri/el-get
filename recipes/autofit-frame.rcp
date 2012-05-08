@@ -1,5 +1,4 @@
 (:name autofit-frame
        :description "Automatically resize one-window frames to fit"
        :type emacswiki
-       :features autofit-frame
        :post-init (add-hook 'after-make-frame-functions 'fit-frame))

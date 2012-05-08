@@ -5,5 +5,4 @@
        for writing custom extensions."
        :type git
        :url "https://git.gitorious.org/evil/evil.git"
-       :features evil
        :depends undo-tree)

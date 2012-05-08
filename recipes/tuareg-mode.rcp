@@ -2,7 +2,6 @@
        :type svn
        :url "svn://svn.forge.ocamlcore.org/svn/tuareg/trunk"
        :description "A  GOOD Emacs mode to edit Objective Caml code."
-       :load-path (".")
        :prepare
        (progn
          (autoload 'tuareg-mode "tuareg" "Major mode for editing Caml code" t)

@@ -1,4 +1,3 @@
 (:name yaoddmuse
        :type emacswiki
-       :description "Yet Another Oddmuse Mode"
-       :load-path ".")
+       :description "Yet Another Oddmuse Mode")

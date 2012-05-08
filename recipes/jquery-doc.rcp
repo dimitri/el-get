@@ -3,5 +3,4 @@
        :website "https://github.com/ananthakumaran/jquery-doc.el"
        :type github
        :pkgname "ananthakumaran/jquery-doc.el"
-       :features "jquery-doc"
        :depends auto-complete)

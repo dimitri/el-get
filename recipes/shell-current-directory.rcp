@@ -1,5 +1,4 @@
 (:name shell-current-directory
        :description "Create new shell based on buffer directory"
        :type github
-       :pkgname "metaperl/shell-current-directory"
-       :features shell-current-directory)
+       :pkgname "metaperl/shell-current-directory")

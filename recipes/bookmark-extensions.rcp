@@ -4,5 +4,4 @@
        :type hg
        :url "http://mercurial.intuxication.org/hg/emacs-bookmark-extension/"
        :compile nil
-       :depends org-mode
-       :features "bookmark-extensions")
+       :depends org-mode)

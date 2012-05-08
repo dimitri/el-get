@@ -1,11 +1,7 @@
 (:name slime
        :description "Superior Lisp Interaction Mode for Emacs"
        :type github
-       :features slime-autoloads
        :info "doc"
        :pkgname "nablaone/slime"
        :load-path ("." "contrib")
-       :compile (".")
-       :build ("make -C doc")
-       :post-init (slime-setup)
-       )
+       :build ("make -C doc"))

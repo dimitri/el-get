@@ -2,6 +2,4 @@
        :website "https://github.com/cataska/qml-mode"
        :description "Qt Declarative UI (QML) mode for Emacs"
        :type github
-       :pkgname "cataska/qml-mode.git"
-       :features qml-mode
-       )
+       :pkgname "cataska/qml-mode.git")

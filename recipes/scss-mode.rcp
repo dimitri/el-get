@@ -1,5 +1,4 @@
 (:name scss-mode
        :description "Major mode for editing SCSS files(http://sass-lang.com)"
        :type github
-       :pkgname "antonj/scss-mode"
-       :features scss-mode)
+       :pkgname "antonj/scss-mode")

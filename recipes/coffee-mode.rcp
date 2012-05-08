@@ -3,7 +3,6 @@
        :description "Emacs Major Mode for CoffeeScript"
        :type github
        :pkgname "defunkt/coffee-mode"
-       :features coffee-mode
        :post-init (progn
                     (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
                     (add-to-list 'auto-mode-alist '("Cakefile" . coffee-mode))

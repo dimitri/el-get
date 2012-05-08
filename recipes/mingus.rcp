@@ -1,5 +1,4 @@
 (:name mingus
        :description "A client for the Music Player Daemon (MPD)."
        :type github
-       :pkgname "pft/mingus"
-       :features mingus-stays-home)
+       :pkgname "pft/mingus")

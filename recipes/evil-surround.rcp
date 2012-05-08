@@ -4,6 +4,5 @@
        emulation layer for emacs"
        :type github
        :pkgname "timcharper/evil-surround"
-       :features surround
        :post-init (global-surround-mode 1)
        :depends evil)

@@ -1,5 +1,4 @@
 (:name string-template
        :description "Support for $-substitution."
        :type github
-       :pkgname "renard/string-template-el"
-       :features string-template)
+       :pkgname "renard/string-template-el")

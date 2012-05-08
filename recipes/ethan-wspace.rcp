@@ -2,5 +2,4 @@
        :description "Whitespace customizations for emacs"
        :type github
        :pkgname "glasserc/ethan-wspace"
-       :load-path "lisp/"
-       :features ethan-wspace)
+       :load-path "lisp/")

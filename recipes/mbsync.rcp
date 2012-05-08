@@ -1,4 +1,3 @@
 (:name mbsync
        :type github
-       :pkgname "dimitri/mbsync-el"
-       :features mbsync)
+       :pkgname "dimitri/mbsync-el")

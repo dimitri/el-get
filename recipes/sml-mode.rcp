@@ -7,5 +7,4 @@
          (lambda (target)
            (concat "make " target " EMACS=" el-get-emacs))
          '("clean" "default"))
-       :load-path (".")
        :load ("sml-mode-startup.el"))

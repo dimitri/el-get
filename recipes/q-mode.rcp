@@ -2,8 +2,6 @@
        :type github
        :pkgname "little-arhat/q-mode"
        :description "kdbp-mode + q-minor-mode combined for easy installation and using."
-       :load-path (".")
-       :features (q-minor-mode kdbp-mode)
        :prepare
        (progn
          (autoload 'q-mode "q-mode")

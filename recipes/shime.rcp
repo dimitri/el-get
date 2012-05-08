@@ -1,7 +1,4 @@
 (:name shime
        :description "Superior Haskell Interaction Mode for Emacs"
        :type github
-       :pkgname "jschaf/shime"
-       :load-path (".")
-       :features shime
-       )
+       :pkgname "jschaf/shime")

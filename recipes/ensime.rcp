@@ -4,7 +4,6 @@
        :pkgname "aemoncannon/ensime"
        :build ("sbt update stage")
        :depends scala-mode
-       :features ensime
        :load-path ("./dist/elisp")
        :post-init (progn
                     (require 'ensime)

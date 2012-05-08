@@ -3,5 +3,4 @@
        :type github
        :pkgname "cbbrowne/scratch-el"
        :info "."
-       :build ("make")
-       :load-path ".")
+       :build ("make"))

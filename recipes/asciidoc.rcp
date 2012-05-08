@@ -2,5 +2,4 @@
        :website "https://github.com/metaperl/asciidoc-el"
        :description "Emacs support for writing Asciidoc"
        :type github
-       :pkgname "metaperl/asciidoc-el"
-       :features asciidoc)
+       :pkgname "metaperl/asciidoc-el")

@@ -2,6 +2,4 @@
        :description "Running leiningen commands from emacs"
        :type github
        :pkgname "remvee/elein"
-       :features elein
-       :load    "elein.el"
        :compile "elein.el")

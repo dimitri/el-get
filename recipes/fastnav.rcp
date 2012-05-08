@@ -3,6 +3,5 @@
        :description "Fast navigation and editing routines."
        :type github
        :pkgname "gleber/fastnav.el"
-       :load-path "."
        :post-init (progn
             (require 'fastnav)))

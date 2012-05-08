@@ -1,5 +1,4 @@
 (:name pg
        :description "Emacs Lisp interface to the PostgreSQL RDBMS"
        :type github
-       :pkgname "cbbrowne/pg.el"
-       :features pg)
+       :pkgname "cbbrowne/pg.el")

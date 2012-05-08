@@ -5,5 +5,4 @@
        :description "Mostly ripped off django-mode by Lennart Borgman."
        :depends nxhtml  ; for mumamo
        ;; fails with "(void-variable jinja-html-mumamo)" if compiled
-       :compile nil
-       :features "jinja")
+       :compile nil)

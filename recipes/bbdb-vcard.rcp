@@ -2,5 +2,4 @@
        :website "https://github.com/trebb/bbdb-vcard#readme"
        :description "vCard Import and Export for The Insidious Big Brother Database (BBDB)"
        :type github
-       :pkgname "trebb/bbdb-vcard"
-       :features bbdb-vcard)
+       :pkgname "trebb/bbdb-vcard")

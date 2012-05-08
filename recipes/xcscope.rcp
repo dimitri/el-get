@@ -1,5 +1,4 @@
 (:name xcscope
        :description "Cscope interface for (X)Emacs"
        :type github
-       :pkgname "To1ne/xcscope"
-       :features xcscope)
+       :pkgname "To1ne/xcscope")
