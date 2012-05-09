@@ -1,0 +1,2 @@
+(:name grep+
+       :type emacswiki)
