@@ -187,7 +187,7 @@ recursion.
 
 	  ((eq build-or-init 'build)
 	   ;; rebuild each time asked --- e.g. on update
-	   (when (and infodir
+	   (when (and infodir el-get-install-info
 		      (file-directory-p infodir-abs)
 		      (not (file-exists-p info-dir)))
 	     (el-get-set-info-path package infodir-rel)
