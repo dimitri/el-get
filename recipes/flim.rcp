@@ -1,12 +1,11 @@
 (:name flim
        :description "A library to provide basic features about message representation or encoding"
        :depends apel
-       :type cvs
+       :type git
+       :branch "flim-1_14-wl"
        :module "flim"
-       :url ":pserver:anonymous@cvs.m17n.org:/cvs/root"
+       :url "https://github.com/wanderlust/flim.git"
        :build
-       (append
-        `((,(executable-find "cvs") ,(split-string "up -r flim-1_14-wl")))
         (mapcar
          (lambda (target)
            (list el-get-emacs
@@ -17,6 +16,6 @@
                  (split-string "-batch -q -no-site-file -l FLIM-MK -f")
                  target
                  "prefix" "site-lisp" "site-lisp"))
-         '("compile-flim" "install-flim")))
+         '("compile-flim" "install-flim"))
        :load-path ("site-lisp/flim"))
 

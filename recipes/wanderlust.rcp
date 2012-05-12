@@ -1,9 +1,9 @@
 (:name wanderlust
        :description "Wanderlust bootstrap."
        :depends semi
-       :type cvs
+       :type git
        :module "wanderlust"
-       :url ":pserver:anonymous@cvs.m17n.org:/cvs/root"
+       :url "https://github.com/wanderlust/wanderlust.git"
        :build (mapcar
            (lambda (target-and-dirs)
          (list el-get-emacs
