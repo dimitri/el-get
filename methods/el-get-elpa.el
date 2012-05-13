@@ -28,14 +28,25 @@
 (defun el-get-elpa-package-directory (package)
   "Return the directory where ELPA stores PACKAGE, or nil if
 PACKAGE isn't currently installed by ELPA."
-  (when (package-installed-p package)
-    (let ((package-name (el-get-as-string package))
-          (package-version (package-desc-vers (assq package package-alist))))
-      ;; See `package-unpack-single'
-      (expand-file-name (concat package-name "-"
-                                (package-version-join
-                                 (version-to-list package-version)))
-                        package-user-dir))))
+  (let* ((pname (format "%s" package))  ; easy way to cope with symbols etc.
+
+	 (l
+	  ;; we use try-completion to find the realname of the directory
+	  ;; ELPA used, and this wants an alist, we trick ls -i -1 into
+	  ;; that.
+	  (mapcar 'split-string
+		  (split-string
+		   (shell-command-to-string
+		    (concat
+		     "ls -i1 "
+                     (shell-quote-argument
+                      (expand-file-name
+                       (file-name-as-directory package-user-dir))))))))
+
+	 (realname (try-completion pname l)))
+
+    (if realname (concat (file-name-as-directory package-user-dir) realname)
+      realname)))
 
 (defun el-get-elpa-package-repo (package)
   "Get the ELPA repository cons cell for PACKAGE.
@@ -159,7 +170,7 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
         pkg package description)
     (when (or (not package-archive-contents) (and package-archive-contents (not do-not-update)))
       (package-refresh-contents))
-    (unless (file-directory-p target-dir) (make-directory target-dir))
+    (unless (file-directory-p target-dir) (make-directory target-dir 'recursive))
     (mapc (lambda(pkg)
 	    (let* ((package (format "%s" (car pkg)))
 		   (pkg-desc (cdr pkg))
