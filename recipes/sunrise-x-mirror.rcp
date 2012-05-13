@@ -1,3 +1,4 @@
 (:name sunrise-x-mirror
        :description "Full read/write access to compressed archives for the Sunrise Commander File Manager"
-       :type elpa)
+       :type elpa
+       :depends sunrise-commander)
