@@ -1,3 +1,4 @@
 (:name sunrise-x-modeline
        :description "Navigable mode line for the Sunrise Commander File Manager"
-       :type elpa)
+       :type elpa
+       :depends sunrise-commander)

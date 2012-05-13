@@ -1,3 +1,4 @@
 (:name sunrise-x-popviewer
        :description "Floating viewer window for the Sunrise Commander"
-       :type elpa)
+       :type elpa
+       :depends sunrise-commander)
