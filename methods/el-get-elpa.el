@@ -116,6 +116,8 @@ the recipe, then return nil."
 
 (defun el-get-elpa-update-available-p (package)
   "Returns t if PACKAGE has an update available in ELPA."
+  (assert (el-get-package-is-installed package) nil
+          (sprintf "Cannot update non-installed ELPA package %s" package))
   (let ((installed-version
          (package-desc-vers (cdr (assq package package-alist))))
         (available-version
