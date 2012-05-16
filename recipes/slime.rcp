@@ -6,6 +6,6 @@
        :pkgname "nablaone/slime"
        :load-path ("." "contrib")
        :compile (".")
-       :build ("make -C doc")
+       :build ("make -C doc slime.info")
        :post-init (slime-setup)
        )
