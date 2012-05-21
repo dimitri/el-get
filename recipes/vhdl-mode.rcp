@@ -1,0 +1,7 @@
+(:name vhdl-mode
+       :description "VHDL Mode is an Emacs major mode for editing VHDL code."
+       :website "http://www.iis.ee.ethz.ch/~zimmi/emacs/vhdl-mode.html"
+       :type http-tar
+       :options ("xzf")
+       :info "."
+       :url "http://www.iis.ee.ethz.ch/~zimmi/emacs/vhdl-mode-3.33.28.tar.gz")
