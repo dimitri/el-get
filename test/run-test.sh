@@ -34,7 +34,7 @@ run_test () {
   else
     echo "*** Running el-get test $testfile ***"
     mkdir -p "$TEMP_HOME"/.emacs.d
-    rm -rf "$TEMP_HOME"/.emacs.d/el-get/
+    [ -n "$DO_NOT_CLEAN" ] || rm -rf "$TEST_HOME"/.emacs.d/el-get/
     HOME="$TEMP_HOME" "$EMACS" -Q -batch -L "$EL_GET_LIB_DIR" \
       -l "$EL_GET_LIB_DIR/el-get.el" -l "$EL_GET_LIB_DIR/test/test-setup.el" \
       -l "$testfile"
