@@ -1,0 +1,4 @@
+(:name websocket
+       :description "A websocket implementation in elisp, for emacs."
+       :type github
+       :pkgname "ahyatt/emacs-websocket")
