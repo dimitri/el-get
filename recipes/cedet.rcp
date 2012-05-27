@@ -8,4 +8,11 @@
   :build/windows-nt ("echo #!/bin/sh > tmp.sh & echo touch `/usr/bin/find . -name Makefile` >> tmp.sh & echo make FIND=/usr/bin/find >> tmp.sh"
 		     "sed 's/^M$//' tmp.sh  > tmp2.sh"
 		     "sh ./tmp2.sh" "rm ./tmp.sh ./tmp2.sh")
-  :load-path ("./common" "speedbar"))
+  :features nil
+  ;; This package isn't really non-lazy, but we want to call the
+  ;; post-init immediately, because it handles the lazy autoload
+  ;; setup.
+  :lazy nil
+  :post-init
+  (unless (featurep 'cedet-devel-load)
+    (load (expand-file-name "cedet-devel-load.el" pdir))))
