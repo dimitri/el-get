@@ -2,7 +2,6 @@
        :description "Wanderlust bootstrap."
        :depends semi
        :type github
-       :module "wanderlust"
        :pkgname "wanderlust/wanderlust"
        :build (mapcar
            (lambda (target-and-dirs)

@@ -3,7 +3,6 @@
        :depends apel
        :type github
        :branch "flim-1_14-wl"
-       :module "flim"
        :pkgname "wanderlust/flim"
        :build
         (mapcar
@@ -18,4 +17,3 @@
                  "prefix" "site-lisp" "site-lisp"))
          '("compile-flim" "install-flim"))
        :load-path ("site-lisp/flim"))
-
