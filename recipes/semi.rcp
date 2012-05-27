@@ -3,7 +3,6 @@
        :depends flim
        :type github
        :branch "semi-1_14-wl"
-       :module "semi"
        :pkgname "wanderlust/semi"
        :build
         (mapcar
@@ -19,4 +18,3 @@
          '("compile-semi" "install-semi"))
         :load-path ("site-lisp/semi/")
        )
-
