@@ -75,7 +75,8 @@
       (let ((el-get-default-process-sync t) ; force sync operations for installer
             (el-get-verbose t))		    ; let's see it all
         (el-get-post-install "el-get"))
-      (el-get-emacswiki-build-local-recipes)
+      (unless (bound-and-true-p 'el-get-install-skip-emacswiki-recipes)
+        (el-get-emacswiki-build-local-recipes))
       (with-current-buffer buf
 	(goto-char (point-max))
 	(insert "\nCongrats, el-get is installed and ready to serve!")))))
