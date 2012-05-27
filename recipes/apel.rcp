@@ -1,9 +1,9 @@
 (:name apel
        :website "http://www.kanji.zinbun.kyoto-u.ac.jp/~tomo/elisp/APEL/"
        :description "APEL (A Portable Emacs Library) is a library to support to write portable Emacs Lisp programs."
-       :type git
+       :type github
        :module "apel"
-       :url "https://github.com/wanderlust/apel.git"
+       :pkgname "wanderlust/apel"
        :build
         (mapcar
          (lambda (target)

@@ -1,9 +1,9 @@
 (:name wanderlust
        :description "Wanderlust bootstrap."
        :depends semi
-       :type git
+       :type github
        :module "wanderlust"
-       :url "https://github.com/wanderlust/wanderlust.git"
+       :pkgname "wanderlust/wanderlust"
        :build (mapcar
            (lambda (target-and-dirs)
          (list el-get-emacs
