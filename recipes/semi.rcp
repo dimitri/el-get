@@ -1,10 +1,10 @@
 (:name semi
        :description "SEMI is a library to provide MIME feature for GNU Emacs."
        :depends flim
-       :type git
+       :type github
        :branch "semi-1_14-wl"
        :module "semi"
-       :url "https://github.com/wanderlust/semi.git"
+       :pkgname "wanderlust/semi"
        :build
         (mapcar
          (lambda (target)
