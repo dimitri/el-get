@@ -1,6 +1,7 @@
 (:name dbgr
        :website "https://github.com/rocky/emacs-dbgr"
        :description "The Grand \"Cathedral\" Debugger rewrite: Towards a modular framework for interacting with external debuggers."
+       :depends (test-unit load-relative loc-changes)
        :type github
        :pkgname "rocky/emacs-dbgr"
        :build ("./autogen.sh" "./configure" "make")
