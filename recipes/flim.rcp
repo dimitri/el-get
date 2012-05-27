@@ -1,10 +1,10 @@
 (:name flim
        :description "A library to provide basic features about message representation or encoding"
        :depends apel
-       :type git
+       :type github
        :branch "flim-1_14-wl"
        :module "flim"
-       :url "https://github.com/wanderlust/flim.git"
+       :pkgname "wanderlust/flim"
        :build
         (mapcar
          (lambda (target)
