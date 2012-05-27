@@ -2,5 +2,5 @@
        :description "Relative file load (within a multi-file Emacs package)"
        :type github
        :pkgname "rocky/emacs-load-relative"
-       :build ("./configure" "make")
+       :build ("./autogen.sh" "./configure" "make")
        )
