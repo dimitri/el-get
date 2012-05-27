@@ -41,7 +41,7 @@ test_recipe () {
   fi
   echo "*** Testing el-get recipe $recipe_file ***"
   mkdir -p "$TEST_HOME"/.emacs.d
-  rm -rf "$TEST_HOME"/.emacs.d/el-get/
+  [ -n "$DO_NOT_CLEAN" ] || rm -rf "$TEST_HOME"/.emacs.d/el-get/
   lisp_temp_file=`mktemp`
   cat >"$lisp_temp_file" <<EOF
 
