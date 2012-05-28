@@ -3,5 +3,6 @@
        :website "https://github.com/jimeh/birds-of-paradise-plus-theme.el"
        :type github
        :pkgname "jimeh/birds-of-paradise-plus-theme.el"
+       :minimum-emacs-version 24
        :post-init (add-to-list 'custom-theme-load-path
                                default-directory))
