@@ -186,7 +186,7 @@ which defaults to installed, required and removed.  Example:
                   (el-get-package-def package-or-source)
                 package-or-source)))
     (el-get-plist-get-with-default
-        def :from-emacs-version
+        def :minimum-emacs-version
       0)))
 
 (defun el-get-error-unless-required-emacs-version (package-or-source)
