@@ -6,7 +6,7 @@
       el-get-sources (list
                       `(:name a
                               :type builtin
-                              :from-emacs-version ,package-a-required-version))
+                              :minimum-emacs-version ,package-a-required-version))
       el-get-default-process-sync t)
 
 ;; Simulate same version, higher version, and lower version
