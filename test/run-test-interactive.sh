@@ -30,7 +30,11 @@ run_test () {
   else
     echo "*** Running el-get test $testfile interactively ***"
     mkdir -p "$TEST_HOME"/.emacs.d
-    [ -n "$DO_NOT_CLEAN" ] || rm -rf "$TEST_HOME"/.emacs.d/el-get/
+    if [ -n "$DO_NOT_CLEAN" ]; then
+      echo "Running test without removing $TEST_HOME first";
+    else
+      rm -rf "$TEST_HOME"/.emacs.d/el-get/
+    fi
     HOME="$TEST_HOME" "$EMACS" -Q -L "$EL_GET_LIB_DIR" \
       -l "$EL_GET_LIB_DIR/el-get.el" -l "$EL_GET_LIB_DIR/test/test-setup.el" \
       -l "$testfile"

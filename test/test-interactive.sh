@@ -14,6 +14,10 @@ set_default TEST_HOME "$TMPDIR/el-get-test-home"
 set_default EMACS "$(which emacs)"
 
 mkdir -p "$TEST_HOME"/.emacs.d
-rm -rf "$TEST_HOME"/.emacs.d/el-get/
+if [ -n "$DO_NOT_CLEAN" ]; then
+  echo "Running test without removing $TEST_HOME first";
+else
+  rm -rf "$TEST_HOME"/.emacs.d/el-get/
+fi
 HOME="$TEST_HOME" "$EMACS" -Q -L "$EL_GET_LIB_DIR" \
   -l "$EL_GET_LIB_DIR/el-get.el" -l "$EL_GET_LIB_DIR/test/test-setup.el"
