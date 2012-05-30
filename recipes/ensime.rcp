@@ -5,7 +5,7 @@
        :build ("sbt update stage")
        :depends scala-mode
        :features ensime
-       :load-path ("./dist/elisp")
+       :load-path ("./src/main/elisp")
        :post-init (progn
                     (require 'ensime)
                     ;; scala-mode can be found in the scala distribution:
