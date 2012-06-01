@@ -48,11 +48,13 @@
       package-name
     (intern (format ":%s" package-name))))
 
-(defun el-get-save-package-status (package status)
+(defun el-get-save-package-status (package status &optional recipe)
   "Save given package status"
   (let* ((package (el-get-as-symbol package))
-         (recipe (when (string= status "installed")
-                   (el-get-package-def package)))
+         (recipe
+          (or recipe
+              (when (string= status "installed")
+                (el-get-package-def package)))
          (package-status-alist
           (assq-delete-all package (el-get-read-status-file)))
          (new-package-status-alist
@@ -61,8 +63,9 @@
                          (cons package (list 'status status 'recipe recipe))))
                 (lambda (p1 p2)
                   (string< (el-get-as-string (car p1))
-                           (el-get-as-string (car p2))))))
-         print-level print-length)
+                           (el-get-as-string (car p2)))))))
+    (assert (listp recipe) nil
+            "Recipe must be a list")
     (with-temp-file el-get-status-file
       (insert (el-get-print-to-string new-package-status-alist 'pretty)))
     ;; Return the new alist
@@ -155,11 +158,134 @@
             unless (equal s "removed")
             collect (list x s)))))
 
-(defmacro el-get-with-status-sources (&rest body)
-  "Evaluate BODY with `el-get-sources' bound to recipes from status file."
-  `(let ((el-get-sources (el-get-package-status-recipes)))
+(defmacro el-get-with-status-sources (package-status-alist &rest body)
+  "Evaluate BODY with `el-get-sources' bound to recipes from PACKAGE-STATUS-ALIST.
+
+If PACKAGE-STATUS-ALIST is nil, read recipes from status file."
+  `(let ((el-get-sources (el-get-package-status-recipes package-status-alist)))
      (progn ,@body)))
-(put 'el-get-with-status-recipes 'lisp-indent-function
-     (get 'progn 'lisp-indent-function))
+(put 'el-get-with-status-sources 'lisp-indent-function
+     (get 'prog1 'lisp-indent-function))
+
+(defvar el-get-status-recipe-update-whitelist
+  '(:load-path
+    :info
+    :load
+    :features
+    :library
+    :before
+    :after
+    :lazy)
+  "Whitelist of properties that may be updated in cached recipes.
+
+If any of these properties change on the recipe for an installed
+package, the changes may be merged into the cached version of
+that recipe in the el-get status file.")
+
+(defun el-get-merge-whitelisted-properties (source newprops)
+  "Merge NEWPROPS into SOURCE if they are all whitelisted.
+
+SOURCE should be an el-get package recipe, and NEWPROPS should be
+a plist to be merged with it (possibly a full recipe, but not
+necessarily). Every property in NEWPROPS that must either be
+whitelisted or must be identical to the corresponding property in
+SOURCE.
+
+Returns the merged source without modifying the original.
+
+To see which properties are whitelisted, see
+`el-get-status-recipe-update-whitelist'."
+  (let* ((whitelist el-get-status-recipe-update-whitelist)
+        (updated-source (copy-list source))
+        (disallowed-props
+         (loop for (k v) on newprops by 'cddr
+               ;; whitelisted
+               if (memq k whitelist) do (plist-put updated-source k v)
+               ;; Not a change, so ignore it
+               else if (equal v (plist-get source k)) do (ignore)
+               ;; Trying to change non-whitelisted property
+               else append (list k v))))
+    ;; Raise an error if we tried to set any disallowed
+    ;; properties. (We wait until now so we can report the full list.)
+    (when disallowed-props
+      (error (format "Tried to merge non-whitelisted properties:
+
+%s
+into source:
+
+%s
+Maybe you should use `el-get-update' or `el-get-reinstall' on %s instead?"
+                     (pp-to-string disallowed-props)
+                     (pp-to-string source)
+                     (el-get-source-name source))))
+    updated-source))
+
+(defun* el-get-merge-properties-into-status (package-or-source
+                                             &optional package-status-alist
+                                             &key noerror skip-non-updatable)
+  "Merge updatable properties for package into pacakge status alist (or status file).
+
+The first argument is either a package source or a pacakge name,
+in which case the source will be read using
+`el-get-package-def'. The named package must already be
+installed.
+
+If the new source differs only in whitelisted properties (see
+`el-get-status-recipe-updatable-properties'), then the updated
+values for those properties will be incorporated into the
+package's recipe from PACKAGE-STATUS-ALIST, which is modified in
+place. If PACKAGE-STATUS-ALIST is not given, it will be read from
+the status file and the modifications will be written to the
+status file. When run interactively, the updated recipe is always
+saved to the status file.
+
+If any non-whitelisted properties differ from the cached values,
+then an error is raise. With optional keyword argument `:noerror
+t', this error is suppressed (but nothing is updated). With
+optional keyword argument `:skip-non-updatable t', the
+whitelisted recipe changes will be merged despite the presence of
+non-whitelisted changes, and no error will be raised.
+"
+  (interactive
+   (list (el-get-read-package-with-status "Update cached recipe" "installed")
+         nil
+         :noerror current-prefix-arg))
+  (let* ((save-to-file (null package-status-alist))
+         (source
+          (if (listp package-or-source)
+              (or package-or-source
+                  (error "package-or-source cannot be nil"))
+            (el-get-package-def package-or-source)))
+         (package (el-get-as-symbol (el-get-source-name source)))
+         (cached-recipe (or (el-get-read-package-status-recipe
+                             package
+                             package-status-alist)
+                            (error "Could not retrieve cached recipe for package %s"
+                                   package))))
+    (unless (el-get-package-is-installed package)
+      (error "Package %s is not installed. Cannot update recipe." package))
+    (when skip-non-updatable
+      ;; Filter out non-whitelisted properties now to avoid the error
+      ;; later.
+      (setq source
+            (loop for (k v) on source by 'cddr
+                  when (memq k el-get-status-recipe-update-whitelist)
+                  append (list k v))))
+    (let ((merged-recipe
+           (condition-case err
+               (el-get-merge-whitelisted-properties cached-recipe source)
+             ;; Convert the error to a verbose message if `noerror' is
+             ;; t (but still quit the function).
+             (error
+              (progn
+                (apply (if noerror 'el-get-verbose-message 'error)
+                       (cdr err))
+                ;; Return from the function even if no error was thrown
+                (return-from el-get-merge-properties-into-status)))
+             )))
+      (if save-to-file
+          (el-get-save-package-status package "installed" merged-recipe)
+        (plist-put (cdr (assq package package-status-alist))
+                   'recipe merged-recipe)))))
 
 (provide 'el-get-status)

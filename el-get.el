@@ -275,6 +275,23 @@ force their evaluation on some packages only."
   :group 'el-get
   :type 'boolean)
 
+(defcustom el-get-auto-update-cached-recipes t
+  "When non-nil, auto-update certain properties in cached recipes.
+
+When El-get installs a package, it stores a copy of the package's
+recipe that becomes independent from the recipe in
+`el-get-sources'. The cached copy is updated only when the
+package itself is updated or reinstalled. However, if this
+preference is t (the default), select properties of the cached
+recipe copy will be updated from `el-get-sources' whenever the
+package is initialized (see
+`el-get-status-recipe-updatable-properties').
+
+If this is set to nil, then the cached copy will *only* be
+updated when the package itself is."
+  :group 'el-get
+  :type 'boolean)
+
 (defvar el-get-next-packages nil
   "List of packages to install next, used when dealing with dependencies.")
 
@@ -438,10 +455,13 @@ Add PACKAGE's directory (or `:load-path' if specified) to the
 `load-path', add any its `:info' directory to
 `Info-directory-list', and `require' its `:features'.  Will be
 called by `el-get' (usually at startup) for each installed package."
-  (interactive (list (el-get-read-package-name "Init")))
+  (interactive (list (el-get-read-package-with-status "Init" "installed")))
   (el-get-verbose-message "el-get-init: %s" package)
+  (when el-get-auto-update-cached-recipes
+    (el-get-merge-properties-into-status package package-status-alist :noerror t))
   (condition-case err
-      (let* ((source
+      (let* ((el-get-sources (el-get-package-status-recipes))
+             (source
               (el-get-read-package-status-recipe package package-status-alist))
              (method   (el-get-package-method source))
              (loads    (el-get-as-list (plist-get source :load)))
