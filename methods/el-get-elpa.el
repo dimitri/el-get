@@ -173,7 +173,7 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
     (when (or (not package-archive-contents) (and package-archive-contents (not do-not-update)))
       (package-refresh-contents))
     (unless (file-directory-p target-dir) (make-directory target-dir 'recursive))
-    (mapc (lambda(pkg)
+    (mapc (lambda (pkg)
 	    (let* ((package (format "%s" (car pkg)))
 		   (pkg-desc (cdr pkg))
 		   (description (package-desc-doc pkg-desc)))
@@ -182,7 +182,7 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
 		(message "%s:%s" package description)
                 (insert
                  (format
-                  "(:name %s\n:type elpa\n:description \"%s\")"
+                  "(:name %s\n:auto-generated t\n:type elpa\n:description \"%s\")\n"
                   package description))
                 (indent-region (point-min) (point-max)))))
 	  package-archive-contents)))
