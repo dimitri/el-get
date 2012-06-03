@@ -831,7 +831,7 @@ itself.")
     (run-hook-with-args hooks package)
     (run-hook-with-args 'el-get-post-remove-hooks package)))
 
-(defun el-get-remove (package)
+(defun el-get-remove (package &optional package-status-alist)
   "Remove any PACKAGE that is know to be installed or required."
   (interactive
    (list (el-get-read-package-with-status "Remove" "required" "installed")))
@@ -843,20 +843,20 @@ itself.")
   (let ((fallback-source
          (or (ignore-errors (el-get-package-def package))
              (list :name package :type 'builtin))))
-    (el-get-with-status-sources
-     (let* ((source   (or (ignore-errors (el-get-package-def package))
-                          fallback-source))
-            ;; Put the fallback source into `el-get-sources' so that
-            ;; other functions will pick it up.
-            (el-get-sources (cons source el-get-sources))
-            (method   (el-get-package-method source))
-            (remove   (el-get-method method :remove))
-            (url      (plist-get source :url)))
-     ;; remove the package now
-     (el-get-remove-autoloads package)
-     (funcall remove package url 'el-get-post-remove)
-     (el-get-save-package-status package "removed")
-     (message "el-get remove %s" package)))))
+    (el-get-with-status-sources package-status-alist
+      (let* ((source   (or (ignore-errors (el-get-package-def package))
+                           fallback-source))
+             ;; Put the fallback source into `el-get-sources' so that
+             ;; other functions will pick it up.
+             (el-get-sources (cons source el-get-sources))
+             (method   (el-get-package-method source))
+             (remove   (el-get-method method :remove))
+             (url      (plist-get source :url)))
+        ;; remove the package now
+        (el-get-remove-autoloads package)
+        (funcall remove package url 'el-get-post-remove)
+        (el-get-save-package-status package "removed")
+        (message "el-get remove %s" package)))))
 
 (defun el-get-reinstall (package)
   "Remove PACKAGE and then install it again."
