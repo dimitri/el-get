@@ -540,15 +540,14 @@ called by `el-get' (usually at startup) for each installed package."
                    postinit "post-init" package)
           (funcall maybe-lazy-eval `(el-get-load-package-user-init-file ',package))
           (funcall el-get-maybe-lazy-runsupp
-                   after "after" package))
-
-        ;; and call the global init hooks
-        (run-hook-with-args 'el-get-post-init-hooks package)
-
-        ;; return the package
-        package)
+                   after "after" package)))
     (debug error
-     (el-get-installation-failed package err))))
+     (el-get-installation-failed package err)))
+    ;; and call the global init hooks
+  (run-hook-with-args 'el-get-post-init-hooks package)
+
+  ;; return the package
+  package)
 
 
 (defun el-get-install (package)
