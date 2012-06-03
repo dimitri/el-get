@@ -1,0 +1,4 @@
+(:name goto-chg
+       :description "Goto the point of the most recent edit in the buffer."
+       :type emacswiki
+       :features goto-chg)
