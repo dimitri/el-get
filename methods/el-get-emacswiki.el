@@ -74,11 +74,12 @@ filename.el ;;; filename.el --- description"
 (defun el-get-emacswiki-build-local-recipes (&optional target-dir)
   "retrieve the index of elisp pages at emacswiki and turn them
 into a local recipe file set"
+  (interactive)
   (let ((target-dir (or target-dir
 			(car command-line-args-left)
 			el-get-recipe-path-emacswiki))
 	(coding-system-for-write 'utf-8))
-    (unless (file-directory-p target-dir) (make-directory target-dir))
+    (unless (file-directory-p target-dir) (make-directory target-dir 'recursive))
     (loop
      for (url package description) in (el-get-emacswiki-retrieve-package-list)
      for recipe = (replace-regexp-in-string "el$" "rcp" package)
@@ -88,7 +89,7 @@ into a local recipe file set"
 	  (message "%s: %s" package description)
 	  (insert
 	   (format
-	    "(:name %s\n:type emacswiki\n:description \"%s\"\n:website \"%s\")"
+	    "(:name %s\n:auto-generated t\n:type emacswiki\n:description \"%s\"\n:website \"%s\")\n"
 	    (file-name-sans-extension package) description url))
 	  ;; (encode-coding-region (point-min) (point-max) 'utf-8)
 	  (indent-region (point-min) (point-max))))))
