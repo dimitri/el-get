@@ -645,52 +645,52 @@ PACKAGE may be either a string or the corresponding symbol."
       (funcall install package url 'el-get-post-install)
       (message "el-get install %s" package))))
 
-(defun el-get-reload (package)
+(defun el-get-reload (package &optional package-status-alist)
   "Reload PACKAGE."
   (interactive
    (list (el-get-read-package-with-status "Reload" "installed")))
   (el-get-verbose-message "el-get-reload: %s" package)
-  (el-get-with-status-sources
-   (let* ((all-features features)
-          (package-features (el-get-package-features package))
-          (package-files (el-get-package-files package))
-          (other-features
-           (remove-if (lambda (x) (memq x package-features)) all-features)))
-     (unwind-protect
-         (progn
-           ;; We cannot let-bind `features' here, becauses the changes
-           ;; made by `el-get-init' must persist.
-           (setq features other-features)
-           ;; Reload all loaded files in package dir if they still
-           ;; exist.
-           (loop for file in package-files
-                 ;; We convert errors to warnings here, because some
-                 ;; files don't like being loaded more than once in a
-                 ;; session. Example: "cedet-remove-builtin.el" from
-                 ;; CEDET.
-                 do (condition-case e
-                        (load file 'noerror)
-                      (error (warn "Error while reloading file %s in package %s: %S\n\n This package may require a restart of emacs to complete the update process."
-                                   file package (cdr e)))))
-           ;; Redo package initialization
-           (el-get-init package)
-           ;; Reload all features provided by the package. This ensures
-           ;; that autoloaded packages (which normally don't load
-           ;; anything until one of their entry points is called) are
-           ;; forced to reload immediately if they were already loaded.
-           (loop for f in package-features
-                 do (require f nil 'noerror)))
-       ;; We have to add all the removed features back in no matter
-       ;; what, or else we would be lying about what has been loaded.
-       ;; This covers the corner case where an updated package no
-       ;; longer provides a certain feature. Technically that feature
-       ;; is still provided, so not adding it back would be wrong.
-       (let ((missing-features
-              (remove-if (lambda (x) (memq x features)) package-features)))
-         (when missing-features
-           (warn "Adding %S back onto features, because the reloaded package did not provide them."
-                 missing-features)
-           (setq features (append missing-features features))))))))
+  (el-get-with-status-sources package-status-alist
+    (let* ((all-features features)
+           (package-features (el-get-package-features package))
+           (package-files (el-get-package-files package))
+           (other-features
+            (remove-if (lambda (x) (memq x package-features)) all-features)))
+      (unwind-protect
+          (progn
+            ;; We cannot let-bind `features' here, becauses the changes
+            ;; made by `el-get-init' must persist.
+            (setq features other-features)
+            ;; Reload all loaded files in package dir if they still
+            ;; exist.
+            (loop for file in package-files
+                  ;; We convert errors to warnings here, because some
+                  ;; files don't like being loaded more than once in a
+                  ;; session. Example: "cedet-remove-builtin.el" from
+                  ;; CEDET.
+                  do (condition-case e
+                         (load file 'noerror)
+                       (error (warn "Error while reloading file %s in package %s: %S\n\n This package may require a restart of emacs to complete the update process."
+                                    file package (cdr e)))))
+            ;; Redo package initialization
+            (el-get-init package package-status-alist)
+            ;; Reload all features provided by the package. This ensures
+            ;; that autoloaded packages (which normally don't load
+            ;; anything until one of their entry points is called) are
+            ;; forced to reload immediately if they were already loaded.
+            (loop for f in package-features
+                  do (require f nil 'noerror)))
+        ;; We have to add all the removed features back in no matter
+        ;; what, or else we would be lying about what has been loaded.
+        ;; This covers the corner case where an updated package no
+        ;; longer provides a certain feature. Technically that feature
+        ;; is still provided, so not adding it back would be wrong.
+        (let ((missing-features
+               (remove-if (lambda (x) (memq x features)) package-features)))
+          (when missing-features
+            (warn "Adding %S back onto features, because the reloaded package did not provide them."
+                  missing-features)
+            (setq features (append missing-features features))))))))
 
 (defun el-get-post-update-build (package)
   "Function to call after building the package while updating it."
