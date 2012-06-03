@@ -54,7 +54,7 @@
          (recipe
           (or recipe
               (when (string= status "installed")
-                (el-get-package-def package)))
+                (el-get-package-def package))))
          (package-status-alist
           (assq-delete-all package (el-get-read-status-file)))
          (new-package-status-alist
