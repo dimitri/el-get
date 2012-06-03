@@ -899,22 +899,22 @@ entry which is not a symbol and is not already a known recipe."
   (dired dir))
 
 ;;;###autoload
-(defun el-get-checksum (package)
+(defun el-get-checksum (package &optional package-status-alist)
   "Compute the checksum of the given package, and put it in the kill-ring"
   (interactive
    (list (el-get-read-package-with-status "Checksum" "installed")))
-  (el-get-with-status-sources
-   (let* ((type             (el-get-package-type package))
-          (checksum         (plist-get (el-get-package-def package) :checksum))
-          (compute-checksum (el-get-method type :compute-checksum)))
-     (when (and checksum (not compute-checksum))
-       (error "package method %s does not support checksums" type))
-     (when compute-checksum
-       (let ((checksum (funcall compute-checksum package)))
-         (message "Checksum for package %s is: %s. It has been copied to the kill-ring."
-                  package checksum)
-         (kill-new checksum)
-         checksum)))))
+  (el-get-with-status-sources package-status-alist
+    (let* ((type             (el-get-package-type package))
+           (checksum         (plist-get (el-get-package-def package) :checksum))
+           (compute-checksum (el-get-method type :compute-checksum)))
+      (when (and checksum (not compute-checksum))
+        (error "package method %s does not support checksums" type))
+      (when compute-checksum
+        (let ((checksum (funcall compute-checksum package)))
+          (message "Checksum for package %s is: %s. It has been copied to the kill-ring."
+                   package checksum)
+          (kill-new checksum)
+          checksum)))))
 
 (defun el-get-self-checksum ()
   "Compute the checksum of the running version of el-get itself.
