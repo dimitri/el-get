@@ -1,0 +1,4 @@
+(:name key-chord
+       :description "Map pairs of simultaneously pressed keys to commands."
+       :type emacswiki
+       :features "key-chord")
