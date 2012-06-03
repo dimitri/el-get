@@ -39,9 +39,13 @@
 
 (defcustom el-get-recipe-path
   (list (concat (file-name-directory el-get-script) "recipes")
-       el-get-recipe-path-elpa
-	el-get-recipe-path-emacswiki)
-  "Define where to look for the recipes, that's a list of directories"
+        el-get-recipe-path-elpa
+        el-get-recipe-path-emacswiki)
+  "List of directories in which to look for el-get recipes.
+
+Directories that contain automatically-generated recipes, such as
+`el-get-recipe-path-emacswiki' and `el-get-recipe-path-elpa',
+should be placed last in this list."
   :group 'el-get
   :type '(repeat (directory)))
 
