@@ -1,0 +1,6 @@
+(:name confluence-el
+       :type svn
+       :website "http://code.google.com/p/confluence-el"
+       :description "Atlassian has a wiki called Confluence. This extension allows you to interact with Confluence from Emacs."
+       :url "http://confluence-el.googlecode.com/svn/trunk/"
+       :autoloads t)
