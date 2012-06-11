@@ -24,19 +24,30 @@
   (let ((git-executable (el-get-executable-find "git"))
 	(pname (el-get-as-string package))
 	(name  (format "*git svn clone %s*" package))
+        (checkout (or (plist-get source :checkout)
+                      (plist-get source :checksum)))
 	(ok    (format "Package %s installed." package))
 	(ko    (format "Could not install package %s." package)))
 
     (el-get-start-process-list
      package
-     `((:command-name ,name
+     (list
+      `(:command-name ,name
 		      :buffer-name ,name
 		      :default-directory ,el-get-dir
 		      :program ,git-executable
 		      :args ( "--no-pager" "svn" "clone" ,url ,pname)
 		      :message ,ok
-		      :error ,ko))
-     post-install-fun)))
+		      :error ,ko)
+      (when checkout
+        (list :command-name (format "*git checkout %s*" checkout)
+              :buffer-name name
+              :default-directory pdir
+              :program git-executable
+              :args (list "--no-pager" "checkout" checkout)
+              :message (format "git checkout %s ok" checkout)
+              :error (format "Could not checkout %s for package %s" checkout package))))
+       post-install-fun)))
 
 (defun el-get-git-svn-update (package url post-update-fun)
   "Update PACKAGE using git-svn. URL is given for compatibility reasons."
