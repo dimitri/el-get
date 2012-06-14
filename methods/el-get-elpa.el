@@ -114,15 +114,29 @@ the recipe, then return nil."
     (el-get-elpa-symlink-package package))
   (funcall post-install-fun package))
 
+(defun el-get-elpa-update-available-p (package)
+  "Returns t if PACKAGE has an update available in ELPA."
+  (assert (el-get-package-is-installed package) nil
+          (sprintf "Cannot update non-installed ELPA package %s" package))
+  (let ((installed-version
+         (package-desc-vers (cdr (assq package package-alist))))
+        (available-version
+         (package-desc-vers (cdr (assq package package-archive-contents)))))
+    (version-list-< installed-version available-version)))
+
 (defun el-get-elpa-update (package url post-update-fun)
   "Ask elpa to update given PACKAGE."
-  (el-get-elpa-remove package url nil)
   (package-refresh-contents)
-  (package-install (el-get-as-symbol package))
+  (when (el-get-elpa-update-available-p package)
+    (el-get-elpa-remove package url nil)
+    (package-install (el-get-as-symbol package)))
   (funcall post-update-fun package))
 
 (defun el-get-elpa-remove (package url post-remove-fun)
   "Remove the right directory where ELPA did install the package."
+  ;; This just removes the symlink from el-get's directory. Look in
+  ;; `el-get-elpa-post-remove' for the piece that actually removes the
+  ;; package.
   (el-get-rmdir package url post-remove-fun))
 
 (defun el-get-elpa-post-remove (package)
@@ -146,7 +160,7 @@ the recipe, then return nil."
 ;;;
 
 ;;;###autoload
-(defun el-get-elpa-build-local-recipies (&optional target-dir do-not-update)
+(defun el-get-elpa-build-local-recipes (&optional target-dir do-not-update)
   "retrieves list of ELPA packages and turn them to local recipe set.
 TARGET-DIR is the target directory
 DO-NOT-UPDATE will not update the package archive contents before running this."
@@ -158,8 +172,8 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
         pkg package description)
     (when (or (not package-archive-contents) (and package-archive-contents (not do-not-update)))
       (package-refresh-contents))
-    (unless (file-directory-p target-dir) (make-directory target-dir))
-    (mapc (lambda(pkg)
+    (unless (file-directory-p target-dir) (make-directory target-dir 'recursive))
+    (mapc (lambda (pkg)
 	    (let* ((package (format "%s" (car pkg)))
 		   (pkg-desc (cdr pkg))
 		   (description (package-desc-doc pkg-desc)))
@@ -168,7 +182,7 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
 		(message "%s:%s" package description)
                 (insert
                  (format
-                  "(:name %s\n:type elpa\n:description \"%s\")"
+                  "(:name %s\n:auto-generated t\n:type elpa\n:description \"%s\")\n"
                   package description))
                 (indent-region (point-min) (point-max)))))
 	  package-archive-contents)))

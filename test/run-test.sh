@@ -15,7 +15,7 @@ fi
 
 set_default EL_GET_LIB_DIR "$(dirname "$(dirname "$(readlink -f "$0")")")"
 set_default TMPDIR "$(dirname "$(mktemp --dry-run)")"
-set_default TEMP_HOME "$TMPDIR/el-get-test-home"
+set_default TEST_HOME "$TMPDIR/el-get-test-home"
 set_default EMACS "$(which emacs)"
 set_default TEST_DIR "$(dirname $0)"
 
@@ -33,10 +33,15 @@ run_test () {
     echo "*** ERROR $1: Could not find test file ***"
   else
     echo "*** Running el-get test $testfile ***"
-    mkdir -p "$TEMP_HOME"/.emacs.d
-    rm -rf "$TEMP_HOME"/.emacs.d/el-get/
-    HOME="$TEMP_HOME" "$EMACS" -Q -batch -L "$EL_GET_LIB_DIR" \
-      -l "$EL_GET_LIB_DIR/el-get.el" -l "$testfile"
+    mkdir -p "$TEST_HOME"/.emacs.d
+    if [ -n "$DO_NOT_CLEAN" ]; then
+      echo "Running test without removing $TEST_HOME first";
+    else
+      rm -rf "$TEST_HOME"/.emacs.d/el-get/
+    fi
+    HOME="$TEST_HOME" "$EMACS" -Q -batch -L "$EL_GET_LIB_DIR" \
+      -l "$EL_GET_LIB_DIR/el-get.el" -l "$EL_GET_LIB_DIR/test/test-setup.el" \
+      -l "$testfile"
     result="$?"
     if [ "$result" = 0 ]; then
       echo "*** SUCCESS $testfile ***"

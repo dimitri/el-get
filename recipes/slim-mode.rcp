@@ -1,0 +1,5 @@
+(:name slim-mode
+       :description "Syntax highlighting for Slim"
+       :type github
+       :pkgname "minad/emacs-slim"
+       :features slim-mode)

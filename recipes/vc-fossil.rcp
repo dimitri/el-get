@@ -1,0 +1,6 @@
+(:name vc-fossil
+       :description "VC integration for Fossil-scm in Emacs"
+       :type fossil
+       :url "http://chiselapp.com/user/venks/repository/emacs-fossil"
+       :load-path ("./vc/el")
+       :post-init (add-to-list 'vc-handled-backends 'Fossil))

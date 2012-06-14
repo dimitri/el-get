@@ -50,7 +50,7 @@ Here's the 'lazy installer':
 (url-retrieve
  "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
  (lambda (s)
-   (end-of-buffer)
+   (goto-char (point-max))
    (eval-print-last-sexp)))
 --------------------------------------
 
@@ -71,14 +71,14 @@ avoid this with the following snippet instead:
   (url-retrieve
    "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
    (lambda (s)
-     (end-of-buffer)
+     (goto-char (point-max))
      (eval-print-last-sexp))))
 --------------------------------------
 
 See next section for details about how to setup you emacs so that it's able
 to benefit from +el-get+ automatically.
 
-== How to install the developer version (master branch)?
+=== How to install the developer version (master branch)?
 
 The 'lazy installer' uses the default +el-get-install.el+ file which targets
 the +2.stable+ branch.  To install el-get directly on the +master+ branch,
@@ -91,7 +91,25 @@ summon the +el-get-master-branch+ variable into existence:
  "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
  (lambda (s)
    (let (el-get-master-branch)
-     (end-of-buffer)
+     (goto-char (point-max))
+     (eval-print-last-sexp))))
+--------------------------------------
+
+=== How to skip fetching the emacswiki recipes at install time?
+
+The installer will fetch from emacswiki all the recipe available there and
+install a local copy of those in your system automatically. Should you want
+to disable that feature, the following snippet is showing how to:
+
+--------------------------------------
+;; So the idea is that you copy/paste this code into your *scratch* buffer,
+;; hit C-j, and you have a working el-get (without emacswiki automatic
+;; recipes).
+(url-retrieve
+ "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
+ (lambda (s)
+   (let (el-get-install-skip-emacswiki-recipes)
+     (goto-char (point-max))
      (eval-print-last-sexp))))
 --------------------------------------
 
@@ -109,7 +127,7 @@ how to:
   (with-current-buffer
       (url-retrieve-synchronously
        "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
-    (end-of-buffer)
+    (goto-char (point-max))
     (eval-print-last-sexp)))
 
 (el-get 'sync)

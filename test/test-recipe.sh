@@ -41,14 +41,16 @@ test_recipe () {
   fi
   echo "*** Testing el-get recipe $recipe_file ***"
   mkdir -p "$TEST_HOME"/.emacs.d
-  rm -rf "$TEST_HOME"/.emacs.d/el-get/
+  if [ -n "$DO_NOT_CLEAN" ]; then
+    echo "Running test without removing $TEST_HOME first";
+  else
+    rm -rf "$TEST_HOME"/.emacs.d/el-get/
+  fi
   lisp_temp_file=`mktemp`
   cat >"$lisp_temp_file" <<EOF
 
 (progn
-  (setq debug-on-error t
-        el-get-verbose t
-        el-get-default-process-sync t
+  (setq el-get-default-process-sync t
         pdef (el-get-read-recipe-file "$recipe_file")
         pname (plist-get pdef :name)
         el-get-sources (list pdef))
@@ -66,13 +68,15 @@ test_recipe () {
 EOF
 
   HOME="$TEST_HOME" "$EMACS" -Q -batch -L "$EL_GET_LIB_DIR" \
-    -l "$EL_GET_LIB_DIR/el-get.el" -l "$lisp_temp_file"
+    -l "$EL_GET_LIB_DIR/el-get.el" -l "$EL_GET_LIB_DIR/test/test-setup.el" \
+    -l "$lisp_temp_file"
   result="$?"
   if [ "$result" = 0 ]; then
     echo "*** SUCCESS $recipe_file ***"
   else
     echo "*** FAILED $recipe_file ***"
   fi
+  rm -f "$lisp_temp_file"
 }
 
 while [ -n "$1" ]; do

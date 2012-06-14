@@ -1,6 +1,6 @@
 (:name vcl-mode
        :description "Syntax highlighting for Varnish Command Language"
        :type http
-       :url "http://www.varnish-cache.org/trac/browser/trunk/varnish-tools/emacs/vcl-mode.el?format=txt"
+       :url "https://www.varnish-cache.org/svn/trunk/varnish-tools/emacs/vcl-mode.el"
        :features vcl-mode
        :localname "vcl-mode.el")

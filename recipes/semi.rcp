@@ -1,12 +1,10 @@
 (:name semi
        :description "SEMI is a library to provide MIME feature for GNU Emacs."
        :depends flim
-       :type cvs
-       :module "semi"
-       :url ":pserver:anonymous@cvs.m17n.org:/cvs/root"
+       :type github
+       :branch "semi-1_14-wl"
+       :pkgname "wanderlust/semi"
        :build
-       (append
-        `((,(executable-find "cvs") ,(split-string "up -r semi-1_14-wl")))
         (mapcar
          (lambda (target)
            (list el-get-emacs
@@ -17,7 +15,6 @@
                  (split-string "-batch -q -no-site-file -l SEMI-MK -f")
                  target
                  "prefix" "site-lisp" "site-lisp"))
-         '("compile-semi" "install-semi")))
+         '("compile-semi" "install-semi"))
         :load-path ("site-lisp/semi/")
        )
-

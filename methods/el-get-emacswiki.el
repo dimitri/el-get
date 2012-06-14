@@ -15,10 +15,15 @@
 (require 'el-get-http)
 
 (defcustom el-get-emacswiki-base-url
-  "http://www.emacswiki.org/emacs/download/"
+  "https://raw.github.com/emacsmirror/emacswiki.org/master/"
   "The base URL where to fetch :emacswiki packages"
   :group 'el-get
-  :type 'string)
+  :type '(radio
+          (const :tag "Github mirror (recommended): https://raw.github.com/emacsmirror/emacswiki.org/master/"
+                 "https://raw.github.com/emacsmirror/emacswiki.org/master/")
+          (const :tag "Main EmacsWiki site: http://www.emacswiki.org/emacs/download/"
+                 "http://www.emacswiki.org/emacs/download/")
+          (string :tag "Other URL")))
 
 (defcustom el-get-emacswiki-elisp-file-list-url
   "http://www.emacswiki.org/cgi-bin/wiki?action=elisp"
@@ -69,11 +74,12 @@ filename.el ;;; filename.el --- description"
 (defun el-get-emacswiki-build-local-recipes (&optional target-dir)
   "retrieve the index of elisp pages at emacswiki and turn them
 into a local recipe file set"
+  (interactive)
   (let ((target-dir (or target-dir
 			(car command-line-args-left)
 			el-get-recipe-path-emacswiki))
 	(coding-system-for-write 'utf-8))
-    (unless (file-directory-p target-dir) (make-directory target-dir))
+    (unless (file-directory-p target-dir) (make-directory target-dir 'recursive))
     (loop
      for (url package description) in (el-get-emacswiki-retrieve-package-list)
      for recipe = (replace-regexp-in-string "el$" "rcp" package)
@@ -83,7 +89,7 @@ into a local recipe file set"
 	  (message "%s: %s" package description)
 	  (insert
 	   (format
-	    "(:name %s\n:type emacswiki\n:description \"%s\"\n:website \"%s\")"
+	    "(:name %s\n:auto-generated t\n:type emacswiki\n:description \"%s\"\n:website \"%s\")\n"
 	    (file-name-sans-extension package) description url))
 	  ;; (encode-coding-region (point-min) (point-max) 'utf-8)
 	  (indent-region (point-min) (point-max))))))

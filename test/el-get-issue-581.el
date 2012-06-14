@@ -2,7 +2,7 @@
 ;;
 ;; ipython should depend on python-mode
 
-(let ((debug-on-error t)
-      ;; (el-get-byte-compile nil)
-      (el-get-verbose t))
-  (el-get 'sync 'ipython))
+(setq debug-on-error t
+      el-get-verbose t)
+
+(el-get 'sync 'ipython)
