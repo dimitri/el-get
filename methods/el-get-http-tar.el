@@ -47,6 +47,15 @@ the files up."
 	 (ok      (format "Package %s installed." package))
 	 (ko      (format "Could not install package %s." package))
 	 (post `(lambda (package)
+                  ;; Remove all files from previous install before
+                  ;; extracting the tar file.
+                  (let ((files-to-delete (remove ,tarfile (directory-files ,pdir nil "[^.]$"))))
+                    (loop for fname in files-to-delete
+                          for fullpath = (expand-file-name fname ,pdir)
+                          do (el-get-verbose-message "el-get-http-tar: Deleting old file %S" fname)
+                          do (if (file-directory-p fullpath)
+                                 (delete-directory fullpath 'recursive)
+                               (delete-file fullpath))))
 		  ;; tar xzf `basename url`
 		  (let ((el-get-sources '(,@el-get-sources)))
 		    (el-get-start-process-list
@@ -67,6 +76,7 @@ the files up."
   :install #'el-get-http-tar-install
   :update #'el-get-http-tar-install
   :remove #'el-get-rmdir
-  :install-hook #'el-get-http-tar-install-hook)
+  :install-hook #'el-get-http-tar-install-hook
+  :update-hook #'el-get-http-tar-install-hook)
 
 (provide 'el-get-http-tar)
