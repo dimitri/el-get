@@ -705,8 +705,13 @@ PACKAGE may be either a string or the corresponding symbol."
 (defun el-get-post-update (package)
   "Post update PACKAGE. This will get run by a sentinel."
   (let* ((sync el-get-default-process-sync)
-         (source   (el-get-package-def package))
+	 (type     (el-get-package-type package))
+	 (hooks    (el-get-method type :update-hook))
 	 (commands (el-get-build-commands package)))
+
+    ;; post-update is the right place to run update-hook
+    (run-hook-with-args hooks package)
+
     (el-get-build package commands nil sync 'el-get-post-update-build)))
 
 (defun el-get-update-requires-reinstall (package)
