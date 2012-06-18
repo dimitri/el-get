@@ -14,7 +14,7 @@
 
 (require 'el-get-http)
 
-(defun el-get-http-tar-cleanup-extract-hook (package)
+(defun el-get-http-unpack-cleanup-extract-hook (package)
   "Cleanup after tar xzf: if there's only one subdir, move all
 the files up."
   (let* ((pdir    (el-get-package-directory package))
@@ -23,7 +23,7 @@ the files up."
 	 (files   (remove tarfile (directory-files pdir nil "[^.]$")))
 	 (dir     (car files)))
     ;; if there's only one directory, move its content up and get rid of it
-    (el-get-verbose-message "el-get: tar cleanup %s [%s]: %S" package pdir files)
+    (el-get-verbose-message "el-get: unpack cleanup %s [%s]: %S" package pdir files)
     (unless (cdr files)
       (loop for fname in (directory-files
 			  (expand-file-name dir pdir) nil "[^.]$")
@@ -70,7 +70,7 @@ the files up."
 		     ,(symbol-function post-install-fun))))))
     (el-get-http-install package url post dest)))
 
-(add-hook 'el-get-http-tar-install-hook 'el-get-http-tar-cleanup-extract-hook)
+(add-hook 'el-get-http-tar-install-hook 'el-get-http-unpack-cleanup-extract-hook)
 
 (el-get-register-method :http-tar
   :install #'el-get-http-tar-install
