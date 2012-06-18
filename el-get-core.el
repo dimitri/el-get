@@ -388,7 +388,12 @@ makes it easier to conditionally splice a command into the list.
                     (error "el-get: %s %s" cname errorm))
                   (when cbuf (kill-buffer cbuf))
                   (if next
-                      (el-get-start-process-list package next final-func)
+                      ;; Prevent stack overflow on very long command
+                      ;; lists. This allows
+                      ;; `el-get-start-process-list' (but not other
+                      ;; functions) to recurse indefinitely.
+                      (let ((max-specpdl-size (+ 100 max-specpdl-size)))
+                        (el-get-start-process-list package next final-func))
                     (when (functionp final-func)
                       (funcall final-func package)))))
             ;; async case
