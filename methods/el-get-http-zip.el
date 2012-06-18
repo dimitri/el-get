@@ -13,28 +13,7 @@
 ;;     Please see the README.asciidoc file from the same distribution
 
 (require 'el-get-http)
-
-(defun el-get-http-zip-cleanup-extract-hook (package)
-  "Cleanup after unzip: if there's only one subdir, move all
-the files up."
-  (let* ((pdir    (el-get-package-directory package))
-	 (url     (plist-get (el-get-package-def package) :url))
-	 (zipfile (el-get-filename-from-url url))
-	 (files   (remove zipfile (directory-files pdir nil "[^.]$")))
-	 (dir     (car files)))
-    ;; if there's only one directory, move its content up and get rid of it
-    (el-get-verbose-message "el-get: unzip cleanup %s [%s]: %S" package pdir files)
-    (unless (cdr files)
-      (loop for fname in (directory-files
-			  (expand-file-name dir pdir) nil "[^.]$")
-	    for fullname = (expand-file-name fname (expand-file-name dir pdir))
-	    for newname  = (expand-file-name pdir fname)
-	    do (progn
-		 (el-get-verbose-message "%S %S %S" pdir dir fname)
-		 (el-get-verbose-message "mv %S %S" fullname newname)
-		 (rename-file fullname newname)))
-      (el-get-verbose-message "delete-directory: %s" (expand-file-name dir pdir))
-      (delete-directory (expand-file-name dir pdir)))))
+(require 'el-get-http-tar)
 
 (defun el-get-http-zip-install (package url post-install-fun)
   "Dowload a zip archive package over HTTP."
@@ -47,6 +26,15 @@ the files up."
 	 (ok      (format "Package %s installed." package))
 	 (ko      (format "Could not install package %s." package))
 	 (post `(lambda (package)
+                  ;; Remove all files from previous install before
+                  ;; extracting the tar file.
+                  (let ((files-to-delete (remove ,zipfile (directory-files ,pdir nil "[^.]$"))))
+                    (loop for fname in files-to-delete
+                          for fullpath = (expand-file-name fname ,pdir)
+                          do (el-get-verbose-message "el-get-http-tar: Deleting old file %S" fname)
+                          do (if (file-directory-p fullpath)
+                                 (delete-directory fullpath 'recursive)
+                               (delete-file fullpath))))
 		  ;; zip xzf `basename url`
 		  (let ((el-get-sources '(,@el-get-sources)))
 		    (el-get-start-process-list
@@ -61,12 +49,13 @@ the files up."
 		     ,(symbol-function post-install-fun))))))
     (el-get-http-install package url post dest)))
 
-(add-hook 'el-get-http-zip-install-hook 'el-get-http-zip-cleanup-extract-hook)
+(add-hook 'el-get-http-zip-install-hook 'el-get-http-unpack-cleanup-extract-hook)
 
 (el-get-register-method :http-zip
   :install #'el-get-http-zip-install
   :update #'el-get-http-zip-install
   :remove #'el-get-rmdir
-  :install-hook #'el-get-http-zip-install-hook)
+  :install-hook #'el-get-http-zip-install-hook
+  :update-hook #'el-get-http-zip-install-hook)
 
 (provide 'el-get-http-zip)
