@@ -85,10 +85,18 @@
       (loop for (p s) on ps by 'cddr
             for psym = (el-get-package-symbol p)
             when psym
-            collect (cons psym
-                          (list 'status s
-                                'recipe (when (string= s "installed")
-                                          (el-get-package-def psym))))))))
+            collect
+            (cons psym
+                  (list 'status s
+                        'recipe (when (string= s "installed")
+                                  (condition-case nil
+                                      (el-get-package-def psym)
+                                    ;; If the recipe is not
+                                    ;; available any more,
+                                    ;; just provide a
+                                    ;; placeholder no-op
+                                    ;; recipe.
+                                    (error `(:name ,psym :type builtin))))))))))
 
 (defun el-get-package-status-alist (&optional package-status-alist)
   "return an alist of (PACKAGE . STATUS)"
