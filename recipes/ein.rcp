@@ -3,4 +3,6 @@
        :type github
        :pkgname "tkf/emacs-ipython-notebook"
        :depends (websocket nxhtml)
+       :load-path ("lisp")
+       :submodule nil
        :features ein)
