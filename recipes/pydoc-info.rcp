@@ -1,0 +1,5 @@
+(:name pydoc-info
+       :description "Emacs package for searching Python documentation in Info"
+       :website "https://bitbucket.org/jonwaltman/pydoc-info"
+       :type hg
+       :url "https://bitbucket.org/jonwaltman/pydoc-info")
