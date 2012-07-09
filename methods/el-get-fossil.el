@@ -53,7 +53,7 @@ are stored in the package directory"
          (fossil-dir (or (plist-get source :fossil-dir)
                          el-get-fossil-dir
                          pdir))
-         (open-args (list "open" (expand-file-name fossil-name fossil-dir) checkout))
+         (open-args (list "open" "--nested" (expand-file-name fossil-name fossil-dir) checkout))
          (ok (format "Package %s installed." package))
          (ko (format "Could not install package %s." package)))
     (el-get-start-process-list
