@@ -1,4 +1,4 @@
 (:name align-let
        :description "Align command for `let' forms and `setq' lists"
-       :type ftp
-       :url "ftp://download.tuxfamily.org/user42/align-let.el")
+       :type http
+       :url "http://download.tuxfamily.org/user42/align-let.el")
