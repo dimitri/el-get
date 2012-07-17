@@ -450,6 +450,13 @@ which defaults to the first element in `el-get-recipe-path'."
 
 
 (defun el-get-init (package &optional package-status-alist)
+  "Make the named PACKAGE available for use, first initializing any
+   dependency of the PACKAGE."
+  (let* ((init-deps   (el-get-dependencies (el-get-as-symbol package))))
+    (el-get-verbose-message "el-get-init: " init-deps)
+    (loop for p in init-deps do (el-get-do-init p) collect p)))
+
+(defun el-get-do-init (package &optional package-status-alist)
   "Make the named PACKAGE available for use.
 
 Add PACKAGE's directory (or `:load-path' if specified) to the
@@ -577,7 +584,7 @@ PACKAGE may be either a string or the corresponding symbol."
   "Function to call after building the package while installing it."
   (el-get-save-package-status package "installed")
   (el-get-invalidate-autoloads package)	; that will also update them
-  (el-get-init package)
+  (el-get-do-init package)
   (run-hook-with-args 'el-get-post-install-hooks package))
 
 (defun el-get-post-install (package)
@@ -618,7 +625,7 @@ PACKAGE may be either a string or the corresponding symbol."
   (if (el-get-package-is-installed package)
       (progn
         (el-get-verbose-message "el-get: `%s' package is already installed" package)
-        (el-get-init package))
+        (el-get-do-init package))
     (let* ((status   (el-get-read-package-status package))
 	   (source   (el-get-package-def package))
 	   (method   (el-get-package-method source))
@@ -698,7 +705,7 @@ PACKAGE may be either a string or the corresponding symbol."
   (when (string= (el-get-read-package-status package) "required")
     (el-get-save-package-status package "installed"))
   (el-get-invalidate-autoloads package)
-  (el-get-init package)
+  (el-get-do-init package)
   (el-get-reload package)
   (run-hook-with-args 'el-get-post-update-hooks package))
 
@@ -958,7 +965,7 @@ considered \"required\"."
     (el-get-verbose-message "el-get-init-and-install: init %S" init-deps)
 
     (loop for p in install-deps do (el-get-do-install p) collect p into done)
-    (loop for p in init-deps    do (el-get-init p)       collect p into done)
+    (loop for p in init-deps    do (el-get-do-init p)    collect p into done)
     done))
 
 (defun el-get (&optional sync &rest packages)
