@@ -2,7 +2,7 @@
 
 Short Story: el-get allows you to install and manage +elisp+ code for
 Emacs. It supports lots of differents types of sources and is able to
-'install' them, 'update' them and 'remove' them, but more importantly it
+'install' them, 'update' them and 'remove' them, and more importantly it
 will 'init' them for you.
 
 That means it will +require+ the 'features' you need, +load+ the
@@ -29,8 +29,7 @@ functions to +eval-after-load+), and multi repositories +ELPA+ support.
 Version String are now inspired by how Emacs itself numbers its versions.
 First is the major version number, then a dot, then the minor version
 number.  The minor version number is 0 when still developping the next major
-version.  So 3.0 is a developer release while 3.1 will be the next stable
-release.
+version.  So 3.0 is a developer release while 3.1 is a stable release.
 
 Please note that this versioning policy has been picked while backing
 1.2~dev, so 1.0 was a "stable" release in fact.  Ah, history.
