@@ -16,10 +16,10 @@ apply your configuration to.
 
 All of these systems require some degree of manual maintenance, especially
 if you have packages from various types of locations:
-[github](http://github.com), [emacswiki](http://emacswiki.com),
+[github](http://github.com), [emacswiki](http://emacswiki.org),
 [GNU ELPA](http://elpa.gnu.org/) or [Marmalade](http://marmalade-repo.org/),
 privately hosted pages, [git](http://git-scm.com/),
-[bzr](http://bazaar.canonical.com/en/), [CVS]()http://www.nongnu.org/cvs/,
+[bzr](http://bazaar.canonical.com/en/), [CVS](http://www.nongnu.org/cvs/),
 the list goes on.
 
 El-get is designed to simplify this process and allow access to all the
@@ -236,4 +236,5 @@ provided with El-get if you think you need to edit your init file.
 
 # Conclusion
 
-Enjoy El-get and an easy setup!
+Enjoy El-get, enjoy Emacs, have fun with Emacs Lisp, and simplify your Emacs
+Setup **today**!
