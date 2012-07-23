@@ -290,6 +290,25 @@ whatever package you need.
 `el-get-remove'
      Remove given package, as prompted.
 
+`el-get-self-update'
+     Update El-Get itself, and force that update to be synchronous. That
+     allows to make sure you're not updating El-Get code while trying to
+     update or install some other package at the same time.
+
+`el-get-update-all'
+     Will update all packages that have the `installed' status in your
+     status file.  Before the update you will be prompted for
+     confirmation that you wish to proceed.
+
+     Beware that using this function can lead to hours of settings
+     review: more often than not updating a package requires some
+     adjustments to your setup.  Updating all of them at once will
+     require reviewing almost all your setup.
+
+`el-get-reload'
+     Reload the given package files.  Happens automatically at update
+     time too.
+
 
 
 File: el-get.info,  Node: Setup,  Next: User Init,  Prev: Usage,  Up: Top
@@ -306,6 +325,7 @@ el-get-install' and friends, then how to get a more involved setup.
 * Basic Setup::
 * The el-get function::
 * Distributed Setup::
+* Setup Customization::
 
 
 File: el-get.info,  Node: Basic Setup,  Next: The el-get function,  Up: Setup
@@ -383,7 +403,7 @@ or init.  When `PACKAGES' is omited (the default), the list of already
 installed packages is considered.
 
 
-File: el-get.info,  Node: Distributed Setup,  Prev: The el-get function,  Up: Setup
+File: el-get.info,  Node: Distributed Setup,  Next: Setup Customization,  Prev: The el-get function,  Up: Setup
 
 6.3 Distributed Setup
 =====================
@@ -422,6 +442,42 @@ this documentation is usable as-is.
             (mapcar 'el-get-source-name el-get-sources)))
 
      (el-get 'sync my-packages)
+
+
+File: el-get.info,  Node: Setup Customization,  Prev: Distributed Setup,  Up: Setup
+
+6.4 Setup Customization
+=======================
+
+Even though the defaults that are provided by El-Get provide all that
+you need to get it working, there may be a reason to manually define
+certain settings, particularly for portability.
+
+`el-get-dir'
+     Path where packages are installed. Defaults to
+     `~/.emacs.d/el-get/'.
+
+`el-get-install-dir'
+     Path for the `el-get' package. Defaults to
+     `~/.emacs.d/el-get/el-get'.
+
+`el-get-install-branch'
+     If this is set, El-Get will be installed using the target
+     `branch'.  This takes precedence over setting
+     `el-get-master-branch' in the installation settings, see *Note
+     Installing::.
+
+`el-get-git-install-url'
+     Use this to specify your own fork of El-Get for installation.
+
+`el-get-recipe-path-elpa'
+     This directory stores a local list of ELPA recipes.
+     `~/.emacs.d/el-get/el-get/recipes/elpa'
+
+`el-get-recipe-path-emacswiki'
+     As above for ELPA, this directory stores a local list of emacswiki
+     recipes. Defaults to `~/.emacs.d/el-get/el-get/recipes/emacswiki/'.
+
 
 
 File: el-get.info,  Node: User Init,  Next: Recipes,  Prev: Setup,  Up: Top
@@ -657,24 +713,25 @@ Node: Installing6611
 Node: Install the developper version7484
 Node: Skip Emacswiki recipes when installing8229
 Node: Usage9065
-Node: Setup10579
-Node: Basic Setup10951
-Node: The el-get function12190
-Node: Distributed Setup13699
-Node: User Init14982
-Node: Before and After properties15669
-Node: Initialization files17177
-Node: Recipes17830
-Node: Organizing recipes18276
-Node: Getting more recipes19791
-Node: Authoring Recipes20456
-Node: Recipe format20928
-Node: Dependencies21053
-Node: Notifications21198
-Node: Byte Compilation21348
-Node: Autoloads21501
-Node: Build21632
-Node: Methods21746
-Node: Status21861
+Node: Setup11354
+Node: Basic Setup11750
+Node: The el-get function12989
+Node: Distributed Setup14498
+Node: Setup Customization15809
+Node: User Init16955
+Node: Before and After properties17642
+Node: Initialization files19150
+Node: Recipes19803
+Node: Organizing recipes20249
+Node: Getting more recipes21764
+Node: Authoring Recipes22429
+Node: Recipe format22901
+Node: Dependencies23026
+Node: Notifications23171
+Node: Byte Compilation23321
+Node: Autoloads23474
+Node: Build23605
+Node: Methods23719
+Node: Status23834
 
 End Tag Table

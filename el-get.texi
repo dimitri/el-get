@@ -290,6 +290,26 @@ setup and that you will have to revisit your setup accordingly.
 @item el-get-remove
 Remove given package, as prompted.
 
+@item el-get-self-update
+Update El-Get itself, and force that update to be synchronous. That
+allows to make sure you're not updating El-Get code while trying to
+update or install some other package at the same time.
+
+@item el-get-update-all
+Will update all packages that have the @code{installed} status in your
+status file.  Before the update you will be prompted for confirmation
+that you wish to proceed.
+
+Beware that using this function can lead to hours of settings review:
+more often than not updating a package requires some adjustments to
+your setup.  Updating all of them at once will require reviewing
+almost all your setup.
+
+@item el-get-reload
+
+Reload the given package files.  Happens automatically at update time
+too.
+
 @end table
 
 @node Setup
@@ -304,6 +324,7 @@ setup.
 * Basic Setup::
 * The el-get function::
 * Distributed Setup::
+* Setup Customization::
 @end menu
 
 @node Basic Setup
@@ -417,6 +438,44 @@ as-is.
 
 (el-get 'sync my-packages)
 @end example
+
+@node Setup Customization
+@section Setup Customization
+
+Even though the defaults that are provided by El-Get provide all that
+you need to get it working, there may be a reason to manually define
+certain settings, particularly for portability.
+
+@table @code
+
+@item el-get-dir
+Path where packages are installed. Defaults to
+@file{~/.emacs.d/el-get/}.
+
+@item el-get-install-dir
+Path for the @code{el-get} package. Defaults to
+@file{~/.emacs.d/el-get/el-get}.
+
+@item el-get-install-branch
+If this is set, El-Get will be installed using the target
+@code{branch}.  This takes precedence over setting
+@code{el-get-master-branch} in the installation settings, see
+@xref{Installing}.
+
+@item el-get-git-install-url
+Use this to specify your own fork of El-Get for installation.
+
+@item el-get-recipe-path-elpa
+This directory stores a local list of ELPA recipes.
+@file{~/.emacs.d/el-get/el-get/recipes/elpa}
+
+@item el-get-recipe-path-emacswiki
+
+As above for ELPA, this directory stores a local list of emacswiki
+recipes. Defaults to
+@file{~/.emacs.d/el-get/el-get/recipes/emacswiki/}.
+
+@end table
 
 @node User Init
 @chapter User Init
