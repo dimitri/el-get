@@ -48,6 +48,11 @@
       package-name
     (intern (format ":%s" package-name))))
 
+;; A cache used to avoid multiple consecutive writes to the
+;; status-file at startup.  Instead, we accumulate the state to be
+;; written in this variable and write it once, with an idle timer.
+(setq el-get-status-to-write nil)
+
 (defun el-get-save-package-status (package status &optional recipe)
   "Save given package status"
   (let* ((package (el-get-as-symbol package))
@@ -66,37 +71,52 @@
                            (el-get-as-string (car p2)))))))
     (assert (listp recipe) nil
             "Recipe must be a list")
-    (with-temp-file el-get-status-file
-      (insert (el-get-print-to-string new-package-status-alist 'pretty)))
+
+    ;; If there isn't one already, set up a task to write the
+    ;; status-file
+    (unless el-get-status-to-write
+      (run-with-idle-timer
+       0 (not 'repeat)
+       (lambda ()
+         (with-temp-file el-get-status-file
+           (insert (el-get-print-to-string
+                    el-get-status-to-write 'pretty)))
+         (setq el-get-status-to-write nil))))
+
+    ;; Remember what will get written
+    (setq el-get-status-to-write new-package-status-alist)
+
     ;; Return the new alist
     new-package-status-alist))
 
 (defun el-get-read-status-file ()
   "read `el-get-status-file' and return an alist of plist like:
    (PACKAGE . (status \"status\" recipe (:name ...)))"
-  (let ((ps
-         (when (file-exists-p el-get-status-file)
-           (car (with-temp-buffer
-                  (insert-file-contents-literally el-get-status-file)
-                  (read-from-string (buffer-string)))))))
-    (if (consp (car ps))         ; check for an alist, new format
-        ps
-      ;; convert to the new format, fetching recipes as we go
-      (loop for (p s) on ps by 'cddr
-            for psym = (el-get-package-symbol p)
-            when psym
-            collect
-            (cons psym
-                  (list 'status s
-                        'recipe (when (string= s "installed")
-                                  (condition-case nil
-                                      (el-get-package-def psym)
-                                    ;; If the recipe is not
-                                    ;; available any more,
-                                    ;; just provide a
-                                    ;; placeholder no-op
-                                    ;; recipe.
-                                    (error `(:name ,psym :type builtin))))))))))
+  (or el-get-status-to-write
+      (let ((ps
+             (when (file-exists-p el-get-status-file)
+               (car (with-temp-buffer
+                      (insert-file-contents-literally el-get-status-file)
+                      (read-from-string (buffer-string)))))))
+        (if (consp (car ps))         ; check for an alist, new format
+            ps
+          ;; convert to the new format, fetching recipes as we go
+          (loop for (p s) on ps by 'cddr
+                for psym = (el-get-package-symbol p)
+                when psym
+                collect
+                (cons
+                 psym
+                 (list 'status s
+                       'recipe (when (string= s "installed")
+                                 (condition-case nil
+                                     (el-get-package-def psym)
+                                   ;; If the recipe is not
+                                   ;; available any more,
+                                   ;; just provide a
+                                   ;; placeholder no-op
+                                   ;; recipe.
+                                   (error `(:name ,psym :type builtin)))))))))))
 
 (defun el-get-package-status-alist (&optional package-status-alist)
   "return an alist of (PACKAGE . STATUS)"
