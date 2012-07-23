@@ -7,14 +7,19 @@ END-INFO-DIR-ENTRY
 
    Copyright (C) 2010, 2011, 2012 Dimitri Fontaine.
 
-   TODO: Think about the proper licencing, it seems like WTFPL is
-appropriate.
+                 DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+             Version 2, December 2004
 
-     Permission is granted to copy, distribute and/or modify this
-     document under the terms of the GNU Free Documentation License,
-     Version 1.2 or any later version published by the Free Software
-     Foundation; with no Invariant Sections, with no Front-Cover Texts,
-     and with no Back-Cover Texts.
+     Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
+
+     Everyone is permitted to copy and distribute verbatim or modified
+     copies of this license document, and changing it is allowed as long
+     as the name is changed.
+
+     DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE    TERMS AND
+     CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+
+     0. You just DO WHAT THE FUCK YOU WANT TO.
 
 
 File: el-get.info,  Node: Top,  Next: Introduction,  Up: (dir)
@@ -642,12 +647,9 @@ simple, though.
 
 * Recipe format::
 * Dependencies::
-* Notifications::
 * Byte Compilation::
 * Autoloads::
 * Build::
-* Methods::
-* Status::
 
 
 File: el-get.info,  Node: Recipe format,  Next: Dependencies,  Up: Authoring Recipes
@@ -655,83 +657,128 @@ File: el-get.info,  Node: Recipe format,  Next: Dependencies,  Up: Authoring Rec
 9.1 Recipe format
 =================
 
+The recipe for the hypothetical package named `el-get-example' must be
+provided in a file named `el-get-example.rcp'. This file will be
+searched for as described in *Note Organizing recipes::. The variable
+`el-get-sources' is also considered as a recipe source, as detailed in
+*Note Organizing recipes::.
+
+   A recipe file contains a lisp property list. Accepted properties are
+described in the documentation for the variable `el-get-sources', and
+their possible values are described at the same place.
+
+   Please refer to that documentation.
+
 
-File: el-get.info,  Node: Dependencies,  Next: Notifications,  Prev: Recipe format,  Up: Authoring Recipes
+File: el-get.info,  Node: Dependencies,  Next: Byte Compilation,  Prev: Recipe format,  Up: Authoring Recipes
 
 9.2 Dependencies
 ================
 
-
-File: el-get.info,  Node: Notifications,  Next: Byte Compilation,  Prev: Dependencies,  Up: Authoring Recipes
-
-9.3 Notifications
-=================
+When a recipe provides a `:depends' property, El-Get makes sure that
+the given list of packages is installed and initialized before the
+package for the current recipe is installed and initialized.
 
 
-File: el-get.info,  Node: Byte Compilation,  Next: Autoloads,  Prev: Notifications,  Up: Authoring Recipes
+File: el-get.info,  Node: Byte Compilation,  Next: Autoloads,  Prev: Dependencies,  Up: Authoring Recipes
 
-9.4 Byte Compilation
+9.3 Byte Compilation
 ====================
+
+By default, El-Get will recursively byte-compile the directory where
+the package is installed, that is each and any file called
+`something.el'. Some packages include non Emacs Lisp directories, and
+sometime test files that are not meant to pass byte compilation without
+errors or warnings. It is possible to setup your recipe to either only
+target some files of the package, or to bypass byte compiling entirely.
 
 
 File: el-get.info,  Node: Autoloads,  Next: Build,  Prev: Byte Compilation,  Up: Authoring Recipes
 
-9.5 Autoloads
+9.4 Autoloads
 =============
 
-
-File: el-get.info,  Node: Build,  Next: Methods,  Prev: Autoloads,  Up: Authoring Recipes
+Think about providing `autoloads' for your recipe if some are
+available. You can provide them yourself too, for packages that should
+have support for autoloads but ship without them.
 
-9.6 Build
+   The `:prepare' property of a recipe is the right place where to put
+added autoloads, as shown in this example:
+
+     (:name undo-tree
+            :description "Treat undo history as a tree"
+            :type git
+            :url "http://www.dr-qubit.org/git/undo-tree.git"
+            :prepare (progn
+                       (autoload 'undo-tree-mode "undo-tree.el"
+                         "Undo tree mode; see undo-tree.el for details" t)
+                       (autoload 'global-undo-tree-mode "undo-tree.el"
+                         "Global undo tree mode" t)))
+
+   The `:prepare' property of a recipe is considered the same as the
+`:before' one, just evaluated after it. `:prepare' is meant for recipe
+authors whereas `:before' is meant for user customisations. See *Note
+Before and After properties::.
+
+
+File: el-get.info,  Node: Build,  Prev: Autoloads,  Up: Authoring Recipes
+
+9.5 Build
 =========
 
-
-File: el-get.info,  Node: Methods,  Next: Status,  Prev: Build,  Up: Authoring Recipes
+The `:build' property of the recipe allows for OS integration at build
+time. Build happens after the package has been fetched, and allows to
+run commands such as `make'.
 
-9.7 Methods
-===========
+   The variable `el-get-emacs' contains the complete path where to find
+the current Emacs executable you're running, as that's something build
+commands often need.
 
-
-File: el-get.info,  Node: Status,  Prev: Methods,  Up: Authoring Recipes
+   As shell interpolation can get hairy, El-Get offers you to setup your
+build commands as Emacs Lisp list. See the magit recipe for an example:
 
-9.8 Status
-==========
+     (:name magit
+            :website "https://github.com/magit/magit#readme"
+            :description "It's Magit! An Emacs mode for Git."
+            :type github
+            :pkgname "magit/magit"
+            :info "."
+            :autoloads ("50magit")
+            :build (("make" "all"))
+            :build/darwin `(,(concat "make EMACS=" el-get-emacs " all")))
 
 
 
 Tag Table:
-Node: Top655
-Node: Introduction1120
-Node: Acknowledgments2195
-Node: Glossary3206
-Ref: Glossary - Init4302
-Ref: Glossary - Install4604
-Ref: Glossary - Recipe5691
-Ref: Glossary - Status6115
-Ref: Glossary - Update6373
-Node: Installing6611
-Node: Install the developper version7484
-Node: Skip Emacswiki recipes when installing8229
-Node: Usage9065
-Node: Setup11354
-Node: Basic Setup11750
-Node: The el-get function12989
-Node: Distributed Setup14498
-Node: Setup Customization15809
-Node: User Init16955
-Node: Before and After properties17642
-Node: Initialization files19150
-Node: Recipes19803
-Node: Organizing recipes20249
-Node: Getting more recipes21764
-Node: Authoring Recipes22429
-Node: Recipe format22901
-Node: Dependencies23026
-Node: Notifications23171
-Node: Byte Compilation23321
-Node: Autoloads23474
-Node: Build23605
-Node: Methods23719
-Node: Status23834
+Node: Top762
+Node: Introduction1227
+Node: Acknowledgments2302
+Node: Glossary3313
+Ref: Glossary - Init4409
+Ref: Glossary - Install4711
+Ref: Glossary - Recipe5798
+Ref: Glossary - Status6222
+Ref: Glossary - Update6480
+Node: Installing6718
+Node: Install the developper version7591
+Node: Skip Emacswiki recipes when installing8336
+Node: Usage9172
+Node: Setup11461
+Node: Basic Setup11857
+Node: The el-get function13096
+Node: Distributed Setup14605
+Node: Setup Customization15916
+Node: User Init17062
+Node: Before and After properties17749
+Node: Initialization files19257
+Node: Recipes19910
+Node: Organizing recipes20356
+Node: Getting more recipes21871
+Node: Authoring Recipes22536
+Node: Recipe format22967
+Node: Dependencies23636
+Node: Byte Compilation23982
+Node: Autoloads24548
+Node: Build25674
 
 End Tag Table
