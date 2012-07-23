@@ -452,6 +452,8 @@ which defaults to the first element in `el-get-recipe-path'."
 (defun el-get-init (package &optional package-status-alist)
   "Make the named PACKAGE available for use, first initializing any
    dependency of the PACKAGE."
+  (interactive (list (el-get-read-package-with-status "Init" "installed")))
+  (el-get-verbose-message "el-get-init: %s" package)
   (let* ((init-deps   (el-get-dependencies (el-get-as-symbol package))))
     (el-get-verbose-message "el-get-init: " init-deps)
     (loop for p in init-deps do (el-get-do-init p) collect p)))
@@ -463,8 +465,6 @@ Add PACKAGE's directory (or `:load-path' if specified) to the
 `load-path', add any its `:info' directory to
 `Info-directory-list', and `require' its `:features'.  Will be
 called by `el-get' (usually at startup) for each installed package."
-  (interactive (list (el-get-read-package-with-status "Init" "installed")))
-  (el-get-verbose-message "el-get-init: %s" package)
   (when el-get-auto-update-cached-recipes
     (el-get-merge-properties-into-status package package-status-alist :noerror t))
    (condition-case err
