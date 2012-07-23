@@ -156,8 +156,13 @@ recursion.
      package process-list build-info-then-post-build-fun)))
 
 (defun el-get-set-info-path (package infodir-rel)
-  (eval-after-load "paths"
-    '(el-get-add-path-to-list package 'Info-default-directory-list infodir-rel)))
+  (let ((body
+         `(el-get-add-path-to-list
+           ',package 'Info-default-directory-list ,infodir-rel)))
+    ;; `Info-default-directory-list' is defined in "paths.el" until 24.1
+    ;; and in "info.el" in more recent Emacs versions.
+    (eval-after-load "paths" body)
+    (eval-after-load "info" body)))
 
 (defun el-get-install-or-init-info (package build-or-init)
   "Call `el-get-install-info' to create the necessary \"dir\"
