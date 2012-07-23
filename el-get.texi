@@ -13,14 +13,20 @@
 @copying
 Copyright @copyright{} 2010, 2011, 2012 Dimitri Fontaine.
 
-TODO: Think about the proper licencing, it seems like WTFPL is appropriate.
-
 @quotation
-Permission is granted to copy, distribute and/or modify this document
-under the terms of the GNU Free Documentation License, Version 1.2 or
-any later version published by the Free Software Foundation; with no
-Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
-Texts.
+            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+                    Version 2, December 2004
+
+ Copyright (C) 2004 Sam Hocevar @email{sam@@hocevar.net}
+
+ Everyone is permitted to copy and distribute verbatim or modified
+ copies of this license document, and changing it is allowed as long
+ as the name is changed.
+
+            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+
+  0. You just DO WHAT THE FUCK YOU WANT TO.
 @end quotation
 @end copying
 
@@ -630,36 +636,96 @@ very simple, though.
 @menu
 * Recipe format::
 * Dependencies::
-* Notifications::
 * Byte Compilation::
 * Autoloads::
 * Build::
-* Methods::
-* Status::
 @end menu
 
 @node Recipe format
 @section Recipe format
 
+The recipe for the hypothetical package named @code{el-get-example}
+must be provided in a file named @file{el-get-example.rcp}. This file
+will be searched for as described in @xref{Organizing recipes}. The
+variable @code{el-get-sources} is also considered as a recipe source,
+as detailed in @xref{Organizing recipes}.
+
+A recipe file contains a lisp property list. Accepted properties are
+described in the documentation for the variable @code{el-get-sources},
+and their possible values are described at the same place.
+
+Please refer to that documentation.
+
 @node Dependencies
 @section Dependencies
 
-@node Notifications
-@section Notifications
+When a recipe provides a @code{:depends} property, El-Get makes sure
+that the given list of packages is installed and initialized before
+the package for the current recipe is installed and initialized.
 
 @node Byte Compilation
 @section Byte Compilation
 
+By default, El-Get will recursively byte-compile the directory where
+the package is installed, that is each and any file called
+@file{something.el}. Some packages include non Emacs Lisp directories,
+and sometime test files that are not meant to pass byte compilation
+without errors or warnings. It is possible to setup your recipe to
+either only target some files of the package, or to bypass byte
+compiling entirely.
+
 @node Autoloads
 @section Autoloads
+
+Think about providing @code{autoloads} for your recipe if some are
+available. You can provide them yourself too, for packages that should
+have support for autoloads but ship without them.
+
+The @code{:prepare} property of a recipe is the right place where to
+put added autoloads, as shown in this example:
+
+@example
+(:name undo-tree
+       :description "Treat undo history as a tree"
+       :type git
+       :url "http://www.dr-qubit.org/git/undo-tree.git"
+       :prepare (progn
+                  (autoload 'undo-tree-mode "undo-tree.el"
+                    "Undo tree mode; see undo-tree.el for details" t)
+                  (autoload 'global-undo-tree-mode "undo-tree.el"
+                    "Global undo tree mode" t)))
+@end example
+
+The @code{:prepare} property of a recipe is considered the same as the
+@code{:before} one, just evaluated after it. @code{:prepare} is meant
+for recipe authors whereas @code{:before} is meant for user
+customisations. See @xref{Before and After properties}.
 
 @node Build
 @section Build
 
-@node Methods
-@section Methods
+The @code{:build} property of the recipe allows for OS integration at
+build time. Build happens after the package has been fetched, and
+allows to run commands such as @command{make}.
 
-@node Status
-@section Status
+The variable @code{el-get-emacs} contains the complete path where to
+find the current Emacs executable you're running, as that's something
+build commands often need.
+
+As shell interpolation can get hairy, El-Get offers you to setup your
+build commands as Emacs Lisp list. See the magit recipe for an
+example:
+
+@example
+(:name magit
+       :website "https://github.com/magit/magit#readme"
+       :description "It's Magit! An Emacs mode for Git."
+       :type github
+       :pkgname "magit/magit"
+       :info "."
+       :autoloads ("50magit")
+       :build (("make" "all"))
+       :build/darwin `(,(concat "make EMACS=" el-get-emacs " all")))
+@end example
 
 @bye
