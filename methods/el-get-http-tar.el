@@ -28,9 +28,8 @@ the files up."
       (loop for fname in (directory-files
 			  (expand-file-name dir pdir) nil "[^.]$")
 	    for fullname = (expand-file-name fname (expand-file-name dir pdir))
-	    for newname  = (expand-file-name pdir fname)
+	    for newname  = (expand-file-name fname pdir)
 	    do (progn
-		 (el-get-verbose-message "%S %S %S" pdir dir fname)
 		 (el-get-verbose-message "mv %S %S" fullname newname)
 		 (rename-file fullname newname)))
       (el-get-verbose-message "delete-directory: %s" (expand-file-name dir pdir))
