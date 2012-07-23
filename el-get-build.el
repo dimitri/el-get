@@ -157,7 +157,7 @@ recursion.
 
 (defun el-get-set-info-path (package infodir-rel)
   (eval-after-load "paths"
-    '(el-get-add-path-to-list package 'Info-default-directory-list infodir-rel)))
+    `(el-get-add-path-to-list ',package 'Info-default-directory-list ,infodir-rel)))
 
 (defun el-get-install-or-init-info (package build-or-init)
   "Call `el-get-install-info' to create the necessary \"dir\"
