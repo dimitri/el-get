@@ -81,7 +81,10 @@
                   (read-from-string (buffer-string)))))))
     (if (consp (car ps))         ; check for an alist, new format
         ps
-      ;; convert to the new format, fetching recipes as we go
+      ;; first backup the old status just in case
+      (with-temp-file (format "%s.old" el-get-status-file)
+        (insert (el-get-print-to-string ps)))
+      ;; now convert to the new format, fetching recipes as we go
       (loop for (p s) on ps by 'cddr
             for psym = (el-get-package-symbol p)
             when psym
