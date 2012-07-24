@@ -1,8 +1,7 @@
 (:name rope
        :description "A python refactoring library"
        :post-init
-       (progn
-         (unless (boundp 'pymacs-load-path) (setq pymacs-load-path nil))
-         (add-to-list 'pymacs-load-path default-directory))
+       ;; Add to PYTHONPATH directly as it is used in ropemacs and traad
+       (el-get-envpath-prepend "PYTHONPATH" default-directory)
        :type hg
        :url "http://bitbucket.org/agr/rope")
