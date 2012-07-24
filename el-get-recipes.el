@@ -224,4 +224,20 @@ Second argument PACKAGE is optional and only used to construct the error message
       (error "Package %s requires Emacs version %s or higher, but the current emacs is only version %s"
              pname required-version emacs-version))))
 
+(defun el-get-envpath-prepend (envname head)
+  "Prepend HEAD in colon-separated environment variable ENVNAME.
+This is effectively the same as doing the following in shell:
+    export ENVNAME=HEAD:$ENVNAME
+
+Use this to modify environment variable such as $PATH or $PYTHONPATH."
+  (setenv envname (el-get-envpath-prepend-1 (getenv envname) head)))
+
+(defun el-get-envpath-prepend-1 (paths head)
+  "Return \"HEAD:PATHS\" omitting duplicates in it."
+  (let ((pplist (split-string (or paths "") ":" 'omit-nulls)))
+    (mapconcat 'identity
+               (remove-duplicates (cons head pplist)
+                                  :test #'string= :from-end t)
+               ":")))
+
 (provide 'el-get-recipes)

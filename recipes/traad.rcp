@@ -1,0 +1,12 @@
+(:name traad
+       :description "A XMLRPC server for the rope Python refactoring library"
+       :type github
+       :pkgname "abingham/traad"
+       :load-path ("elisp")
+       :prepare
+       (progn
+         ;; do PYTHONPATH=~/.emacs.d/el-get/traad/:$PYTHONPATH
+         (el-get-envpath-prepend "PYTHONPATH" default-directory)
+         (setq traad-server-program '("python" "-m" "traad.server"))
+         (autoload 'traad-open "traad" nil t))
+       :depends rope)
