@@ -1,0 +1,5 @@
+(:name revbufs
+       :description "Reverts out-of-date buffers safely"
+       :type http
+       :url "http://www.neilvandyke.org/revbufs/revbufs.el"
+       :features revbufs)
