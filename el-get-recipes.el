@@ -65,11 +65,11 @@ compiled version."
     (let* ((init-file-name (format "init-%s.el" package))
 	   (package-init-file
 	    (expand-file-name init-file-name el-get-user-package-directory))
-           (file-name-no-extension (file-name-sans-extension package-init-file))
+	   (file-name-no-extension (file-name-sans-extension package-init-file))
 	   (compiled-init-file (concat file-name-no-extension ".elc")))
       (when (file-exists-p package-init-file)
-        (when el-get-byte-compile
-          (el-get-byte-compile-file package-init-file))
+	(when el-get-byte-compile
+	  (el-get-byte-compile-file package-init-file))
 	(el-get-verbose-message "el-get: load %S" file-name-no-extension)
 	(load file-name-no-extension 'noerror)))))
 
