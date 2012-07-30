@@ -585,6 +585,7 @@ Recipes are a list of properties, which are documented in the variable
 @menu
 * Organizing recipes::
 * Getting more recipes::
+* Overriding package files::
 @end menu
 
 @node Organizing recipes
@@ -635,6 +636,14 @@ code. See @xref{User Init}.
 The command @code{el-get-elpa-build-local-recipes} downloads the list
 of Emacs Lisp Packages from the ELPA archives you have setup, and make
 them automatically available for El-Get.
+
+@node Overriding package files
+@section Overriding package files
+
+El-Get manages the files associated with a package. You can browse
+those files using the @code{el-get-cd} function. It's possible to hack
+on those files, be aware that doing so might break your setup
+capability to handle upgrades.
 
 @node Authoring Recipes
 @chapter Authoring Recipes
