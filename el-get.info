@@ -75,25 +75,39 @@ File: el-get.info,  Node: Acknowledgments,  Next: Glossary,  Prev: Introduction,
 2 Acknowledgments
 *****************
 
-Dimitri Fontaine start the whole project and still manage the releases,
-and sometimes even contribute code and documentation.
+Dimitri Fontaine started the whole project and still manages the
+releases, and sometimes even contribute code and documentation.
 
    Julien Danjou has been a contributor since very early days, about the
 first beta tester of the idea, before we really knew how much to
 achieve.
 
-   Ryan Thompson joined and commented some issues, began contributing
-and quickly became top-level and most active contributor to the project,
-getting a commit bit and some management duties. He manages tests and
-issues on github as much as he can spares time to el-get.
+   Ryan C. Thompson joined and commented some issues, began contributing
+and quickly became top-level and most active contributor to the
+project, getting a commit bit and some management duties. He manages
+tests and issues on github as much as he can spares time to El-Get.
 
    Dave Abrahams contributed lots of code and efforts to make things
 right™. He's still using El-Get, but decided to retire from the
 project.
 
-   Lots of people (more than we can list here) did contribute to el-get
+   Lots of people (more than we can list here) did contribute to El-Get
 either recipes, bug fixes or ideas to implement, often with code. That
 builds up an awesome community, thanks guys!
+
+     dim ~/dev/emacs/el-get git --no-pager shortlog -n -s | wc -l
+          133
+     dim ~/dev/emacs/el-get git --no-pager shortlog -n -s | head -10
+        713	Dimitri Fontaine
+        336	Ryan C. Thompson
+        110	Dave Abrahams
+        106	Julien Danjou
+         73	Ryan Thompson
+         68	Sébastien Gross
+         34	Takafumi Arakaki
+         25	Yakkala Yagnesh Raghava
+         25	Alex Ott
+         21	Rüdiger Sonderfeld
 
 
 File: el-get.info,  Node: Glossary,  Next: Installing,  Prev: Acknowledgments,  Up: Top
@@ -392,16 +406,10 @@ concurrently, in the background.
    When SYNC is `sync', each package will be installed synchronously,
 and any error will stop it all.
 
-   When SYNC is `wait', then `el-get' will enter a wait-loop and only
-let you use Emacs once it has finished with its job. That's useful an
-option to use in your *Note user-init-file: (emacs)user-init-file. Note
-that each package in the list gets installed in parallel with this
-option.
-
    Please note that the `el-get-init' part of `el-get' is always done
-synchronously, so you will have to wait here. There's `byte-compile'
-support though, and the packages you use are welcome to use `autoload'
-too.
+synchronously. There's `byte-compile' support though, and the packages
+you use are welcome to use `autoload' too. You can also force your
+setup to be loaded lazily with the `el-get-is-lazy' variable.
 
    `PACKAGES' is expected to be a list of packages you want to install
 or init.  When `PACKAGES' is omited (the default), the list of already
@@ -580,6 +588,7 @@ variable EL-GET-SOURCES.
 
 * Organizing recipes::
 * Getting more recipes::
+* Overriding package files::
 
 
 File: el-get.info,  Node: Organizing recipes,  Next: Getting more recipes,  Up: Recipes
@@ -617,7 +626,7 @@ matching `el-get-sources' stanza.
    El-Get also supports full User Init files, see *Note User Init::.
 
 
-File: el-get.info,  Node: Getting more recipes,  Prev: Organizing recipes,  Up: Recipes
+File: el-get.info,  Node: Getting more recipes,  Next: Overriding package files,  Prev: Organizing recipes,  Up: Recipes
 
 8.2 Getting more recipes
 ========================
@@ -631,6 +640,17 @@ you often have to add some initialisation code. See *Note User Init::.
    The command `el-get-elpa-build-local-recipes' downloads the list of
 Emacs Lisp Packages from the ELPA archives you have setup, and make
 them automatically available for El-Get.
+
+
+File: el-get.info,  Node: Overriding package files,  Prev: Getting more recipes,  Up: Recipes
+
+8.3 Overriding package files
+============================
+
+El-Get manages the files associated with a package. You can browse
+those files using the `el-get-cd' function. It's possible to hack on
+those files, be aware that doing so might break your setup capability
+to handle upgrades.
 
 
 File: el-get.info,  Node: Authoring Recipes,  Prev: Recipes,  Up: Top
@@ -753,32 +773,33 @@ Tag Table:
 Node: Top762
 Node: Introduction1227
 Node: Acknowledgments2302
-Node: Glossary3313
-Ref: Glossary - Init4409
-Ref: Glossary - Install4711
-Ref: Glossary - Recipe5798
-Ref: Glossary - Status6222
-Ref: Glossary - Update6480
-Node: Installing6718
-Node: Install the developper version7591
-Node: Skip Emacswiki recipes when installing8336
-Node: Usage9172
-Node: Setup11461
-Node: Basic Setup11857
-Node: The el-get function13096
-Node: Distributed Setup14605
-Node: Setup Customization15916
-Node: User Init17062
-Node: Before and After properties17749
-Node: Initialization files19257
-Node: Recipes19910
-Node: Organizing recipes20356
-Node: Getting more recipes21871
-Node: Authoring Recipes22536
-Node: Recipe format22967
-Node: Dependencies23636
-Node: Byte Compilation23982
-Node: Autoloads24548
-Node: Build25674
+Node: Glossary3752
+Ref: Glossary - Init4848
+Ref: Glossary - Install5150
+Ref: Glossary - Recipe6237
+Ref: Glossary - Status6661
+Ref: Glossary - Update6919
+Node: Installing7157
+Node: Install the developper version8030
+Node: Skip Emacswiki recipes when installing8775
+Node: Usage9611
+Node: Setup11900
+Node: Basic Setup12296
+Node: The el-get function13535
+Node: Distributed Setup14811
+Node: Setup Customization16122
+Node: User Init17268
+Node: Before and After properties17955
+Node: Initialization files19463
+Node: Recipes20116
+Node: Organizing recipes20591
+Node: Getting more recipes22106
+Node: Overriding package files22804
+Node: Authoring Recipes23187
+Node: Recipe format23618
+Node: Dependencies24287
+Node: Byte Compilation24633
+Node: Autoloads25199
+Node: Build26325
 
 End Tag Table
