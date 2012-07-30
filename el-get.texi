@@ -76,25 +76,41 @@ Please note that this versioning policy has been picked while backing
 @node Acknowledgments
 @chapter Acknowledgments
 
-Dimitri Fontaine start the whole project and still manage the
+Dimitri Fontaine started the whole project and still manages the
 releases, and sometimes even contribute code and documentation.
 
 Julien Danjou has been a contributor since very early days, about the
 first beta tester of the idea, before we really knew how much to
 achieve.
 
-Ryan Thompson joined and commented some issues, began contributing and
-quickly became top-level and most active contributor to the project,
-getting a commit bit and some management duties. He manages tests and
-issues on github as much as he can spares time to el-get.
+Ryan C. Thompson joined and commented some issues, began contributing
+and quickly became top-level and most active contributor to the
+project, getting a commit bit and some management duties. He manages
+tests and issues on github as much as he can spares time to El-Get.
 
 Dave Abrahams contributed lots of code and efforts to make things
 right™. He's still using El-Get, but decided to retire from the
 project.
 
-Lots of people (more than we can list here) did contribute to el-get
+Lots of people (more than we can list here) did contribute to El-Get
 either recipes, bug fixes or ideas to implement, often with code. That
 builds up an awesome community, thanks guys!
+
+@example
+dim ~/dev/emacs/el-get git --no-pager shortlog -n -s | wc -l
+     133
+dim ~/dev/emacs/el-get git --no-pager shortlog -n -s | head -10
+   713	Dimitri Fontaine
+   336	Ryan C. Thompson
+   110	Dave Abrahams
+   106	Julien Danjou
+    73	Ryan Thompson
+    68	Sébastien Gross
+    34	Takafumi Arakaki
+    25	Yakkala Yagnesh Raghava
+    25	Alex Ott
+    21	Rüdiger Sonderfeld
+@end example
 
 @node Glossary
 @chapter Glossary
