@@ -70,13 +70,15 @@ connection to start Emacs even if El-get is already installed while the code
 in the later section will only require a connection if it cannot find an
 existing installation.
 
-    ;; So the idea is that you copy/paste this code into your *scratch* buffer,
-    ;; hit C-j, and you have a working el-get.
-    (url-retrieve
-     "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
-     (lambda (s)
-       (goto-char (point-max))
-       (eval-print-last-sexp)))
+```emacs-lisp
+;; So the idea is that you copy/paste this code into your *scratch* buffer,
+;; hit C-j, and you have a working el-get.
+(url-retrieve
+ "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
+ (lambda (s)
+   (goto-char (point-max))
+   (eval-print-last-sexp)))
+```
 
 Evaluating this code after copying it into your `\*scratch\*` buffer by
 typing `C-j` or `M-x eval-print-last-exp` will retrieve the El-get
@@ -89,14 +91,33 @@ The lazy installer above targets the current stable release.  If you would
 rather use the current development version you must clone the `master`
 branch by ensuring the variable `el-get-master-branch` exists.
 
-    ;; So the idea is that you copy/paste this code into your *scratch* buffer,
-    ;; hit C-j, and you have a working developper edition of el-get.
-    (url-retrieve
-     "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
-     (lambda (s)
-       (let (el-get-master-branch)
-         (goto-char (point-max))
-         (eval-print-last-sexp))))
+```emacs-lisp
+;; So the idea is that you copy/paste this code into your *scratch* buffer,
+;; hit C-j, and you have a working developper edition of el-get.
+(url-retrieve
+ "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
+ (lambda (s)
+   (let (el-get-master-branch)
+     (goto-char (point-max))
+     (eval-print-last-sexp))))
+```
+
+## Upgrading from 3.1 to 4.1
+
+The development of El-Get 4.1 took a long time, and as a result a lot of
+recipes have change in non compatible ways: some sources switched from `SVN`
+to `git`, some revisited their hosting choice, etc.
+
+As a result, lots of recipe should be *reinstalled* when upgrading. The
+easiest way here might well be to just backup your `el-get-dir` directory
+and start-up fresh with the new El-Get code:
+
+    M-x el-get-self-update
+    mkdir ~/.emacs.d/el-get
+    mv ~/.emacs.d/el-get ~/.emacs.d/el-get-backup-3.stable
+
+That code sample assumes that `el-get-dir` is set to its default value, that
+is `~/.emacs.d/el-get`.
 
 # Setup
 
@@ -115,30 +136,34 @@ manual.
 
 Here is the basic setup to add to your `user-init-file` (`.emacs`):
 
-    (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+```emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
-    (unless (require 'el-get nil t)
-      (url-retrieve
-       "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
-       (lambda (s)
-         (goto-char (point-max))
-         (eval-print-last-sexp))))
+(unless (require 'el-get nil t)
+  (url-retrieve
+   "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
+   (lambda (s)
+     (goto-char (point-max))
+     (eval-print-last-sexp))))
 
-    (el-get 'sync)
+(el-get 'sync)
+```
 
 And for those who prefer the master branch, please use the code below
 
-    (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+```emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
-    (unless (require 'el-get nil t)
-      (url-retrieve
-       "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
-       (lambda (s)
-         (let (el-get-master-branch)
-           (goto-char (point-max))
-           (eval-print-last-sexp)))))
+(unless (require 'el-get nil t)
+  (url-retrieve
+   "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
+   (lambda (s)
+     (let (el-get-master-branch)
+       (goto-char (point-max))
+       (eval-print-last-sexp)))))
 
-    (el-get 'sync)
+(el-get 'sync)
+```
 
 ## Package Setup
 
