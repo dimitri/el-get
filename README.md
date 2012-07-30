@@ -70,7 +70,7 @@ connection to start Emacs even if El-get is already installed while the code
 in the later section will only require a connection if it cannot find an
 existing installation.
 
-```emacs-lisp
+```lisp
 ;; So the idea is that you copy/paste this code into your *scratch* buffer,
 ;; hit C-j, and you have a working el-get.
 (url-retrieve
@@ -91,7 +91,7 @@ The lazy installer above targets the current stable release.  If you would
 rather use the current development version you must clone the `master`
 branch by ensuring the variable `el-get-master-branch` exists.
 
-```emacs-lisp
+```lisp
 ;; So the idea is that you copy/paste this code into your *scratch* buffer,
 ;; hit C-j, and you have a working developper edition of el-get.
 (url-retrieve
@@ -136,7 +136,7 @@ manual.
 
 Here is the basic setup to add to your `user-init-file` (`.emacs`):
 
-```emacs-lisp
+```lisp
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
 (unless (require 'el-get nil t)
@@ -151,7 +151,7 @@ Here is the basic setup to add to your `user-init-file` (`.emacs`):
 
 And for those who prefer the master branch, please use the code below
 
-```emacs-lisp
+```lisp
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
 (unless (require 'el-get nil t)
