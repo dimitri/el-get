@@ -405,16 +405,11 @@ concurrently, in the background.
 When @var{sync} is @code{sync}, each package will be installed
 synchronously, and any error will stop it all.
 
-When @var{sync} is @code{wait}, then @code{el-get} will enter a
-wait-loop and only let you use Emacs once it has finished with its
-job. That's useful an option to use in your @xref{user-init-file,
-user-init-file, Init File, emacs}. Note that each package in the list
-gets installed in parallel with this option.
-
 Please note that the @code{el-get-init} part of @code{el-get} is
-always done synchronously, so you will have to wait here. There's
-@code{byte-compile} support though, and the packages you use are
-welcome to use @code{autoload} too.
+always done synchronously. There's @code{byte-compile} support though,
+and the packages you use are welcome to use @code{autoload} too. You
+can also force your setup to be loaded lazily with the
+@code{el-get-is-lazy} variable.
 
 @code{PACKAGES} is expected to be a list of packages you want to
 install or init.  When @code{PACKAGES} is omited (the default), the
