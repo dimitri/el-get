@@ -986,23 +986,13 @@ concurrently, in the background.
 When SYNC is 'sync, each package will be installed synchronously,
 and any error will stop it all.
 
-When SYNC is 'wait, then `el-get' will enter a wait-loop and only
-let you use Emacs once it has finished with its job. That's
-useful an option to use in your `user-init-file'. Note that each
-package in the list gets installed in parallel with this option.
-
 Please note that the `el-get-init' part of `el-get' is always
-done synchronously, so you will have to wait here. There's
-`byte-compile' support though, and the packages you use are
-welcome to use `autoload' too.
+done synchronously. There's `byte-compile' support though, and
+the packages you use are welcome to use `autoload' too.
 
 PACKAGES is expected to be a list of packages you want to install
 or init.  When PACKAGES is omited (the default), the list of
 already installed packages is considered."
-  (unless (or (null sync)
-	      (member sync '(sync wait)))
-    (error "el-get sync parameter should be either nil, sync or wait"))
-
   ;; If there's no autoload file, everything needs to be regenerated.
   (unless (file-exists-p el-get-autoload-file) (el-get-invalidate-autoloads))
 
@@ -1014,29 +1004,12 @@ already installed packages is considered."
 	  (loop for p in packages when (listp p) append p else collect p))
          (total       (length packages))
          (installed   (el-get-count-packages-with-status packages "installed"))
-         (wait (eq sync 'wait))
-         (progress (and wait
-                        (make-progress-reporter
-			 "Waiting for `el-get' to complete... "
-			 0 (- total installed) 0)))
-         ;; In the wait case, we actually want the installation to be
-         ;; async, so set `sync' to nil.
-         (sync (if wait nil sync))
          (el-get-default-process-sync sync))
 
     ;; keep the result of `el-get-init-and-install' to return it even in the
     ;; 'wait case
     (prog1
 	(el-get-init-and-install (mapcar 'el-get-as-symbol packages))
-
-      ;; el-get-install is async, that's now ongoing.
-      (when wait
-        (while (> (- total installed) 0)
-          (sleep-for 0.2)
-          ;; don't forget to account for installation failure
-          (setq installed (el-get-count-packages-with-status packages "installed" "required"))
-          (progress-reporter-update progress (- total installed)))
-        (progress-reporter-done progress))
 
       ;; now is a good time to care about autoloads
       (el-get-eval-autoloads))))
