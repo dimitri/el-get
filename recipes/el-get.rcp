@@ -5,5 +5,5 @@
        :branch "3.stable"
        :pkgname "dimitri/el-get"
        :features el-get
-       :info    "el-get.info"
+       :info    "."
        :load    "el-get.el")
