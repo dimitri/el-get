@@ -30,6 +30,8 @@
 PACKAGE isn't currently installed by ELPA."
   (let* ((pname (format "%s" package))  ; easy way to cope with symbols etc.
 
+     (ls-command (if (memq system-type '(ms-dos windows-nt)) "dir /B " "ls -1 "))
+
 	 (l
 	  ;; we use try-completion to find the realname of the directory
 	  ;; ELPA used, and this wants an alist, we trick ls -i -1 into
@@ -38,7 +40,7 @@ PACKAGE isn't currently installed by ELPA."
 		  (split-string
 		   (shell-command-to-string
 		    (concat
-		     "ls -i1 "
+		     ls-command
                      (shell-quote-argument
                       (expand-file-name
                        (file-name-as-directory package-user-dir))))))))
