@@ -2,5 +2,4 @@
        :description "Idle Highlight Mode."
        :website "https://github.com/nonsequitur/idle-highlight-mode"
        :type github
-       :pkgname "nonsequitur/idle-highlight-mode"
-       :features "idle-highlight-mode")
+       :pkgname "nonsequitur/idle-highlight-mode")
