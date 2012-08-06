@@ -1,0 +1,4 @@
+(:name shell-switcher
+       :type github
+       :pkgname "DamienCassou/shell-switcher"
+       :description "An emacs mode to easily switch between shell buffers (like with alt+tab)")
