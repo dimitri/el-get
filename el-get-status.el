@@ -31,7 +31,7 @@
          (symbol-name package-symbol))
         ((stringp package-symbol)
          package-symbol)
-        (t (error "Unknown package: %s"))))
+        (t (error "Unknown package: %s" package-symbol))))
 
 (defun el-get-package-symbol (package)
   "Returns a package name as a non-keyword symbol"
@@ -40,7 +40,7 @@
         ((symbolp package)
          package)
         ((stringp package) (intern package))
-        (t (error "Unknown package: %s"))))
+        (t (error "Unknown package: %s" package))))
 
 (defun el-get-package-keyword (package-name)
   "Returns a package name as a keyword :package."
