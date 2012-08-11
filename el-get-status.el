@@ -68,6 +68,8 @@
             "Recipe must be a list")
     (with-temp-file el-get-status-file
       (insert (el-get-print-to-string new-package-status-alist 'pretty)))
+    ;; Update cache
+    (setq el-get-status-cache new-package-status-alist)
     ;; Return the new alist
     new-package-status-alist))
 
@@ -90,9 +92,17 @@
                                 ;; just provide a placeholder no-op recipe.
                                 (error `(:name ,psym :type builtin))))))))
 
+(defvar el-get-status-cache nil
+  "Cache used by `el-get-read-status-file'.")
+
 (defun el-get-read-status-file ()
   "read `el-get-status-file' and return an alist of plist like:
    (PACKAGE . (status \"status\" recipe (:name ...)))"
+  (or el-get-status-cache
+      (setq el-get-status-cache (el-get-read-status-file-force))))
+
+(defun el-get-read-status-file-force ()
+  "Forcefully load status file."
   (let* ((ps
           (when (file-exists-p el-get-status-file)
             (car (with-temp-buffer
