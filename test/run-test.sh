@@ -33,12 +33,12 @@ run_test () {
     echo "*** ERROR $1: Could not find test file ***"
   else
     echo "*** Running el-get test $testfile ***"
-    mkdir -p "$TEST_HOME"/.emacs.d
     if [ -n "$DO_NOT_CLEAN" ]; then
       echo "Running test without removing $TEST_HOME first";
     else
       rm -rf "$TEST_HOME"/.emacs.d/el-get/
     fi
+    mkdir -p "$TEST_HOME"/.emacs.d/el-get/
     HOME="$TEST_HOME" "$EMACS" -Q -batch -L "$EL_GET_LIB_DIR" \
       -l "$EL_GET_LIB_DIR/el-get.el" -l "$EL_GET_LIB_DIR/test/test-setup.el" \
       -l "$testfile"
