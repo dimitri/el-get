@@ -206,9 +206,13 @@ If PACKAGE-STATUS-ALIST is nil, read recipes from status file."
     :load
     :features
     :library
+    :prepare
     :before
     :after
-    :lazy)
+    :post-init
+    :lazy
+    :website
+    :description)
   "Whitelist of properties that may be updated in cached recipes.
 
 If any of these properties change on the recipe for an installed
