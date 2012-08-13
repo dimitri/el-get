@@ -71,24 +71,47 @@
     ;; Return the new alist
     new-package-status-alist))
 
+(defun el-get-convert-from-old-status-format (old-status-list)
+  "Convert OLD-STATUS-LIST, a property list, to the new format"
+  ;; first backup the old status just in case
+  (with-temp-file (format "%s.old" el-get-status-file)
+    (insert (el-get-print-to-string ps)))
+  ;; now convert to the new format, fetching recipes as we go
+  (loop for (p s) on ps by 'cddr
+        for psym = (el-get-package-symbol p)
+        when psym
+        collect
+        (cons psym
+              (list 'status s
+                    'recipe (when (string= s "installed")
+                              (condition-case nil
+                                  (el-get-package-def psym)
+                                ;; If the recipe is not available any more,
+                                ;; just provide a placeholder no-op recipe.
+                                (error `(:name ,psym :type builtin))))))))
+
 (defun el-get-read-status-file ()
   "read `el-get-status-file' and return an alist of plist like:
    (PACKAGE . (status \"status\" recipe (:name ...)))"
-  (let ((ps
-         (when (file-exists-p el-get-status-file)
-           (car (with-temp-buffer
-                  (insert-file-contents-literally el-get-status-file)
-                  (read-from-string (buffer-string)))))))
-    (if (consp (car ps))         ; check for an alist, new format
-        ps
-      ;; convert to the new format, fetching recipes as we go
-      (loop for (p s) on ps by 'cddr
-            for psym = (el-get-package-symbol p)
-            when psym
-            collect (cons psym
-                          (list 'status s
-                                'recipe (when (string= s "installed")
-                                          (el-get-package-def psym))))))))
+  (let* ((ps
+          (when (file-exists-p el-get-status-file)
+            (car (with-temp-buffer
+                   (insert-file-contents-literally el-get-status-file)
+                   (read-from-string (buffer-string))))))
+         (p-s
+          (if (consp (car ps))         ; check for an alist, new format
+              ps
+            (el-get-convert-from-old-status-format ps))))
+    ;; double check some status "conditions"
+    ;;
+    ;; a package with status "installed" and a missing directory is
+    ;; automatically reset to "required" so that a proper install happens.
+    (loop for (p . prop) in p-s
+          if (and (string= (plist-get prop 'status) "installed")
+                  (not (file-directory-p (el-get-package-directory p))))
+          collect (cons p (plist-put prop 'status "required"))
+          else
+          collect (cons p prop))))
 
 (defun el-get-package-status-alist (&optional package-status-alist)
   "return an alist of (PACKAGE . STATUS)"

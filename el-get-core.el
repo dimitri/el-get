@@ -56,8 +56,8 @@ call for doing the named package action in the given method.")
   (and (el-get-method name :install) t))
 
 (defun* el-get-register-method (name &key install update remove
-                                     install-hook remove-hook compute-checksum
-                                     guess-website)
+                                     install-hook update-hook remove-hook
+                                     compute-checksum guess-website)
   "Register the method for backend NAME, with given functions"
   (let (method-def)
     (loop for required-arg in '(install update remove)
@@ -67,7 +67,7 @@ call for doing the named package action in the given method.")
                    (plist-put method-def
                               (intern (format ":%s" required-arg))
                               (symbol-value required-arg))))
-    (loop for optional-arg in '(install-hook remove-hook
+    (loop for optional-arg in '(install-hook update-hook remove-hook
                                 compute-checksum guess-website)
         if (symbol-value optional-arg)
         do (setq method-def
@@ -388,7 +388,12 @@ makes it easier to conditionally splice a command into the list.
                     (error "el-get: %s %s" cname errorm))
                   (when cbuf (kill-buffer cbuf))
                   (if next
-                      (el-get-start-process-list package next final-func)
+                      ;; Prevent stack overflow on very long command
+                      ;; lists. This allows
+                      ;; `el-get-start-process-list' (but not other
+                      ;; functions) to recurse indefinitely.
+                      (let ((max-specpdl-size (+ 100 max-specpdl-size)))
+                        (el-get-start-process-list package next final-func))
                     (when (functionp final-func)
                       (funcall final-func package)))))
             ;; async case

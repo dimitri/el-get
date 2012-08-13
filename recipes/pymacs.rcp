@@ -5,13 +5,7 @@
        :prepare
        (progn
          ;; do PYTHONPATH=~/.emacs.d/el-get/pymacs/:$PYTHONPATH
-         (setenv
-          "PYTHONPATH"
-          (let ((pplist (split-string (or (getenv "PYTHONPATH") "") ":" 'omit-nulls)))
-            (mapconcat 'identity
-                       (remove-duplicates (cons default-directory pplist)
-                                          :test #'string= :from-end t)
-                       ":")))
+         (el-get-envpath-prepend "PYTHONPATH" default-directory)
          (autoload 'pymacs-load "pymacs" nil t)
          (autoload 'pymacs-eval "pymacs" nil t)
          (autoload 'pymacs-exec "pymacs" nil t)

@@ -449,14 +449,21 @@ which defaults to the first element in `el-get-recipe-path'."
 
 
 (defun el-get-init (package &optional package-status-alist)
+  "Make the named PACKAGE available for use, first initializing any
+   dependency of the PACKAGE."
+  (interactive (list (el-get-read-package-with-status "Init" "installed")))
+  (el-get-verbose-message "el-get-init: %s" package)
+  (let* ((init-deps   (el-get-dependencies (el-get-as-symbol package))))
+    (el-get-verbose-message "el-get-init: " init-deps)
+    (loop for p in init-deps do (el-get-do-init p) collect p)))
+
+(defun el-get-do-init (package &optional package-status-alist)
   "Make the named PACKAGE available for use.
 
 Add PACKAGE's directory (or `:load-path' if specified) to the
 `load-path', add any its `:info' directory to
 `Info-directory-list', and `require' its `:features'.  Will be
 called by `el-get' (usually at startup) for each installed package."
-  (interactive (list (el-get-read-package-with-status "Init" "installed")))
-  (el-get-verbose-message "el-get-init: %s" package)
   (when el-get-auto-update-cached-recipes
     (el-get-merge-properties-into-status package package-status-alist :noerror t))
   (condition-case err
@@ -577,7 +584,7 @@ PACKAGE may be either a string or the corresponding symbol."
   "Function to call after building the package while installing it."
   (el-get-save-package-status package "installed")
   (el-get-invalidate-autoloads package)	; that will also update them
-  (el-get-init package)
+  (el-get-do-init package)
   (run-hook-with-args 'el-get-post-install-hooks package))
 
 (defun el-get-post-install (package)
@@ -618,7 +625,7 @@ PACKAGE may be either a string or the corresponding symbol."
   (if (el-get-package-is-installed package)
       (progn
         (el-get-verbose-message "el-get: `%s' package is already installed" package)
-        (el-get-init package))
+        (el-get-do-init package))
     (let* ((status   (el-get-read-package-status package))
 	   (source   (el-get-package-def package))
 	   (method   (el-get-package-method source))
@@ -698,15 +705,20 @@ PACKAGE may be either a string or the corresponding symbol."
   (when (string= (el-get-read-package-status package) "required")
     (el-get-save-package-status package "installed"))
   (el-get-invalidate-autoloads package)
-  (el-get-init package)
+  (el-get-do-init package)
   (el-get-reload package)
   (run-hook-with-args 'el-get-post-update-hooks package))
 
 (defun el-get-post-update (package)
   "Post update PACKAGE. This will get run by a sentinel."
   (let* ((sync el-get-default-process-sync)
-         (source   (el-get-package-def package))
+	 (type     (el-get-package-type package))
+	 (hooks    (el-get-method type :update-hook))
 	 (commands (el-get-build-commands package)))
+
+    ;; post-update is the right place to run update-hook
+    (run-hook-with-args hooks package)
+
     (el-get-build package commands nil sync 'el-get-post-update-build)))
 
 (defun el-get-update-requires-reinstall (package)
@@ -953,7 +965,7 @@ considered \"required\"."
     (el-get-verbose-message "el-get-init-and-install: init %S" init-deps)
 
     (loop for p in install-deps do (el-get-do-install p) collect p into done)
-    (loop for p in init-deps    do (el-get-init p)       collect p into done)
+    (loop for p in init-deps    do (el-get-do-init p)    collect p into done)
     done))
 
 (defun el-get (&optional sync &rest packages)
@@ -974,23 +986,13 @@ concurrently, in the background.
 When SYNC is 'sync, each package will be installed synchronously,
 and any error will stop it all.
 
-When SYNC is 'wait, then `el-get' will enter a wait-loop and only
-let you use Emacs once it has finished with its job. That's
-useful an option to use in your `user-init-file'. Note that each
-package in the list gets installed in parallel with this option.
-
 Please note that the `el-get-init' part of `el-get' is always
-done synchronously, so you will have to wait here. There's
-`byte-compile' support though, and the packages you use are
-welcome to use `autoload' too.
+done synchronously. There's `byte-compile' support though, and
+the packages you use are welcome to use `autoload' too.
 
 PACKAGES is expected to be a list of packages you want to install
 or init.  When PACKAGES is omited (the default), the list of
 already installed packages is considered."
-  (unless (or (null sync)
-	      (member sync '(sync wait)))
-    (error "el-get sync parameter should be either nil, sync or wait"))
-
   ;; If there's no autoload file, everything needs to be regenerated.
   (unless (file-exists-p el-get-autoload-file) (el-get-invalidate-autoloads))
 
@@ -1002,25 +1004,12 @@ already installed packages is considered."
 	  (loop for p in packages when (listp p) append p else collect p))
          (total       (length packages))
          (installed   (el-get-count-packages-with-status packages "installed"))
-         (progress (and (eq sync 'wait)
-                        (make-progress-reporter
-			 "Waiting for `el-get' to complete... "
-			 0 (- total installed) 0)))
          (el-get-default-process-sync sync))
 
     ;; keep the result of `el-get-init-and-install' to return it even in the
     ;; 'wait case
     (prog1
 	(el-get-init-and-install (mapcar 'el-get-as-symbol packages))
-
-      ;; el-get-install is async, that's now ongoing.
-      (when progress
-        (while (> (- total installed) 0)
-          (sleep-for 0.2)
-          ;; don't forget to account for installation failure
-          (setq installed (el-get-count-packages-with-status packages "installed" "required"))
-          (progress-reporter-update progress (- total installed)))
-        (progress-reporter-done progress))
 
       ;; now is a good time to care about autoloads
       (el-get-eval-autoloads))))

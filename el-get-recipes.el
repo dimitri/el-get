@@ -65,11 +65,13 @@ compiled version."
     (let* ((init-file-name (format "init-%s.el" package))
 	   (package-init-file
 	    (expand-file-name init-file-name el-get-user-package-directory))
-	   (compiled-init-file (concat (file-name-sans-extension package-init-file) ".elc")))
+	   (file-name-no-extension (file-name-sans-extension package-init-file))
+	   (compiled-init-file (concat file-name-no-extension ".elc")))
       (when (file-exists-p package-init-file)
-	(el-get-byte-compile-file package-init-file)
-	(el-get-verbose-message "el-get: load %S" compiled-init-file)
-	(load compiled-init-file 'noerror)))))
+	(when el-get-byte-compile
+	  (el-get-byte-compile-file package-init-file))
+	(el-get-verbose-message "el-get: load %S" file-name-no-extension)
+	(load file-name-no-extension 'noerror)))))
 
 (defun el-get-recipe-dirs ()
   "Return the elements of el-get-recipe-path that actually exist.
@@ -223,5 +225,21 @@ Second argument PACKAGE is optional and only used to construct the error message
     (when (version-list-< (version-to-list emacs-version) required-version-list)
       (error "Package %s requires Emacs version %s or higher, but the current emacs is only version %s"
              pname required-version emacs-version))))
+
+(defun el-get-envpath-prepend (envname head)
+  "Prepend HEAD in colon-separated environment variable ENVNAME.
+This is effectively the same as doing the following in shell:
+    export ENVNAME=HEAD:$ENVNAME
+
+Use this to modify environment variable such as $PATH or $PYTHONPATH."
+  (setenv envname (el-get-envpath-prepend-1 (getenv envname) head)))
+
+(defun el-get-envpath-prepend-1 (paths head)
+  "Return \"HEAD:PATHS\" omitting duplicates in it."
+  (let ((pplist (split-string (or paths "") ":" 'omit-nulls)))
+    (mapconcat 'identity
+               (remove-duplicates (cons head pplist)
+                                  :test #'string= :from-end t)
+               ":")))
 
 (provide 'el-get-recipes)

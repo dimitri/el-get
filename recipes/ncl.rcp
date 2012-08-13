@@ -1,6 +1,0 @@
-(:name ncl
-       :type github
-       :website "http://www.ncl.ucar.edu/"
-       :description "ncl-mode for ncar command line language"
-       :pkgname "yyr/ncl.el"
-       :autoloads t)
