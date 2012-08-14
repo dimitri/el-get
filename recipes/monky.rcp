@@ -1,0 +1,5 @@
+(:name monky
+       :description "Magit for Hg"
+       :type github
+       :pkgname "ananthakumaran/monky"
+       :features monky)

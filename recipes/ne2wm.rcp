@@ -1,0 +1,6 @@
+(:name ne2wm
+       :description "Perspectives, plugins, functions and commands for e2wm"
+       :type github
+       :pkgname "tkf/ne2wm"
+       :depends e2wm
+       :features ne2wm-setup)

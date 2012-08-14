@@ -1,0 +1,6 @@
+(:name deferred-flyspell
+       :description "Defer spell checking"
+       :type github
+       :pkgname "tkf/emacs-deferred-flyspell"
+       :post-init (add-hook 'flyspell-mode-hook 'deferred-flyspell:auto-setup)
+       :depends deferred)

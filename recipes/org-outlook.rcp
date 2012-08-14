@@ -1,0 +1,4 @@
+(:name org-outlook
+       :type github
+       :pkgname "mlf176f2/org-outlook.el"
+       :description "Integrate Microsoft Outlook with org-mode")

@@ -1,0 +1,4 @@
+(:name groovy-emacs-mode
+       :description "Emacs major mode for the Groovy programming language"
+       :type bzr
+       :url "http://bazaar.launchpad.net/~russel/groovy-emacs-mode/trunk/")

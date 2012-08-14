@@ -1,0 +1,7 @@
+(:name e2wm
+       :description "simple window manager for emacs"
+       :website "https://github.com/kiwanami/emacs-window-manager"
+       :type github
+       :pkgname "kiwanami/emacs-window-manager"
+       :depends window-layout
+       :features "e2wm")

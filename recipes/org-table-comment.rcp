@@ -1,0 +1,5 @@
+(:name org-table-comment
+       :website "https://github.com/mlf176f2/org-table-comment.el"
+       :description "Org tables in comments"
+       :type github
+       :pkgname "mlf176f2/org-table-comment.el")

@@ -1,0 +1,6 @@
+(:name anything-howm
+       :description "`anything' interface for `howm'"
+       :type github
+       :pkgname "wakaran/anything-howm"
+       :depends anything
+       :features "anything-howm")

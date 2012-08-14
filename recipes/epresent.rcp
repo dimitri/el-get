@@ -1,6 +1,6 @@
 (:name epresent
-       :type git
-       :url "http://github.com/eschulte/epresent.git"
+       :type github
+       :pkgname "eschulte/epresent"
        :description "make presentation slides from a org-mode file within emacs"
        :autoloads t)
 

@@ -1,0 +1,8 @@
+(:name tomorrow-night-paradise-theme
+       :description "A light-on-dark Emacs theme which is essentially a tweaked version of Chris Kempson's Tomorrow Night Bright theme."
+       :website "https://github.com/jimeh/tomorrow-night-paradise-theme.el"
+       :type github
+       :pkgname "jimeh/tomorrow-night-paradise-theme.el"
+       :minimum-emacs-version 24
+       :post-init (add-to-list 'custom-theme-load-path
+                               default-directory))

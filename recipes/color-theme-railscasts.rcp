@@ -1,8 +1,7 @@
 (:name color-theme-railscasts
        :description "Railscasts color theme for Emacs."
-       :type git
-       :url "https://github.com/olegshaldybin/color-theme-railscasts.git"
+       :type github
+       :pkgname "olegshaldybin/color-theme-railscasts"
        :depends color-theme
-       :post-init (lambda ()
-                    (autoload 'color-theme-railscasts "color-theme-railscasts"
-                      "color-theme: railscasts" t)))
+       :prepare (autoload 'color-theme-railscasts "color-theme-railscasts"
+                  "color-theme: railscasts" t))

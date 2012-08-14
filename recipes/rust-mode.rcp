@@ -1,5 +1,6 @@
 (:name rust-mode
-       :type git
-       :url "git://github.com/marijnh/rust-mode.git"
+       :type http
+       :url "https://raw.github.com/mozilla/rust/master/src/etc/emacs/rust-mode.el"
+       :depends cm-mode
        :description "Emacs mode for Rust"
        :features rust-mode)

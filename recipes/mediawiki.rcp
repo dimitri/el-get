@@ -1,4 +1,10 @@
 (:name mediawiki
        :description "Mediawiki frontend"
        :type bzr
-       :url "lp:mediawiki-el")
+       :url "lp:mediawiki-el"
+       :prepare (progn
+                  (autoload 'mediawiki-open "mediawiki.el"
+                    "Open a wiki page specified by NAME from the mediawiki engine")
+                  (autoload 'mediawiki-site "mediawiki.el"
+                    "Set up mediawiki.el for a site.  Without an argument, use
+`mediawiki-site-default'.  Interactively, prompt for a site.")))

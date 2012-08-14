@@ -30,6 +30,8 @@
 PACKAGE isn't currently installed by ELPA."
   (let* ((pname (format "%s" package))  ; easy way to cope with symbols etc.
 
+     (ls-command (if (memq system-type '(ms-dos windows-nt)) "dir /B " "ls -1 "))
+
 	 (l
 	  ;; we use try-completion to find the realname of the directory
 	  ;; ELPA used, and this wants an alist, we trick ls -i -1 into
@@ -38,7 +40,7 @@ PACKAGE isn't currently installed by ELPA."
 		  (split-string
 		   (shell-command-to-string
 		    (concat
-		     "ls -i1 "
+		     ls-command
                      (shell-quote-argument
                       (expand-file-name
                        (file-name-as-directory package-user-dir))))))))
@@ -114,15 +116,29 @@ the recipe, then return nil."
     (el-get-elpa-symlink-package package))
   (funcall post-install-fun package))
 
+(defun el-get-elpa-update-available-p (package)
+  "Returns t if PACKAGE has an update available in ELPA."
+  (assert (el-get-package-is-installed package) nil
+          (sprintf "Cannot update non-installed ELPA package %s" package))
+  (let ((installed-version
+         (package-desc-vers (cdr (assq package package-alist))))
+        (available-version
+         (package-desc-vers (cdr (assq package package-archive-contents)))))
+    (version-list-< installed-version available-version)))
+
 (defun el-get-elpa-update (package url post-update-fun)
   "Ask elpa to update given PACKAGE."
-  (el-get-elpa-remove package url nil)
   (package-refresh-contents)
-  (package-install (el-get-as-symbol package))
+  (when (el-get-elpa-update-available-p package)
+    (el-get-elpa-remove package url nil)
+    (package-install (el-get-as-symbol package)))
   (funcall post-update-fun package))
 
 (defun el-get-elpa-remove (package url post-remove-fun)
   "Remove the right directory where ELPA did install the package."
+  ;; This just removes the symlink from el-get's directory. Look in
+  ;; `el-get-elpa-post-remove' for the piece that actually removes the
+  ;; package.
   (el-get-rmdir package url post-remove-fun))
 
 (defun el-get-elpa-post-remove (package)
@@ -134,8 +150,43 @@ the recipe, then return nil."
 
 (add-hook 'el-get-elpa-remove-hook 'el-get-elpa-post-remove)
 
-(el-get-register-method
- :elpa #'el-get-elpa-install #'el-get-elpa-update #'el-get-elpa-remove
- #'el-get-elpa-install-hook #'el-get-elpa-remove-hook)
+(el-get-register-method :elpa
+  :install #'el-get-elpa-install
+  :update #'el-get-elpa-update
+  :remove #'el-get-elpa-remove
+  :install-hook #'el-get-elpa-install-hook
+  :remove-hook #'el-get-elpa-remove-hook)
+
+;;;
+;;; Functions to maintain a local recipe list from ELPA
+;;;
+
+;;;###autoload
+(defun el-get-elpa-build-local-recipes (&optional target-dir do-not-update)
+  "retrieves list of ELPA packages and turn them to local recipe set.
+TARGET-DIR is the target directory
+DO-NOT-UPDATE will not update the package archive contents before running this."
+  (interactive)
+  (let ((target-dir (or target-dir
+			(car command-line-args-left)
+                        el-get-recipe-path-elpa))
+        (coding-system-for-write 'utf-8)
+        pkg package description)
+    (when (or (not package-archive-contents) (and package-archive-contents (not do-not-update)))
+      (package-refresh-contents))
+    (unless (file-directory-p target-dir) (make-directory target-dir 'recursive))
+    (mapc (lambda (pkg)
+	    (let* ((package (format "%s" (car pkg)))
+		   (pkg-desc (cdr pkg))
+		   (description (package-desc-doc pkg-desc)))
+              (with-temp-file (expand-file-name (concat package ".rcp")
+						target-dir)
+		(message "%s:%s" package description)
+                (insert
+                 (format
+                  "(:name %s\n:auto-generated t\n:type elpa\n:description \"%s\")\n"
+                  package description))
+                (indent-region (point-min) (point-max)))))
+	  package-archive-contents)))
 
 (provide 'el-get-elpa)

@@ -1,0 +1,6 @@
+(:name direx
+       :description "Directory Explorer"
+       :website "https://github.com/m2ym/direx-el"
+       :type github
+       :pkgname "m2ym/direx-el"
+       :features "direx")

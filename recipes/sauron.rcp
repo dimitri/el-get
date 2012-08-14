@@ -1,0 +1,7 @@
+(:name sauron
+       :description
+       "enhanced tracking of the world inside and outside your emacs"
+       :website "https://github.com/djcb/sauron"
+       :type github
+       :pkgname "djcb/sauron"
+       :prepare (autoload 'sauron-start "sauron" "Start sauron." t))

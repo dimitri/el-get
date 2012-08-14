@@ -1,0 +1,18 @@
+(:name dpans2texi
+       :description "onverts the TeX sources of the draft ANSI Common Lisp standard"
+       :type http-tar
+       :options ("xzf")
+       :website "http://users-phys.au.dk/harder/dpans.html"
+       :url "http://users-phys.au.dk/harder/dpans2texi-1.05.tar.gz"
+       :info "ansicl"
+       :build `(,(format "EMACS=%s ./configure" el-get-emacs)
+                "make wget"
+                ,(concat "make EMACS=" el-get-emacs)
+                ;; info file is generated without extension
+                "ln -nfs ansicl ansicl.info")
+       :prepare (eval-after-load "info-look"
+                  '(info-lookup-add-help
+                    :mode 'lisp-mode
+                    :regexp "[^][()'\" \t\n]+"
+                    :ignore-case t
+                    :doc-spec '(("(ansicl)Symbol Index" nil nil nil)))))

@@ -1,0 +1,7 @@
+(:name anything-ack
+       :description "search refinement of ack result with anything"
+       :website "http://www.emacswiki.org/emacs-fr/anything-ack.el"
+       :type emacswiki
+       :prepare (autoload 'anything-ack "anything-ack"
+                  "Run ack in `anything' buffer to narrow results." t)
+       :depends anything)

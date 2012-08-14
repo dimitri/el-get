@@ -1,0 +1,5 @@
+(:name cm-mode
+       :type http
+       :url "https://raw.github.com/mozilla/rust/master/src/etc/emacs/cm-mode.el"
+       :description "Wrapper for CodeMirror-style emacs modes."
+       :features cm-mode)

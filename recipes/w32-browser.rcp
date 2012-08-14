@@ -1,0 +1,4 @@
+(:name w32-browser
+       :type emacswiki
+       :description "Run Windows application associated with a file."
+       :load-path ".")

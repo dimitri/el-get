@@ -1,0 +1,7 @@
+(:name ampc
+       :website "http://www.emacswiki.org/emacs/Ampc"
+       :description "Asynchronous Music Player Controller"
+       :type git
+       :url "http://ch.ristopher.com/r/ampc"
+       :features ampc
+       :prepare (autoload 'ampc "ampc" nil t))

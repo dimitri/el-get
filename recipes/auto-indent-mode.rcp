@@ -1,0 +1,5 @@
+(:name auto-indent-mode
+       :website "https://github.com/mlf176f2/auto-indent-mode.el"
+       :description "Automatically Indent  when pressing return, pasting, and other customizable features."
+       :type github
+       :pkgname "mlf176f2/auto-indent-mode.el")

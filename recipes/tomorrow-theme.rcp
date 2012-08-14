@@ -1,0 +1,9 @@
+(:name tomorrow-theme
+       :description "Colour Schemes for Hackers"
+       :website "https://github.com/chriskempson/tomorrow-theme"
+       :type github
+       :pkgname "chriskempson/tomorrow-theme"
+       :load-path "GNU Emacs"
+       :minimum-emacs-version 24
+       :post-init (add-to-list 'custom-theme-load-path
+                               default-directory))

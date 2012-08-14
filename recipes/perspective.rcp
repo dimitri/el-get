@@ -1,0 +1,4 @@
+(:name perspective
+       :type github
+       :description "switch between named perspectives of the editor"
+       :pkgname "nex3/perspective-el")

@@ -1,0 +1,4 @@
+(:name lispxmp
+       :description "Automagic emacs lisp code annotation"
+       :type emacswiki
+       :features "lispxmp")

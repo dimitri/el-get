@@ -1,5 +1,5 @@
 (:name mo-git-blame
        :description "An interactive, iterative 'git blame' mode for Emacs"
-       :type git
-       :url "git://github.com/mbunkus/mo-git-blame.git"
+       :type github
+       :pkgname "mbunkus/mo-git-blame"
        :features "mo-git-blame")

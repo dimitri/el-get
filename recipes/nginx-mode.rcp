@@ -1,0 +1,5 @@
+ (:name nginx-mode
+  :website "https://github.com/ajc/nginx-mode"
+  :description "major mode for editing nginx config files"
+  :type github
+  :pkgname "ajc/nginx-mode")

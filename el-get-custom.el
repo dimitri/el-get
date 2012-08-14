@@ -96,25 +96,38 @@ definition provided by `el-get' recipes locally.
 
     The name of the package for the underlying package management
     system (`apt-get', `fink' or `pacman', also supported by
-    `emacsmirror'), which can be different from the Emacs package
-    name.
+    `github' and `emacsmirror'), which can be different from the
+    Emacs package name.
 
 :type
 
     The type of the package, currently el-get offers support for
-    `apt-get', `elpa', `git', `emacsmirror', `git-svn', `bzr' `svn',
-    `cvs', `darcs', `fink', `ftp', `emacswiki', `http-tar', `pacman',
-    `hg' and `http'. You can easily support your own types here,
-    see the variable `el-get-methods'.
+    `apt-get', `elpa', `git', `github', `emacsmirror', `git-svn',
+    `bzr' `svn', `cvs', `darcs', `fink', `ftp', `emacswiki',
+    `http-tar', `pacman', `hg' and `http'. You can easily support
+    your own types here, see the variable `el-get-methods'.
 
 :branch
 
-    Which branch to fetch when using `git'.  Also supported in
-    the installer in `el-get-install'.
+    Which branch to fetch when using `git' (and by extension,
+    `github' and `emacsmirror', which are derived form `git').
+    Also supported in the installer in `el-get-install'.
 
 :url
 
-    Where to fetch the package, only meaningful for `git' and `http' types.
+    Where to fetch the package, only meaningful for `git' and
+    `http' types.
+
+:username, :pkgname
+
+    For the `github' type, these specify the user name and repo
+    name to clone from Github. For example, for el-get, the user
+    name would be \"dimitri\", and the repo name would be
+    \"el-get\". As described above, the `:pkgname' property is
+    only required if the repo name on Github differs from the
+    Emacs package name. Note that the `emacsmirror' type is just
+    like the `github' type with `:username' set to
+    \"emacsmirror\".
 
 :build
 
@@ -218,30 +231,34 @@ definition provided by `el-get' recipes locally.
 
 :prepare
 
-    Intended for use from recipes, it will run once both the
+    This should be a lisp form to evaluate after both the
     `Info-directory-list' and the `load-path' variables have been
-    taken care of, but before any further action from
-    `el-get-init'.
+    taken care of, but before loading the package or any further
+    action from `el-get-init'.  It will be run with
+    `default-directory' set to the package directory.
 
 :before
 
-    A pre-init function to run once before `el-get-init' calls
-    `load' and `require'.  It gets to run with `load-path'
-    already set, and after :prepare has been called.  It's not
-    intended for use from recipes.
+    This exactly like `:prepare' property, but is reserved for
+    user customizations in `el-get-sources'.  Recipe files should
+    not use this property.  It will be run just after `:prepare'.
 
 :post-init
 
-    Intended for use from recipes.  This function is registered
-    for `eval-after-load' against the recipe library by
-    `el-get-init' once the :load and :features have been setup.
+    This should be a lisp form to evaluate after loading the
+    package.  Intended for use from recipes.  This function is
+    registered for `eval-after-load' against the recipe library
+    by `el-get-init' once the :load and :features have been
+    setup.  Like `:prepare', it will be run with
+    `default-directory' set to the package directory.
 
 :after
 
-    A function to register for `eval-after-load' against the
-    recipe library, after :post-init, and after per-package
-    user-init-file (see `el-get-user-package-directory').  That's not
-    intended for recipe use.
+    This exactly like the `:post-init' property, but is reserved
+    for user customizations in `el-get-sources'.  Recipe files
+    should not use this property.  It will be run just after
+    `:post-init' and after any per-package user-init-file (see
+    `el-get-user-package-directory').
 
 :lazy
 
@@ -284,6 +301,35 @@ definition provided by `el-get' recipes locally.
     with the following meaning:
 
       * `http', `ftp' and `emacswiki' with the SHA1 of the downloaded file
+      * `git' in which it is an alias for `:checkout' (see below)
+
+:checkout
+
+    A git refspec (branch, tag, commit hash) that should be
+    checked out after cloning the git repository. If provided,
+    this overrides any value for the `:branch' property. Unlike
+    the `:branch' property, this can be any valid argument to
+    `git checkout', including a tag name or a commit hash. The
+    intended use of this property is to \"lock\" a repository at
+    a particular revision, regardless of what happens to the repo
+    upstream.
+
+    Currently this property only has meaning for `git' type
+    recipes. Other VCS-based methods may implement support in the
+    future.
+
+:shallow
+
+    If set to t in a git recipe, git-clone will be run with
+    `--depth 1', which will create a so-called shallow clone by
+    not downloading all the history of the repository. The
+    default is controlled by the variable
+    `el-get-git-shallow-clone', which is nil by default.
+
+:submodule
+
+   If set to nil in a git recipe, submodules will not be updated.
+
 "
   :group 'el-get
   :type
@@ -322,14 +368,14 @@ this is the name to fetch in that system"
                      (if (symbolp e)
                          (cons
                           (list 'const
-                                (intern (substring (prin1-to-string e) 1)))
+                                (intern (substring (el-get-print-to-string e) 1)))
                           r)
                        r))
                    el-get-methods
                    :initial-value nil)
                   (lambda (x y)
-                    (string< (prin1-to-string (cadr x))
-                             (prin1-to-string (cadr y)))))))
+                    (string< (el-get-print-to-string (cadr x))
+                             (el-get-print-to-string (cadr y)))))))
 
        (group :inline t :format "Source URL: %v"
               (const :format "" :url) (string :format "%v"))
@@ -383,12 +429,14 @@ this is the name to fetch in that system"
               (const :format "" :before) (function :format "%v"))
        (group :inline t
               :format "`After' Function (`Post-Init' recommended instead): %v"
-              (const :format "" :after) (function :format "%v")))
+              (const :format "" :after) (function :format "%v"))
+       ;; TODO: `:checksum', `:checkout', `:shallow'
+       )
       (repeat
        :inline t :tag "System-Specific Build Recipes"
        (group :inline t
               (symbol :value ,(concat ":build/"
-                                      (prin1-to-string system-type))
+                                      (el-get-print-to-string system-type))
                       :format "Build Tag: %v%h"
                       :doc "Must be of the form `:build/<system-type>',
 where `<system-type>' is the value of `system-type' on
