@@ -47,14 +47,18 @@
 ;;   - add support for el-get-reload and do that at update time
 ;;   - implement :checksum property for http kinds of files
 ;;   - Add new command el-get-reinstall
-;;   - implement :checkout property for git packages
+;;   - implement :checkout property for git, fossil, hg, and http methods
 ;;   - implement :shallow property for git packages
 ;;   - add support for auto-building of ELPA recipes
 ;;   - implement :submodule property for git packages (allow bypassing them)
-;;   - New package types: github, emacsmirror
+;;   - New package types: github, github-tar and zip, emacsmirror, fossil, etc
 ;;   - Support for installing CVS packages through non-transparent
 ;;     http proxy servers
 ;;   - `el-get-update-all' now prompts before updating packages
+;;   - new status file format, with a cache
+;;   - plenty new recipes
+;;   - fetch emacswiki recipes at install time by default
+;;   - new documentation, in proper info format
 ;;
 ;;  3.1 - 2011-09-15 - Get a fix
 ;;
