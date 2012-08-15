@@ -206,10 +206,14 @@ If PACKAGE-STATUS-ALIST is nil, read recipes from status file."
     :load
     :features
     :library
+    :prepare
     :before
     :after
-    :lazy)
-  "Whitelist of properties that may be updated in cached recipes.
+    :post-init
+    :lazy
+    :website
+    :description)
+  "Properties that can be updated without `el-get-update'/`el-get-reinstall'.
 
 If any of these properties change on the recipe for an installed
 package, the changes may be merged into the cached version of
