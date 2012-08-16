@@ -1,0 +1,13 @@
+(:name rnc-mode
+       :website "http://pantor.com/downloads.html"
+       :description "A major mode for editing RELAX NG Compact syntax."
+       :type http-tar
+       :options ("xzf")
+       ;; If this disappears (and wasn't merely updated), see
+       ;; <http://snapshot.debian.org/package/rnc-mode/>.
+       :url "http://www.pantor.com/RncMode-1_0b3.tgz"
+       :prepare
+       (progn
+         (autoload 'rnc-mode "rnc-mode"
+           "Major mode for editing RELAX NG Compact Syntax schemas." t)
+         (add-to-list 'auto-mode-alist '("\\.rnc\\'" . rnc-mode))))
