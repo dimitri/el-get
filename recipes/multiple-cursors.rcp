@@ -1,0 +1,5 @@
+(:name multiple-cursors
+       :description "An experiment in adding multiple cursors to emacs"
+       :type github
+       :pkgname "magnars/multiple-cursors.el"
+       :features multiple-cursors)
