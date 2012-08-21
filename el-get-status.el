@@ -31,7 +31,7 @@
          (symbol-name package-symbol))
         ((stringp package-symbol)
          package-symbol)
-        (t (error "Unknown package: %s"))))
+        (t (error "Unknown package: %s" package-symbol))))
 
 (defun el-get-package-symbol (package)
   "Returns a package name as a non-keyword symbol"
@@ -40,7 +40,7 @@
         ((symbolp package)
          package)
         ((stringp package) (intern package))
-        (t (error "Unknown package: %s"))))
+        (t (error "Unknown package: %s" package))))
 
 (defun el-get-package-keyword (package-name)
   "Returns a package name as a keyword :package."
@@ -68,6 +68,8 @@
             "Recipe must be a list")
     (with-temp-file el-get-status-file
       (insert (el-get-print-to-string new-package-status-alist 'pretty)))
+    ;; Update cache
+    (setq el-get-status-cache new-package-status-alist)
     ;; Return the new alist
     new-package-status-alist))
 
@@ -90,9 +92,17 @@
                                 ;; just provide a placeholder no-op recipe.
                                 (error `(:name ,psym :type builtin))))))))
 
+(defvar el-get-status-cache nil
+  "Cache used by `el-get-read-status-file'.")
+
 (defun el-get-read-status-file ()
   "read `el-get-status-file' and return an alist of plist like:
    (PACKAGE . (status \"status\" recipe (:name ...)))"
+  (or el-get-status-cache
+      (setq el-get-status-cache (el-get-read-status-file-force))))
+
+(defun el-get-read-status-file-force ()
+  "Forcefully load status file."
   (let* ((ps
           (when (file-exists-p el-get-status-file)
             (car (with-temp-buffer
@@ -196,52 +206,37 @@ If PACKAGE-STATUS-ALIST is nil, read recipes from status file."
     :load
     :features
     :library
+    :prepare
     :before
     :after
-    :lazy)
-  "Whitelist of properties that may be updated in cached recipes.
+    :post-init
+    :lazy
+    :website
+    :description)
+  "Properties that can be updated without `el-get-update'/`el-get-reinstall'.
 
 If any of these properties change on the recipe for an installed
 package, the changes may be merged into the cached version of
 that recipe in the el-get status file.")
 
-(defun el-get-merge-whitelisted-properties (source newprops)
-  "Merge NEWPROPS into SOURCE if they are all whitelisted.
+(defun el-get-classify-new-properties (source newprops)
+  "Classify NEWPROPS into two groups: need update/disallowed.
 
-SOURCE should be an el-get package recipe, and NEWPROPS should be
-a plist to be merged with it (possibly a full recipe, but not
-necessarily). Every property in NEWPROPS that must either be
-whitelisted or must be identical to the corresponding property in
-SOURCE.
-
-Returns the merged source without modifying the original.
-
-To see which properties are whitelisted, see
-`el-get-status-recipe-update-whitelist'."
-  (let* ((whitelist el-get-status-recipe-update-whitelist)
-        (updated-source (copy-list source))
-        (disallowed-props
-         (loop for (k v) on newprops by 'cddr
-               ;; whitelisted
-               if (memq k whitelist) do (plist-put updated-source k v)
-               ;; Not a change, so ignore it
-               else if (equal v (plist-get source k)) do (ignore)
-               ;; Trying to change non-whitelisted property
-               else append (list k v))))
-    ;; Raise an error if we tried to set any disallowed
-    ;; properties. (We wait until now so we can report the full list.)
-    (when disallowed-props
-      (error (format "Tried to merge non-whitelisted properties:
-
-%s
-into source:
-
-%s
-Maybe you should use `el-get-update' or `el-get-reinstall' on %s instead?"
-                     (pp-to-string disallowed-props)
-                     (pp-to-string source)
-                     (el-get-source-name source))))
-    updated-source))
+Return a list (UPDATE DISALLOWED).  Both UPDATE and NEWPROPS are
+subset of NEWPROPS whose element is different from SOURCE.
+Elements in UPDATE are whitelisted whereas elements in DISALLOWED
+are not."
+  (loop with update
+        with disallowed
+        with whitelist = el-get-status-recipe-update-whitelist
+        for (k v) on newprops by 'cddr
+        ;; Not a change, so ignore it
+        if (equal v (plist-get source k)) do (ignore)
+        ;; whitelisted
+        else if (memq k whitelist) do (setq update (plist-put update k v))
+        ;; Trying to change non-whitelisted property
+        else do (setq disallowed (plist-put disallowed k v))
+        finally return (list update disallowed)))
 
 (defun* el-get-merge-properties-into-status (package-or-source
                                              &optional package-status-alist
@@ -294,21 +289,29 @@ non-whitelisted changes, and no error will be raised.
             (loop for (k v) on source by 'cddr
                   when (memq k el-get-status-recipe-update-whitelist)
                   append (list k v))))
-    (let ((merged-recipe
-           (condition-case err
-               (el-get-merge-whitelisted-properties cached-recipe source)
-             ;; Convert the error to a verbose message if `noerror' is
-             ;; t (but still quit the function).
-             (error
-              (progn
-                (apply (if noerror 'el-get-verbose-message 'error)
-                       (cdr err))
-                ;; Return from the function even if no error was thrown
-                (return-from el-get-merge-properties-into-status)))
-             )))
-      (if save-to-file
-          (el-get-save-package-status package "installed" merged-recipe)
-        (plist-put (cdr (assq package package-status-alist))
-                   'recipe merged-recipe)))))
+    (destructuring-bind (update disallowed)
+        (el-get-classify-new-properties cached-recipe source)
+      (when disallowed
+        ;; Emit a verbose message if `noerror' is t (but still quit
+        ;; the function).
+        (funcall (if noerror 'el-get-verbose-message 'error)
+                 "Tried to merge non-whitelisted properties:
+
+%s
+into source:
+
+%s
+Maybe you should use `el-get-update' or `el-get-reinstall' on %s instead?"
+                 (pp-to-string disallowed)
+                 (pp-to-string cached-recipe)
+                 (el-get-source-name cached-recipe))
+        (return-from el-get-merge-properties-into-status))
+      (when update
+        (loop for (k v) on update by 'cddr
+              do (plist-put cached-recipe k v))
+        (if save-to-file
+            (el-get-save-package-status package "installed" cached-recipe)
+          (plist-put (cdr (assq package package-status-alist))
+                     'recipe cached-recipe))))))
 
 (provide 'el-get-status)
