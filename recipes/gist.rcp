@@ -2,4 +2,4 @@
        :description "Emacs integration for gist.github.com"
        :type github
        :pkgname "defunkt/gist.el"
-       :features gist)
+       :depends gh)
