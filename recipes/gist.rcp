@@ -1,5 +1,4 @@
 (:name gist
-       :website "http://github.com/defunkt/gist.el"
        :description "Emacs integration for gist.github.com"
        :type github
        :pkgname "defunkt/gist.el"
