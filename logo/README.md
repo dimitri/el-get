@@ -9,6 +9,6 @@ hopefully allows me to use the work, and converted to ico and png. The
 black&white in case you need that, please consider contributing a better
 version though.
 
- ![Color El-Get logo](logo/el-get.png)
- ![Monochrome El-Get logo](logo/el-get-mono.png)
+ ![Color El-Get logo](https://raw.github.com/dimitri/el-get/master/logo/el-get.png)
+ ![Monochrome El-Get logo](https://raw.github.com/dimitri/el-get/master/logo/el-get-mono.png)
 
