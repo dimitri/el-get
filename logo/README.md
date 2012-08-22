@@ -10,5 +10,5 @@ black&white in case you need that, please consider contributing a better
 version though.
 
  ![Color El-Get logo](https://raw.github.com/dimitri/el-get/master/logo/el-get.png)
- ![Monochrome El-Get logo](https://raw.github.com/dimitri/el-get/master/logo/el-get-mono.png)
+ ![Monochrome El-Get logo](https://raw.github.com/dimitri/el-get/master/logo/el-get.mono.png)
 
