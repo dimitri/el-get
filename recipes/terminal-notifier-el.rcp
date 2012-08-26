@@ -1,0 +1,4 @@
+(:name terminal-notifier-el
+       :type github
+       :description "Emacs interface for terminal-notifier for MacOSX notification center."
+       :pkgname "renard/terminal-notifier-el")
