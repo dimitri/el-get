@@ -1,11 +1,11 @@
 ;;; el-get.el --- Manage the external elisp bits and pieces you depend upon
 ;;
-;; Copyright (C) 2010-2011 Dimitri Fontaine
+;; Copyright (C) 2010-2012 Dimitri Fontaine
 ;;
 ;; Author: Dimitri Fontaine <dim@tapoueh.org>
 ;; URL: http://www.emacswiki.org/emacs/el-get
 ;; GIT: https://github.com/dimitri/el-get
-;; Version: 4.0
+;; Version: 4.1
 ;; Created: 2010-06-17
 ;; Keywords: emacs package elisp install elpa git git-svn bzr cvs svn darcs hg
 ;;           apt-get fink pacman http http-tar emacswiki
@@ -35,7 +35,7 @@
 
 ;;; Change Log:
 ;;
-;;  4.0 - WIP - To infinity, and beyond!
+;;  4.1 - 2012-08-28 - To infinity, and beyond!
 ;;
 ;;   - code refactoring
 ;;   - fix dependency tracking at install and init times
