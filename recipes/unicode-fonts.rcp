@@ -1,0 +1,5 @@
+(:name unicode-fonts
+       :depends (dynamic-fonts ucs-utils)
+       :type github
+       :description "Configure Unicode fonts"
+       :pkgname "rolandwalker/unicode-fonts")
