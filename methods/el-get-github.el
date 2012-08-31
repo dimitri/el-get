@@ -22,10 +22,17 @@
         'ssh "git@github.com:%USER%/%REPO%.git")
   "Plist mapping Github types to their URL format strings.")
 
-(defun el-get-github-url-format (url-type)
-  (or (plist-get el-get-github-url-type-plist
-                 url-type)
-      (error "Unknown Github repo URL type: %s" url-type)))
+(defun el-get-github-url-private (url-type username reponame)
+  "Return the url of a particular github project.
+URL-TYPE must be a valid property (a symbol) of
+`el-get-github-url-type-plist'.
+USERNAME and REPONAME are strings."
+  (let ((url-format-string
+         (or (plist-get el-get-github-url-type-plist url-type)
+             (error "Unknown Github repo URL type: %s" url-type))))
+    (el-get-replace-string
+     "%USER%" username
+     (el-get-replace-string "%REPO%" reponame url-format-string))))
 
 (defcustom el-get-github-default-url-type 'http
   "The kind of URL to use for Github repositories.
@@ -77,13 +84,8 @@ FROM is a literal string, not a regexp."
             (reponame (cdr user-and-repo))
             (url-type (el-get-as-symbol
                        (or (plist-get source :url-type)
-                           el-get-github-default-url-type)))
-            (url-format-string (el-get-github-url-format url-type)))
-       (el-get-replace-string
-        "%USER%" username
-        (el-get-replace-string
-         "%REPO%" reponame
-         url-format-string))))))
+                           el-get-github-default-url-type))))
+       (el-get-github-url-private url-type username reponame)))))
 
 (defun el-get-github-clone (package url post-install-fun)
   "Clone the given package from Github following the URL."
@@ -95,7 +97,7 @@ FROM is a literal string, not a regexp."
   (let* ((user-and-repo (el-get-github-parse-user-and-repo package))
          (username (car user-and-repo))
          (reponame (cdr user-and-repo)))
-    (format "https://github.com/%s/%s" username reponame)))
+    (el-get-github-url-private 'https username reponame)))
 
 (el-get-register-derived-method :github :git
   :install #'el-get-github-clone
