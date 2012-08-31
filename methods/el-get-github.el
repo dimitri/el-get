@@ -115,13 +115,8 @@ FROM is a literal string, not a regexp."
 (defun el-get-github-guess-website (package)
   (let* ((user-and-repo (el-get-github-parse-user-and-repo package))
          (username (car user-and-repo))
-         (reponame (cdr user-and-repo))
-         (url-format-string "https://github.com/%USER%/%REPO%"))
-    (el-get-replace-string
-     "%USER%" username
-     (el-get-replace-string
-      "%REPO%" reponame
-      url-format-string))))
+         (reponame (cdr user-and-repo)))
+    (format "https://github.com/%s/%s" username reponame)))
 
 (el-get-register-derived-method :github :git
   :install #'el-get-github-clone
