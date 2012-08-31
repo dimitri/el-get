@@ -36,21 +36,11 @@ Individual Github recipes can override this setting by providing
 their own `:url-type' property. Note that `ssh' is also an
 acceptable value for `:url-type', but you should not set it here
 because it will prevent access to any repositories not owned by
-you.
-
-You can also supply a custom format string, which must contain
-the tokens \"%USER%\" and \"%REPO%\" at the locations where the
-username and repo name should be substituted in."
+you."
   :group 'el-get
   :type '(choice (const :tag "HTTP" http)
                  (const :tag "HTTPS" https)
-                 (const :tag "git" git)
-                 (string :tag "Custom string"
-                         :match (lambda (widget value)
-                                  (and (string-match-p (regexp-quote "%USER%")
-                                                       value)
-                                       (string-match-p (regexp-quote "%REPO%")
-                                                       value))))))
+                 (const :tag "git" git)))
 
 (defun el-get-replace-string (from to str)
   "Replace all instances of FROM with TO in str.
@@ -88,12 +78,7 @@ FROM is a literal string, not a regexp."
             (url-type (el-get-as-symbol
                        (or (plist-get source :url-type)
                            el-get-github-default-url-type)))
-            (url-format-string
-             (if (stringp url-type)
-                 url-type
-               (or (plist-get el-get-github-url-type-plist
-                              url-type)
-                   (error "Unknown Github URL type: %s" url-type)))))
+            (url-format-string (el-get-github-url-format url-type)))
        (el-get-replace-string
         "%USER%" username
         (el-get-replace-string
