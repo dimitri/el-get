@@ -91,12 +91,6 @@ FROM is a literal string, not a regexp."
                     (or url (el-get-github-url package))
                     post-install-fun))
 
-(defun el-get-guess-github-website (url)
-  "If a package's URL is on Github, return the project's Github URL."
-  (when (and url (string-match "github\\.com/" url))
-    (replace-regexp-in-string "\\.git$" ""
-                              (replace-regexp-in-string "\\(git\\|https\\)://" "http://" url))))
-
 (defun el-get-github-guess-website (package)
   (let* ((user-and-repo (el-get-github-parse-user-and-repo package))
          (username (car user-and-repo))
