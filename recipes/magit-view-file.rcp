@@ -1,0 +1,4 @@
+(:name magit-view-file
+       :type github
+       :description "View git file through history."
+       :pkgname "renard/magit-view-file")
