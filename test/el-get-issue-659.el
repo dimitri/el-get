@@ -25,7 +25,8 @@
                                     "\n")))))
                 :prepare (message "Preparing A")
                 :post-init (message "Post-init A")
-                :lazy nil)))
+                :lazy nil)
+         (:name b :type test)))
       (update-source
        '(:name a
                :before (message "Before A")
@@ -49,7 +50,7 @@
                :type test
                :features a
                ;; Not allowed to update this
-               :post-init (message "New post-init A"))))
+               :depends b)))
   ;; Install A
   (el-get 'sync 'a)
   (require 'a)
