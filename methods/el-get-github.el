@@ -22,18 +22,6 @@
         'ssh "git@github.com:%USER%/%REPO%.git")
   "Plist mapping Github types to their URL format strings.")
 
-(defun el-get-github-url-private (url-type username reponame)
-  "Return the url of a particular github project.
-URL-TYPE must be a valid property (a symbol) of
-`el-get-github-url-type-plist'.
-USERNAME and REPONAME are strings."
-  (let ((url-format-string
-         (or (plist-get el-get-github-url-type-plist url-type)
-             (error "Unknown Github repo URL type: %s" url-type))))
-    (el-get-replace-string
-     "%USER%" username
-     (el-get-replace-string "%REPO%" reponame url-format-string))))
-
 (defcustom el-get-github-default-url-type 'http
   "The kind of URL to use for Github repositories.
 
@@ -72,6 +60,18 @@ FROM is a literal string, not a regexp."
     (unless username
       (error "Recipe for %s package %s needs a username" type package))
     (cons username reponame)))
+
+(defun el-get-github-url-private (url-type username reponame)
+  "Return the url of a particular github project.
+URL-TYPE must be a valid property (a symbol) of
+`el-get-github-url-type-plist'.
+USERNAME and REPONAME are strings."
+  (let ((url-format-string
+         (or (plist-get el-get-github-url-type-plist url-type)
+             (error "Unknown Github repo URL type: %s" url-type))))
+    (el-get-replace-string
+     "%USER%" username
+     (el-get-replace-string "%REPO%" reponame url-format-string))))
 
 (defun el-get-github-url (package)
   (let* ((source (el-get-package-def package)))
