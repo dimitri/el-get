@@ -13,7 +13,7 @@
       (a-rcp-2
        '(:name a
                :type test
-               :before (message "Before A (changed)")))
+               :before (message "Before A")))
       (test
        (lambda (func rcp)
          (let ((el-get-sources (list rcp)))
