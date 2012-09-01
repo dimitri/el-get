@@ -238,6 +238,19 @@ are not."
         else do (setq disallowed (plist-put disallowed k v))
         finally return (list update disallowed)))
 
+(defun el-get-diagnosis-properties (old-source new-source)
+  "Diagnosis difference between OLD-SOURCE and NEW-SOURCE.
+
+Return a list (UPDATE-P ADDED-DISALLOWED REMOVED-DISALLOWED).
+UPDATE-P is non-nil when OLD-SOURCE and NEW-SOURCE are different.
+ADDED-DISALLOWED and REMOVED-DISALLOWED are added and removed
+properties, respectively."
+  (let ((added   (el-get-classify-new-properties old-source new-source))
+        (removed (el-get-classify-new-properties new-source old-source)))
+    (list (or (car added) (car removed))
+          (cadr added)
+          (cadr removed))))
+
 (defun el-get-non-whitelisted-properties-changed-p (old-source new-source)
   "Test if non-whitelisted properties are changed."
   (loop for k in (set-difference
@@ -305,24 +318,30 @@ non-whitelisted changes, and no error will be raised.
             (loop for (k v) on source by 'cddr
                   when (memq k el-get-status-recipe-update-whitelist)
                   append (list k v))))
-    (destructuring-bind (update disallowed)
-        (el-get-classify-new-properties cached-recipe source)
+    (destructuring-bind (update-p added-disallowed removed-disallowed)
+        (el-get-diagnosis-properties cached-recipe source)
       (when (el-get-non-whitelisted-properties-changed-p cached-recipe source)
         ;; Emit a verbose message if `noerror' is t (but still quit
         ;; the function).
         (funcall (if noerror 'el-get-verbose-message 'error)
-                 "Tried to merge non-whitelisted properties:
+                 "Tried to add non-whitelisted properties:
 
 %s
-into source:
+
+and remove non-whitelisted properties:
+
+%s
+
+into/from source:
 
 %s
 Maybe you should use `el-get-update' or `el-get-reinstall' on %s instead?"
-                 (pp-to-string disallowed)
+                 (if   added-disallowed (pp-to-string   added-disallowed) "()")
+                 (if removed-disallowed (pp-to-string removed-disallowed) "()")
                  (pp-to-string cached-recipe)
                  (el-get-source-name cached-recipe))
         (return-from el-get-merge-properties-into-status))
-      (when update
+      (when update-p
         (if save-to-file
             (el-get-save-package-status package "installed" source)
           (plist-put (cdr (assq package package-status-alist))
