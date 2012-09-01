@@ -251,22 +251,6 @@ properties, respectively."
           (cadr added)
           (cadr removed))))
 
-(defun el-get-non-whitelisted-properties-changed-p (old-source new-source)
-  "Test if non-whitelisted properties are changed."
-  (loop for k in (set-difference
-                  (remove-duplicates
-                   (append (loop for (k _) on old-source by 'cddr collect k)
-                           (loop for (k _) on new-source by 'cddr collect k)))
-                  el-get-status-recipe-update-whitelist)
-        for in-old-p = (plist-member old-source k)
-        for in-new-p = (plist-member new-source k)
-        for old-val  = (plist-get    old-source k)
-        for new-val  = (plist-get    new-source k)
-        if (or (and (not in-old-p) in-new-p)  ; added
-               (and (not in-new-p) in-old-p)  ; removed
-               (not (equal old-val new-val))) ; changed
-        return t))
-
 (defun* el-get-merge-properties-into-status (package-or-source
                                              &optional package-status-alist
                                              &key noerror skip-non-updatable)
@@ -320,7 +304,7 @@ non-whitelisted changes, and no error will be raised.
                   append (list k v))))
     (destructuring-bind (update-p added-disallowed removed-disallowed)
         (el-get-diagnosis-properties cached-recipe source)
-      (when (el-get-non-whitelisted-properties-changed-p cached-recipe source)
+      (when (or added-disallowed removed-disallowed)
         ;; Emit a verbose message if `noerror' is t (but still quit
         ;; the function).
         (funcall (if noerror 'el-get-verbose-message 'error)
