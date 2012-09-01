@@ -74,18 +74,14 @@ USERNAME and REPONAME are strings."
      (el-get-replace-string "%REPO%" reponame url-format-string))))
 
 (defun el-get-github-url (package)
-  (let* ((source (el-get-package-def package)))
-    (or
-     ;; Use :url if provided
-     (plist-get source :url)
-     ;; Else generate URL from username, reponame, and url-type
-     (let* ((user-and-repo (el-get-github-parse-user-and-repo package))
-            (username (car user-and-repo))
-            (reponame (cdr user-and-repo))
-            (url-type (el-get-as-symbol
-                       (or (plist-get source :url-type)
-                           el-get-github-default-url-type))))
-       (el-get-github-url-private url-type username reponame)))))
+  (let* ((source (el-get-package-def package))
+         (user-and-repo (el-get-github-parse-user-and-repo package))
+         (username (car user-and-repo))
+         (reponame (cdr user-and-repo))
+         (url-type (el-get-as-symbol
+                    (or (plist-get source :url-type)
+                        el-get-github-default-url-type))))
+    (el-get-github-url-private url-type username reponame)))
 
 (defun el-get-github-clone (package url post-install-fun)
   "Clone the given package from Github following the URL."
