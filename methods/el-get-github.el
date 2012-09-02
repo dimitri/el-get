@@ -46,20 +46,12 @@ FROM is a literal string, not a regexp."
 (defun el-get-github-parse-user-and-repo (package)
   "Returns a cons cell of `(USER . REPO)'."
   (let* ((source (el-get-package-def package))
-         (type (el-get-package-method package))
-         (username (plist-get source :username))
-         (reponame (el-get-as-string
-                    (or (plist-get source :pkgname)
-                        package))))
-    (when (string-match-p "/" reponame)
-      (let* ((split (split-string reponame "[[:space:]]\\|/" 'omit-nulls)))
-        (assert (= (length split) 2) nil
-                "Github pkgname %s must contain only one slash and no spaces" reponame)
-        (setq username (first split)
-              reponame (second split))))
-    (unless username
-      (error "Recipe for %s package %s needs a username" type package))
-    (cons username reponame)))
+         (user-slash-repo (plist-get source :pkgname))
+         (user-and-repo (split-string user-slash-repo "/" 'omit-nulls)))
+    (assert (= (length user-and-repo) 2) nil
+              "Github pkgname %s must be of the form username/reponame"
+                user-slash-repo)
+    (cons (first user-and-repo) (second user-and-repo))))
 
 (defun el-get-github-url-private (url-type username reponame)
   "Return the url of a particular github project.
