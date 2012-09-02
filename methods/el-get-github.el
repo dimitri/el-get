@@ -46,7 +46,10 @@ FROM is a literal string, not a regexp."
 (defun el-get-github-parse-user-and-repo (package)
   "Returns a cons cell of `(USER . REPO)'."
   (let* ((source (el-get-package-def package))
-         (user-slash-repo (plist-get source :pkgname))
+         (user-slash-repo
+          (or (plist-get source :pkgname)
+              (error ":pkgname \"username/reponame\" is mandatory for github recipe '%s"
+                     package)))
          (user-and-repo (split-string user-slash-repo "/" 'omit-nulls)))
     (assert (= (length user-and-repo) 2) nil
               "Github pkgname %s must be of the form username/reponame"
