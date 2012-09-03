@@ -456,7 +456,9 @@ which defaults to the first element in `el-get-recipe-path'."
 (defun el-get-init (package &optional package-status-alist)
   "Make the named PACKAGE available for use, first initializing any
    dependency of the PACKAGE."
-  (interactive (list (el-get-read-package-with-status "Init" "installed")))
+  (interactive (progn
+                 (el-get-clear-status-cache)
+                 (list (el-get-read-package-with-status "Init" "installed"))))
   (el-get-verbose-message "el-get-init: %s" package)
   (let* ((init-deps   (el-get-dependencies (el-get-as-symbol package))))
     (el-get-verbose-message "el-get-init: " init-deps)
@@ -566,7 +568,9 @@ called by `el-get' (usually at startup) for each installed package."
 dependencies (if any).
 
 PACKAGE may be either a string or the corresponding symbol."
-  (interactive (list (el-get-read-package-name "Install")))
+  (interactive (progn
+                 (el-get-clear-status-cache)
+                 (list (el-get-read-package-name "Install"))))
   (setq el-get-next-packages (el-get-dependencies (el-get-as-symbol package)))
   (el-get-verbose-message "el-get-install %s: %S" package el-get-next-packages)
   (add-hook 'el-get-post-init-hooks 'el-get-install-next-packages)
@@ -659,7 +663,9 @@ PACKAGE may be either a string or the corresponding symbol."
 (defun el-get-reload (package &optional package-status-alist)
   "Reload PACKAGE."
   (interactive
-   (list (el-get-read-package-with-status "Reload" "installed")))
+   (progn
+     (el-get-clear-status-cache)
+     (list (el-get-read-package-with-status "Reload" "installed"))))
   (el-get-verbose-message "el-get-reload: %s" package)
   (el-get-with-status-sources package-status-alist
     (let* ((all-features features)
@@ -764,7 +770,9 @@ itself.")
 (defun el-get-update (package)
   "Update PACKAGE."
   (interactive
-   (list (el-get-read-package-with-status "Update" "required" "installed")))
+   (progn
+     (el-get-read-status-file-force)
+     (list (el-get-read-package-with-status "Update" "required" "installed"))))
   (el-get-error-unless-package-p package)
   (if (el-get-update-requires-reinstall package)
       (el-get-reinstall package)
@@ -850,7 +858,9 @@ itself.")
 (defun el-get-remove (package &optional package-status-alist)
   "Remove any PACKAGE that is know to be installed or required."
   (interactive
-   (list (el-get-read-package-with-status "Remove" "required" "installed")))
+   (progn
+     (el-get-clear-status-cache)
+     (list (el-get-read-package-with-status "Remove" "required" "installed"))))
   ;; If the package has a recipe saved in the status file, that will
   ;; be used. But if not, we still want to try to remove it, so we
   ;; fall back to the recipe file, and if even that doesn't provide
