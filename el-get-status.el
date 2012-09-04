@@ -95,6 +95,10 @@
 (defvar el-get-status-cache nil
   "Cache used by `el-get-read-status-file'.")
 
+(defun el-get-clear-status-cache ()
+  "Clear in-memory cache for status file."
+  (setq el-get-status-cache nil))
+
 (defun el-get-read-status-file ()
   "read `el-get-status-file' and return an alist of plist like:
    (PACKAGE . (status \"status\" recipe (:name ...)))"
