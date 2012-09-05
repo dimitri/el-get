@@ -1,0 +1,10 @@
+(:name mu
+ :website "http://www.djcbsoftware.nl/code/mu/mu4e.html"
+ :description "An emacs-based e-mail client which uses mu (http://www.djcbsoftware.nl/code/mu/) as its back-end: mu4e."
+ :type github
+ :pkgname "djcb/mu"
+ :build `(("autoreconf -i")
+          ("./configure")
+          ("make"))
+ :load-path "."
+)
