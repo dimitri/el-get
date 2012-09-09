@@ -1,0 +1,8 @@
+(:name checkdoc-autoload
+       :website "http://user42.tuxfamily.org/checkdoc-autoload/index.html"
+       :description "check for various autoload cookies"
+       :type ftp
+       :url "ftp://download.tuxfamily.org/user42/checkdoc-autoload.el"
+       :features checkdoc-autoload
+       :post-init
+       (add-hook 'checkdoc-comment-style-hooks 'checkdoc-autoload-comment))
