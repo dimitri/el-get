@@ -1,0 +1,13 @@
+(:name org-sync
+       :website "http://orgmode.org/worg/org-contrib/gsoc2012/student-projects/org-sync/"
+       :description "Org-sync is a tool to synchronize Org-mode documents with bugtracking tools such as Bugzilla, Github or Google Code and other TODO-list services such as Remember the Milk."
+       :type git
+       :url "git://orgmode.org/org-sync.git"
+       :prepare
+       (progn
+         (autoload 'os "os"
+           "Sync org-mode files with different online services" t)
+         (autoload 'os-import "os"
+           "Import information to sync with org-mode from different online services" t)
+         (autoload 'os-sync "os"
+           "Sync current org-mode file with service it is bound to" t)))
