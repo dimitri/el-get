@@ -1,5 +1,5 @@
 (:name swank-js
        :description "SLIME REPL and other development tools for in-browser JavaScript and Node.JS"
        :type github
-       :pkgname "fukamachi/swank-js"
+       :pkgname "swank-js/swank-js"
        :features nil)
