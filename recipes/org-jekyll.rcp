@@ -1,0 +1,6 @@
+(:name org-jekyll
+       :description "Blog from org-mode using jekyll"
+       :type github
+       :pkgname "juanre/org-jekyll"
+       :features org-jekyll)
+
