@@ -56,6 +56,11 @@ run_test () {
   fi
 }
 
+echo "*** Emacs version ***"
+echo "EMACS =" $(which $EMACS)
+$EMACS --version
+echo
+
 while [ -n "$1" ]; do
   run_test "$1"
   shift
