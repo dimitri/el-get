@@ -11,4 +11,4 @@ env:
   - EMACS=emacs
   - EMACS=emacs-snapshot
 script:
-  test/run-all-tests.sh
+  test/run-travis-ci.sh
