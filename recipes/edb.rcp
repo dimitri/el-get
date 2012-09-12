@@ -1,0 +1,10 @@
+(:name edb
+       :website "http://www.gnuvola.org/software/edb"
+       :description "The Emacs database."
+       :type http-tar
+       :options ("xzf")
+       :url "http://www.gnuvola.org/software/edb/edb-1.31.tar.gz/edb-1.31.tar.gz"
+       :info "doc"
+       :load-path ("lisp")
+       :build `(("./configure")
+                (,(format "make EMACS=\"%s\"" el-get-emacs))))
