@@ -820,7 +820,7 @@ itself.")
   (interactive)
   (when (or no-prompt
             (yes-or-no-p
-             "Do you really want to update all installed packages?"))
+             "Do you really want to update all installed packages? "))
     ;; The let and flet forms here ensure that
     ;; `package-refresh-contents' is only called once, regardless of
     ;; how many ELPA-type packages need to be installed. Without this,
