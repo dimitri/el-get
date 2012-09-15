@@ -23,6 +23,9 @@ set_default TEST_DIR "$(dirname $0)"
 # many tests in a short time
 set_default DELAY_BETWEEN_TESTS 5
 
+FAILED_TESTS=0
+ALL_TESTS=0
+
 run_test () {
   for x in "$1" "$TEST_DIR/$1" "$TEST_DIR/$1.el" "$TEST_DIR/el-get-issue-$1.el"; do
     if [ -f "$x" ]; then
@@ -47,9 +50,16 @@ run_test () {
       echo "*** SUCCESS $testfile ***"
     else
       echo "*** FAILED $testfile ***"
+      FAILED_TESTS="$(expr $FAILED_TESTS + 1)"
     fi
+    ALL_TESTS="$(expr $ALL_TESTS + 1)"
   fi
 }
+
+echo "*** Emacs version ***"
+echo "EMACS =" $(which $EMACS)
+$EMACS --version
+echo
 
 while [ -n "$1" ]; do
   run_test "$1"
@@ -58,3 +68,8 @@ while [ -n "$1" ]; do
     sleep "$DELAY_BETWEEN_TESTS"
   fi
 done
+
+echo "Ran $ALL_TESTS tests (FAILED: $FAILED_TESTS)."
+if [ "$FAILED_TESTS" -gt 0 ]; then
+    exit 1
+fi
