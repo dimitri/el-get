@@ -1,0 +1,3 @@
+(:name ibuffer-vc
+       :description "Group ibuffer's list by VC project, or show VC status"
+       :type elpa)

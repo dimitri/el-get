@@ -1,0 +1,7 @@
+(:name auto-async-byte-compile
+       :description "Automatically byte-compile when saved"
+       :website "http://www.emacswiki.org/emacs/AutoAsyncByteCompile"
+       :type emacswiki
+       :post-init
+       (add-hook 'emacs-lisp-mode-hook 'enable-auto-async-byte-compile-mode)
+       :features "auto-async-byte-compile")

@@ -1,0 +1,9 @@
+(:name eproject
+       :description "File grouping (\"project\") extension for emacs"
+       :type github
+       :pkgname "jrockway/eproject"
+       :load-path ("." "lang" "contrib")
+       ;; the core functionality needs to be present.
+       ;; eproject-extras, otoh, has autoload cookies.
+       ;; lang/* can be added by the user as needed.
+       :features eproject)

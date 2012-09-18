@@ -1,0 +1,8 @@
+(:name d-mode
+       :description "Digitalmars-D-Mode for emacs"
+       :type http
+       :url "http://www.billbaxter.com/etc/d-mode.el"
+       :prepare (progn
+                  (autoload 'd-mode "d-mode"
+                    "Major mode for editing D code." t)
+                  (add-to-list 'auto-mode-alist '("\\.d[i]?$" . d-mode))))

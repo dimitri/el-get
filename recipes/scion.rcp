@@ -1,0 +1,6 @@
+(:name scion
+       :description "IDE library for Haskell based on the GHC API."
+       :type github
+       :pkgname "nominolo/scion"
+       :load-path "emacs"
+       :features scion)

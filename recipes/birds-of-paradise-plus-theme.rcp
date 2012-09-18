@@ -1,0 +1,8 @@
+(:name birds-of-paradise-plus-theme
+       :description "A Emacs port of Joseph Bergantine's light-on-dark theme by the same name."
+       :website "https://github.com/jimeh/birds-of-paradise-plus-theme.el"
+       :type github
+       :pkgname "jimeh/birds-of-paradise-plus-theme.el"
+       :minimum-emacs-version 24
+       :post-init (add-to-list 'custom-theme-load-path
+                               default-directory))

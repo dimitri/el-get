@@ -1,0 +1,4 @@
+(:name lib-requires
+       :type emacswiki
+       :description "Commands to list Emacs Lisp library dependencies."
+       )

@@ -7,9 +7,8 @@
 ;; solution is either to remove :features from the flymake-fringe-icons
 ;; recipe or to make el-get-init respect the :depends clause.
 
-(let ((debug-on-error t))
-  (setq el-get-byte-compile nil
-	el-get-verbose t)
-  (require 'el-get)
-  (el-get 'sync '(flymake-fringe-icons)))
+(setq debug-on-error t)
 
+(setq el-get-byte-compile nil
+      el-get-verbose t)
+(el-get 'sync '(flymake-fringe-icons))

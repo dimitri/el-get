@@ -1,0 +1,5 @@
+(:name popwin
+       :description "Popup Window Manager."
+       :website "https://github.com/m2ym/popwin-el"
+       :type github
+       :pkgname "m2ym/popwin-el")

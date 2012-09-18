@@ -1,0 +1,5 @@
+(:name ess-smart-underscore
+        :website "https://github.com/mlf176f2/ess-smart-underscore.el"
+        :description "Smarter underscore behavior in emacs"
+        :type github
+        :pkgname "mlf176f2/ess-smart-underscore.el")

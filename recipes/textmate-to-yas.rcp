@@ -1,0 +1,5 @@
+(:name textmate-to-yas
+       :website "https://github.com/mlf176f2/textmate-to-yas.el"
+       :description "Convert Textmate snippets to Yasnippets"
+       :type github
+       :pkgname "mlf176f2/textmate-to-yas.el")

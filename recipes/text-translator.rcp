@@ -1,0 +1,4 @@
+(:name text-translator
+       :description "Translate text within GNU Emacs by online translators"
+       :type bzr
+       :url "lp:~khiker/+junk/text-translator")

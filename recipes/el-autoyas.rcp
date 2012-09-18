@@ -1,0 +1,5 @@
+(:name el-autoyas
+       :website "https://github.com/mlf176f2/el-autoyas.el"
+       :description "Automatic yasnippet creation for emacs lisp."
+       :type github
+       :pkgname "mlf176f2/el-autoyas.el")

@@ -1,0 +1,6 @@
+(:name ssh
+       :website "http://www.splode.com/~friedman/software/emacs-lisp/#ssh"
+       :description "This is a comint-based interface for connecting to remote hosts via ssh."
+       :type http
+       :url "http://www.splode.com/~friedman/software/emacs-lisp/src/ssh.el")
+

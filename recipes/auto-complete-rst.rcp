@@ -1,0 +1,5 @@
+(:name auto-complete-rst
+       :description "Auto-complete extension for ReST and Sphinx"
+       :type github
+       :pkgname "tkf/auto-complete-rst"
+       :depends auto-complete)

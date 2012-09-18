@@ -24,6 +24,17 @@
 (require 'bytecomp)
 (require 'autoload)
 
+(defun el-get-print-to-string (object &optional pretty)
+  "Return string representation of lisp object.
+
+Unlike the Emacs builtin printing functions, this ignores
+`print-level' and `print-length', ensuring that as much as
+possible the returned string will be a complete representation of
+the original object."
+  (let (print-level print-length)
+    (funcall (if pretty #'pp-to-string #'prin1-to-string)
+             object)))
+
 (defun el-get-verbose-message (format &rest arguments)
   (when el-get-verbose (apply 'message format arguments)))
 
@@ -36,18 +47,54 @@
 
 The methods list is a PLIST, each entry has a method name
 property which value is another PLIST, which must contain values
-for :install, :install-hook, :update and :remove
-properties. Those should be the elisp functions to call for doing
-the named package action in the given method.")
+for :install, :install-hook, :update, :remove, :remove-hook
+and :checksum properties. Those should be the elisp functions to
+call for doing the named package action in the given method.")
 
-(defun el-get-register-method (name install update remove
-				    &optional install-hook remove-hook)
+(defun el-get-method-defined-p (name)
+  "Returns t if NAME is a known el-get install method backend, nil otherwise."
+  (and (el-get-method name :install) t))
+
+(defun* el-get-register-method (name &key install update remove
+                                     install-hook update-hook remove-hook
+                                     compute-checksum guess-website)
   "Register the method for backend NAME, with given functions"
-  (let ((def (list :install install :update update :remove remove)))
-    (when install-hook (setq def (append def (list :install-hook install-hook))))
-    (when remove-hook  (setq def (append def (list :remove-hook remove-hook))))
-    (setq el-get-methods (plist-put el-get-methods name def))))
+  (let (method-def)
+    (loop for required-arg in '(install update remove)
+          unless (symbol-value required-arg)
+          do (error "Missing required argument: :%s" required-arg)
+          do (setq method-def
+                   (plist-put method-def
+                              (intern (format ":%s" required-arg))
+                              (symbol-value required-arg))))
+    (loop for optional-arg in '(install-hook update-hook remove-hook
+                                compute-checksum guess-website)
+        if (symbol-value optional-arg)
+        do (setq method-def
+                 (plist-put method-def
+                            (intern (format ":%s" optional-arg))
+                            (symbol-value optional-arg))))
+    (setq el-get-methods (plist-put el-get-methods name method-def))))
 
+(put 'el-get-register-method 'lisp-indent-function
+     (get 'prog1 'lisp-indent-function))
+
+(defun* el-get-register-derived-method (name derived-from-name
+                                             &rest keys &key &allow-other-keys)
+  "Register the method for backend NAME.
+
+Defaults for all optional arguments are taken from
+already-defined method DERIVED-FROM-NAME."
+  (unless (el-get-method-defined-p derived-from-name)
+    (error "Cannot derive new el-get method from unknown method %s" derived-from-name))
+  (apply #'el-get-register-method name (append keys (plist-get el-get-methods derived-from-name))))
+
+(put 'el-get-register-derived-method 'lisp-indent-function
+     (get 'prog2 'lisp-indent-function))
+
+(defun el-get-register-method-alias (name old-name)
+  "Register NAME as an alias for install method OLD-NAME."
+  (el-get-register-derived-method name old-name))
 
 
 ;;
@@ -86,28 +133,24 @@ returning a list that contains it (and only it)."
 (defun el-get-source-name (source)
   "Return the package name (stringp) given an `el-get-sources'
 entry."
-  (if (symbolp source) (symbol-name source)
-    (format "%s" (plist-get source :name))))
+  (if (listp source)
+      (format "%s" (or (plist-get source :name)
+                       (error "Source does not have a :name property: %S" source)))
+    (symbol-name source)))
 
 
 ;;
 ;; Common support bits
 ;;
-(defun el-get-rmdir (package url post-remove-fun)
-  "Just rm -rf the package directory. Follow symlinks."
-  (let* ((source   (el-get-package-def package))
-	 (method   (el-get-package-method source))
-	 (pdir (el-get-package-directory package)))
-    (if (eq method 'elpa)
-	;; only remove a symlink here
-	(when (or (file-symlink-p (directory-file-name pdir))
-                  (file-exists-p pdir))
-	  (delete-file (directory-file-name pdir)))
-      ;; non ELPA packages, remove the directory
-      (if (file-exists-p pdir)
-	  (dired-delete-file pdir 'always)
-	(message "el-get could not find package directory \"%s\"" pdir))
-      (funcall post-remove-fun package))))
+(defun el-get-rmdir (package &rest ignored)
+  "Just rm -rf the package directory. If it is a symlink, delete it."
+  (let* ((pdir (expand-file-name "." (el-get-package-directory package))))
+    (cond ((file-symlink-p pdir)
+           (delete-file pdir))
+          ((file-directory-p pdir)
+           (delete-directory pdir 'recursive))
+          ((file-exists-p pdir)
+           (delete-file pdir)))))
 
 
 ;;
@@ -134,15 +177,20 @@ entry."
   "Return the list of absolute directory names to be added to
 `load-path' by the named PACKAGE."
   (let* ((source   (el-get-package-def package))
-	 (el-path  (el-get-flatten (or (plist-get source :load-path) ".")))
+	 (el-path  (if (plist-member source :load-path)
+                       (el-get-flatten (plist-get source :load-path))
+                     '(".")))
          (pkg-dir (el-get-package-directory package)))
     (mapcar (lambda (p) (expand-file-name p pkg-dir)) el-path)))
 
 (defun el-get-method (method-name action)
   "Return the function to call for doing action (e.g. install) in
 given method."
-  (let* ((method  (intern (concat ":" (format "%s" method-name))))
-	 (actions (plist-get el-get-methods method)))
+  (let* ((method  (if (keywordp method-name) method-name
+                    (intern (concat ":" (format "%s" method-name)))))
+         (actions (plist-get el-get-methods method)))
+    (assert actions nil
+            "Unknown recipe type: %s" method)
     (plist-get actions action)))
 
 (defun el-get-check-init ()
@@ -291,10 +339,18 @@ properties:
    `process-send-string' for an asynchronous one.
 
 Any other property will get put into the process object.
+
+Any element of commands that is nil will simply be ignored. This
+makes it easier to conditionally splice a command into the list.
 "
+  ;; Skip nil elements of commands. This makes it easier for methods
+  ;; to conditionally splice commands into the list.
+  (while (and commands (null (car commands)))
+    (setq commands (cdr commands)))
   (condition-case err
       (if commands
         (let* ((c       (car commands))
+               (next    (cdr commands))
                (cdir    (plist-get c :default-directory))
                (cname   (plist-get c :command-name))
                (cbuf    (plist-get c :buffer-name))
@@ -305,7 +361,7 @@ Any other property will get put into the process object.
                (args    (if shell
 			    (mapcar #'shell-quote-argument (plist-get c :args))
 			  (plist-get c :args)))
-               (sync    (if (plist-member c :sync) (plist-get c :sync)
+               (sync    (el-get-plist-get-with-default c :sync
                           el-get-default-process-sync))
 	       (stdin   (plist-get c :stdin))
                (default-directory (if cdir
@@ -313,28 +369,35 @@ Any other property will get put into the process object.
                                        (expand-file-name cdir))
                                     default-directory)))
           (if sync
-              (let* ((startf (if shell #'call-process-shell-command #'call-process))
-		     (infile (when stdin (make-temp-file "el-get")))
-		     (dummy  (when infile
-			       (with-temp-file infile
-				 (insert (prin1-to-string stdin)))))
-                     (dummy  (message "el-get is waiting for %S to complete" cname))
-		     (status (apply startf program infile cbuf t args))
-                     (message (plist-get c :message))
-                     (errorm  (plist-get c :error))
-                     (next    (cdr commands)))
-		(when el-get-verbose
-		  (message "%S" (with-current-buffer cbuf (buffer-string))))
-                (if (eq 0 status)
-                    (message "el-get: %s" message)
-                  (set-window-buffer (selected-window) cbuf)
-                  (error "el-get: %s %s" cname errorm))
-                (when cbuf (kill-buffer cbuf))
-                (if next
-                    (el-get-start-process-list package next final-func)
-                  (when (functionp final-func)
-                    (funcall final-func package))))
+              (progn
+                (el-get-verbose-message "Running commands synchronously: %S" commands)
+                (let* ((startf (if shell #'call-process-shell-command #'call-process))
+                       (infile (when stdin (make-temp-file "el-get")))
+                       (dummy  (when infile
+                                 (with-temp-file infile
+                                   (insert (el-get-print-to-string stdin)))))
+                       (dummy  (message "el-get is waiting for %S to complete" cname))
+                       (status (apply startf program infile cbuf t args))
+                       (message (plist-get c :message))
+                       (errorm  (plist-get c :error)))
+                  (when el-get-verbose
+                    (message "%S" (with-current-buffer cbuf (buffer-string))))
+                  (if (eq 0 status)
+                      (message "el-get: %s" message)
+                    (set-window-buffer (selected-window) cbuf)
+                    (error "el-get: %s %s" cname errorm))
+                  (when cbuf (kill-buffer cbuf))
+                  (if next
+                      ;; Prevent stack overflow on very long command
+                      ;; lists. This allows
+                      ;; `el-get-start-process-list' (but not other
+                      ;; functions) to recurse indefinitely.
+                      (let ((max-specpdl-size (+ 100 max-specpdl-size)))
+                        (el-get-start-process-list package next final-func))
+                    (when (functionp final-func)
+                      (funcall final-func package)))))
             ;; async case
+            (el-get-verbose-message "Running commands asynchronously: %S" commands)
             (let* ((startf (if shell #'start-process-shell-command #'start-process))
                    (process-connection-type nil) ; pipe, don't pretend we're a pty
                    (proc (apply startf cname cbuf program args)))
@@ -343,9 +406,9 @@ Any other property will get put into the process object.
               (process-put proc :el-get-sources el-get-sources)
               (process-put proc :el-get-package package)
               (process-put proc :el-get-final-func final-func)
-              (process-put proc :el-get-start-process-list (cdr commands))
+              (process-put proc :el-get-start-process-list next)
 	      (when stdin
-		(process-send-string proc (prin1-to-string stdin))
+		(process-send-string proc (el-get-print-to-string stdin))
 		(process-send-eof proc))
               (set-process-sentinel proc 'el-get-start-process-list-sentinel)
               (when filter (set-process-filter proc filter)))))
@@ -398,5 +461,16 @@ out if it's nil."
 	   name))
 	command)))))
 
-(provide 'el-get-core)
+(defun el-get-plist-get-with-default (plist prop def)
+  "Same as (plist-get PLIST PROP), but falls back to DEF.
 
+Specifically, if (plist-member PLIST PROP) is nil, then returns
+DEF instead. Note that having a property set to nil is not the
+same as having it unset."
+  (if (plist-member plist prop)
+      (plist-get plist prop)
+    def))
+(put 'el-get-plist-get-with-default 'lisp-indent-function
+     (get 'prog2 'lisp-indent-function))
+
+(provide 'el-get-core)

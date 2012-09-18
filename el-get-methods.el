@@ -11,7 +11,6 @@
 ;;
 ;; Install
 ;;     Please see the README.asciidoc file from the same distribution
-
 (require 'el-get-core)
 
 ;;
@@ -24,6 +23,7 @@
 
 (require 'el-get-apt-get)
 (require 'el-get-builtin)
+(require 'el-get-brew)
 (require 'el-get-bzr)
 (require 'el-get-cvs)
 (require 'el-get-darcs)
@@ -32,11 +32,16 @@
 (require 'el-get-emacswiki)
 (require 'el-get-fink)
 (require 'el-get-git)
+(require 'el-get-github)
 (require 'el-get-git-svn)
 (require 'el-get-hg)
 (require 'el-get-http)
 (require 'el-get-http-tar)
+(require 'el-get-http-zip)
+(require 'el-get-github-tar)
+(require 'el-get-github-zip)
 (require 'el-get-pacman)
 (require 'el-get-svn)
+(require 'el-get-fossil)
 
 (provide 'el-get-methods)

@@ -1,0 +1,7 @@
+(:name pcmpl-git
+       :description "pcomplete support for git"
+       :type github
+       :pkgname "leoliu/pcmpl-git-el"
+       :features pcmpl-git
+       :prepare (setq pcmpl-git-options-file
+                        (expand-file-name "git-options")))

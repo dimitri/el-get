@@ -1,0 +1,5 @@
+(:name shen-mode
+       :description "Major mode for editing Shen source code"
+       :website "http://shenlanguage.org"
+       :type github
+       :pkgname "eschulte/shen-mode")

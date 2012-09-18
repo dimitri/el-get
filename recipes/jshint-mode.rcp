@@ -1,0 +1,6 @@
+(:name jshint-mode
+ :website "https://github.com/daleharvey/jshint-mode"
+ :description "Integrate JSHint into Emacs via a node.js server. JSHint (http://www.jshint.com/) is a static code analysis tool for JavaScript."
+ :type github
+ :pkgname "daleharvey/jshint-mode"
+)

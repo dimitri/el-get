@@ -1,0 +1,5 @@
+(:name org-cua-dwim
+       :website "https://github.com/mlf176f2/org-cua-dwim.el"
+       :description "Allow C-c, C-v, C-x etc to work as you would expect elsewhere when using CUA mode."
+       :type github
+       :pkgname "mlf176f2/org-cua-dwim.el")

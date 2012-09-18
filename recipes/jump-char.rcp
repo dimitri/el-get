@@ -1,0 +1,5 @@
+(:name jump-char
+       :description "navigate by typing chars (search)"
+       :website "https://github.com/lewang/jump-char"
+       :type github
+       :pkgname "lewang/jump-char")

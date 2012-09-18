@@ -1,0 +1,7 @@
+(:name ncl-mode
+       :type github
+       :website "http://www.ncl.ucar.edu/"
+       :description "ncl-mode and other goodies for editing Ncar Command
+       line Language(NCL) files."
+       :pkgname "yyr/ncl-mode"
+       :autoloads t)

@@ -1,0 +1,6 @@
+(:name zenburn-theme
+         :description "Zenburn theme for Emacs"
+         :type http
+         :url "https://raw.github.com/djcb/elisp/master/themes/zenburn-theme.el"
+         :post-init (add-to-list 'custom-theme-load-path
+                                 default-directory))

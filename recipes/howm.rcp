@@ -1,0 +1,7 @@
+(:name howm
+       :website "http://howm.sourceforge.jp/"
+       :description "Write fragmentarily and read collectively."
+       :type http-tar
+       :options ("xzf")
+       :url "http://howm.sourceforge.jp/a/howm-1.3.9.2.tar.gz"
+       :build `(("./configure" ,(concat "--with-emacs=" el-get-emacs)) "make"))

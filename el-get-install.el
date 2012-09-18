@@ -63,15 +63,19 @@
                       ("master")))
              (default-directory pdir)
              (bstatus
-              (call-process git nil (list buf t) t "checkout" branch)))
+               (if (string-equal branch "master")
+                 0
+                 (call-process git nil (list buf t) t "checkout" "-t" remote-branch))))
         (unless (zerop bstatus)
-          (error "Couldn't `git checkout %s`" branch)))
+          (error "Couldn't `git checkout -t %s`" branch)))
 
       (add-to-list 'load-path pdir)
       (load package)
       (let ((el-get-default-process-sync t) ; force sync operations for installer
             (el-get-verbose t))		    ; let's see it all
         (el-get-post-install "el-get"))
+      (unless (boundp 'el-get-install-skip-emacswiki-recipes)
+        (el-get-emacswiki-build-local-recipes))
       (with-current-buffer buf
 	(goto-char (point-max))
 	(insert "\nCongrats, el-get is installed and ready to serve!")))))

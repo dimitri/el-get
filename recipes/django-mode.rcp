@@ -1,13 +1,13 @@
 (:name django-mode
        :description "Major mode for Django web framework."
-       :type git
-       :url "https://github.com/myfreeweb/django-mode.git"
+       :type github
+       :pkgname "myfreeweb/django-mode"
        :depends yasnippet
+       :prepare (autoload 'django-mode "django-mode" "Major mode for Django web framework." t)
        :post-init
-       (lambda ()
+       (progn
          ;; Load yasnippet because yas/load-directory has no autoload
          (require 'yasnippet)
-	 (yas/load-directory (expand-file-name "snippets" pdir))
-	 (autoload 'django-mode "django-mode" "Major mode for Django web framework." t)
+	 (yas/load-directory (expand-file-name "snippets"))
 	 ;; django-html-mode is autoloaded, should just work
 	 (add-to-list 'auto-mode-alist '("\.djhtml$" . django-html-mode))))

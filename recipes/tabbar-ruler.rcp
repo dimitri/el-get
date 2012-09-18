@@ -1,0 +1,6 @@
+(:name tabbar-ruler
+       :website "https://github.com/mlf176f2/tabbar-ruler.el"
+       :description "Tabbar ruler is an emacs package that allows both the tabbar and the ruler to be used together. In addition it allows auto-hiding of the menu-bar and tool-bar."
+       :type github
+       :depends tabbar
+       :pkgname "mlf176f2/tabbar-ruler.el")

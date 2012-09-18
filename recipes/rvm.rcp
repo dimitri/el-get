@@ -1,7 +1,7 @@
 (:name rvm
        :description "Emacs integration for rvm"
-       :type git
+       :type github
        :features rvm
-       :url "https://github.com/senny/rvm.el.git"
+       :pkgname "senny/rvm.el"
        :compile "rvm.el"
-       :post-init (lambda () (rvm-use-default)))
+       :post-init (rvm-use-default))

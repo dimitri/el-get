@@ -1,0 +1,5 @@
+(:name extend-dnd
+       :website "https://github.com/mlf176f2/extend-dnd"
+       :description "Extended Drag and Drop support"
+       :type github
+       :pkgname "mlf176f2/extend-dnd")

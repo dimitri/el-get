@@ -4,11 +4,14 @@
        :type git
        :url "git://orgmode.org/org-mode.git"
        :info "doc"
+       :build/berkeley-unix `,(mapcar
+                               (lambda (target)
+                                 (list "gmake" target (concat "EMACS=" (shell-quote-argument el-get-emacs))))
+                               '("oldorg"))
        :build `,(mapcar
                  (lambda (target)
-                   (concat "make " target " EMACS=" el-get-emacs))
-                 '("clean" "all"))
+                   (list "make" target (concat "EMACS=" (shell-quote-argument el-get-emacs))))
+                 '("oldorg"))
        :load-path ("." "lisp" "contrib/lisp")
        :autoloads nil
        :features org-install)
-

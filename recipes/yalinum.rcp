@@ -1,0 +1,6 @@
+(:name yalinum
+       :description "Yet another display line numbers."
+       :website "https://github.com/tm8st/emacs-yalinum/"
+       :type github
+       :pkgname "tm8st/emacs-yalinum"
+       :features "yalinum")

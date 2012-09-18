@@ -1,0 +1,6 @@
+(:name "flymake-html-validator"
+       :description "Make flymake work with Validator.nu."
+       :type git
+       :url "https://github.com/dwdreisigmeyer/flymake-html-validator"
+       :features "flymake-html-validator"
+       :prepare (setq validator-script (concat el-get-dir "flymake-html-validator")))

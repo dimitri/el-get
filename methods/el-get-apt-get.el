@@ -55,6 +55,7 @@
 	 (method  (el-get-package-method package))
 	 (pname   (el-get-as-string package))
 	 (basedir (cond ((eq method 'apt-get) el-get-apt-get-base)
+                        ((eq method 'brew)    el-get-brew-base)
 			((eq method 'fink)    el-get-fink-base)
 			((eq method 'pacman)  el-get-pacman-base)))
 	 (debdir  (concat (file-name-as-directory basedir) pname)))
@@ -123,7 +124,7 @@ password prompt."
 		      :buffer-name ,name
 		      :process-filter ,(function el-get-sudo-password-process-filter)
 		      :program ,(executable-find "sudo")
-		      :args ("-S" ,(executable-find "apt-get") "install" ,pkgname)
+		      :args ("-S" ,el-get-apt-get "install" ,pkgname)
 		      :message ,ok
 		      :error ,ko))
      post-install-fun)))
@@ -142,15 +143,18 @@ password prompt."
 		      :buffer-name ,name
 		      :process-filter ,(function el-get-sudo-password-process-filter)
 		      :program ,(executable-find "sudo")
-		      :args ("-S" ,(executable-find "apt-get") "remove" "-y" ,pkgname)
+		      :args ("-S" ,el-get-apt-get "remove" "-y" ,pkgname)
 		      :message ,ok
 		      :error ,ko))
      post-remove-fun)))
 
 (add-hook 'el-get-apt-get-remove-hook 'el-get-dpkg-remove-symlink)
 
-(el-get-register-method
- :apt-get #'el-get-apt-get-install #'el-get-apt-get-install #'el-get-apt-get-remove
- #'el-get-apt-get-install-hook #'el-get-apt-get-remove-hook)
+(el-get-register-method :apt-get
+  :install #'el-get-apt-get-install
+  :update #'el-get-apt-get-install
+  :remove #'el-get-apt-get-remove
+  :install-hook #'el-get-apt-get-install-hook
+  :remove-hook #'el-get-apt-get-remove-hook)
 
 (provide 'el-get-apt-get)

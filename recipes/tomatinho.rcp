@@ -1,0 +1,5 @@
+(:name tomatinho
+       :description "Pomodoro technique timer with a lean and usable interface."
+       :type github
+       :branch "autoload"
+       :pkgname "konr/tomatinho")

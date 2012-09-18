@@ -1,0 +1,11 @@
+(:name mac-print-mode
+       :website "http://www.emacswiki.org/emacs/MacPrintMode"
+       :description "Pseudo-native print dialog for Cocoa/Carbon Emacs.
+Use M-p to generate an HTML version of the current buffer and print it with TextEdit"
+       :type http
+       :url "http://svn.sourceforge.jp/svnroot/macwiki/zenitani/CarbonEmacs/src/lisp/mac-print-mode.el"
+       :features mac-print-mode
+       :post-init (progn
+                    (mac-print-mode 1)
+                    (global-set-key (kbd "M-p") 'mac-print-buffer))
+       :depends htmlize)

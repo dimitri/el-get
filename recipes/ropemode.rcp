@@ -1,0 +1,8 @@
+(:name ropemode
+       :description "Common parts of ropemacs and ropevim."
+       :post-init
+       (progn
+         (unless (boundp 'pymacs-load-path) (setq pymacs-load-path nil))
+         (add-to-list 'pymacs-load-path default-directory))
+       :type hg
+       :url "http://bitbucket.org/agr/ropemode")

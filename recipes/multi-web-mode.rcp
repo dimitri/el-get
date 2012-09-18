@@ -1,0 +1,4 @@
+(:name "multi-web-mode"
+       :description "Multi Web Mode is a minor mode which makes web editing in Emacs much easier"
+       :type github
+       :pkgname "martialboniou/multi-web-mode")

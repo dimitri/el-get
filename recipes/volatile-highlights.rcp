@@ -1,0 +1,5 @@
+(:name volatile-highlights
+       :description "Minor mode for visual feedback on some operations in Emacs"
+       :type github
+       :pkgname "k-talo / volatile-highlights.el"
+       :features volatile-highlights)

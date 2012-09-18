@@ -1,0 +1,8 @@
+(:name ibus
+       :description "IBus client for GNU Emacs"
+       :website "https://launchpad.net/ibus.el"
+       :type http-tar
+       :options ("xzf")
+       :url "http://launchpad.net/ibus.el/0.3/0.3.2/+download/ibus-el-0.3.2.tar.gz"
+       :post-init (add-hook 'after-init-hook 'ibus-mode-on)
+       :features "ibus")
