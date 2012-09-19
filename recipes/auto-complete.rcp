@@ -2,5 +2,6 @@
        :website "http://cx4a.org/software/auto-complete/"
        :description "The most intelligent auto-completion extension."
        :type github
-       :pkgname "auto-complete/auto-complete"
+       :username "auto-complete"
+       :features auto-complete
        :depends (popup fuzzy))
