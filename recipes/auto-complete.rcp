@@ -3,5 +3,4 @@
        :description "The most intelligent auto-completion extension."
        :type github
        :username "auto-complete"
-       :features auto-complete
        :depends (popup fuzzy))
