@@ -1,0 +1,5 @@
+(:name dynamic-fonts
+       :depends persistent-soft
+       :type github
+       :description "Set faces based on available fonts"
+       :pkgname "rolandwalker/dynamic-fonts")

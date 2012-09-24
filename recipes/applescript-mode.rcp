@@ -1,0 +1,7 @@
+(:name applescript-mode
+       :type github
+       :description "Emacs mode for editing AppleScript."
+       :pkgname "ieure/applescript-mode"
+       :prepare
+       (autoload 'applescript-mode "applescript-mode"
+         "Major mode for editing AppleScript source." t))

@@ -6,4 +6,6 @@
        :type git
        :url "https://git.gitorious.org/evil/evil.git"
        :features evil
-       :depends undo-tree)
+       :depends undo-tree
+       :build (("make" "all" "info"))
+       :info "doc")

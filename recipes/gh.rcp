@@ -1,0 +1,5 @@
+(:name gh
+       :description "GitHub API library for Emacs"
+       :type github
+       :pkgname "sigma/gh.el"
+       :depends (pcache logito))

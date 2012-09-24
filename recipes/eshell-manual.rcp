@@ -1,0 +1,7 @@
+(:name eshell-manual
+       :description "eshell is great but lacks a good manual, someone wrote one."
+       :type github
+       :pkgname "nicferrier/eshell-manual"
+       :build (("make" "eshell.info"))
+       :compile nil
+       :info "eshell.info")

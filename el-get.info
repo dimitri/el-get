@@ -96,17 +96,17 @@ either recipes, bug fixes or ideas to implement, often with code. That
 builds up an awesome community, thanks guys!
 
      dim ~/dev/emacs/el-get git --no-pager shortlog -n -s | wc -l
-          133
+          137
      dim ~/dev/emacs/el-get git --no-pager shortlog -n -s | head -10
-        713	Dimitri Fontaine
+        734	Dimitri Fontaine
         336	Ryan C. Thompson
+        114	Julien Danjou
         110	Dave Abrahams
-        106	Julien Danjou
          73	Ryan Thompson
-         68	Sébastien Gross
-         34	Takafumi Arakaki
+         72	Sébastien Gross
+         42	Takafumi Arakaki
+         27	Alex Ott
          25	Yakkala Yagnesh Raghava
-         25	Alex Ott
          21	Rüdiger Sonderfeld
 
 
