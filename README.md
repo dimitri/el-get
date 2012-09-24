@@ -113,9 +113,9 @@ As a result, lots of recipe should be *reinstalled* when upgrading. The
 easiest way here might well be to just backup your `el-get-dir` directory
 and start-up fresh with the new El-Get code:
 
-    M-x el-get-self-update
-    mkdir ~/.emacs.d/el-get
     mv ~/.emacs.d/el-get ~/.emacs.d/el-get-backup-3.stable
+    mkdir ~/.emacs.d/el-get
+    M-x el-get-self-update
 
 That code sample assumes that `el-get-dir` is set to its default value, that
 is `~/.emacs.d/el-get`.
