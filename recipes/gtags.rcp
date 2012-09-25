@@ -1,0 +1,7 @@
+(:name gtags
+       :type http
+       :website "http://www.gnu.org/software/global"
+       :localname "gtags.el"
+       :url "http://cvs.savannah.gnu.org/viewvc/*checkout*/global/global/gtags.el"
+       :description "Gtags-mode for GNU GLOBAL."
+       :features "gtags")
