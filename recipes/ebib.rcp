@@ -4,5 +4,4 @@
        :description "Application to manage BibTeX database"
        :pkgname "joostkremers/ebib"
        :shallow nil
-       :load-path ("src")
        :autoloads t)
