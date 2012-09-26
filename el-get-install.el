@@ -61,7 +61,6 @@
                                   :branch))
                       ;; As a last resort, use the master branch
                       ("master")))
-             (remote-branch (format "origin/%s" branch))
              (default-directory pdir)
              (bstatus
                (if (string-equal branch "master")
