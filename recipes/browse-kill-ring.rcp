@@ -1,4 +1,5 @@
 (:name browse-kill-ring
        :description "Interactively insert items from kill-ring"
-       :type emacswiki
+       :type github
+       :pkgname "browse-kill-ring/browse-kill-ring"
        :features browse-kill-ring)
