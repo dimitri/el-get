@@ -1,0 +1,5 @@
+(:name sqlite-dump
+       :type ftp
+       :url "ftp://download.tuxfamily.org/user42/sqlite-dump.el"
+       :description "View SQLite database files in Emacs as '.dump' SQL text."
+       )
