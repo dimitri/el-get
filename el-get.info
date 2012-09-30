@@ -423,9 +423,9 @@ File: el-get.info,  Node: Distributed Setup,  Next: Setup Customization,  Prev: 
 
 When you are sharing your emacs setup between several machines (work
 and home destops, laptop, etc); it's usual to manage your `.emacs.d'
-setup in a distributed repository (such as `git'). El-Get then provide
-and easy canonical list of packages you depend on to run emacs, and
-this documentation is usable as-is.
+setup in a distributed repository (such as `git'). El-Get then provides
+an easy canonical list of packages you depend on to run emacs, and this
+documentation is usable as-is.
 
      (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
      (require 'el-get)
@@ -455,6 +455,15 @@ this documentation is usable as-is.
             (mapcar 'el-get-source-name el-get-sources)))
 
      (el-get 'sync my-packages)
+
+   Going one step further with the idea of a canonical list, el-get
+provides the command `el-get-cleanup', which will remove all packages
+absent from that list. This allows, in effect, to put under version
+control only the user init file, instead of the whole `.emacs.d'
+directory, and still enjoy a truly portable emacs configuration.  The
+following line can thus be appended to the example above:
+
+     (el-get-cleanup my-packages)
 
 
 File: el-get.info,  Node: Setup Customization,  Prev: Distributed Setup,  Up: Setup
@@ -787,19 +796,19 @@ Node: Setup11900
 Node: Basic Setup12296
 Node: The el-get function13535
 Node: Distributed Setup14811
-Node: Setup Customization16122
-Node: User Init17268
-Node: Before and After properties17955
-Node: Initialization files19463
-Node: Recipes20116
-Node: Organizing recipes20591
-Node: Getting more recipes22106
-Node: Overriding package files22804
-Node: Authoring Recipes23187
-Node: Recipe format23618
-Node: Dependencies24287
-Node: Byte Compilation24633
-Node: Autoloads25199
-Node: Build26325
+Node: Setup Customization16557
+Node: User Init17703
+Node: Before and After properties18390
+Node: Initialization files19898
+Node: Recipes20551
+Node: Organizing recipes21026
+Node: Getting more recipes22541
+Node: Overriding package files23239
+Node: Authoring Recipes23622
+Node: Recipe format24053
+Node: Dependencies24722
+Node: Byte Compilation25068
+Node: Autoloads25634
+Node: Build26760
 
 End Tag Table

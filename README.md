@@ -237,17 +237,6 @@ between several machines for example).
    Reload the given package files.  Happens automatically at update time
    too.
 
-- **M-x el-get-cleanup**
-
-   Will remove all packages absent from the list of packages provided
-   as argument. This is most useful in the `user-init-file`
-   (`.emacs`), where you might want to remove all packages that have
-   been installed but not explicitly declared: `el-get-cleanup
-   my-packages`. This allows, in effect, to put under version control
-   only the `user-init-file` (`.emacs`), instead of the whole
-   `.emacs.d` directory, and still enjoy a truly portable emacs
-   configuration.
-
 ### Viewing available recipes
 
 - **M-x el-get-list-packages**
