@@ -890,6 +890,17 @@ itself.")
   (el-get-remove package)
   (el-get-install package))
 
+(defun el-get-cleanup (packages) 
+  "Removes packages absent from the argument list
+'packages. Useful, for example, when we 
+want to remove all packages not explicitly declared 
+in the user-init-file (.emacs)." 
+  (let* ((packages-to-keep (el-get-dependencies (mapcar 'el-get-as-symbol packages))) 
+	 (packages-to-remove (set-difference (mapcar 'el-get-as-symbol
+						     (el-get-list-package-names-with-status
+						      "installed")) packages-to-keep))) 
+    (mapc 'el-get-remove packages-to-remove)))
+
 ;;;###autoload
 (defun el-get-cd (package)
   "Open dired in the package directory."
