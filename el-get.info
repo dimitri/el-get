@@ -456,14 +456,19 @@ documentation is usable as-is.
 
      (el-get 'sync my-packages)
 
+   Please note that when you unreference a package from `my-packages',
+it remains locally installed.
+
    Going one step further with the idea of a canonical list, el-get
 provides the command `el-get-cleanup', which will remove all packages
-absent from that list. This allows, in effect, to put under version
+absent from `my-packages'. This allows, in effect, to put under version
 control only the user init file, instead of the whole `.emacs.d'
-directory, and still enjoy a truly portable emacs configuration.  The
-following line can thus be appended to the example above:
+directory, and still enjoy a truly portable emacs configuration.
+
+   In the code example above, replace the last line with the following:
 
      (el-get-cleanup my-packages)
+     (el-get 'sync my-packages)
 
 
 File: el-get.info,  Node: Setup Customization,  Prev: Distributed Setup,  Up: Setup
@@ -796,19 +801,19 @@ Node: Setup11900
 Node: Basic Setup12296
 Node: The el-get function13535
 Node: Distributed Setup14811
-Node: Setup Customization16557
-Node: User Init17703
-Node: Before and After properties18390
-Node: Initialization files19898
-Node: Recipes20551
-Node: Organizing recipes21026
-Node: Getting more recipes22541
-Node: Overriding package files23239
-Node: Authoring Recipes23622
-Node: Recipe format24053
-Node: Dependencies24722
-Node: Byte Compilation25068
-Node: Autoloads25634
-Node: Build26760
+Node: Setup Customization16705
+Node: User Init17851
+Node: Before and After properties18538
+Node: Initialization files20046
+Node: Recipes20699
+Node: Organizing recipes21174
+Node: Getting more recipes22689
+Node: Overriding package files23387
+Node: Authoring Recipes23770
+Node: Recipe format24201
+Node: Dependencies24870
+Node: Byte Compilation25216
+Node: Autoloads25782
+Node: Build26908
 
 End Tag Table

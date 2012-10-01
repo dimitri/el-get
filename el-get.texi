@@ -456,16 +456,21 @@ as-is.
 (el-get 'sync my-packages)
 @end example
 
+Please note that when you unreference a package from
+@code{my-packages}, it remains locally installed.
+
 Going one step further with the idea of a canonical list, el-get
 provides the command @code{el-get-cleanup}, which will remove all
-packages absent from that list. This allows, in effect, to put under
-version control only the user init file, instead of the whole
-@code{.emacs.d} directory, and still enjoy a truly portable emacs
-configuration.
-The following line can thus be appended to the example above: 
+packages absent from @code{my-packages}. This allows, in effect, to
+put under version control only the user init file, instead of the
+whole @code{.emacs.d} directory, and still enjoy a truly portable
+emacs configuration.
+
+In the code example above, replace the last line with the following:
 
 @example
 (el-get-cleanup my-packages)
+(el-get 'sync my-packages)
 @end example 
 
 @node Setup Customization
