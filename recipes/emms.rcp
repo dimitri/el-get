@@ -5,7 +5,7 @@
        :info "doc"
        :load-path ("./lisp")
        :features emms-setup
-       :build `(("mkdir" "-p" ,(format "%s/emms" user-emacs-directory))
+       :build `(("mkdir" "-p" ,(expand-file-name (format "%s/emms" user-emacs-directory)))
                 ("make" ,(format "EMACS=%s" el-get-emacs)
                  ,(format "SITEFLAG=\\\"--no-site-file -L %s/emacs-w3m/ \\\""
                           el-get-dir)
