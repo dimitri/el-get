@@ -58,9 +58,13 @@
          (package-status-alist
           (assq-delete-all package (el-get-read-status-file)))
          (new-package-status-alist
-          (sort (append package-status-alist
-                        (list            ; alist of (PACKAGE . PROPERTIES-LIST)
-                         (cons package (list 'status status 'recipe recipe))))
+          (sort
+           ;; Do not save package information if status is removed.
+           (if (string= status "removed")
+               package-status-alist
+             (append package-status-alist
+                     (list  ; alist of (PACKAGE . PROPERTIES-LIST)
+                      (cons package (list 'status status 'recipe recipe)))))
                 (lambda (p1 p2)
                   (string< (el-get-as-string (car p1))
                            (el-get-as-string (car p2)))))))
