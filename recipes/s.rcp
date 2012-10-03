@@ -1,0 +1,5 @@
+(:name s
+       :description "The long lost Emacs string manipulation library."
+       :type github
+       :pkgname "magnars/s.el"
+       :features s)
