@@ -96,17 +96,17 @@ either recipes, bug fixes or ideas to implement, often with code. That
 builds up an awesome community, thanks guys!
 
      dim ~/dev/emacs/el-get git --no-pager shortlog -n -s | wc -l
-          133
+          137
      dim ~/dev/emacs/el-get git --no-pager shortlog -n -s | head -10
-        713	Dimitri Fontaine
+        734	Dimitri Fontaine
         336	Ryan C. Thompson
+        114	Julien Danjou
         110	Dave Abrahams
-        106	Julien Danjou
          73	Ryan Thompson
-         68	Sébastien Gross
-         34	Takafumi Arakaki
+         72	Sébastien Gross
+         42	Takafumi Arakaki
+         27	Alex Ott
          25	Yakkala Yagnesh Raghava
-         25	Alex Ott
          21	Rüdiger Sonderfeld
 
 
@@ -423,9 +423,9 @@ File: el-get.info,  Node: Distributed Setup,  Next: Setup Customization,  Prev: 
 
 When you are sharing your emacs setup between several machines (work
 and home destops, laptop, etc); it's usual to manage your `.emacs.d'
-setup in a distributed repository (such as `git'). El-Get then provide
-and easy canonical list of packages you depend on to run emacs, and
-this documentation is usable as-is.
+setup in a distributed repository (such as `git'). El-Get then provides
+an easy canonical list of packages you depend on to run emacs, and this
+documentation is usable as-is.
 
      (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
      (require 'el-get)
@@ -454,6 +454,20 @@ this documentation is usable as-is.
             '(cssh el-get switch-window vkill google-maps nxhtml xcscope yasnippet)
             (mapcar 'el-get-source-name el-get-sources)))
 
+     (el-get 'sync my-packages)
+
+   Please note that when you unreference a package from `my-packages',
+it remains locally installed.
+
+   Going one step further with the idea of a canonical list, el-get
+provides the command `el-get-cleanup', which will remove all packages
+absent from `my-packages'. This allows, in effect, to put under version
+control only the user init file, instead of the whole `.emacs.d'
+directory, and still enjoy a truly portable emacs configuration.
+
+   In the code example above, replace the last line with the following:
+
+     (el-get-cleanup my-packages)
      (el-get 'sync my-packages)
 
 
@@ -787,19 +801,19 @@ Node: Setup11900
 Node: Basic Setup12296
 Node: The el-get function13535
 Node: Distributed Setup14811
-Node: Setup Customization16122
-Node: User Init17268
-Node: Before and After properties17955
-Node: Initialization files19463
-Node: Recipes20116
-Node: Organizing recipes20591
-Node: Getting more recipes22106
-Node: Overriding package files22804
-Node: Authoring Recipes23187
-Node: Recipe format23618
-Node: Dependencies24287
-Node: Byte Compilation24633
-Node: Autoloads25199
-Node: Build26325
+Node: Setup Customization16705
+Node: User Init17851
+Node: Before and After properties18538
+Node: Initialization files20046
+Node: Recipes20699
+Node: Organizing recipes21174
+Node: Getting more recipes22689
+Node: Overriding package files23387
+Node: Authoring Recipes23770
+Node: Recipe format24201
+Node: Dependencies24870
+Node: Byte Compilation25216
+Node: Autoloads25782
+Node: Build26908
 
 End Tag Table

@@ -1,0 +1,6 @@
+(:name checkdoc-batch
+       :website "http://user42.tuxfamily.org/checkdoc-batch/index.html"
+       :description "batch report of M-x checkdoc things"
+       :type ftp
+       :url "ftp://download.tuxfamily.org/user42/checkdoc-batch.el"
+       :features checkdoc-batch)

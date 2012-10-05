@@ -53,7 +53,7 @@
                        (replace-regexp-in-string
                         "\n" ""
                         (replace-regexp-in-string
-                         "^emacs" el-get-emacs
+                         "emacs -batch" (concat el-get-emacs " -batch")
                          (with-temp-buffer
                            (insert-file-contents makerfile)
                            (buffer-string))))))

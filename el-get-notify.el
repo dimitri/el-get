@@ -69,6 +69,10 @@ fallback."
          ((equal el-get-notify-type 'message) (error "Use `message' instead"))
          ;; Graphical notification
          ((fboundp 'notifications-notify) (notifications-notify :title title
+                                                                :app-name "el-get"
+                                                                :app-icon (concat
+                                                                           (el-get-package-directory "el-get")
+                                                                           "/logo/el-get.png")
                                                                 :body message))
          ((fboundp 'notify)               (notify title message))
          ((fboundp 'el-get-growl)         (el-get-growl title message))

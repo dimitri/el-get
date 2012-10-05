@@ -98,17 +98,17 @@ builds up an awesome community, thanks guys!
 
 @example
 dim ~/dev/emacs/el-get git --no-pager shortlog -n -s | wc -l
-     133
+     137
 dim ~/dev/emacs/el-get git --no-pager shortlog -n -s | head -10
-   713	Dimitri Fontaine
+   734	Dimitri Fontaine
    336	Ryan C. Thompson
+   114	Julien Danjou
    110	Dave Abrahams
-   106	Julien Danjou
     73	Ryan Thompson
-    68	Sébastien Gross
-    34	Takafumi Arakaki
+    72	Sébastien Gross
+    42	Takafumi Arakaki
+    27	Alex Ott
     25	Yakkala Yagnesh Raghava
-    25	Alex Ott
     21	Rüdiger Sonderfeld
 @end example
 
@@ -421,7 +421,7 @@ list of already installed packages is considered.
 When you are sharing your emacs setup between several machines (work
 and home destops, laptop, etc); it's usual to manage your
 @code{.emacs.d} setup in a distributed repository (such as
-@code{git}). El-Get then provide and easy canonical list of packages
+@code{git}). El-Get then provides an easy canonical list of packages
 you depend on to run emacs, and this documentation is usable
 as-is.
 
@@ -455,6 +455,23 @@ as-is.
 
 (el-get 'sync my-packages)
 @end example
+
+Please note that when you unreference a package from
+@code{my-packages}, it remains locally installed.
+
+Going one step further with the idea of a canonical list, el-get
+provides the command @code{el-get-cleanup}, which will remove all
+packages absent from @code{my-packages}. This allows, in effect, to
+put under version control only the user init file, instead of the
+whole @code{.emacs.d} directory, and still enjoy a truly portable
+emacs configuration.
+
+In the code example above, replace the last line with the following:
+
+@example
+(el-get-cleanup my-packages)
+(el-get 'sync my-packages)
+@end example 
 
 @node Setup Customization
 @section Setup Customization

@@ -1,4 +1,5 @@
-El-get allows you to install and manage `elisp` code for Emacs. It supports
+![Color El-Get logo](https://raw.github.com/dimitri/el-get/master/logo/el-get.png)
+El-Get allows you to install and manage `elisp` code for Emacs. It supports
 lots of differents types of sources and is able to *install* them, *update*
 them and *remove* them, but more importantly it will *init* them for you.
 That means it will `require` the *features* you need, `load` the necessary
@@ -22,12 +23,12 @@ privately hosted pages, [git](http://git-scm.com/),
 [bzr](http://bazaar.canonical.com/en/), [CVS](http://www.nongnu.org/cvs/),
 the list goes on.
 
-El-get is designed to simplify this process and allow access to all the
+El-Get is designed to simplify this process and allow access to all the
 various methods of obtaining packages from a single interface.  Every
 package has a recipe that allows you to locate the original source, and that
 can be updated if the package is moved.
 
-Whether you are using one machine or many, el-get provides you with a simple
+Whether you are using one machine or many, El-Get provides you with a simple
 interface to your list of installed packages, and the tools to keep them up
 to date.
 
@@ -38,21 +39,21 @@ Lisp extensions for Emacs, and supports several servers where to find a list
 of packaged extension.
 
 Rather than ask authors or contributors to clean-up and package existing
-software, the El-get approach is to take bits and pieces as they exist today
+software, the El-Get approach is to take bits and pieces as they exist today
 and still empower Emacs users in a way that those random electrons are easy
 to use.
 
-That's why El-get supports `package.el` as one of its *methods* to fetch
+That's why El-Get supports `package.el` as one of its *methods* to fetch
 Emacs Lisp Extensions.
 
-Technical differences also include the ability for El-get to run OS commands
+Technical differences also include the ability for El-Get to run OS commands
 (such as `make` or `ginstall-info`) so as to better cope with the diversity
 found in the wild, allowing for automatic inclusion of *Info* pages for
 packages providing some.
 
 # Installation
 
-El-get is easy to install.  The only requirements to do so successfully are
+El-Get is easy to install.  The only requirements to do so successfully are
 Emacs, `git` and a connection to the internet that allows you to `git clone`
 repositories.
 
@@ -62,13 +63,13 @@ your package manager if you are using Linux or by downloading it from the
 
 ## Stable Branch
 
-To install El-get you can use the *lazy-installer*.  This will not load it
+To install El-Get you can use the *lazy-installer*.  This will not load it
 on startup or otherwise affect future usage of Emacs.  If you wish to ensure
-that El-get will be available in future Emacs session please use the code
+that El-Get will be available in future Emacs session please use the code
 provided in **Basic Setup**.  Using the code below will require an internet
-connection to start Emacs even if El-get is already installed while the code
-in the later section will only require a connection if it cannot find an
-existing installation.
+connection even if El-Get is already installed, that's why it's adviced to
+use it for first time installation, not for embedding into your `.emacs` (or
+your `user-init-file`).
 
 ```lisp
 ;; So the idea is that you copy/paste this code into your *scratch* buffer,
@@ -80,10 +81,10 @@ existing installation.
    (eval-print-last-sexp)))
 ```
 
-Evaluating this code after copying it into your `\*scratch\*` buffer by
-typing `C-j` or `M-x eval-print-last-exp` will retrieve the El-get
-installation script.  This script will then use `git` to clone El-get and
-install it to the default location (`~/.emacs.d/el-get/el-get`).
+Evaluating this code after copying it into your `*scratch*` buffer by typing
+`C-j` or `M-x eval-print-last-exp` will retrieve the El-Get installation
+script.  This script will then use `git` to clone El-Get and install it to
+the default location (`~/.emacs.d/el-get/el-get`).
 
 ## Master Branch
 
@@ -123,7 +124,7 @@ is `~/.emacs.d/el-get`.
 
 ## Basic Setup
 
-If you wish to ensure that el-get is available when you load Emacs you can
+If you wish to ensure that El-Get is available when you load Emacs you can
 place the following elisp code in your init file.  It will detect if
 `el-get` is already installed and install it if necessary.
 
@@ -171,17 +172,19 @@ The easiest way to setup a given package is to add its initialization code
 to a file named `init-<package>.el` with `<package>` replaced with the
 package name. This file needs to be placed in the directory
 `el-get-user-package-directory` (defaults to `nil`, you have to set a value
-for it).
+for it, like for example `~/.emacs.d/el-get-init-files/`).
 
-El-get will then load that file at package initialization time. See the full
+El-Get will then load that file at package initialization time. See the full
 *Info* documentation for more details and possibilities.
 
 # Usage
 
-El-get requires very little interaction with your init file when managing
+El-Get requires very little interaction with your init file when managing
 packages.  **Basic Usage** explains how to manage your packages without ever
-having to touch your init file. Please refer to the *Info* documentation
-provided with El-get if you think you need to edit your init file.
+having to touch your init file again (meaning, *once El-Get is
+installed*). Please refer to the *Info* documentation provided with El-Get
+if you think you need to edit your init file (when sharing the same setup
+between several machines for example).
 
 ## Basic usage
 
@@ -240,18 +243,16 @@ provided with El-get if you think you need to edit your init file.
 
    Opens a buffer listing all known packages (those for which you have a
    recipe).  The listing includes the package name, its status (one of
-   "available", "installed", "removed" or "required") and the package
+   *available*, *installed*, *removed* or *required*) and the package
    description.  The description is a free form text and has not been
-   provided for all recipes.  Please also note that
-   `el-get-emacswiki-refresh` will create recipes omitting the description
-   as of now.
+   provided for all recipes.
 
 - **M-x el-get-describe**
 
-   Prompt for a package name, with completion, then open an `\*Help\*`
-   window with details about the selected package.  Those include current
-   status, website, description, installation method, full recipe, and
-   buttons to easily install, update or remove the package.
+   Prompt for a package name, with completion, then open an `*Help*` window
+   with details about the selected package.  Those include current status,
+   website, description, installation method, full recipe, and buttons to
+   easily install, update or remove the package.
 
 - **M-x el-get-find-recipe-file**
 

@@ -1,0 +1,6 @@
+(:name pgdevenv-el
+       :website "https://github.com/dimitri/pgdevenv-el"
+       :description "PostgreSQL Development tool for Emacs"
+       :type github
+       :pkgname "dimitri/pgdevenv-el"
+       :features pgdevenv)

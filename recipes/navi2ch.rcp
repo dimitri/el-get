@@ -1,0 +1,5 @@
+(:name navi2ch
+       :website "http://navi2ch.sourceforge.net/"
+       :description "Navigator for 2ch for Emacsen"
+       :type github
+       :pkgname "naota/navi2ch")
