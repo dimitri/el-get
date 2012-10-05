@@ -78,22 +78,23 @@ the first one found is used."
   "Function for loading user init files stored as .org*"
   (condition-case nil
       (org-babel-load-file package-init-file)
-    (error (eval-after-load 'org-install `(org-babel-load-file
+    (error (eval-after-load 'ob-tangle `(org-babel-load-file
                                            ,package-init-file))
            (setq el-get-user-package-org-pending 't))))
 
 (defun el-get-user-package-org-check ()
-  "Check to see if any user init files are waiting on org-install.
+  "Check to see if any user init files are waiting on ob-tangle.
 
 If 'nil then either `org-babel-load-file' is available, or no
 user init files are .org*.  If 't then notify user that
 org is not yet loaded."
   (when el-get-user-package-org-pending
-    ;; Check to see if org-install was required after (eval-after-load
-    ;; 'org-install) was called.
-    (unless (featurep 'org-install)
+    ;; Check to see if ob-tangle or org were required after
+    ;; (eval-after-load 'ob-tangle) was called.  Org will load
+    ;; ob-tangle as well.
+    (unless (featurep 'ob-tangle)
       (el-get-notify "Loading of user init files incomplete"
-                     "Add Org-Mode to path and run `(require 'org-install)' to complete initialization."))))
+                     "Add Org-Mode to path and run `(require 'org)' to complete initialization."))))
 
 (defun el-get-user-package-el-load (package-init-file)
   "Function for loading user init files stored as .el*.
@@ -143,10 +144,10 @@ will load it directly."
              (load-method (or
                            (package-load base
                                          el-get-user-package-org-type
-                                         el-get-user-package-org-load)
+                                         'el-get-user-package-org-load)
                            (package-load base
                                          el-get-user-package-el-type
-                                         el-get-user-package-el-load))))
+                                         'el-get-user-package-el-load))))
         ;; Perform load evalation here
         (if load-method
             (progn
