@@ -1,0 +1,6 @@
+(:name ac-nrepl
+       :description "Nrepl completion source for Emacs auto-complete package"
+       :type github
+       :pkgname "purcell/ac-nrepl"
+       :depends nrepl
+       :features ac-nrepl)
