@@ -1,5 +1,5 @@
 (:name php-mode
        :description "A PHP mode for GNU Emacs "
        :type github
-       :pkgname  ejmr/php-mode
+       :pkgname  "ejmr/php-mode"
        :website "https://github.com/ejmr/php-mode")
