@@ -5,9 +5,10 @@
 (require 'cl)
 (let* ((debug-on-error t)
        (el-get-verbose t)
-       ;; Just need to install something
-       (pkg 'ergoemacs-keybindings)
-       (checksum "0ee16b3a7096a93c923cb3eea3c72838f015db7f")
+       ;; Just need to install something hg-method
+       (pkg 'ahg)
+       ;; https://bitbucket.org/agriggio/ahg/changeset/c732a739a7a1/raw/
+       (checksum "c732a739a7a1505d5922e94e4368b656dccddf11")
        (el-get-sources
         (list
          `(:name ,pkg
