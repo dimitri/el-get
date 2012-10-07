@@ -49,7 +49,7 @@
                :type test
                :features a
                ;; Not allowed to update this
-               :post-init (message "New post-init A"))))
+               :non-updatable-property value)))
   ;; Install A
   (el-get 'sync 'a)
   (require 'a)
