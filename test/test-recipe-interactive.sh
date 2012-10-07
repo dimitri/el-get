@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ -z "$1" ]; then
   echo "Usage: $0 recipe1 [recipe2 ...]"

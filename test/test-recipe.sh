@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ -z "$1" ]; then
   echo "Usage: $0 recipe1 [recipe2 ...]"
@@ -11,6 +11,24 @@ if [ -z \$$1 ]; then
   $1=$2
 fi
 "
+}
+
+# http://www.linuxjournal.com/content/use-bash-trap-statement-cleanup-temporary-files
+on_exit ()
+{
+    for i in "${on_exit_items[@]}"
+    do
+        eval $i
+    done
+}
+
+add_on_exit ()
+{
+    local n=${#on_exit_items[*]}
+    on_exit_items[$n]="$*"
+    if [[ $n -eq 0 ]]; then
+        trap on_exit EXIT
+    fi
 }
 
 set_default EL_GET_LIB_DIR "$(dirname "$(dirname "$(readlink -f "$0")")")"
@@ -44,9 +62,14 @@ test_recipe () {
   if [ -n "$DO_NOT_CLEAN" ]; then
     echo "Running test without removing $TEST_HOME first";
   else
-    rm -rf "$TEST_HOME"/.emacs.d/el-get/
+    add_on_exit "rm -rf $TEST_HOME"
+    rm -rf "$TEST_HOME"
   fi
+  mkdir -p "$TEST_HOME"/.emacs.d/el-get/
+  TMPDIR="$TEST_HOME"
+
   lisp_temp_file=`mktemp`
+  add_on_exit "rm -f $lisp_temp_file"
   cat >"$lisp_temp_file" <<EOF
 
 (progn

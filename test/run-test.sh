@@ -13,6 +13,24 @@ fi
 "
 }
 
+# http://www.linuxjournal.com/content/use-bash-trap-statement-cleanup-temporary-files
+function on_exit()
+{
+    for i in "${on_exit_items[@]}"
+    do
+        eval $i
+    done
+}
+
+function add_on_exit()
+{
+    local n=${#on_exit_items[*]}
+    on_exit_items[$n]="$*"
+    if [[ $n -eq 0 ]]; then
+        trap on_exit EXIT
+    fi
+}
+
 set_default EL_GET_LIB_DIR "$(dirname "$(dirname "$(readlink -f "$0")")")"
 set_default TMPDIR "$(dirname "$(mktemp --dry-run)")"
 set_default TEST_HOME "$TMPDIR/el-get-test-home"
@@ -39,9 +57,12 @@ run_test () {
     if [ -n "$DO_NOT_CLEAN" ]; then
       echo "Running test without removing $TEST_HOME first";
     else
-      rm -rf "$TEST_HOME"/.emacs.d/el-get/
+      add_on_exit "rm -rf $TEST_HOME"
+      rm -rf "$TEST_HOME"
     fi
     mkdir -p "$TEST_HOME"/.emacs.d/el-get/
+    TMPDIR="$TEST_HOME"
+
     HOME="$TEST_HOME" "$EMACS" -Q -batch -L "$EL_GET_LIB_DIR" \
       -l "$EL_GET_LIB_DIR/el-get.el" -l "$EL_GET_LIB_DIR/test/test-setup.el" \
       -l "$testfile"
