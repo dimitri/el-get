@@ -257,7 +257,7 @@ properties, respectively."
 
 (defun* el-get-merge-properties-into-status (package-or-source
                                              &optional package-status-alist
-                                             &key noerror skip-non-updatable)
+                                             &key noerror)
   "Merge updatable properties for package into pacakge status alist (or status file).
 
 The first argument is either a package source or a pacakge name,
@@ -276,11 +276,7 @@ saved to the status file.
 
 If any non-whitelisted properties differ from the cached values,
 then an error is raise. With optional keyword argument `:noerror
-t', this error is suppressed (but nothing is updated). With
-optional keyword argument `:skip-non-updatable t', the
-whitelisted recipe changes will be merged despite the presence of
-non-whitelisted changes, and no error will be raised.
-"
+t', this error is suppressed (but nothing is updated)."
   (interactive
    (list (el-get-read-package-with-status "Update cached recipe" "installed")
          nil
@@ -299,13 +295,6 @@ non-whitelisted changes, and no error will be raised.
                                    package))))
     (unless (el-get-package-is-installed package)
       (error "Package %s is not installed. Cannot update recipe." package))
-    (when skip-non-updatable
-      ;; Filter out non-whitelisted properties now to avoid the error
-      ;; later.
-      (setq source
-            (loop for (k v) on source by 'cddr
-                  when (memq k el-get-status-recipe-update-whitelist)
-                  append (list k v))))
     (destructuring-bind (update-p added-disallowed removed-disallowed)
         (el-get-diagnosis-properties cached-recipe source)
       (when (or added-disallowed removed-disallowed)
