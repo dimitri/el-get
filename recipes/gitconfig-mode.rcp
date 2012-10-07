@@ -1,0 +1,4 @@
+(:name gitconfig-mode
+       :type github
+       :description "A major mode for editing .gitconfig files."
+       :pkgname "lunaryorn/gitconfig-mode")
