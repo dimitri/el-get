@@ -1,0 +1,5 @@
+(:name swank-chicken
+       :website "https://github.com/nickg/swank-chicken.git"                     
+       :description "A SWANK server for Chicken Scheme."                    
+       :type github                                                                 
+       :pkgname "nickg/swank-chicken")
