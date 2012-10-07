@@ -20,7 +20,8 @@
   "Return a github-type source equivalent to emacsmirror PACKAGE."
   (assert (equal (el-get-package-type package) 'emacsmirror) nil
           "Need an emacsmirror package")
-  (append '(:type github :username "emacsmirror")
+  (append `(:type github
+                  :pkgname ,(format "emacsmirror/%s" package))
           (el-get-package-def package)))
 
 ;;
