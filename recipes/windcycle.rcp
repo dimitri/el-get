@@ -1,0 +1,6 @@
+(:name windcycle
+       :description "A simple window management for emacs that uses WindMove and adds additional functionality"
+       :type http
+       :url  "https://raw.github.com/troydm/emacs-stuff/master/windcycle.el"
+       :website "http://www.emacswiki.org/emacs/windcycle"
+       :features "windcycle")
