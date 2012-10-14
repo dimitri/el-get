@@ -2,7 +2,7 @@
   :website "http://cedet.sourceforge.net/"
   :description "CEDET is a Collection of Emacs Development Environment Tools written with the end goal of creating an advanced development environment in Emacs."
   :type git
-  :url "http://git.randomsample.de/cedet.git"
+  :url "https://github.com/emacsmirror/cedet.git"
   :build
   ;; `((,el-get-emacs "-batch" "-Q" "-l" "cedet-build.el" "-f" "cedet-build"))
   `(("sh" "-c" "touch `find . -name Makefile`")
