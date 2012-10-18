@@ -1,0 +1,5 @@
+(:name notmuch-labeler
+       :description "Improve notmuch way of displaying labels and make them interactive."
+       :type github
+       :pkgname "DamienCassou/notmuch-labeler"
+       :depends notmuch)
