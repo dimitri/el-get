@@ -2,4 +2,5 @@
        :description "Emacs Code Browser"
        :type github
        :pkgname "alexott/ecb"
-       :build `(("make" "CEDET=" ,(concat "EMACS=" (shell-quote-argument el-get-emacs)))))
+       :depends cedet
+       :build `(("make" "CEDET=../cedet" ,(concat "EMACS=" (shell-quote-argument el-get-emacs)))))
