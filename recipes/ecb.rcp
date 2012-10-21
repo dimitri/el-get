@@ -1,6 +1,5 @@
 (:name ecb
        :description "Emacs Code Browser"
-       :type cvs
-       :module "ecb"
-       :url ":pserver:anonymous@ecb.cvs.sourceforge.net:/cvsroot/ecb"
+       :type github
+       :pkgname "alexott/ecb"
        :build `(("make" "CEDET=" ,(concat "EMACS=" (shell-quote-argument el-get-emacs)))))
