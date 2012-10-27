@@ -1,0 +1,5 @@
+(:name shampoo
+       :description "A set of tools for remote Smalltalk development with Emacs"
+       :type github
+       :pkgname "dmatveev/shampoo-emacs"
+       :features "shampoo")
