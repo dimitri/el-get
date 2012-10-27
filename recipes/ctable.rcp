@@ -1,0 +1,4 @@
+(:name ctable
+       :description "Table Component for elisp"
+       :type github
+       :pkgname "kiwanami/emacs-ctable")
