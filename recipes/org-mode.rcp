@@ -14,4 +14,4 @@
                  '("oldorg"))
        :load-path ("." "lisp" "contrib/lisp")
        :autoloads nil
-       :features org-install)
+       :features org)
