@@ -4,7 +4,7 @@
        emulates the main features of Vim, and provides facilities
        for writing custom extensions."
        :type git
-       :url "https://git.gitorious.org/evil/evil.git"
+       :url "git://gitorious.org/evil/evil.git"
        :features evil
        :depends undo-tree
        :build (("make" "all" "info"))
