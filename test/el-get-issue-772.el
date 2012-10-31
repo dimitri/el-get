@@ -14,7 +14,7 @@
          `(:name ,pkg
                  :checksum ,checksum))))
   (assert (eq (el-get-package-type pkg) 'hg) nil
-          "Package %s is supposed to be an hg type pacakge but is actually %s. You should edit this test to use another package."
+          "Package %s is supposed to be an hg type package but is actually %s. You should edit this test to use another package."
           pkg (el-get-package-type pkg))
   (el-get 'sync pkg)
   (assert (el-get-package-is-installed pkg))

@@ -258,9 +258,9 @@ properties, respectively."
 (defun* el-get-merge-properties-into-status (package-or-source
                                              &optional package-status-alist
                                              &key noerror)
-  "Merge updatable properties for package into pacakge status alist (or status file).
+  "Merge updatable properties for package into package status alist (or status file).
 
-The first argument is either a package source or a pacakge name,
+The first argument is either a package source or a package name,
 in which case the source will be read using
 `el-get-package-def'. The named package must already be
 installed.

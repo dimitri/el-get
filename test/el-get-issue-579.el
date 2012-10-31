@@ -64,7 +64,7 @@
   (message "Good recipes: %S" (mapcar 'el-get-source-name good-sources))
   (apply 'el-get 'sync (mapcar 'el-get-source-name good-sources))
   (loop for broken-pkg in (mapcar 'el-get-source-name broken-sources)
-        ;; Each pacakge should fail to install
+        ;; Each package should fail to install
         do (condition-case err
                (progn
                  (let ((debug-on-error nil))
