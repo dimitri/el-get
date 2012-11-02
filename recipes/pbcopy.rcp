@@ -1,0 +1,5 @@
+(:name pbcopy
+       :description "An interface to OSX's pbcopy utility"
+       :type github
+       :pkgname "jkp/pbcopy.el"
+       :features "pbcopy")
