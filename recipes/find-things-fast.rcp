@@ -1,0 +1,5 @@
+(:name find-things-fast
+       :description "An mode to find things fast and move around in a project quickly"
+       :type github
+       :pkgname "eglaysher/find-things-fast"
+       :features "find-things-fast")
