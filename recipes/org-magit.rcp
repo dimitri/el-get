@@ -1,0 +1,5 @@
+(:name org-magit
+       :depends magit
+       :type github
+       :description "Link to magit from org documents."
+       :pkgname "sigma/org-magit")
