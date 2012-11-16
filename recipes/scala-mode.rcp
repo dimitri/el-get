@@ -3,5 +3,6 @@
        :type svn
        :url "http://lampsvn.epfl.ch/svn-repos/scala/scala-tool-support/trunk/src/emacs/"
        :build ("make")
+       :build/darwin `(,(concat "make ELISP_COMMAND=" el-get-emacs))
        :load-path (".")
        :features scala-mode-auto)
