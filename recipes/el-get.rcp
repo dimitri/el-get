@@ -4,6 +4,5 @@
        :type github
        :branch "4.stable"
        :pkgname "dimitri/el-get"
-       :features el-get
        :info    "."
        :load    "el-get.el")
