@@ -1,8 +1,4 @@
 (:name epresent
        :type github
        :pkgname "eschulte/epresent"
-       :description "make presentation slides from a org-mode file within emacs"
-       :autoloads t)
-
-
-
+       :description "make presentation slides from a org-mode file within emacs")
