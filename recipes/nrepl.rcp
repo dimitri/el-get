@@ -2,5 +2,4 @@
        :description "An Emacs client for nREPL, the Clojure networked REPL server."
        :type github
        :pkgname "kingtim/nrepl.el"
-       :depends clojure-mode
-       :features nrepl)
+       :depends clojure-mode)
