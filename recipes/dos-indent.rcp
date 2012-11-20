@@ -1,0 +1,4 @@
+(:name dos-indent
+       :description "Indentation support for editing DOS/Windows batch files"
+       :type emacswiki
+)

@@ -1,0 +1,7 @@
+(:name dos
+       :description "Mode for editing DOS/Windows batch files"
+       :type emacswiki
+       :post-init (progn
+          (add-to-list 'auto-mode-alist '("\\.bat$" . dos-mode))
+          (add-to-list 'auto-mode-alist '("\\.cmd$" . dos-mode)))
+)
