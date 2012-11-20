@@ -1037,7 +1037,12 @@ already installed packages is considered."
 	(el-get-init-and-install (mapcar 'el-get-as-symbol packages))
 
       ;; now is a good time to care about autoloads
-      (el-get-eval-autoloads))))
+      (el-get-eval-autoloads))
+
+    ;; Now that package loading is complete, check that .org user init
+    ;; files were loaded and not simply left waiting for
+    ;; 'org-install to be required.
+    (el-get-user-package-org-check)))
 
 (provide 'el-get)
 
