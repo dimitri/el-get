@@ -115,23 +115,32 @@ Used to avoid errors when exploring the path for recipes"
 	(el-get-read-recipe-file filename)
       (error "el-get can not find a recipe for package \"%s\"." package))))
 
-(defun el-get-read-all-recipes ()
-  "Return the list of all the recipes, formatted like `el-get-sources'.
+(defun el-get-read-all-recipe-files ()
+  "Return the list of all the file based recipes, formated like
+   `el-get-sources'
 
 Only consider any given recipe only once even if present in
 multiple dirs from `el-get-recipe-path'. The first recipe found
-is the one considered.  We first look in `el-get-sources' then in
-each directory listed in `el-get-recipe-path' in order."
+is the one considered."
+  (loop for dir in (el-get-recipe-dirs)
+        with packages
+        nconc (loop for recipe in (directory-files dir nil "^[^.].*\.\\(rcp\\|el\\)$")
+                    for filename = (concat (file-name-as-directory dir) recipe)
+                    for package = (file-name-sans-extension (file-name-nondirectory recipe))
+                    unless (member package packages)
+                    collect package into packages
+                    and collect (ignore-errors (el-get-read-recipe-file filename)))))
+
+(defun el-get-read-all-recipes ()
+  "Return the list of all the recipes, formatted like `el-get-sources'.
+
+  We first look in `el-get-sources' then in each directory listed
+in `el-get-recipe-path' in order."
   (let ((packages (mapcar 'el-get-source-name el-get-sources)))
     (append
      el-get-sources
-     (loop for dir in (el-get-recipe-dirs)
-	   nconc (loop for recipe in (directory-files dir nil "^[^.].*\.\\(rcp\\|el\\)$")
-		       for filename = (concat (file-name-as-directory dir) recipe)
-		       for package = (file-name-sans-extension (file-name-nondirectory recipe))
-		       unless (member package packages)
-		       do (push package packages)
-                       and collect (ignore-errors (el-get-read-recipe-file filename)))))))
+     (remove-if (lambda (recipe) (member (el-get-source-name recipe) packages))
+                (el-get-read-all-recipe-files)))))
 
 (defun el-get-package-def (package)
   "Return a single `el-get-sources' entry for PACKAGE."
