@@ -1,0 +1,5 @@
+(:name jinja2-mode
+       :description "Jinja2 mode for emacs"
+       :website "http://paradoxxxzero.github.com/jinja2-mode/"
+       :type github
+       :pkgname "paradoxxxzero/jinja2-mode")
