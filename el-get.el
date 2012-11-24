@@ -1022,7 +1022,7 @@ PACKAGES is expected to be a list of packages you want to install
 or init.  When PACKAGES is omited (the default), the list of
 already installed packages is considered."
   ;; Check if we need to cleanup first
-  (when cleanup (el-get-cleanup packages))
+  (when (and (cleanup) (packages)) (el-get-cleanup packages))
 
   ;; If there's no autoload file, everything needs to be regenerated.
   (unless (file-exists-p el-get-autoload-file) (el-get-invalidate-autoloads))
