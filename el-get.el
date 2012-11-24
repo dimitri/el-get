@@ -997,6 +997,10 @@ considered \"required\"."
     done))
 
 (defun* el-get (&optional sync &rest packages &key cleanup)
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/core_sync_cleanup_feature
   "Ensure that packages have been downloaded once and init them as needed.
 
 This will not update the sources by using `apt-get install' or
@@ -1022,6 +1026,7 @@ PACKAGES is expected to be a list of packages you want to install
 or init.  When PACKAGES is omited (the default), the list of
 already installed packages is considered."
   ;; Check if we need to cleanup first
+
   (when (and (cleanup) (packages)) (el-get-cleanup packages))
 
   ;; If there's no autoload file, everything needs to be regenerated.
