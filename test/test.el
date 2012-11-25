@@ -1,3 +1,5 @@
+(require 'el-get)
+
 (eval-when-compile
   (require 'cl)
   (when (null (ignore-errors (require 'ert)))
@@ -7,7 +9,6 @@
 (defconst testing-destination-dir "/tmp/emacs.d.testing")
 
 (ert-deftest el-get-recipe-dirs-test ()
-  (require 'el-get)
   (let ((el-get-recipe-path
          `("/"
            ,(let ((f "/foo"))
@@ -19,7 +20,6 @@
                          collect f)))))
 
 (ert-deftest el-get-trivial-install-test ()
-  (require 'el-get)
   (let* ((pkg 'el-get-trivial-install-test)
          (pkg-name (symbol-name pkg))
          (pkg-file (concat pkg-name ".el"))
