@@ -1,8 +1,9 @@
 (require 'el-get)
+(require 'ert nil t)
 
 (eval-when-compile
   (require 'cl)
-  (when (null (ignore-errors (require 'ert)))
+  (unless (featurep 'ert)
     (defmacro* ert-deftest (name () &body docstring-keys-and-body)
       (message "Skipping tests, ERT is not available"))))
 
