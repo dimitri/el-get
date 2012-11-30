@@ -99,5 +99,13 @@ Following variables are bound to temporal values during test:
           (should-not (file-exists-p pkg-destination)))
       (delete-file pkg-source))))
 
+(el-get-deftest el-get-elpa-feature ()
+  "`:features' option should work for ELPA type recipe."
+  (let* ((pkg 'wrap-region)              ; some package from elpa
+         (el-get-sources `((:name ,pkg :features ,pkg))))
+    (should-not (featurep pkg))
+    (el-get 'sync (mapcar 'el-get-source-name el-get-sources))
+    (should (featurep pkg))))
+
 ;(featurep 'el-get-trivial-install-test)
 ;(unload-feature 'el-get-trivial-install-test)
