@@ -32,12 +32,15 @@ Following variables are bound to temporal values:
 * `user-emacs-directory'
 * `el-get-dir'
 * `el-get-status-file'
+* `el-get-status-cache'
 * `el-get-autoload-file'"
+  (declare (debug t))
   `(let* ((user-emacs-directory
-           (make-temp-file "emacs.d.el-get-testing" 'dir))
+           (make-temp-file "emacs.d.el-get-testing" 'dir "/"))
           (el-get-dir (mapconcat #'file-name-as-directory
                                  `(,user-emacs-directory "el-get") ""))
           (el-get-status-file (concat el-get-dir ".status.el"))
+          (el-get-status-cache nil)
           (el-get-autoload-file (concat el-get-dir ".loaddefs.el"))
           (el-get-test-output-buffer
            (when noninteractive (get-buffer-create "*el-get-test-output*"))))
@@ -50,6 +53,12 @@ Following variables are bound to temporal values:
                     (with-current-buffer el-get-test-output-buffer
                       (princ (buffer-string))))
                   (signal (car err) (cdr err))))
+       (let ((kill-buffer-query-functions nil))
+         (dolist (buf (buffer-list))
+           (with-current-buffer buf
+             (when (string-prefix-p user-emacs-directory default-directory)
+               (set-buffer-modified-p nil)
+               (kill-buffer)))))
        (delete-directory user-emacs-directory t)
        (when el-get-test-output-buffer
          (kill-buffer el-get-test-output-buffer)))))
@@ -96,3 +105,23 @@ Following variables are bound to temporal values:
        (when (featurep pkg)
          (unload-feature pkg))))))
 
+(ert-deftest el-get-elpa-feature ()
+  "`:features' option should work for ELPA type recipe."
+  :expected-result :failed
+  (el-get-with-temp-home
+   (require 'package-x) ; create local package archive
+   (let* ((pkg 'el-get-test-package)
+          (package-archive-upload-base (expand-file-name "~/pkg-repo"))
+          (package-archives nil)
+          (el-get-sources
+           `((:name package :post-init nil) ; avoid adding other repos
+             (:name el-get-test-package
+                    :type elpa
+                    :repo ("test-repo" . ,package-archive-upload-base)
+                    :features el-get-test-package))))
+     (make-directory package-archive-upload-base t)
+     (package-upload-file (expand-file-name "pkgs/el-get-test-package.el"
+                                            el-get-test-files-dir))
+     (should-not (featurep pkg))
+     (el-get 'sync (mapcar 'el-get-source-name el-get-sources))
+     (should (featurep pkg)))))
