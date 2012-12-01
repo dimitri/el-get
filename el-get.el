@@ -1026,7 +1026,7 @@ already installed packages is considered."
   ;; then we need to cleanup packages
 
   (when (and cleanup packages)
-    (setq packages (sanitize packages)) 
+    (setq packages (el-get-sanitize packages)) 
     (el-get-cleanup packages))
 
   ;; If there's no autoload file, everything needs to be regenerated.
