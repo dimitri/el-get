@@ -997,7 +997,6 @@ considered \"required\"."
     done))
 
 (defun* el-get (&optional sync &rest packages &key cleanup &allow-other-keys)
-;(defun el-get (&optional sync &rest packages)
   "Ensure that packages have been downloaded once and init them as needed.
 
 This will not update the sources by using `apt-get install' or
