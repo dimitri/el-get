@@ -144,7 +144,13 @@ entry."
 ;;
 (defun el-get-rmdir (package &rest ignored)
   "Just rm -rf the package directory. If it is a symlink, delete it."
-  (let* ((pdir (expand-file-name "." (el-get-package-directory package))))
+  (let* ((edir (expand-file-name el-get-dir))
+         (pdir (expand-file-name "." (el-get-package-directory package))))
+    ;; check that we're all set
+    (unless (and (string= edir pdir)    ; package is "", or such like
+                 (string= edir (substring pdir 0 (length edir))))
+      (error "el-get-rmdir: directory '%s' of package '%s' is not inside `el-get-dir' ('%s')."
+             pdir package el-get-dir))
     (cond ((file-symlink-p pdir)
            (delete-file pdir))
           ((file-directory-p pdir)

@@ -861,28 +861,30 @@ itself.")
    (progn
      (el-get-clear-status-cache)
      (list (el-get-read-package-with-status "Remove" "required" "installed"))))
-  ;; If the package has a recipe saved in the status file, that will
-  ;; be used. But if not, we still want to try to remove it, so we
-  ;; fall back to the recipe file, and if even that doesn't provide
-  ;; something, we use `el-get-rmdir' by default. This won't work for
-  ;; everything, but it's better than nothing.
-  (let ((fallback-source
-         (or (ignore-errors (el-get-package-def package))
-             (list :name package :type 'builtin))))
-    (el-get-with-status-sources package-status-alist
-      (let* ((source   (or (ignore-errors (el-get-package-def package))
-                           fallback-source))
-             ;; Put the fallback source into `el-get-sources' so that
-             ;; other functions will pick it up.
-             (el-get-sources (cons source el-get-sources))
-             (method   (el-get-package-method source))
-             (remove   (el-get-method method :remove))
-             (url      (plist-get source :url)))
-        ;; remove the package now
-        (el-get-remove-autoloads package)
-        (funcall remove package url 'el-get-post-remove)
-        (el-get-save-package-status package "removed")
-        (message "el-get remove %s" package)))))
+  ;; When the user didn't select any package, just bail out
+  (unless (string= package "")
+    ;; If the package has a recipe saved in the status file, that will
+    ;; be used. But if not, we still want to try to remove it, so we
+    ;; fall back to the recipe file, and if even that doesn't provide
+    ;; something, we use `el-get-rmdir' by default. This won't work for
+    ;; everything, but it's better than nothing.
+    (let ((fallback-source
+           (or (ignore-errors (el-get-package-def package))
+               (list :name package :type 'builtin))))
+      (el-get-with-status-sources package-status-alist
+        (let* ((source   (or (ignore-errors (el-get-package-def package))
+                             fallback-source))
+               ;; Put the fallback source into `el-get-sources' so that
+               ;; other functions will pick it up.
+               (el-get-sources (cons source el-get-sources))
+               (method   (el-get-package-method source))
+               (remove   (el-get-method method :remove))
+               (url      (plist-get source :url)))
+          ;; remove the package now
+          (el-get-remove-autoloads package)
+          (funcall remove package url 'el-get-post-remove)
+          (el-get-save-package-status package "removed")
+          (message "el-get remove %s" package))))))
 
 (defun el-get-reinstall (package)
   "Remove PACKAGE and then install it again."
@@ -890,15 +892,15 @@ itself.")
   (el-get-remove package)
   (el-get-install package))
 
-(defun el-get-cleanup (packages) 
+(defun el-get-cleanup (packages)
   "Removes packages absent from the argument list
-'packages. Useful, for example, when we 
-want to remove all packages not explicitly declared 
-in the user-init-file (.emacs)." 
-  (let* ((packages-to-keep (el-get-dependencies (mapcar 'el-get-as-symbol packages))) 
+'packages. Useful, for example, when we
+want to remove all packages not explicitly declared
+in the user-init-file (.emacs)."
+  (let* ((packages-to-keep (el-get-dependencies (mapcar 'el-get-as-symbol packages)))
 	 (packages-to-remove (set-difference (mapcar 'el-get-as-symbol
 						     (el-get-list-package-names-with-status
-						      "installed")) packages-to-keep))) 
+						      "installed")) packages-to-keep)))
     (mapc 'el-get-remove packages-to-remove)))
 
 ;;;###autoload
