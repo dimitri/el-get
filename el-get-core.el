@@ -474,7 +474,7 @@ same as having it unset."
      (get 'prog2 'lisp-indent-function))
 
 (defun el-get-remove-keyword-params (seq)
-  "Removes keyword parameters from &rest when defun* ('cl) is used. Used by el-get."
+  "Removes keyword parameters from &rest when defun* ('cl) is used. Used by `el-get'."
   (if (null seq) nil
     (let ((head (car seq))
           (tail (cdr seq)))
@@ -482,13 +482,10 @@ same as having it unset."
         (cons head (el-get-remove-keyword-params tail))))))
 
 (defun el-get-flatten (l)
-  "Will unnest nested lists. Used to flatten the &rest argument. Used by el-get."
+  "Will unnest nested lists. Used to flatten the &rest argument. Used by `el-get'."
   (cond ((null l) nil)
         ((atom l) (list l))
         (t (loop for a in l appending (el-get-flatten a)))))
 
-(defun el-get-sanitize (args)
-    "Flattens lists passed in &rest after keyword parameters are removed. Used by el-get."
-  (el-get-flatten (el-get-remove-keyword-params args)))
 
 (provide 'el-get-core)
