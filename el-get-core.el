@@ -147,8 +147,9 @@ entry."
   (let* ((edir (expand-file-name el-get-dir))
          (pdir (expand-file-name "." (el-get-package-directory package))))
     ;; check that we're all set
-    (unless (and (string= edir pdir)    ; package is "", or such like
-                 (string= edir (substring pdir 0 (length edir))))
+    (when (or (string= edir pdir)    ; package is "", or such like
+              ;; error if pdir is not a subdirectory of el-get-dir
+              (not (string= edir (substring pdir 0 (length edir)))))
       (error "el-get-rmdir: directory '%s' of package '%s' is not inside `el-get-dir' ('%s')."
              pdir package el-get-dir))
     (cond ((file-symlink-p pdir)
