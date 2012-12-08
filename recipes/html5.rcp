@@ -5,7 +5,7 @@
 
   :type git
   :url "http://github.com/hober/html5-el"
-  :after '(eval-after-load
+  :after (eval-after-load
 	    "rng-loc"
 	    '(add-to-list 'rng-schema-locating-files (concat el-get-dir "html5/schemas.xml")))
   :features whattf-dt
