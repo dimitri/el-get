@@ -61,6 +61,25 @@ If you do not already have `git` on your system, you can install it through
 your package manager if you are using Linux or by downloading it from the
 [Git Homepage](http://git-scm.com/).
 
+## Installation Dependencies
+
+Installing El-Get depends on a working `install-info` command, please make
+sure you have one in your `PATH`. In `debian`, it's available in the
+[install-info debian package](http://packages.debian.org/squeeze/install-info). The
+[MacOSX install-info](http://developer.apple.com/library/mac/#DOCUMENTATION/Darwin/Reference/ManPages/man1/install-info.1.html)
+version works fine with El-Get.
+
+When using the *windows* operating system, take into account that the way
+Emacs calls external programs is not the same for *native builds* and
+*cygwin*, so make sure you don't mix and match them at least for
+`install-info` (e.g. *cygwin* version of `install-info` will error out when
+called by el-get from a `windows-nt` Emacs, see `system-type`). When using a
+*native build* of Emacs for windows, consider using the
+[GNU Win 32](http://gnuwin32.sourceforge.net/packages.html) distribution of
+[TexInfo for windows](http://gnuwin32.sourceforge.net/packages/texinfo.htm),
+which contains the proper `install-info` version when you're not using the
+*cygwin* Emacs binary.
+
 ## Stable Branch
 
 To install El-Get you can use the *lazy-installer*.  This will not load it
