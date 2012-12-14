@@ -172,6 +172,9 @@
 
 ;;; Code:
 
+;;
+(require 'cl)            ; needed for `el-get 'sync'
+
 ;; first some essential variables, used in other parts of the code.
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
@@ -995,7 +998,7 @@ considered \"required\"."
     (loop for p in init-deps    do (el-get-do-init p)    collect p into done)
     done))
 
-(defun el-get (&optional sync &rest packages)
+(defun* el-get (&optional sync &rest packages &key cleanup &allow-other-keys)
   "Ensure that packages have been downloaded once and init them as needed.
 
 This will not update the sources by using `apt-get install' or
@@ -1020,6 +1023,14 @@ the packages you use are welcome to use `autoload' too.
 PACKAGES is expected to be a list of packages you want to install
 or init.  When PACKAGES is omited (the default), the list of
 already installed packages is considered."
+  
+  ;; if el-get was called with a keyword argument (:cleanup), we first need to sanitize the argument list for the scope of the function
+  ;; then we need to cleanup packages
+
+  (when (and cleanup packages)
+    (setq packages (el-get-flatten (el-get-remove-keyword-params packages))) 
+    (el-get-cleanup packages))
+
   ;; If there's no autoload file, everything needs to be regenerated.
   (unless (file-exists-p el-get-autoload-file) (el-get-invalidate-autoloads))
 
@@ -1037,7 +1048,7 @@ already installed packages is considered."
     ;; 'wait case
     (prog1
 	(el-get-init-and-install (mapcar 'el-get-as-symbol packages))
-
+       
       ;; now is a good time to care about autoloads
       (el-get-eval-autoloads))))
 

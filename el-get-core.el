@@ -480,4 +480,19 @@ same as having it unset."
 (put 'el-get-plist-get-with-default 'lisp-indent-function
      (get 'prog2 'lisp-indent-function))
 
+(defun el-get-remove-keyword-params (seq)
+  "Removes keyword parameters from &rest when defun* ('cl) is used. Used by `el-get'."
+  (if (null seq) nil
+    (let ((head (car seq))
+          (tail (cdr seq)))
+      (if (keywordp head) (el-get-remove-keyword-params (cdr tail))
+        (cons head (el-get-remove-keyword-params tail))))))
+
+(defun el-get-flatten (l)
+  "Will unnest nested lists. Used to flatten the &rest argument. Used by `el-get'."
+  (cond ((null l) nil)
+        ((atom l) (list l))
+        (t (loop for a in l appending (el-get-flatten a)))))
+
+
 (provide 'el-get-core)

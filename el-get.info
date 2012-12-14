@@ -467,8 +467,7 @@ directory, and still enjoy a truly portable emacs configuration.
 
    In the code example above, replace the last line with the following:
 
-     (el-get-cleanup my-packages)
-     (el-get 'sync my-packages)
+     (el-get 'sync my-packages :cleanup t)
 
 
 File: el-get.info,  Node: Setup Customization,  Prev: Distributed Setup,  Up: Setup
@@ -801,19 +800,19 @@ Node: Setup11900
 Node: Basic Setup12296
 Node: The el-get function13535
 Node: Distributed Setup14811
-Node: Setup Customization16705
-Node: User Init17851
-Node: Before and After properties18538
-Node: Initialization files20046
-Node: Recipes20699
-Node: Organizing recipes21174
-Node: Getting more recipes22689
-Node: Overriding package files23387
-Node: Authoring Recipes23770
-Node: Recipe format24201
-Node: Dependencies24870
-Node: Byte Compilation25216
-Node: Autoloads25782
-Node: Build26908
+Node: Setup Customization16682
+Node: User Init17828
+Node: Before and After properties18515
+Node: Initialization files20023
+Node: Recipes20676
+Node: Organizing recipes21151
+Node: Getting more recipes22666
+Node: Overriding package files23364
+Node: Authoring Recipes23747
+Node: Recipe format24178
+Node: Dependencies24847
+Node: Byte Compilation25193
+Node: Autoloads25759
+Node: Build26885
 
 End Tag Table

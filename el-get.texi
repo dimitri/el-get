@@ -469,8 +469,7 @@ emacs configuration.
 In the code example above, replace the last line with the following:
 
 @example
-(el-get-cleanup my-packages)
-(el-get 'sync my-packages)
+(el-get 'sync my-packages :cleanup t)
 @end example 
 
 @node Setup Customization
