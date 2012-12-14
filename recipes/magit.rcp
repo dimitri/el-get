@@ -5,8 +5,7 @@
        :pkgname "magit/magit"
        :info "."
        :autoloads ("50magit")
-       :build (("make" "all"))
-       :build/berkeley-unix (("touch" "`find . -name Makefile`") ("gmake"))
-       :build/darwin `(("make"
-                        ,(format "EMACS=%s" el-get-emacs)
-                        "all")))
+       :build `(("make"
+                 ,(format "EMACS=%s" el-get-emacs)
+                 "all"))
+       :build/berkeley-unix (("touch" "`find . -name Makefile`") ("gmake")))
