@@ -691,7 +691,227 @@ A recipe file contains a lisp property list. Accepted properties are
 described in the documentation for the variable @code{el-get-sources},
 and their possible values are described at the same place.
 
-Please refer to that documentation.
+If your property list is missing the @code{:type} property, then it's
+merged with the recipe one, so that you can override any definition
+provided by @code{el-get} recipes locally.
+
+@table @code
+
+@item :name
+The name of the package. It can be different from the name of the
+directory where the package is stored (after a @code{git clone} for
+example), in which case a symlink will be created.
+
+@item :depends
+A single package name, or a list of package names, on which the
+package depends.  All of a packages dependencies will be installed
+before the package is installed.
+
+@item :builtin
+Emacs major version (see @var{emacs-major-version}) from which Emacs
+includes the recipe as a builtin.  For example, @file{package.el} (the
+implementation of ELPA) is part fo Emacs24 but needs an external
+recipe for previous major versions.
+
+@item :pkgname
+The name of the package for the underlying package management system
+(apt-get, fink or pacman, also supported by github and emacsmirror),
+which can be different from the Emacs package name.
+
+@item :type
+The type of the package, currently el-get offers support for apt-get,
+elpa, git, github, emacsmirror, git-svn, bzr svn, cvs, darcs, fink,
+ftp, emacswiki, http-tar, pacman, hg and http. You can easily support
+your own types here, see @var{el-get-methods}.
+
+@item :branch
+Which branch to fetch when using git (and by extension, github and
+emacsmirror, which are derived form git).  Also supported in the
+installer in el-get-install.
+
+@item :url
+Where to fetch the package, only meaningful for git and http types.
+
+@item :username, :pkgname
+For the github type, these specify the user name and repo name to
+clone from Github. For example, for el-get, the user name would be
+@code{"dimitri"} , and the repo name would be @code{"el-get"} . As
+described above, the @code{:pkgname} property is only required if the
+repo name on Github differs from the Emacs package name. Note that the
+emacsmirror type is just like the github type with @code{:username}
+set to @code{"emacsmirror"} .
+
+@item :build
+
+Your build recipe, a list.  A build command C whose `car' is a symbol
+ (see `symbolp') will be replaced by (eval C).
+
+Then, each element of the recipe will be interpreted as a command:
+
+If the element is a list of string, the first element of the list must
+be the program to call, and each following element a different
+argument to the call.  No whitespace parsing is done.
+
+Otherwise, if it is a list, any list sub-elements will be recursively
+"flattened" (see @code{el-get-flatten}).  The resulting strings will
+be interpreted as individual shell arguments, appropriately quoted.
+
+@item :build/system-type
+Your specific build recipe for a given @var{system-type} gets there
+and looks like @code{:build}.
+
+@item :load-path
+A directory or a list of directories you want El-Get to add to your
+@var{load-path}. Those directories are relative to where the package
+gets installed.
+
+@item :compile
+Allow to restrict what to byte-compile: by default, El-Get will
+compile all elisp files in the @code{:load-path} directories, unless a
+@code{:build} command exists for the package source. Given a
+@code{:compile} property, El-Get will only byte-compile those given
+files, directories or filename-regexpes in the property value. This
+property can be a @code{listp} or a @code{stringp} if you want to
+compile only one of those.
+
+@item :info
+This string allows you to setup a directory where to find a
+@file{package.info} file, or a @file{path/to/whatever.info} file. It
+will even run @code{ginstall-info} for you to create the @file{dir}
+entry so that @kbd{C-h i} will be able to list the newly installed
+documentation. Note that you might need to kill (@kbd{C-x k} ) your
+info buffer then @kbd{C-h i} again to be able to see the new menu
+entry.
+
+@item :load
+List of files to load, or a single file to load after having installed
+the source but before `require'ing its features.
+
+@item :features
+List of features el-get will @code{require} for you.
+
+@item :autoloads
+Control whether El-Get should generate autoloads for this
+package. Setting this to @code{nil} prevents El-Get from generating
+autoloads for the package. Default is @code{t}. Setting this to a
+string or a list of string will load the named autoload files.
+
+@item :library
+When using @code{:after} but not using @code{:features} ,
+@code{:library} allows to set the library against which to register
+the @code{:after} function against @code{eval-after-load}.  It
+defaults to either @code{:pkgname} or @code{:package} , in this order.
+See also @code{el-get-eval-after-load} .
+
+@item :options
+Currently used by http-tar and cvs support.  When using http-tar, it
+allows you to give the tar options you want to use. Typically would be
+@code{"xzf"} , but you might want to choose @code{"xjf"} for handling
+@file{.tar.bz} files e.g.
+
+When using CVS, when it's set to @code{"login"}, El-Get will first
+issue a @code{cvs login} against the server, asking you interactively
+(in the minibuffer) any password you might to enter, and only then it
+will run the @code{cvs checkout} command.
+
+@item :module
+Currently only used by the cvs support, allow you to configure the
+module you want to checkout in the given URL.
+
+@item :repo
+Only used by the elpa support, a cons cell with the form @code{(NAME
+. URL)} , as in @var{package-archives} .  If the package source only
+specifies a URL, the URL will be used for NAME as well.
+
+@item :prepare
+This should be a lisp form to evaluate after both the
+@var{Info-directory-list} and the @var{load-path} variables have been
+taken care of, but before loading the package or any further action
+from @file{el-get-init} .  It will be run with @var{default-directory}
+set to the package directory.
+
+@item :before
+This exactly like @code{:prepare} property, but is reserved for user
+customizations in @var{el-get-sources} .  Recipe files should not use
+this property.  It will be run just after :prepare.
+
+@item :post-init
+This should be a lisp form to evaluate after loading the package.
+Intended for use from recipes.  This function is registered for
+@code{eval-after-load} against the recipe library by
+@code{el-get-init} once the @code{:load} and @code{:features} have
+been setup.  Like @code{:prepare} , it will be run with
+@var{default-directory} set to the package directory.
+
+@item :after
+This exactly like the @code{:post-init} property, but is reserved for
+user customizations in @var{el-get-sources}.  Recipe files should not
+use this property.  It will be run just after @code{:post-init} and
+after any per-package user-init-file (see
+@var{el-get-user-package-directory}).
+
+@item :lazy
+Default to @code{nil} .  Allows to override @var{el-get-is-lazy} per
+package.
+
+@item :localname
+Currently only used by both `http' and `ftp' supports, allows to
+specify the target name of the downloaded file.
+
+This option is useful if the package should be retrieved using a
+presentation interface (such as as web SCM tool).
+
+For example, destination should be set to @file{package.el} if the
+package url has the following scheme:
+
+   "http://www.example.com/show-as-text?file=path/package.el"
+
+@item :website
+The website of the project.  
+
+@item :description
+A short description of the project.
+
+@item :checksum
+Some methods in El-Get download files that are not so trusted
+(e.g. anyone is allowed to modify emacswiki anytime).  For these cases
+you can set up a checksum value for a package, so you will notice if
+El-Get tries to install a version that you haven't seen before.  The
+installation will simply fail and you will see the good and bad
+checksum values in @code{*Messages*}.  To get the checksum value for a
+package initially, install the package while @var{el-get-verbose} is
+on.
+
+Checksum calculation is currently supported by these methods with the
+following meaning:
+
+http, ftp and emacswiki with the SHA1 of the downloaded file
+
+git in which it is an alias for @code{:checkout} (see below)
+
+@item :checkout
+A git refspec (branch, tag, commit hash) that should be checked out
+after cloning the git repository. If provided, this overrides any
+value for the @code{:branch} property. Unlike the @code{:branch}
+property, this can be any valid argument to git checkout, including a
+tag name or a commit hash. The intended use of this property is to
+"lock" a repository at a particular revision, regardless of what
+happens to the repo upstream.
+
+Currently this property only has meaning for git type recipes. Other
+VCS-based methods may implement support in the future.
+
+@item :shallow
+If set to t in a git recipe, @code{git-clone} will be run with
+@code{--depth 1} , which will create a so-called shallow clone by not
+downloading all the history of the repository. The default is
+controlled by the variable @var{el-get-git-shallow-clone}, which is
+@code{nil} by default.
+
+@item :submodule
+If set to @code{nil} in a git recipe, submodules will not be updated.
+
+@end table
 
 @node Dependencies
 @section Dependencies
