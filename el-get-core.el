@@ -142,7 +142,7 @@ entry."
 ;;
 ;; Common support bits
 ;;
-(defun el-get-rmdir (package &rest ignored)
+(defun el-get-rmdir (package url post-remove-fun)
   "Just rm -rf the package directory. If it is a symlink, delete it."
   (let* ((edir (expand-file-name el-get-dir))
          (pdir (expand-file-name "." (el-get-package-directory package))))
@@ -157,7 +157,8 @@ entry."
           ((file-directory-p pdir)
            (delete-directory pdir 'recursive))
           ((file-exists-p pdir)
-           (delete-file pdir)))))
+           (delete-file pdir)))
+    (funcall post-remove-fun package)))
 
 
 ;;
