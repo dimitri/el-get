@@ -3,7 +3,9 @@
        :type cvs
        :module "reftex"
        :url ":pserver:anonymous@cvs.sv.gnu.org:/sources/auctex"
-       :build '(("make") ("make" "info"))
+       :build `(("make"
+                 ,(concat "EMACS=" el-get-emacs))
+                ("make" "info"))
        :features reftex
        :load-path ("lisp")
        :info "doc")
