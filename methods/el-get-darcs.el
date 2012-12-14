@@ -19,6 +19,7 @@
   :group 'el-get
   :type 'hook)
 
+;;;###autoload
 (defun el-get-darcs-get (package url post-install-fun)
   "Get a given PACKAGE following the URL using darcs."
   (let* ((darcs-executable (el-get-executable-find "darcs"))
@@ -37,6 +38,7 @@
 		      :error ,ko))
      post-install-fun)))
 
+;;;###autoload
 (defun el-get-darcs-pull (package url post-update-fun)
   "darcs pull the package."
   (let* ((darcs-executable (el-get-executable-find "darcs"))
@@ -56,6 +58,7 @@
 		      :error ,ko))
      post-update-fun)))
 
+;;;###autoload
 (el-get-register-method :darcs
   :install #'el-get-darcs-get
   :update #'el-get-darcs-pull

@@ -199,9 +199,9 @@
 ;;
 ;; Now load the rest of the el-get code
 ;;
+(add-to-list 'load-path (concat el-get-dir "/methods"))
 (require 'el-get-core)			; core facilities used everywhere
 (require 'el-get-custom)		; user tweaks and `el-get-sources'
-(require 'el-get-methods)		; support for `el-get-methods', backends
 (require 'el-get-recipes)		; support for dealing with recipes
 (require 'el-get-status)		; support for dealing with status
 (require 'el-get-build)			; building packages

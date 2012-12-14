@@ -83,6 +83,7 @@ Enable this if you want el-get to honor these settings"
 	  (setq ret (replace-match (concat ":pserver" cvs-proxy ":") t t ret)))))
     (symbol-value 'ret)))
 
+;;;###autoload
 (defun el-get-cvs-checkout (package urlp post-install-fun)
   "cvs checkout the package."
   (let* ((cvs-executable (el-get-executable-find "cvs"))
@@ -119,6 +120,7 @@ Enable this if you want el-get to honor these settings"
 		      :error ,ko))
      post-install-fun)))
 
+;;;###autoload
 (defun el-get-cvs-update (package urlp post-update-fun)
   "cvs checkout the package."
   (let* ((cvs-executable (el-get-executable-find "cvs"))
@@ -139,6 +141,7 @@ Enable this if you want el-get to honor these settings"
 		      :error ,ko))
      post-update-fun)))
 
+;;;###autoload
 (el-get-register-method :cvs
   :install #'el-get-cvs-checkout
   :update #'el-get-cvs-update

@@ -34,6 +34,7 @@ are stored in the package directory"
                "found in your PATH")))
     fossil-executable))
 
+;;;###autoload
 (defun el-get-fossil-clone (package url post-install-fun)
   "Clone the given package following the URL."
   (let* ((fossil-executable (el-get-executable-find "fossil"))
@@ -85,7 +86,7 @@ are stored in the package directory"
             :error ko))
      post-install-fun)))
 
-
+;;;###autoload
 (defun el-get-fossil-update (package url post-update-fun)
   "fossil update the package"
   (let* ((fossil-executable (el-get-executable-find "fossil"))
@@ -132,6 +133,7 @@ checkout of the repository using this command."
       (loop for x in fossil-info
             collect (split-string x ": +")))))
 
+;;;###autoload
 (defun el-get-fossil-compute-checksum (package)
   "Return the hash of the checked-out revision of PACKAGE."
   (let* ((fossil-info (el-get-fossil-info package)))
@@ -141,6 +143,7 @@ checkout of the repository using this command."
           (cadr (assoc "checkout" fossil-info))
           " "))))
 
+;;;###autoload
 (defun el-get-fossil-rmdir (package &rest ignored)
   "Ensure .fossil is deleted as well as the package directory.
 
@@ -158,6 +161,7 @@ using `el-get-rmdir' as usual."
   ;; Remove the package as usual
   (el-get-rmdir package))
 
+;;;###autoload
 (el-get-register-method :fossil
   :install #'el-get-fossil-clone
   :update #'el-get-fossil-update

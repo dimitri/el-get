@@ -29,6 +29,7 @@
        (format "https://github.com/%s/%s/zipball/%s"
                username reponame branch)))))
 
+;;;###autoload
 (defun el-get-github-zip-install (package url post-install-fun)
   "Clone the given package from Github following the URL."
   ;; The recipe must have a `:url' property for
@@ -40,6 +41,7 @@
          (el-get-sources (cons new-pdef el-get-sources)))
     (el-get-http-zip-install package url post-install-fun)))
 
+;;;###autoload
 (el-get-register-derived-method :github-zip :http-zip
   :install #'el-get-github-zip-install
   :update #'el-get-github-zip-install

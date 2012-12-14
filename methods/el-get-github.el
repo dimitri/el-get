@@ -78,18 +78,21 @@ USERNAME and REPONAME are strings."
                         el-get-github-default-url-type))))
     (el-get-github-url-private url-type username reponame)))
 
+;;;###autoload
 (defun el-get-github-clone (package url post-install-fun)
   "Clone the given package from Github following the URL."
   (el-get-git-clone package
                     (or url (el-get-github-url package))
                     post-install-fun))
 
+;;;###autoload
 (defun el-get-github-guess-website (package)
   (let* ((user-and-repo (el-get-github-parse-user-and-repo package))
          (username (car user-and-repo))
          (reponame (cdr user-and-repo)))
     (el-get-github-url-private 'https username reponame)))
 
+;;;###autoload
 (el-get-register-derived-method :github :git
   :install #'el-get-github-clone
   :guess-website #'el-get-github-guess-website)

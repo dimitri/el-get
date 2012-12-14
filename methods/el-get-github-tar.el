@@ -29,6 +29,7 @@
        (format "https://github.com/%s/%s/tarball/%s"
                username reponame branch)))))
 
+;;;###autoload
 (defun el-get-github-tar-install (package url post-install-fun)
   "Clone the given package from Github following the URL."
   ;; The recipe must have a `:url' property for
@@ -42,6 +43,7 @@
          (el-get-sources (cons new-pdef el-get-sources)))
     (el-get-http-tar-install package url post-install-fun)))
 
+;;;###autoload
 (el-get-register-derived-method :github-tar :http-tar
   :install #'el-get-github-tar-install
   :update #'el-get-github-tar-install

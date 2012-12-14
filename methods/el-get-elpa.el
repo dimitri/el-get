@@ -89,6 +89,7 @@ the recipe, then return nil."
 		 (shell-command
 		  (format "cd %s && ln -s \"%s\" \"%s\"" el-get-dir elpa-dir package)))))))
 
+;;;###autoload
 (defun el-get-elpa-install (package url post-install-fun)
   "Ask elpa to install given PACKAGE."
   (let* ((elpa-dir (el-get-elpa-package-directory package))
@@ -126,6 +127,7 @@ the recipe, then return nil."
          (package-desc-vers (cdr (assq package package-archive-contents)))))
     (version-list-< installed-version available-version)))
 
+;;;###autoload
 (defun el-get-elpa-update (package url post-update-fun)
   "Ask elpa to update given PACKAGE."
   (package-refresh-contents)
@@ -141,6 +143,7 @@ the recipe, then return nil."
   ;; package.
   (el-get-rmdir package url post-remove-fun))
 
+;;;###autoload
 (defun el-get-elpa-post-remove (package)
   "Do remove the ELPA bits for package, now"
   (let ((p-elpa-dir (el-get-elpa-package-directory package)))
@@ -150,6 +153,7 @@ the recipe, then return nil."
 
 (add-hook 'el-get-elpa-remove-hook 'el-get-elpa-post-remove)
 
+;;;###autoload
 (el-get-register-method :elpa
   :install #'el-get-elpa-install
   :update #'el-get-elpa-update

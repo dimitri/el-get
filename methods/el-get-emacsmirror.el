@@ -27,6 +27,7 @@
 ;;
 ;; emacsmirror support
 ;;
+;;;###autoload
 (defun el-get-emacsmirror-clone (package url post-install-fun)
   ;; Override the package def with an equivalent github-type package,
   ;; then run the github method.
@@ -35,12 +36,14 @@
          (el-get-sources (cons package-github-source el-get-sources)))
     (el-get-github-clone package url post-install-fun)))
 
+;;;###autoload
 (defun el-get-emacsmirror-guess-website (package)
   (let* ((package-github-source
           (el-get-emacsmirror-get-github-source package))
          (el-get-sources (cons package-github-source el-get-sources)))
     (el-get-github-guess-website package)))
 
+;;;###autoload
 (el-get-register-derived-method :emacsmirror :github
   :install #'el-get-emacsmirror-clone
   :guess-website #'el-get-emacsmirror-guess-website)

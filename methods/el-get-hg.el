@@ -19,6 +19,7 @@
   :group 'el-get
   :type 'hook)
 
+;;;###autoload
 (defun el-get-hg-clone (package url post-install-fun)
   "Clone the given package following the URL."
   (let* ((hg-executable (el-get-executable-find "hg"))
@@ -46,6 +47,7 @@
 		      :error ,ko))
      post-install-fun)))
 
+;;;###autoload
 (defun el-get-hg-pull (package url post-update-fun)
   "hg pull the package."
   (let* ((hg-executable (el-get-executable-find "hg"))
@@ -78,6 +80,7 @@
                              checkout package)))
      post-update-fun)))
 
+;;;###autoload
 (defun el-get-hg-compute-checksum (package)
   "Return the hash of the checked-out revision of PACKAGE."
   (with-temp-buffer
@@ -87,6 +90,7 @@
            (hash (shell-command-to-string cmd)))
       hash)))
 
+;;;###autoload
 (el-get-register-method :hg
   :install #'el-get-hg-clone
   :update #'el-get-hg-pull

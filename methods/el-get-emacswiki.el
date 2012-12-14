@@ -36,14 +36,17 @@ filename.el ;;; filename.el --- description"
   :group 'el-get
   :type 'string)
 
+;;;###autoload
 (defun el-get-emacswiki-install (package url post-install-fun)
   "Download a single-file PACKAGE over HTTP from emacswiki."
   (let ((url (or url (format "%s%s.el" el-get-emacswiki-base-url package))))
     (el-get-http-install package url post-install-fun)))
 
+;;;###autoload
 (defun el-get-emacswiki-guess-website (package)
   (format "%s%s.el" el-get-emacswiki-base-url package))
 
+;;;###autoload
 (el-get-register-derived-method :emacswiki :http
   :install #'el-get-emacswiki-install
   :update #'el-get-emacswiki-install
@@ -71,6 +74,7 @@ filename.el ;;; filename.el --- description"
 	for url = (format "%s%s" el-get-emacswiki-base-url filename)
 	collect (list url filename description)))
 
+;;;###autoload
 (defun el-get-emacswiki-build-local-recipes (&optional target-dir)
   "retrieve the index of elisp pages at emacswiki and turn them
 into a local recipe file set"

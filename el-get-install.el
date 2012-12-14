@@ -71,11 +71,13 @@
           (error "Couldn't `git checkout -t %s`" branch)))
 
       (add-to-list 'load-path pdir)
-      (load package)
+      (require 'el-get)
+      (require 'el-get-github)
       (let ((el-get-default-process-sync t) ; force sync operations for installer
             (el-get-verbose t))		    ; let's see it all
         (el-get-post-install "el-get"))
       (unless (boundp 'el-get-install-skip-emacswiki-recipes)
+        (require 'el-get-emacswiki)
         (el-get-emacswiki-build-local-recipes))
       (with-current-buffer buf
 	(goto-char (point-max))

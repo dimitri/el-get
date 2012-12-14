@@ -27,6 +27,7 @@
 ;;
 ;; svn support
 ;;
+;;;###autoload
 (defun el-get-svn-checkout (package url post-install-fun)
   "svn checkout the package."
   (let* ((svn-executable (el-get-executable-find "svn"))
@@ -47,6 +48,7 @@
 		      :error ,ko))
      post-install-fun)))
 
+;;;###autoload
 (defun el-get-svn-update (package url post-update-fun)
   "update the package using svn."
   (let* ((svn-executable (el-get-executable-find "svn"))
@@ -66,6 +68,7 @@
 		      :error ,ko))
      post-update-fun)))
 
+;;;###autoload
 (el-get-register-method :svn
   :install #'el-get-svn-checkout
   :update #'el-get-svn-update

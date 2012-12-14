@@ -15,6 +15,7 @@
 (require 'el-get-http)
 (require 'el-get-http-tar)
 
+;;;###autoload
 (defun el-get-http-zip-install (package url post-install-fun)
   "Dowload a zip archive package over HTTP."
   (let* ((source  (el-get-package-def package))
@@ -51,6 +52,7 @@
 
 (add-hook 'el-get-http-zip-install-hook 'el-get-http-unpack-cleanup-extract-hook)
 
+;;;###autoload
 (el-get-register-method :http-zip
   :install #'el-get-http-zip-install
   :update #'el-get-http-zip-install

@@ -34,6 +34,7 @@
   :group 'el-get
   :type 'hook)
 
+;;;###autoload
 (defun el-get-brew-install (package url post-install-fun)
   "brew install PACKAGE"
   (let* ((name (format "*brew install %s*" package))
@@ -53,6 +54,7 @@
 
 (add-hook 'el-get-brew-install-hook 'el-get-dpkg-symlink)
 
+;;;###autoload
 (defun el-get-brew-update (package url post-update-fun)
   "brew update PACKAGE"
   (let* ((name (format "*brew update %s*" package))
@@ -70,6 +72,7 @@
 		      :error ,ko))
      post-update-fun)))
 
+;;;###autoload
 (defun el-get-brew-remove (package url post-remove-fun)
   "brew remove PACKAGE. URL is there for API compliance."
   (let* ((name (format "*brew remove %s*" package))
@@ -89,6 +92,7 @@
 
 (add-hook 'el-get-brew-remove-hook 'el-get-dpkg-remove-symlink)
 
+;;;###autoload
 (el-get-register-method :brew
   :install #'el-get-brew-install
   :update #'el-get-brew-update

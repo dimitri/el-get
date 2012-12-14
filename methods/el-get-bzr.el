@@ -19,6 +19,7 @@
   :group 'el-get
   :type 'hook)
 
+;;;###autoload
 (defun el-get-bzr-branch (package url post-install-fun)
   "Branch a given bzr PACKAGE following the URL using bzr."
   (let* ((bzr-executable (el-get-executable-find "bzr"))
@@ -37,6 +38,7 @@
 		      :error ,ko))
      post-install-fun)))
 
+;;;###autoload
 (defun el-get-bzr-pull (package url post-update-fun)
   "bzr pull the package."
   (let* ((bzr-executable (el-get-executable-find "bzr"))
@@ -56,6 +58,7 @@
 		      :error ,ko))
      post-update-fun)))
 
+;;;###autoload
 (el-get-register-method :bzr
   :install #'el-get-bzr-branch
   :update #'el-get-bzr-pull

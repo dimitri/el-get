@@ -19,6 +19,7 @@
   :group 'el-get
   :type 'hook)
 
+;;;###autoload
 (defun el-get-git-svn-clone (package url post-install-fun)
   "Clone the given svn PACKAGE following the URL using git."
   (let ((git-executable (el-get-executable-find "git"))
@@ -49,6 +50,7 @@
               :error (format "Could not checkout %s for package %s" checkout package))))
        post-install-fun)))
 
+;;;###autoload
 (defun el-get-git-svn-update (package url post-update-fun)
   "Update PACKAGE using git-svn. URL is given for compatibility reasons."
   (let ((git-executable (el-get-executable-find "git"))
@@ -79,6 +81,7 @@
 		      :error ,r-ko))
      post-update-fun)))
 
+;;;###autoload
 (el-get-register-derived-method :git-svn :git
   :install #'el-get-git-svn-clone
   :update #'el-get-git-svn-update

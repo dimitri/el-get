@@ -19,12 +19,14 @@
   :group 'el-get
   :type 'hook)
 
+;;;###autoload
 (defun el-get-builtin-install (package url post-install-fun)
   (let ((pdir (el-get-package-directory package)))
     (unless (file-directory-p pdir)
       (make-directory pdir))
     (funcall post-install-fun package)))
 
+;;;###autoload
 (el-get-register-method :builtin
   :install #'el-get-builtin-install
   :update #'el-get-builtin-install

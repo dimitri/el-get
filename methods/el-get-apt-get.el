@@ -110,6 +110,7 @@ password prompt."
 
       (setq el-get-sudo-password-process-filter-pos (point-max)))))
 
+;;;###autoload
 (defun el-get-apt-get-install (package url post-install-fun)
   "echo $pass | sudo -S apt-get install PACKAGE"
   (let* ((source  (el-get-package-def package))
@@ -129,6 +130,7 @@ password prompt."
 		      :error ,ko))
      post-install-fun)))
 
+;;;###autoload
 (defun el-get-apt-get-remove (package url post-remove-fun)
   "apt-get remove PACKAGE, URL is there for API compliance"
   (let* ((source  (el-get-package-def package))
@@ -150,6 +152,7 @@ password prompt."
 
 (add-hook 'el-get-apt-get-remove-hook 'el-get-dpkg-remove-symlink)
 
+;;;###autoload
 (el-get-register-method :apt-get
   :install #'el-get-apt-get-install
   :update #'el-get-apt-get-install

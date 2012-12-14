@@ -60,6 +60,7 @@ Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
 		     (el-get-filename-from-url url))))
     (expand-file-name fname pdir)))
 
+;;;###autoload
 (defun el-get-http-install (package url post-install-fun &optional dest)
   "Dowload a single-file PACKAGE over HTTP and store it in DEST.
 
@@ -78,6 +79,7 @@ into the package :localname option or its `file-name-nondirectory' part."
         (el-get-http-retrieve-callback
 	 nil package post-install-fun dest el-get-sources)))))
 
+;;;###autoload
 (defun el-get-http-compute-checksum (package)
   "Look up download time SHA1 of PACKAGE."
   (let ((checksum (gethash package el-get-http-checksums)))
@@ -90,9 +92,11 @@ into the package :localname option or its `file-name-nondirectory' part."
       (puthash package checksum el-get-http-checksums))
     checksum))
 
+;;;###autoload
 (defun el-get-http-guess-website (package)
   (plist-get (el-get-package-def package) :url))
 
+;;;###autoload
 (el-get-register-method :http
   :install #'el-get-http-install
   :update #'el-get-http-install

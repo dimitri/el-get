@@ -37,6 +37,7 @@ found."
 	       "or the binary `git' to be found in your PATH")))
     git-executable))
 
+;;;###autoload
 (defun el-get-git-clone (package url post-install-fun)
   "Clone the given package following the URL."
   (let* ((git-executable (el-get-executable-find "git"))
@@ -95,6 +96,7 @@ found."
               :error "Could not update git submodules")))
      post-install-fun)))
 
+;;;###autoload
 (defun el-get-git-pull (package url post-update-fun)
   "git pull the package."
   (let* ((git-executable (el-get-executable-find "git"))
@@ -139,6 +141,7 @@ found."
 		      :error "Could not update git submodules")))
      post-update-fun)))
 
+;;;###autoload
 (defun el-get-git-compute-checksum (package)
   "Return the hash of the checked-out revision of PACKAGE."
   (with-temp-buffer
@@ -155,6 +158,7 @@ found."
            (cmd (mapconcat 'shell-quote-argument args " ")))
       (shell-command-to-string cmd))))
 
+;;;###autoload
 (el-get-register-method :git
   :install #'el-get-git-clone
   :update #'el-get-git-pull

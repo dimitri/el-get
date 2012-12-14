@@ -21,6 +21,7 @@
 
 (add-hook 'el-get-pacman-install-hook 'el-get-dpkg-symlink)
 
+;;;###autoload
 (defun el-get-pacman-install (package url post-install-fun)
   "echo $pass | sudo -S pacman install PACKAGE"
   (let* ((source  (el-get-package-def package))
@@ -41,6 +42,7 @@
 		      :sync t))
      post-install-fun)))
 
+;;;###autoload
 (defun el-get-pacman-remove (package url post-remove-fun)
   "pacman remove PACKAGE, URL is there for API compliance"
   (let* ((source  (el-get-package-def package))
@@ -63,6 +65,7 @@
 
 (add-hook 'el-get-pacman-remove-hook 'el-get-dpkg-remove-symlink)
 
+;;;###autoload
 (el-get-register-method :pacman
   :install #'el-get-pacman-install
   :update #'el-get-pacman-install
