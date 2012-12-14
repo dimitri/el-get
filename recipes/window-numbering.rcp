@@ -1,0 +1,6 @@
+(:name window-numbering
+       :type http
+       :website "http://nschum.de/src/emacs/window-numbering-mode/"
+       :description "Assigns numbers to Emacs windows to allow easy window navigation"
+       :url "http://nschum.de/src/emacs/window-numbering-mode/window-numbering.el"
+       )
