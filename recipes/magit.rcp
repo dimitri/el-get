@@ -4,7 +4,7 @@
        :type github
        :pkgname "magit/magit"
        :info "."
-       :autoloads ("50magit")
+       ;; let el-get care about autoloads so that it works with all OSes
        :build `(("make"
                  ,(format "EMACS=%s" el-get-emacs)
                  "all"))
