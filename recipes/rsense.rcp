@@ -1,0 +1,6 @@
+(:name rsense
+       :type github
+       :pkgname "m2ym/rsense"
+       :description "RSense client for Emacs"
+       :website "http://cx4a.org/software/rsense/index.html"
+       :load-path ("etc"))
