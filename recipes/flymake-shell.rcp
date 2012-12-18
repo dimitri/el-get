@@ -1,0 +1,6 @@
+(:name flymake-shell
+       :type github
+       :pkgname "purcell/flymake-shell"
+       :description "A flymake syntax-checker for shell scripts"
+       :website "http://github.com/purcell/flymake-shell"
+       :post-init (add-hook 'shell-script-mode-hook 'flymake-shell-load))
