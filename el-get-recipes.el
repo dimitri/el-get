@@ -122,14 +122,18 @@ Used to avoid errors when exploring the path for recipes"
 Only consider any given recipe only once even if present in
 multiple dirs from `el-get-recipe-path'. The first recipe found
 is the one considered."
-  (loop for dir in (el-get-recipe-dirs)
-        with packages
-        nconc (loop for recipe in (directory-files dir nil "^[^.].*\.\\(rcp\\|el\\)$")
-                    for filename = (concat (file-name-as-directory dir) recipe)
-                    for package = (file-name-sans-extension (file-name-nondirectory recipe))
-                    unless (member package packages)
-                    collect package into packages
-                    and collect (ignore-errors (el-get-read-recipe-file filename)))))
+  (let (packages)
+    (loop
+     for dir in (el-get-recipe-dirs)
+     nconc (loop
+            for recipe in (directory-files dir nil "^[^.].*\.\\(rcp\\|el\\)$")
+            for filename = (concat (file-name-as-directory dir) recipe)
+            for pname = (file-name-sans-extension
+                         (file-name-nondirectory recipe))
+            for package = (el-get-as-symbol pname)
+            unless (member package packages)
+            do (push package packages)
+            and collect (ignore-errors (el-get-read-recipe-file filename))))))
 
 (defun el-get-read-all-recipes ()
   "Return the list of all the recipes, formatted like `el-get-sources'.
