@@ -1,0 +1,6 @@
+(:name anything-project
+       :type github
+       :pkgname "imakado/anything-project"
+       :depends (anything)
+       :description "finding any resource of a project"
+       :website "https://github.com/imakado/anything-project")
