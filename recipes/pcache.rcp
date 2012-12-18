@@ -1,4 +1,5 @@
 (:name pcache
-       :description "persistent caching for Emacs"
        :type github
-       :pkgname "sigma/pcache")
+       :pkgname "sigma/pcache"
+       :description "persistent caching for Emacs"
+       :website "http://github.com/sigma/pcache")
