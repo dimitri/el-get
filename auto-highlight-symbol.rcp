@@ -1,0 +1,5 @@
+(:name auto-highlight-symbol
+       :type github
+       :pkgname "mitsuo-saito/auto-highlight-symbol-mode"
+       :description "Automatic highlighting current symbol minor mode"
+       :website "https://github.com/mitsuo-saito/auto-highlight-symbol-mode/")
