@@ -1,5 +1,6 @@
 (:name gh
-       :description "GitHub API library for Emacs"
        :type github
        :pkgname "sigma/gh.el"
-       :depends (pcache logito))
+       :depends (pcache logito)
+       :description "Github API client libraries"
+       :website "http://github.com/sigma/gh.el")

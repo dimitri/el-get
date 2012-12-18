@@ -1,4 +1,5 @@
 (:name logito
-       :description "tiny logging framework for Emacs"
        :type github
-       :pkgname "sigma/logito")
+       :pkgname "sigma/logito"
+       :description "logging library for Emacs"
+       :website "http://github.com/sigma/logito")
