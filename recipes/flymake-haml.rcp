@@ -1,0 +1,6 @@
+(:name flymake-haml
+       :type github
+       :pkgname "purcell/flymake-haml"
+       :description "Flymake handler for haml files"
+       :website "http://github.com/purcell/flymake-haml"
+       :post-init (add-hook 'haml-mode-hook 'flymake-haml-load))
