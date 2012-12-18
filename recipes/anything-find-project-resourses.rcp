@@ -1,0 +1,6 @@
+(:name anything-find-project-resourses
+       :type github
+       :pkgname "kiwanami/emacs-anything-fpr"
+       :depends (anything)
+       :description "finding any resource of a project"
+       :website "http://github.com/kiwanami/emacs-anything-fpr")
