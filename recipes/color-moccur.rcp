@@ -1,0 +1,5 @@
+(:name color-moccur
+       :type http
+       :url "http://www.bookshelf.jp/elc/color-moccur.el"
+       :description "multi-buffer occur (grep) mode"
+       :website "http://www.bookshelf.jp/soft/meadow_50.html")
