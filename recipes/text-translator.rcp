@@ -1,4 +1,5 @@
 (:name text-translator
        :description "Translate text within GNU Emacs by online translators"
        :type bzr
-       :url "lp:~khiker/+junk/text-translator")
+       :url "lp:~khiker/+junk/text-translator"
+       :website "http://d.hatena.ne.jp/khiker/20070503/emacs_text_translator")
