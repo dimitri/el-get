@@ -2,10 +2,11 @@
        :description "ENhanced Scala Interaction Mode for Emacs"
        :type github
        :pkgname "aemoncannon/ensime"
-       :build ("sbt update stage")
+       :build '(("sbt update stage")
+                ("ln -s $(ls -1 | grep '^dist' | sort | head -1) dist"))
        :depends scala-mode
        :features ensime
-       :load-path ("./src/main/elisp")
+       :load-path ("./dist/elisp")
        :post-init (progn
                     (require 'ensime)
                     ;; scala-mode can be found in the scala distribution:
