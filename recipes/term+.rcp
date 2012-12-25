@@ -1,0 +1,5 @@
+(:name term+
+       :website "https://github.com/tarao/term-plus-el"
+       :description "A terminal emulator in Emacs (term.el enhancement: 256 colors, edit mode, logging, multiplexer and shell integration)"
+       :type git
+       :url "git://github.com/tarao/term-plus-el.git")

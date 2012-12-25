@@ -1,0 +1,6 @@
+(:name multi-mode-util
+       :website "https://github.com/tarao/multi-mode-el"
+       :description "multi-mode utility"
+       :type git
+       :url "git://github.com/tarao/key-intercept-el.git"
+       :depends multi-mode)

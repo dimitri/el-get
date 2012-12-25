@@ -1,0 +1,6 @@
+(:name term+mode
+       :website "https://github.com/tarao/term-plus-mode-el"
+       :description "term+ with multiple modes"
+       :type git
+       :url "git://github.com/tarao/term-plus-mode-el.git"
+       :depends (multi-mode multi-mode-util))
