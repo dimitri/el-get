@@ -1,6 +1,5 @@
 (:name term+anything-shell-history
-       :website "https://github.com/tarao/term-plus-ash-el"
        :description "term+ anything shell history integration"
-       :type git
-       :url "git://github.com/tarao/term-plus-ash-el.git"
-       :depends anything-complete)
+       :type github
+       :pkgname "tarao/term-plus-ash-el"
+       :depends (term+ anything-complete))

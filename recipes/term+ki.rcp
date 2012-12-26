@@ -1,6 +1,5 @@
 (:name term+ki
-       :website "https://github.com/tarao/term-plus-ki-el"
        :description "term+ intercept key mapping"
-       :type git
-       :url "git://github.com/tarao/term-plus-ki-el.git"
-       :depends key-intercept)
+       :type github
+       :pkgname "tarao/term-plus-ki-el"
+       :depends (term+ key-intercept))

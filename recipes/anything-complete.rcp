@@ -1,6 +1,5 @@
 (:name anything-complete
-       :website "http://www.emacswiki.org/cgi-bin/wiki/download/anything-complete.el"
        :description "completion with anything"
        :type emacswiki
        :feature anything-complete
-       :depends anything)
+       :depends (anything))

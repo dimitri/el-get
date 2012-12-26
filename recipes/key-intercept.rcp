@@ -1,5 +1,4 @@
 (:name key-intercept
-       :website "https://github.com/tarao/key-intercept-el"
        :description "Intercept prefix keys"
-       :type git
-       :url "git://github.com/tarao/key-intercept-el.git")
+       :type github
+       :pkgname "tarao/key-intercept-el")

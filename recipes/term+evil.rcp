@@ -1,5 +1,5 @@
 (:name term+evil
-       :website "https://github.com/tarao/term-plus-evil-el"
        :description "term+ evil integration"
-       :type git
-       :url "git://github.com/tarao/term-plus-evil-el.git")
+       :type github
+       :pkgname "tarao/term-plus-evil-el"
+       :depends (term+ evil))

@@ -1,5 +1,5 @@
 (:name term+mux
-       :website "https://github.com/tarao/term-plus-mux-el"
        :description "term+ terminal multiplexer and session management"
-       :type git
-       :url "git://github.com/tarao/term-plus-mux-el.git")
+       :type github
+       :pkgname "tarao/term-plus-mux-el"
+       :depends (term+))
