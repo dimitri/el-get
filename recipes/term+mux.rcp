@@ -2,4 +2,4 @@
        :description "term+ terminal multiplexer and session management"
        :type github
        :pkgname "tarao/term-plus-mux-el"
-       :depends (term+))
+       :depends (term+ tab-group))

@@ -1,6 +1,5 @@
 (:name tab-group
-       :website "https://github.com/tarao/tab-group-el"
        :description "Grouped tabs and their tabbar"
-       :type git
-       :url "git://github.com/tarao/tab-group-el.git"
-       :depends tabbar)
+       :type github
+       :pkgname "tarao/tab-group-el"
+       :depends (tabbar))
