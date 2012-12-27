@@ -1,0 +1,4 @@
+(:name Emacs-Groovy-Mode
+       :type github
+       :pkgname "russel/Emacs-Groovy-Mode"
+       :description "This is a collection of (X)Emacs modes for use with Groovy-related technology -- Groovy, Grails, etc.")
