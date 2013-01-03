@@ -1,4 +1,5 @@
 (:name o-blog
        :type github
        :description "Stand alone org-mode blog exporter."
-       :pkgname "renard/o-blog")
+       :pkgname "renard/o-blog"
+       :depends htmlize)
