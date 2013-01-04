@@ -1,0 +1,4 @@
+(:name slime-annot
+       :description "cl-annot support for SLIME"
+       :type http
+       :url "https://raw.github.com/arielnetworks/cl-annot/master/misc/slime-annot.el")
