@@ -1,4 +1,4 @@
-This is el-get.info, produced by makeinfo version 4.8 from el-get.texi.
+This is el-get.info, produced by makeinfo version 4.13 from el-get.texi.
 
 INFO-DIR-SECTION Emacs
 START-INFO-DIR-ENTRY
@@ -88,8 +88,7 @@ project, getting a commit bit and some management duties. He manages
 tests and issues on github as much as he can spares time to El-Get.
 
    Dave Abrahams contributed lots of code and efforts to make things
-right™. He's still using El-Get, but decided to retire from the
-project.
+right™. He's still using El-Get, but decided to retire from the project.
 
    Lots of people (more than we can list here) did contribute to El-Get
 either recipes, bug fixes or ideas to implement, often with code. That
@@ -677,6 +676,10 @@ Emacs Lisp code and distribution you can find out there in the wild, so
 the list of features supported is quite large. Simple cases are very
 simple, though.
 
+   If you want to submit recipes as pull request, please make sure to
+run recipe checker (*note Recipe checker::) and paste the result in the
+pull request comment.
+
 * Menu:
 
 * Recipe format::
@@ -684,6 +687,7 @@ simple, though.
 * Byte Compilation::
 * Autoloads::
 * Build::
+* Recipe checker::
 
 
 File: el-get.info,  Node: Recipe format,  Next: Dependencies,  Up: Authoring Recipes
@@ -968,7 +972,7 @@ authors whereas `:before' is meant for user customisations. See *Note
 Before and After properties::.
 
 
-File: el-get.info,  Node: Build,  Prev: Autoloads,  Up: Authoring Recipes
+File: el-get.info,  Node: Build,  Next: Recipe checker,  Prev: Autoloads,  Up: Authoring Recipes
 
 9.5 Build
 =========
@@ -994,39 +998,57 @@ build commands as Emacs Lisp list. See the magit recipe for an example:
             :build (("make" "all"))
             :build/darwin `(,(concat "make EMACS=" el-get-emacs " all")))
 
+
+File: el-get.info,  Node: Recipe checker,  Prev: Build,  Up: Authoring Recipes
+
+9.6 Recipe checker
+==================
+
+There are two ways to run recipe checker.  One is to run it as an Emacs
+command. Run `el-get-check-recipe' in the buffer opening the recipe to
+be checked.  You can also use a script to run the checker.  This is
+convenient if you want to check multiple recipes at once.
+
+     test/check-recipe.el PATH/TO/RECIPE.rcp ANOTHER/RECIPE.rcp ...
+
+   MS Windows user may need to call the script like this:
+
+     emacs -batch -Q -l test/check-recipe.el  PATH/TO/RECIPE.rcp ...
+
 
 
 Tag Table:
-Node: Top762
-Node: Introduction1227
-Node: Acknowledgments2302
-Node: Glossary3752
-Ref: Glossary - Init4848
-Ref: Glossary - Install5150
-Ref: Glossary - Recipe6237
-Ref: Glossary - Status6661
-Ref: Glossary - Update6919
-Node: Installing7157
-Node: Install the developper version8030
-Node: Skip Emacswiki recipes when installing8775
-Node: Usage9611
-Node: Setup11900
-Node: Basic Setup12296
-Node: The el-get function13535
-Node: Distributed Setup14811
-Node: Setup Customization16705
-Node: User Init17851
-Node: Before and After properties18538
-Node: Initialization files20046
-Node: Recipes20699
-Node: Organizing recipes21174
-Node: Getting more recipes22689
-Node: Overriding package files23387
-Node: Authoring Recipes23770
-Node: Recipe format24201
-Node: Dependencies33860
-Node: Byte Compilation34206
-Node: Autoloads34772
-Node: Build35898
+Node: Top763
+Node: Introduction1228
+Node: Acknowledgments2303
+Node: Glossary3753
+Ref: Glossary - Init4849
+Ref: Glossary - Install5151
+Ref: Glossary - Recipe6238
+Ref: Glossary - Status6662
+Ref: Glossary - Update6920
+Node: Installing7158
+Node: Install the developper version8031
+Node: Skip Emacswiki recipes when installing8776
+Node: Usage9612
+Node: Setup11901
+Node: Basic Setup12297
+Node: The el-get function13536
+Node: Distributed Setup14812
+Node: Setup Customization16706
+Node: User Init17852
+Node: Before and After properties18539
+Node: Initialization files20047
+Node: Recipes20700
+Node: Organizing recipes21175
+Node: Getting more recipes22690
+Node: Overriding package files23388
+Node: Authoring Recipes23771
+Node: Recipe format24386
+Node: Dependencies34045
+Node: Byte Compilation34391
+Node: Autoloads34957
+Node: Build36083
+Node: Recipe checker37055
 
 End Tag Table

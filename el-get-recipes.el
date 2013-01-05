@@ -255,4 +255,61 @@ Use this to modify environment variable such as $PATH or $PYTHONPATH."
                                   :test #'string= :from-end t)
                ":")))
 
+(defun el-get-check-recipe (file-or-buffer)
+  "Check the format of the recipe.
+Please run this command before sending a pull request.
+Usage: M-x el-get-check-recipe RET
+
+You can run this function from checker script like this:
+    test/check-recipe.el PATH/TO/RECIPE.rcp
+
+When used as a lisp function, FILE-OR-BUFFER must be a buffer
+object or a file path."
+  (interactive (list (current-buffer)))
+  (if (bufferp file-or-buffer)
+      (with-current-buffer file-or-buffer
+        (el-get-check-recipe-in-current-buffer))
+    (with-temp-buffer
+      (erase-buffer)
+      (insert-file-contents file-or-buffer)
+      (el-get-check-recipe-in-current-buffer))))
+
+(defun el-get-check-recipe-in-current-buffer ()
+  (let ((recipe (save-excursion
+                  (goto-char (point-min))
+                  (read (current-buffer))))
+        (numerror 0)
+        (buffer (get-buffer-create "*el-get check recipe*")))
+    (display-buffer buffer)
+    (with-current-buffer buffer
+      (erase-buffer)
+      ;; Check if userspace property is used.
+      (loop for key in '(:before :after)
+            for alt in '(:prepare :post-init)
+            when (plist-get recipe key)
+            do (progn
+                 (insert (format
+                          "* Property %S is for user.  Use %S instead.\n"
+                          key alt))
+                 (incf numerror)))
+      (destructuring-bind (&key type url autoloads features
+                                &allow-other-keys)
+          recipe
+        ;; Is github type used?
+        (when (and (eq type 'git) (string-match "//github.com/" url))
+          (insert "* Use `:type github' for github type recipe\n")
+          (incf numerror))
+        ;; Warn when `:autoloads nil' is specified.
+        (when (and (null autoloads) (plist-member recipe :autoloads))
+          (insert "* WARNING: Are you sure you don't need autoloads?
+  This property should be used only when the library takes care of
+  the autoload.\n"))
+        ;; Warn when `:features t' is specified
+        (when features
+          (insert "* WARNING: Are you sure you need features?
+  If this library has `;;;###autoload' comment (a.k.a autoload cookie),
+  you don't need `:features'.\n")))
+      (insert (format "%s error(s) found." numerror)))
+    numerror))
+
 (provide 'el-get-recipes)
