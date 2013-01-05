@@ -670,12 +670,17 @@ Emacs Lisp code and distribution you can find out there in the wild,
 so the list of features supported is quite large. Simple cases are
 very simple, though.
 
+If you want to submit recipes as pull request, please make sure to run
+recipe checker (@pxref{Recipe checker}) and paste the result in the pull
+request comment.
+
 @menu
 * Recipe format::
 * Dependencies::
 * Byte Compilation::
 * Autoloads::
 * Build::
+* Recipe checker::
 @end menu
 
 @node Recipe format
@@ -983,6 +988,24 @@ example:
        :autoloads ("50magit")
        :build (("make" "all"))
        :build/darwin `(,(concat "make EMACS=" el-get-emacs " all")))
+@end example
+
+@node Recipe checker
+@section Recipe checker
+
+There are two ways to run recipe checker.  One is to run it as an Emacs
+command. Run @command{el-get-check-recipe} in the buffer opening the
+recipe to be checked.  You can also use a script to run the checker.
+This is convenient if you want to check multiple recipes at once.
+
+@example
+test/check-recipe.el PATH/TO/RECIPE.rcp ANOTHER/RECIPE.rcp ...
+@end example
+
+MS Windows user may need to call the script like this:
+
+@example
+emacs -batch -Q -l test/check-recipe.el  PATH/TO/RECIPE.rcp ...
 @end example
 
 @bye
