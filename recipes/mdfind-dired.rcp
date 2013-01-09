@@ -1,0 +1,5 @@
+(:name mdfind-dired
+       :type git
+       :website "https://gist.github.com/900452"
+       :description "run a `mdfind' command and dired the output"
+       :url "https://gist.github.com/900452.git")
