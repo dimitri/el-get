@@ -5,7 +5,7 @@
        :options ("xzf")
        ;; If this disappears (and wasn't merely updated), see
        ;; <http://snapshot.debian.org/package/rnc-mode/>.
-       :url "http://www.pantor.com/RncMode-1_0b3.tgz"
+       :url "http://snapshot.debian.org/archive/debian/20050328T000000Z/pool/main/r/rnc-mode/rnc-mode_1.0b3.orig.tar.gz"
        :prepare
        (progn
          (autoload 'rnc-mode "rnc-mode"
