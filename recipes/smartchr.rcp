@@ -1,4 +1,5 @@
 (:name smartchr
-       :type emacsmirror
+       :type github
+       :pkgname "imakado/emacs-smartchr"
        :features smartchr
        :description "Emacs version of smartchr.vim")
