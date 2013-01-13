@@ -2,5 +2,5 @@
        :description "Nrepl completion source for Emacs auto-complete package"
        :type github
        :pkgname "purcell/ac-nrepl"
-       :depends nrepl
+       :depends (auto-complete nrepl)
        :features ac-nrepl)
