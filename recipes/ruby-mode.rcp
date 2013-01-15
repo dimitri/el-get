@@ -1,4 +1,5 @@
 (:name ruby-mode
+       :builtin 24
        :type http
        :description "Major mode for editing Ruby files."
        :url "http://bugs.ruby-lang.org/projects/ruby-trunk/repository/raw/misc/ruby-mode.el")
