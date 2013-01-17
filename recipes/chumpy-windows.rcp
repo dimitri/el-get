@@ -1,0 +1,4 @@
+(:name chumpy-windows
+       :description "Emacs window management utilities: window-jump.el, spaces.el, splitter.el"
+       :type github
+       :pkgname "chumpage/chumpy-windows")

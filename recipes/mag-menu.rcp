@@ -1,0 +1,5 @@
+(:name mag-menu
+       :description "Intuitive keyboard-centric menu system"
+       :type github
+       :pkgname "chumpage/mag-menu"
+       :depends (splitter))
