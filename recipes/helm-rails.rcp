@@ -2,7 +2,7 @@
        :description "Helm extension for Rails projects"
        :type github
        :pkgname "asok/helm-rails"
-       :depends (helm magit)
+       :depends (helm magit inflections)
        :prepare (loop for name in '(models
                                     views
                                     controllers
