@@ -148,6 +148,13 @@ matching REGEX with TYPE and ARGS as parameter."
         (with-current-buffer standard-output
           (buffer-string))))))
 
+(defcustom el-get-package-menu-view-recipe-function
+  'find-file-other-window
+  "`find-file' compatible function used to display recipe content
+in el-get package menu."
+  :group 'el-get
+  :type 'symbol)
+
 
 ;;
 ;; Package Menu
@@ -166,6 +173,14 @@ matching REGEX with TYPE and ARGS as parameter."
     (beginning-of-line)
     (if (looking-at ". \\([^ \t]*\\)")
 		(match-string 1))))
+
+(defun el-get-package-menu-view-recipe ()
+  "Show package recipe in a read-only mode."
+  (interactive)
+  (let* ((package (el-get-package-menu-get-package-name))
+         (recipe-file (el-get-recipe-filename package)))
+    (funcall el-get-package-menu-view-recipe-function recipe-file)
+    (view-mode)))
 
 (defun el-get-package-menu-get-status ()
   (save-excursion
@@ -242,7 +257,7 @@ matching REGEX with TYPE and ARGS as parameter."
 
 (defun el-get-package-menu-quick-help ()
   (interactive)
-  (message "n-ext, p-revious, i-nstall, u-pdate, d-elete, SPC-unmark, g-revert, x-execute, ?-package describe, h-elp, q-uit"))
+  (message "n-ext, p-revious, i-nstall, u-pdate, d-elete, SPC-unmark, g-revert, x-execute, ?-package describe, v-iew recipe, h-elp, q-uit"))
 
 (unless el-get-package-menu-mode-map
   (setq el-get-package-menu-mode-map (make-keymap))
@@ -256,6 +271,7 @@ matching REGEX with TYPE and ARGS as parameter."
   (define-key el-get-package-menu-mode-map "g" 'el-get-package-menu-revert)
   (define-key el-get-package-menu-mode-map "x" 'el-get-package-menu-execute)
   (define-key el-get-package-menu-mode-map "?" 'el-get-package-menu-describe)
+  (define-key el-get-package-menu-mode-map "v" 'el-get-package-menu-view-recipe)
   (define-key el-get-package-menu-mode-map "h" 'el-get-package-menu-quick-help)
   (define-key el-get-package-menu-mode-map "q" 'quit-window))
 
