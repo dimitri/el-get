@@ -1,0 +1,21 @@
+(:name helm-rails
+       :description "Helm extension for Rails projects"
+       :type github
+       :pkgname "asok/helm-rails"
+       :depends (helm magit inflections)
+       :prepare (loop for name in '(models
+                                    views
+                                    controllers
+                                    helpers
+                                    mailers
+                                    specs
+                                    libs
+                                    javascripts
+                                    styleshetts
+                                    all)
+                      do (autoload
+                           (intern (format "helm-rails-%S" name))
+                           "helm-rails"
+                           nil
+                           t))
+       )
