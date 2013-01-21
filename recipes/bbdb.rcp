@@ -7,7 +7,8 @@
        ;; if using vm, add `--with-vm-dir=DIR' after ./configure
        :build `("autoconf" ,(concat "./configure --with-emacs=" el-get-emacs)
                 "make clean" "rm -f lisp/bbdb-autoloads.el"
-                "make bbdb")
+                "make info bbdb")
        :features bbdb-loaddefs
        :autoloads nil
+       :info "doc"
        :post-init (bbdb-initialize))
