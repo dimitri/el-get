@@ -1,0 +1,9 @@
+(:name ee
+       :website "http://www.jurta.org/en/emacs/ee"
+       :description "Emacs Information Manager"
+       :type http-tar
+       :options ("xzf")
+       :url "http://git.savannah.gnu.org/cgit/ee.git/snapshot/ee-0.1.0.tar.gz"
+       :info "ee.info"
+       :autoloads nil
+       :provides ee-autoloads)
