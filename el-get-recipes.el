@@ -309,6 +309,14 @@ object or a file path."
           (insert "* WARNING: Are you sure you need features?
   If this library has `;;;###autoload' comment (a.k.a autoload cookie),
   you don't need `:features'.\n")))
+      ;; Check for required properties.
+      (loop for key in '(:description :name)
+            unless (plist-get recipe key)
+            do (progn
+                 (insert (format
+                          "* Required property %S is not defined.\n"
+                          key))
+                 (incf numerror)))
       (insert (format "%s error(s) found." numerror)))
     numerror))
 
