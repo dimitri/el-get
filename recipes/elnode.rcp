@@ -1,5 +1,5 @@
 (:name elnode
-       :website "http://emacswiki.org/wiki/Elnode"
+       :website "http://elnode.org/"
        :description "Asynchronous HttpServer framework."
        :depends (fakir web db)
        :type github
