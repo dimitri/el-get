@@ -1,0 +1,4 @@
+(:name kv
+       :description "Key/Value collection type functions: for alists, hashtables and plists. Useful stuff."
+       :type github
+       :pkgname "nicferrier/emacs-kv")

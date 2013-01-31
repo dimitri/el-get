@@ -1,0 +1,5 @@
+(:name db
+       :description "very simple database for emacslisp, can also wrap other databases."
+       :depends kv
+       :type github
+       :pkgname "nicferrier/emacs-db")
