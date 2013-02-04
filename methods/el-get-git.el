@@ -51,8 +51,9 @@ found."
                                     (not submodule-prop)))
          (checkout (or (plist-get source :checkout)
 		       (plist-get source :checksum)))
-         (shallow (el-get-plist-get-with-default source :shallow
-                                                 el-get-git-shallow-clone))
+         (shallow (unless (string-prefix-p "http" url)
+                    (el-get-plist-get-with-default source :shallow
+                                                   el-get-git-shallow-clone)))
 	 (clone-args (append '("--no-pager" "clone")
                              (when shallow '("--depth" "1"))
 			     (cond
