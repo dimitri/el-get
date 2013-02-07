@@ -1,0 +1,18 @@
+(:name mew
+       :description "Mew is a mail reader for Emacs"
+       :type git
+       :url "https://github.com/kazu-yamamoto/Mew.git"
+       ;;; To use Mew S/MIME support, manual configuration of
+       ;;; pinentry-program entry on ~/.gnupg/gpg-agent.conf is required.
+       ;;; pinentry-program for mew is (concat el-get-dir "mew/bin/mew-pinentry")
+       ;;; Consult http://www.mew.org/en/feature/smime.html for more infomation.
+       :prepare
+       (progn
+         (setq mew-prog-mewl        (concat default-directory "bin/mewl"))
+         (setq mew-prog-mime-encode (concat default-directory "bin/mewencode"))
+         (setq mew-prog-mime-decode (concat default-directory "bin/mewencode"))
+         (setq mew-prog-cmew        (concat default-directory "bin/cmew"))
+         (setq mew-prog-est-update  (concat default-directory "bin/mewest"))
+         (setq mew-prog-smew        (concat default-directory "bin/smew"))
+         (setq mew-mbox-command     (concat default-directory "bin/incm")))
+       :build `(("./configure" ,(concat "--with-emacs=" el-get-emacs)) "make"))
