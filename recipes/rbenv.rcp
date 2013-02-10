@@ -1,0 +1,7 @@
+(:name rbenv
+       :description "Emacs integration for rbenv"
+       :type github
+       :features rbenv
+       :pkgname "senny/rbenv.el"
+       :compile "rbenv.el"
+       :post-init (rbenv-use-global))
