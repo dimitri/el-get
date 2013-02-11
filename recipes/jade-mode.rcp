@@ -1,0 +1,4 @@
+(:name jade-mode
+       :description "Emacs major mode for jade template highlighting."
+       :features jade-mode
+       :type elpa)
