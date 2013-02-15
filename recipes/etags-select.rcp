@@ -1,0 +1,5 @@
+(:name etags-select
+       :description "Select from multiple tags"
+       :type http
+       :url "http://www.emacswiki.org/cgi-bin/wiki/download/etags-select.el"
+       :features etags-select)
