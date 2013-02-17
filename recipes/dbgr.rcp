@@ -1,7 +1,7 @@
 (:name dbgr
        :website "https://github.com/rocky/emacs-dbgr"
        :description "The Grand \"Cathedral\" Debugger rewrite: Towards a modular framework for interacting with external debuggers."
-       :depends (test-unit load-relative loc-changes)
+       :depends (test-simple load-relative loc-changes)
        :type github
        :pkgname "rocky/emacs-dbgr"
        :build
@@ -13,5 +13,5 @@
                           (shell-quote-argument load-path-env)
                           (shell-quote-argument command))))
           '("./autogen.sh" "./configure" "make")))
-       :features (loc-changes load-relative test-unit)
+       :features (loc-changes load-relative test-simple)
        )
