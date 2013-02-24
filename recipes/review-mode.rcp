@@ -1,0 +1,6 @@
+(:name review-mode
+       :type github
+       :website "https://github.com/kmuto/review-el"
+       :branch "master"
+       :description "Major mode for ReVIEW. It is a easy-to-use digital publishing system for books and ebooks."
+       :pkgname "kmuto/review-el")
