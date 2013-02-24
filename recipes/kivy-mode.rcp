@@ -1,0 +1,5 @@
+(:name kivy-mode
+       :website "https://github.com/kivy/kivy/blob/master/kivy/tools/highlight/kivy-mode.el"
+       :description "Emacs major mode for editing Kivy files."
+       :type http
+       :url "https://raw.github.com/kivy/kivy/master/kivy/tools/highlight/kivy-mode.el")
