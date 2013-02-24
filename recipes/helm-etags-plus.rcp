@@ -1,0 +1,5 @@
+(:name helm-etags-plus
+       :type github
+       :website "https://github.com/jixiuf/helm-etags-plus"
+       :description "etags plus for helm-mode"
+       :pkgname "jixiuf/helm-etags-plus")
