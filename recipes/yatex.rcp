@@ -1,0 +1,10 @@
+(:name yatex
+       :website "http://www.yatex.org/"
+       :description "Yet Another TeX mode for Emacs"
+       :type hg
+       :url "http://www.yatex.org/hgrepos/yatex"
+       ;;; this fix the trouble on .loaddefs.el
+       ;;; yatexmth.el contains inappropriate autoload magic comment
+       :build (("sed -i 's/ from yatex.el//' yatexmth.el"))
+       :build/berkeley-unix (("sed -i '' 's/ from yatex.el//' yatexmth.el"))
+       :build/darwin (("LANG=C LC_ALL=C") ("sed -i '' 's/ from yatex.el//' yatexmth.el")))
