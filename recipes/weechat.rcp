@@ -1,5 +1,5 @@
 (:name weechat
        :description "Chat via WeeChat's relay protocol in Emacs"
        :type github
-       :depends s
+       :depends (s cl-lib)
        :pkgname "the-kenny/weechat.el")
