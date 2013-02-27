@@ -1,0 +1,5 @@
+(:name helm-c-moccur
+       :type github
+       :pkgname "emacs-helm/helm-c-moccur"
+       :description "helm source for color-moccur.el"
+       :depends (helm color-moccur))
