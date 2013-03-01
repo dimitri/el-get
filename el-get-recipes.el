@@ -177,8 +177,7 @@ return 'builtin."
                 package-or-source))
          (builtin (plist-get def :builtin)))
 
-    (if (or (and (integerp builtin) (<= builtin emacs-major-version))
-            (and (stringp builtin) (version<= builtin emacs-version)))
+    (if (and builtin (version<= builtin emacs-version))
         'builtin
       (plist-get def :type))))
 
