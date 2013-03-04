@@ -177,6 +177,9 @@ return 'builtin."
                 package-or-source))
          (builtin (plist-get def :builtin)))
 
+    (when (integerp builtin)
+      (warn "Integer argument for :builtin is obsolete.  Use strings instead.")
+      (setq builtin (number-to-string builtin)))
     (if (and builtin (version<= builtin emacs-version))
         'builtin
       (plist-get def :type))))
