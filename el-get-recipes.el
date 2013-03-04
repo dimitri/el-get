@@ -292,7 +292,7 @@ object or a file path."
                           "* Property %S is for user.  Use %S instead.\n"
                           key alt))
                  (incf numerror)))
-      (destructuring-bind (&key type url autoloads features
+      (destructuring-bind (&key type url autoloads features builtin
                                 &allow-other-keys)
           recipe
         ;; Is github type used?
@@ -308,7 +308,11 @@ object or a file path."
         (when features
           (insert "* WARNING: Are you sure you need features?
   If this library has `;;;###autoload' comment (a.k.a autoload cookie),
-  you don't need `:features'.\n")))
+  you don't need `:features'.\n"))
+        ;; Check if `:builtin' is used with an integer
+        (when (integerp builtin)
+          (insert "* WARNING: Usage of integers for :builtin is obsolete.
+  Use a version string like \"24.3\" instead.\n")))
       ;; Check for required properties.
       (loop for key in '(:description :name)
             unless (plist-get recipe key)
