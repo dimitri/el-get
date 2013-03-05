@@ -1,4 +1,4 @@
-(:name edirtree
+(:name emacs-dirtree
        :type github
        :description "Directory Tree Views in Emacs"
        :pkgname "zkim/emacs-dirtree"
