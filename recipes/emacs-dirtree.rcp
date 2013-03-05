@@ -1,0 +1,6 @@
+(:name edirtree
+       :type github
+       :description "Directory Tree Views in Emacs"
+       :pkgname "zkim/emacs-dirtree"
+       :depends (tree-mode windata)
+       :features dirtree)
