@@ -3,7 +3,7 @@
        :type github
        :autoloads "slime-autoloads"
        :info "doc"
-       :pkgname "nablaone/slime"
+       :pkgname "antifuchs/slime"
        :load-path ("." "contrib")
        :compile (".")
        :build '(("make" "-C" "doc" "slime.info"))
