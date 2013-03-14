@@ -720,10 +720,10 @@ provided by `el-get' recipes locally.
      before the package is installed.
 
 `:builtin'
-     Emacs major version (see EMACS-MAJOR-VERSION) from which Emacs
-     includes the recipe as a builtin.  For example, `package.el' (the
-     implementation of ELPA) is part fo Emacs24 but needs an external
-     recipe for previous major versions.
+     A string containing the Emacs version (see EMACS-MAJOR-VERSION
+     variable) from which Emacs includes the recipe as a builtin.  For
+     example, `package.el' (the implementation of ELPA) is part of
+     Emacs 24 but needs an external recipe for previous major versions.
 
 `:pkgname'
      The name of the package for the underlying package management
@@ -1045,10 +1045,10 @@ Node: Getting more recipes22690
 Node: Overriding package files23388
 Node: Authoring Recipes23771
 Node: Recipe format24386
-Node: Dependencies34045
-Node: Byte Compilation34391
-Node: Autoloads34957
-Node: Build36083
-Node: Recipe checker37055
+Node: Dependencies34073
+Node: Byte Compilation34419
+Node: Autoloads34985
+Node: Build36111
+Node: Recipe checker37083
 
 End Tag Table
