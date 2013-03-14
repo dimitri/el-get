@@ -1,0 +1,10 @@
+(:name elpy
+       :website "https://github.com/jorgenschaefer/elpy"
+       :description "Emacs Python Development Environment"
+       :type github
+       :pkgname "jorgenschaefer/elpy"
+       :depends ("auto-complete" "yasnippet" "virtualenv"
+                 "highlight-indentation" "find-file-in-project"
+                 "idomenu" "iedit"
+                 ;; "nose" - not on el-get
+                 ))
