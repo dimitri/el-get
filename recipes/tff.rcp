@@ -1,0 +1,6 @@
+(:name tff
+       :type http
+       :website "https://github.com/gizmomogwai/tff"
+       :description "Toggles between friend files (e.g. h and cpp). See customize-group tff. This deprecates toggle-friend-file"
+       :url "https://github.com/gizmomogwai/tff/raw/master/tff.el"
+       :features tff)
