@@ -1,0 +1,5 @@
+(:name tracking
+       :description "The library provides a way to globally register buffers as being modified and scheduled for user review. "
+       :website "https://github.com/jorgenschaefer/circe/wiki/Tracking"
+       :type elpa
+       :repo ("marmalade" . "http://marmalade-repo.org/packages/"))
