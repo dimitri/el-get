@@ -6,10 +6,11 @@
        :options ("xzf")
        :url "http://openlab.ring.gr.jp/skk/maintrunk/ddskk-15.1.tar.gz"
        :autoloads nil
+       :info "doc/skk.info"
        :features ("skk-setup")
 ;; The "correct" way would be actually installing ddskk into some subdirectory.
 ;; But it needs significant work due to the limitation of the Makefile
 ;; thus here we are trying to emulate the Makefile behaviour.
-       :build `(,(concat el-get-emacs
-                  " -batch -q -no-site-file -l SKK-MK -f SKK-MK-compile")
-		"mv skk-setup.el.in skk-setup.el"))
+       :build `((,el-get-emacs "-batch" "-q" "-no-site-file" "-l" "SKK-MK" "-f" "SKK-MK-compile")
+                (,el-get-emacs "-batch" "-q" "-no-site-file" "-l" "SKK-MK" "-f" "SKK-MK-compile-info")
+                ("mv" "skk-setup.el.in" "skk-setup.el")))
