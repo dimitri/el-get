@@ -1,0 +1,8 @@
+(:name wc-mode
+       :website "http://www.dr-qubit.org/emacs.php"
+       :description "A minor mode to provide a 'wc' function for Emacs buffers."
+       :type http
+       :url "http://www.dr-qubit.org/emacs-misc/wc-mode-0.2.el"
+       :build ("mv wc-mode-0.2.el wc-mode.el")
+       :compile "wc-mode.el"
+       :autoloads "wc-mode")
