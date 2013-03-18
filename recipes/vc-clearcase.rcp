@@ -1,0 +1,4 @@
+(:name vc-clearcase
+       :description "Support for the ClearCase version control system under GNU Emacs"
+       :type hg
+       :url "https://code.google.com/p/vc-clearcase/")
