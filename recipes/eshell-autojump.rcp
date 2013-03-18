@@ -1,0 +1,4 @@
+(:name eshell-autojump
+       :description "autojump command for Eshell"
+       :type emacswiki
+       :features eshell-autojump)
