@@ -1,0 +1,3 @@
+(:name vlf
+       :description "A small hack to View Large Files in Emacs"
+       :type emacswiki)
