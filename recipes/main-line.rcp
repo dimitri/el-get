@@ -1,0 +1,6 @@
+(:name main-line
+       :website "https://github.com/jasonm23/emacs-mainline"
+       :description "Mainline for Emacs, a powerline fork"
+       :type github
+       :pkgname "jasonm23/emacs-mainline"
+       :features main-line)
