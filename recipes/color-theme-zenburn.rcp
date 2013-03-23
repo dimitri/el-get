@@ -4,6 +4,6 @@
        :description "Just some alien fruit salad to keep you in the zone"
        :prepare
        (progn
-         (autoload 'color-theme-zenburn "zenburn"
+         (autoload 'color-theme-zenburn "zenburn-theme"
            "Just some alien fruit salad to keep you in the zone." t)
          (defalias 'zenburn #'color-theme-zenburn)))
