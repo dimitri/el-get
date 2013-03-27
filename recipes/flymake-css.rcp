@@ -3,4 +3,5 @@
        :pkgname "purcell/flymake-css"
        :description "Flymake support for css using csslint"
        :website "http://github.com/purcell/flymake-css"
+       :depends (flymake-easy)
        :post-init (add-hook 'css-mode-hook 'flymake-css-load))
