@@ -1,0 +1,5 @@
+(:name sokoban
+       :website "https://github.com/leoliu/sokoban"
+       :description "Sokoban for GNU Emacs ported from XEmacs"
+       :type github
+       :pkgname "leoliu/sokoban")
