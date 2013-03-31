@@ -5,4 +5,4 @@
        :info "."
        :load-path (".")
        :features jabber-autoloads
-       :build ("autoreconf -i" "./configure" "make" "mv jabber.info emacs-jabber.info" ))
+       :build (("autoreconf" "-i") "./configure" "make" ("mv" "jabber.info" "emacs-jabber.info")))
