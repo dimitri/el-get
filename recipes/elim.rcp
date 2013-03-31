@@ -1,0 +1,9 @@
+(:name elim
+       :website "http://savannah.nongnu.org/projects/dtrt-indent://savannah.nongnu.org/projects/elim"
+       :description "An elisp instant messenger daemon"
+       :type git
+       :url "git://git.sv.gnu.org/elim.git"
+       :build ("make")
+       :prepare (setq elim-executable
+                      (expand-file-name
+		       (concat (el-get-package-directory "elim") "elim-client"))))
