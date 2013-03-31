@@ -829,7 +829,7 @@ itself.")
     (let ((refreshed nil)
           (orig-package-refresh-contents
            (ignore-errors (symbol-function 'package-refresh-contents))))
-      (flet ((package-refresh-contents
+      (cl-flet ((package-refresh-contents
               ;; This is the only way to get sane auto-indentation
               (cdr (lambda (&rest args)
                      (unless refreshed
