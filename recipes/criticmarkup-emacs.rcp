@@ -1,0 +1,5 @@
+(:name criticmarkup-emacs
+       :type github
+       :description "Emacs minor mode for handling CriticMarkup."
+       :pkgname "joostkremers/criticmarkup-emacs"
+       :shallow nil)
