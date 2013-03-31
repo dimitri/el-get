@@ -3,4 +3,5 @@
        :description "A flymake handler for ruby-mode files"
        :pkgname "purcell/flymake-ruby"
        :website "http://github.com/purcell/flymake-ruby"
+       :depends (flymake-easy)
        :post-init (add-hook 'ruby-mode-hook 'flymake-ruby-load))
