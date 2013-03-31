@@ -1,0 +1,7 @@
+(:name scala-mode2
+       :website "https://github.com/hvesalai/scala-mode2"
+       :description "A new scala-mode for Emacs 24"
+       :type github
+       :pkgname "hvesalai/scala-mode2"
+       :load-path "."
+       :features scala-mode2 )
