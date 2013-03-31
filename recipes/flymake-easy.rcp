@@ -1,0 +1,5 @@
+(:name flymake-easy
+       :type github
+       :description "Helpers for easily building flymake checkers"
+       :pkgname "purcell/flymake-easy"
+       :website "http://github.com/purcell/flymake-easy")
