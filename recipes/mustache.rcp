@@ -1,0 +1,6 @@
+(:name mustache
+       :website "https://github.com/Wilfred/mustache.el"
+       :description "A mustache templating library for Emacs."
+       :type github
+       :depends (dash ht s with-namespace)
+       :pkgname "Wilfred/mustache.el")
