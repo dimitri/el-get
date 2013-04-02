@@ -1,0 +1,6 @@
+(:name with-namespace
+       :website "https://github.com/Wilfred/with-namespace.el"
+       :description "interoperable elisp namespaces."
+       :type github
+       :depends (dash loop)
+       :pkgname "Wilfred/with-namespace.el")
