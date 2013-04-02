@@ -1,0 +1,5 @@
+(:name refheap
+       :type github
+       :pkgname "Raynes/refheap.el"
+       :description "Emacs integration for www.refheap.com"
+       :website "http://github.com/Raynes/refheap.el")
