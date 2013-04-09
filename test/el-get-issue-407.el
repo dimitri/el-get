@@ -2,7 +2,7 @@
 ;;
 ;; use url-retrieve-synchronously in init file
 ;;
-;; Drop the -L . option from the README.asciidoc for this very test.
+;; Drop the -L . option from the README.md for this very test.
 
 (require 'cl)
 ;; Unload el-get and delete it from the load path
