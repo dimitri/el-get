@@ -3,7 +3,6 @@
        :description "This project brings some of the great eclipse features to emacs developers."
        :type github
        :pkgname "senny/emacs-eclim"
-       :load-path ("." "vendor")
        :features eclim
        :post-init (progn
                     (setq eclim-auto-save t)
