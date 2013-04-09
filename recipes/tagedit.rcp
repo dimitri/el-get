@@ -1,0 +1,6 @@
+(:name tagedit
+       :type github
+       :description "A collection of paredit-like functions for editing in html-mode"
+       :pkgname "magnars/tagedit"
+       :website "http://github.com/magnars/tagedit"
+       :depends (s dash))
