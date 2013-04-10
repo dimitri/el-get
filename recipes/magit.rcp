@@ -3,9 +3,10 @@
        :description "It's Magit! An Emacs mode for Git."
        :type github
        :pkgname "magit/magit"
+       :depends (cl-lib)
        :info "."
        ;; let el-get care about autoloads so that it works with all OSes
-       :build `(("make"
-                 ,(format "EMACS=%s" el-get-emacs)
-                 "all"))
+       :build (if (version-list-<= (version-to-list "24.3") (version-to-list emacs-version))
+		  `(("make" ,(format "EMACS=%s" el-get-emacs) "all"))
+		`(("make" ,(format "EMACS=%s" el-get-emacs) "docs")))
        :build/berkeley-unix (("touch" "`find . -name Makefile`") ("gmake")))
