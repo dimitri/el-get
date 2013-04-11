@@ -830,11 +830,10 @@ itself.")
           (orig-package-refresh-contents
            (ignore-errors (symbol-function 'package-refresh-contents))))
       (flet ((package-refresh-contents
-              ;; This is the only way to get sane auto-indentation
-              (cdr (lambda (&rest args)
-                     (unless refreshed
-                       (apply orig-package-refresh-contents args)
-                       (setq refreshed t))))))
+              (&rest args)
+              (unless refreshed
+                (apply orig-package-refresh-contents args)
+                (setq refreshed t))))
         ;; This is the only line that really matters
         (mapc 'el-get-update (el-get-list-package-names-with-status "installed"))))))
 
