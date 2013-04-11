@@ -1,0 +1,6 @@
+(:name one-key-local
+       :website "https://github.com/aki2o/one-key-local"
+       :description "provides the menu of one-key.el for any major-mode and minor-mode."
+       :type github
+       :pkgname "aki2o/one-key-local"
+       :depends one-key)

@@ -1,0 +1,6 @@
+(:name auto-complete-nxml
+       :website "https://github.com/aki2o/auto-complete-nxml"
+       :description "do completion by auto-complete.el on nXML-mode."
+       :type github
+       :pkgname "aki2o/auto-complete-nxml"
+       :depends auto-complete)
