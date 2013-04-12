@@ -1,0 +1,4 @@
+(:name smart-quotes
+       :description "Smart quotes minor mode"
+       :type github
+       :pkgname "gareth-rees/smart-quotes")
