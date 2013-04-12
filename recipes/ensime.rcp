@@ -3,11 +3,8 @@
        :type github
        :pkgname "aemoncannon/ensime"
        :build ("sbt update stage")
-       :depends scala-mode
+       :depends scala-mode2
        :features ensime
        :load-path ("./src/main/elisp")
        :post-init (progn
-                    (require 'ensime)
-                    ;; scala-mode can be found in the scala distribution:
-                    (require 'scala-mode-auto)
                     (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)))
