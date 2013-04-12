@@ -365,6 +365,7 @@ next emacs startup the installed packages are initialized.
     (goto-char (point-max))
     (eval-print-last-sexp)))
 
+(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
 (el-get 'sync)
 @end example
 
@@ -614,10 +615,11 @@ cached, so that you can still start Emacs even if you remove the
 recipe file.
 
 The variable @code{el-get-recipe-path} is a list of directory paths
-where to look for recipe files, in order. The recipe for a package
+to search for recipe files, in order. The recipe for a package
 @code{example} must be named @code{example.rcp}. The first file named
 that way in the @code{el-get-recipe-path} variable is used as the
-recipe.
+recipe. If you need to change it, you should do so immediately before
+running @code{el-get}; see the example in @xref{Basic Setup}.
 
 To check which recipe is used for a given package, use either the
 @code{M-x el-get-describe} or @code{M-x el-get-find-recipe-file}
