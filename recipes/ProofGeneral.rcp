@@ -4,7 +4,8 @@
        :type http-tar
        :options ("xzf")
        :url "http://proofgeneral.inf.ed.ac.uk/releases/ProofGeneral-4.2.tgz"
-       :build ("cd ProofGeneral && make clean" "cd ProofGeneral && make compile")
-       :build/darwin `("cd ProofGeneral && make clean" ,(concat "cd ProofGeneral && make compile EMACS=" el-get-emacs))
+       :build `("cd ProofGeneral && make clean"
+       ,(concat "cd ProofGeneral && sed -e 's/(setq byte-compile-error-on-warn t)//' <Makefile >Makefile.1 && mv Makefile.1 Makefile &&"
+                "make compile EMACS=" el-get-emacs))
        :load  ("ProofGeneral/generic/proof-site.el")
        :info "./ProofGeneral/doc/")
