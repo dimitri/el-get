@@ -1,0 +1,5 @@
+(:name frink-mode
+       :type http
+       :website "http://futureboy.us/frinkdocs/"
+       :description "Major mode for editing Frink source"
+       :url "http://futureboy.us/frinktools/emacs/frink-mode.el")
