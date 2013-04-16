@@ -1,0 +1,5 @@
+(:name kill-ring-rotate
+       :website "http://www-verimag.imag.fr/~moy/?L-Editeur-de-texte-Emacs#Mes-bibliotheques"
+       :description "Interactive rotation of the kill-ring"
+       :type http
+       :url "http://www-verimag.imag.fr/~moy/emacs/kill-ring-rotate.el")
