@@ -115,7 +115,7 @@ recursion.
 		      `(:command-name ,name
 				      :buffer-name ,buf
 				      :default-directory ,wdir
-				      :shell t
+				      :shell nil
 				      :sync ,sync
 				      :program ,program
 				      :args (,@args)
