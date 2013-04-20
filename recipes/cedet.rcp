@@ -7,11 +7,13 @@
   ;; `((,el-get-emacs "-batch" "-Q" "-l" "cedet-build.el" "-f" "cedet-build"))
   `(("sh" "-c" "touch `find . -name Makefile`")
     ("make" ,(format "EMACS=%s" (shell-quote-argument el-get-emacs)) "clean-all")
-    ("make" ,(format "EMACS=%s" (shell-quote-argument el-get-emacs))))
+    ("make" ,(format "EMACS=%s" (shell-quote-argument el-get-emacs)))
+    ("make" ,(format "EMACS=%s" (shell-quote-argument el-get-emacs)) "-C" "contrib"))
   :build/berkeley-unix
   `(("sh" "-c" "touch `find . -name Makefile`")
     ("gmake" ,(format "EMACS=%s" (shell-quote-argument el-get-emacs)) "clean-all")
-    ("gmake" ,(format "EMACS=%s" (shell-quote-argument el-get-emacs))))
+    ("gmake" ,(format "EMACS=%s" (shell-quote-argument el-get-emacs)))
+    ("gmake" ,(format "EMACS=%s" (shell-quote-argument el-get-emacs)) "-C" "contrib"))
   :build/windows-nt ("echo #!/bin/sh > tmp.sh & echo touch `/usr/bin/find . -name Makefile` >> tmp.sh & echo make FIND=/usr/bin/find >> tmp.sh"
 		     "sed 's/^M$//' tmp.sh  > tmp2.sh"
 		     "sh ./tmp2.sh" "rm ./tmp.sh ./tmp2.sh")
