@@ -4,6 +4,7 @@
        :type git
        :url "git://git.sv.gnu.org/elim.git"
        :build ("make")
+       :load-path ("./elisp")
        :prepare (setq elim-executable
                       (expand-file-name
 		       (concat (el-get-package-directory "elim") "elim-client"))))
