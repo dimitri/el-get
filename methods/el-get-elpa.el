@@ -172,15 +172,23 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
                         el-get-recipe-path-elpa))
         (coding-system-for-write 'utf-8)
         pkg package description)
-    (when (or (not package-archive-contents) (and package-archive-contents (not do-not-update)))
+
+    (when (or (not package-archive-contents)
+              (and package-archive-contents
+                   (not do-not-update)))
       (package-refresh-contents))
-    (unless (file-directory-p target-dir) (make-directory target-dir 'recursive))
+
+    (unless (file-directory-p target-dir)
+      (make-directory target-dir 'recursive))
+
     (mapc (lambda (pkg)
-	    (let* ((package (format "%s" (car pkg)))
-		   (pkg-desc (cdr pkg))
+	    (let* ((package     (format "%s" (car pkg)))
+		   (pkg-desc    (cdr pkg))
 		   (description (package-desc-doc pkg-desc))
-		   (depends (mapcar #'car (package-desc-reqs pkg-desc)))
-		   (repo (assoc(aref pkg-desc (- (length pkg-desc) 1)) package-archives)))
+		   (depends     (mapcar #'car (package-desc-reqs pkg-desc)))
+		   (repo
+                    (assoc (aref pkg-desc (- (length pkg-desc) 1))
+                           package-archives)))
 	      (with-temp-file (expand-file-name (concat package ".rcp")
 						target-dir)
 		(message "%s:%s" package description)
@@ -189,8 +197,7 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
 		  "(:name %s\n:auto-generated t\n:type elpa\n:description \"%s\"\n:repo %S\n"
 		  package description repo))
 		(when depends
-		  (insert
-		   (format ":depends %s\n" depends)))
+		  (insert (format ":depends %s\n" depends)))
 		(insert ")")
 		(indent-region (point-min) (point-max)))))
 	  package-archive-contents)))
