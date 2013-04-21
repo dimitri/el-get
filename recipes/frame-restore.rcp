@@ -1,0 +1,5 @@
+(:name frame-restore
+       :type emacswiki
+       :description "Save/restore frame size & position with desktop-save"
+       :website "https://raw.github.com/emacsmirror/emacswiki.org/master/frame-restore.el"
+       :features frame-restore)
