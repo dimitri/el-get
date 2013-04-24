@@ -1,0 +1,4 @@
+(:name less-css-mode
+       :description "Major mode for editing LESS CSS files (lesscss.org)"
+       :features less-css-mode
+       :type elpa)
