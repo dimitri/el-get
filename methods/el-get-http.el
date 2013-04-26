@@ -39,6 +39,7 @@ Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
 	 (buffer-file-coding-system 'no-conversion)
 	 (require-final-newline nil))
     ;; prune HTTP headers before save
+    (goto-char (point-min))
     (re-search-forward "\r?\n\r?\n")
     (write-region (point) (point-max) part)
     (puthash package (sha1 (current-buffer)) el-get-http-checksums)
