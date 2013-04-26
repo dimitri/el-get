@@ -1,4 +1,4 @@
-This is el-get.info, produced by makeinfo version 4.13 from el-get.texi.
+This is el-get.info, produced by makeinfo version 4.8 from el-get.texi.
 
 INFO-DIR-SECTION Emacs
 START-INFO-DIR-ENTRY
@@ -88,7 +88,8 @@ project, getting a commit bit and some management duties. He manages
 tests and issues on github as much as he can spares time to El-Get.
 
    Dave Abrahams contributed lots of code and efforts to make things
-right™. He's still using El-Get, but decided to retire from the project.
+right™. He's still using El-Get, but decided to retire from the
+project.
 
    Lots of people (more than we can list here) did contribute to El-Get
 either recipes, bug fixes or ideas to implement, often with code. That
@@ -1018,37 +1019,37 @@ convenient if you want to check multiple recipes at once.
 
 
 Tag Table:
-Node: Top763
-Node: Introduction1228
-Node: Acknowledgments2303
-Node: Glossary3753
-Ref: Glossary - Init4849
-Ref: Glossary - Install5151
-Ref: Glossary - Recipe6238
-Ref: Glossary - Status6662
-Ref: Glossary - Update6920
-Node: Installing7158
-Node: Install the developper version8031
-Node: Skip Emacswiki recipes when installing8776
-Node: Usage9612
-Node: Setup11901
-Node: Basic Setup12297
-Node: The el-get function13536
-Node: Distributed Setup14812
-Node: Setup Customization16706
-Node: User Init17852
-Node: Before and After properties18539
-Node: Initialization files20047
-Node: Recipes20700
-Node: Organizing recipes21175
-Node: Getting more recipes22690
-Node: Overriding package files23388
-Node: Authoring Recipes23771
-Node: Recipe format24386
-Node: Dependencies34073
-Node: Byte Compilation34419
-Node: Autoloads34985
-Node: Build36111
-Node: Recipe checker37083
+Node: Top762
+Node: Introduction1227
+Node: Acknowledgments2301
+Node: Glossary3751
+Ref: Glossary - Init4847
+Ref: Glossary - Install5149
+Ref: Glossary - Recipe6236
+Ref: Glossary - Status6660
+Ref: Glossary - Update6918
+Node: Installing7156
+Node: Install the developper version8029
+Node: Skip Emacswiki recipes when installing8774
+Node: Usage9610
+Node: Setup11899
+Node: Basic Setup12295
+Node: The el-get function13534
+Node: Distributed Setup14810
+Node: Setup Customization16704
+Node: User Init17850
+Node: Before and After properties18537
+Node: Initialization files20045
+Node: Recipes20698
+Node: Organizing recipes21173
+Node: Getting more recipes22688
+Node: Overriding package files23386
+Node: Authoring Recipes23769
+Node: Recipe format24384
+Node: Dependencies34071
+Node: Byte Compilation34417
+Node: Autoloads34983
+Node: Build36109
+Node: Recipe checker37081
 
 End Tag Table

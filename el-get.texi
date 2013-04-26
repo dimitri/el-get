@@ -67,8 +67,8 @@ extension. Or call it a package.
 El-Get Version String (@code{M-x el-get-version}) are now inspired by
 how Emacs itself numbers its versions.  First is the major version
 number, then a dot, then the minor version number.  The minor version
-number is 0 when still developping the next major version.  So 3.0 is
-a developer release while 3.1 is a stable release.
+number is 0 when still developing the next major version.  So 3.0 is a
+developer release while 3.1 is a stable release.
 
 Please note that this versioning policy has been picked while backing
 1.2~dev, so 1.0 was a "stable" release in fact.  Ah, history.
