@@ -902,17 +902,9 @@ whether or not el-get is listed in the 'packages argument list.
 
 This is useful, for example, when we want to remove all packages not
 explicitly declared in the user-init-file (.emacs)."
-  (el-get--remove-all-but (add-to-list 'packages 'el-get)))
-
-(defun el-get--remove-all-but (packages)
-  "Removes all installed packages which are not in the argument
-list 'packages or dependencies thereof.
-
-N.B.  Dangerous since it will remove el-get itself unless you
-explicitly list el-get in the 'packages argument.  Normal users
-should probably be using el-get-cleanup instead."
   (let* ((packages-to-keep (el-get-dependencies
-                            (mapcar 'el-get-as-symbol packages)))
+                            (mapcar 'el-get-as-symbol
+                                    (add-to-list 'packages 'el-get))))
 	 (packages-to-remove (set-difference
                               (mapcar 'el-get-as-symbol
                                       (el-get-list-package-names-with-status
