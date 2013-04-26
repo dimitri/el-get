@@ -32,6 +32,8 @@ Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
 
 (defun el-get-http-retrieve-callback (status package post-install-fun &optional dest sources)
   "Callback function for `url-retrieve', store the emacs lisp file for the package."
+  (let ((err (plist-get status :error)))
+    (when err (error (format "could not fetch URL: error %s %s" (car (cdr err)) (cdr (cdr err))))))
   (let* ((pdir   (el-get-package-directory package))
 	 (dest   (or dest (format "%s%s.el" (file-name-as-directory pdir) package)))
 	 (part   (concat dest ".part"))
