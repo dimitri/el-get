@@ -1,0 +1,6 @@
+(:name hy-mode
+       :website "https://github.com/hylang/hy-mode"
+       :description "Emacs support for the Hy language."
+       :type github
+       :pkgname "hylang/hy-mode"
+       )
