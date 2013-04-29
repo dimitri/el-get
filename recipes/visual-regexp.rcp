@@ -1,0 +1,6 @@
+(:name visual-regexp
+       :description "A regexp/replace command for Emacs with
+       interactive visual feedback"
+       :type github
+       :depends cl-lib
+       :pkgname "benma/visual-regexp.el")
