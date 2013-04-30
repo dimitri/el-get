@@ -11,7 +11,7 @@
 @end direntry
 
 @copying
-Copyright @copyright{} 2010, 2011, 2012 Dimitri Fontaine.
+Copyright @copyright{} 2010, 2011, 2012, 2013 Dimitri Fontaine.
 
 @quotation
             DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
@@ -424,7 +424,9 @@ and home destops, laptop, etc); it's usual to manage your
 @code{.emacs.d} setup in a distributed repository (such as
 @code{git}). El-Get then provides an easy canonical list of packages
 you depend on to run emacs, and this documentation is usable
-as-is.
+as-is. It is recommended that you not store the El-Get tree in git,
+however; to prevent this, so you can add a pattern @code{/el-get} to
+@code{.emacs.d/.gitignore}.
 
 @example
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
