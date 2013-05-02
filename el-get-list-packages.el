@@ -276,7 +276,9 @@ in el-get package menu."
   (define-key el-get-package-menu-mode-map "q" 'quit-window))
 
 (defun el-get-package-menu-mode ()
-  "Major mode for browsing a list of packages."
+  "Major mode for browsing a list of packages.
+
+\\{el-get-package-menu-mode-map}"
   (kill-all-local-variables)
   (use-local-map el-get-package-menu-mode-map)
   (setq major-mode 'el-get-package-menu-mode)
