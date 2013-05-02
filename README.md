@@ -166,6 +166,7 @@ Here is the basic setup to add to your `user-init-file` (`.emacs`):
     (goto-char (point-max))
     (eval-print-last-sexp)))
 
+(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
 (el-get 'sync)
 ```
 
