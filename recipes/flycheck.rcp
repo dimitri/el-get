@@ -1,5 +1,5 @@
 (:name flycheck
-       :website "https://github.com/lunaryorn/flycheck"
+       :type github
+       :pkgname "lunaryorn/flycheck"
        :description "On-the-fly syntax checking extension"
-       :depends (s dash)
-       :type elpa)
+       :depends (s dash))
