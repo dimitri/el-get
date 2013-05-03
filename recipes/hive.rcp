@@ -1,0 +1,6 @@
+(:name hive
+       :type github
+       :pkgname "r0man/hive-el"
+       :description "Hive SQL mode extension for Emacs"
+       :load "hive.el"
+       :compile ("hive.el"))
