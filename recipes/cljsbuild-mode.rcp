@@ -1,0 +1,4 @@
+(:name cljsbuild-mode 
+       :description "Minor mode for the ClojureScript 'lein cljsbuild' command"
+       :type github
+       :pkgname "kototama/cljsbuild-mode")
