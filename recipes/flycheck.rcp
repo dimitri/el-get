@@ -2,4 +2,4 @@
        :type github
        :pkgname "lunaryorn/flycheck"
        :description "On-the-fly syntax checking extension"
-       :depends (s dash))
+       :depends (s dash cl-lib))
