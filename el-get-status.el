@@ -259,6 +259,26 @@ properties, respectively."
           (cadr added)
           (cadr removed))))
 
+(defun el-get-package-or-source (package-or-source)
+  "Given either a package name or a full source entry, return a
+   full source entry."
+  (if (listp package-or-source)
+      (or package-or-source
+          (error "package-or-source cannot be nil"))
+    (el-get-package-def package-or-source)))
+
+(defun el-get-read-cached-recipe (package source &optional package-status-alist)
+  "Read the cached recipe for given PACKAGE: the one we have in the status file.
+
+   If given PACKAGE isn't registered in the status file, and if
+   it's a builtin package, then install it."
+  (unless (el-get-read-package-status-recipe package package-status-alist)
+    (if (eq 'builtin (el-get-package-method source))
+        (let ((el-get-default-process-sync t))
+          (el-get-install package))
+      ;; it's not builtin, it's not installed.
+      (error "Package %s is nowhere to be found in el-get status file." package))))
+
 (defun* el-get-merge-properties-into-status (package-or-source
                                              &optional package-status-alist
                                              &key noerror)
@@ -286,17 +306,10 @@ t', this error is suppressed (but nothing is updated)."
          nil
          :noerror current-prefix-arg))
   (let* ((save-to-file (null package-status-alist))
-         (source
-          (if (listp package-or-source)
-              (or package-or-source
-                  (error "package-or-source cannot be nil"))
-            (el-get-package-def package-or-source)))
-         (package (el-get-as-symbol (el-get-source-name source)))
-         (cached-recipe (or (el-get-read-package-status-recipe
-                             package
-                             package-status-alist)
-                            (error "Could not retrieve cached recipe for package %s"
-                                   package))))
+         (source       (el-get-package-or-source package-or-source))
+         (package      (el-get-as-symbol (el-get-source-name source)))
+         (cached-recipe
+          (el-get-read-cached-recipe package source package-status-alist)))
     (unless (el-get-package-is-installed package)
       (error "Package %s is not installed. Cannot update recipe." package))
     (destructuring-bind (update-p added-disallowed removed-disallowed)
