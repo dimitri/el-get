@@ -1,5 +1,5 @@
 (:name auto-highlight-symbol
        :type github
-       :pkgname "mitsuo-saito/auto-highlight-symbol-mode"
+       :pkgname "emacsmirror/auto-highlight-symbol"
        :description "Automatic highlighting current symbol minor mode"
-       :website "https://github.com/mitsuo-saito/auto-highlight-symbol-mode/")
+       :website "https://github.com/emacsmirror/auto-highlight-symbol/")
