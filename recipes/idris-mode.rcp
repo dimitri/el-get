@@ -1,0 +1,6 @@
+(:name idris-mode
+       :website "https://github.com/idris-hackers/idris-mode"
+       :description "Major mode for the Idris language"
+       :type github
+       :pkgname "idris-hackers/idris-mode"
+       :features idris-mode)
