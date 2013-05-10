@@ -272,12 +272,13 @@ properties, respectively."
 
    If given PACKAGE isn't registered in the status file, and if
    it's a builtin package, then install it."
-  (unless (el-get-read-package-status-recipe package package-status-alist)
-    (if (eq 'builtin (el-get-package-method source))
-        (let ((el-get-default-process-sync t))
-          (el-get-install package))
-      ;; it's not builtin, it's not installed.
-      (error "Package %s is nowhere to be found in el-get status file." package))))
+  (or (el-get-read-package-status-recipe package package-status-alist)
+      (if (eq 'builtin (el-get-package-method source))
+          (let ((el-get-default-process-sync t))
+            (el-get-install package))
+        ;; it's not builtin, it's not installed.
+        (error "Package %s is nowhere to be found in el-get status file."
+               package))))
 
 (defun* el-get-merge-properties-into-status (package-or-source
                                              &optional package-status-alist
