@@ -81,7 +81,8 @@ matching REGEX with TYPE and ARGS as parameter."
          (name (plist-get def :name))
          (website (plist-get def :website))
          (descr (plist-get def :description))
-         (type (plist-get def :type))
+         (type (el-get-package-method def))
+         (builtin (plist-get def :builtin))
          (url (plist-get def :url))
          (depends (plist-get def :depends)))
     (princ (format "%s is an `el-get' package. It is currently %s " name
@@ -121,8 +122,10 @@ matching REGEX with TYPE and ARGS as parameter."
          (format "`%s'" depends) "`\\([^`']+\\)"
          'el-get-help-describe-package depends))
       (princ ".\n"))
-    (princ (format "The default installation method is %s %s\n\n" type
-                   (if url (format "from %s" url) "")))
+    (if (eq type 'builtin)
+        (princ (format "The package is built in since Emacs %s.\n\n" builtin))
+      (princ (format "The default installation method is %s %s\n\n" type
+                     (if url (format "from %s" url) ""))))
     (princ "Full definition")
     (let ((file (el-get-recipe-filename package)))
       (if (not file)
