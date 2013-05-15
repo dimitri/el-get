@@ -38,9 +38,9 @@ run_test () {
       -l "$testfile"
     result="$?"
     if [ "$result" = 0 ]; then
-      echo "*** SUCCESS $testfile ***"
+      echo "*** ${EL_GET_SUCCESS_COLOR}SUCCESS${EL_GET_END} $testfile ***"
     else
-      echo "*** FAILED $testfile ***"
+      echo "*** ${EL_GET_FAILURE_COLOR}FAILED${EL_GET_END} $testfile ***"
       FAILED_TESTS="$(expr $FAILED_TESTS + 1)"
     fi
     ALL_TESTS="$(expr $ALL_TESTS + 1)"
