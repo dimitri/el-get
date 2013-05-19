@@ -3,4 +3,5 @@
        :description "Circe is a Client for IRC in Emacs with sane defaults"
        :type github
        :pkgname "jorgenschaefer/circe"
+       :depends cl-lib
        :load-path ("lisp"))
