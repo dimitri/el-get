@@ -1,0 +1,5 @@
+(:name ggo-mode
+       :type git
+       :website "https://gist.github.com/5619356"
+       :description "Major mode for editing GNU Gengetopt files"
+       :url "https://gist.github.com/5619356.git")
