@@ -4,6 +4,7 @@
        :pkgname "haskell/haskell-mode"
        :build ("make all")
        :load "haskell-site-file.el"
+       :build (("make" "all"))
        :post-init (progn
                     (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
                     (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)))
