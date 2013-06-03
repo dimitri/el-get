@@ -29,3 +29,9 @@ set_default TMPDIR "$(dirname "$(mktemp --dry-run)")"
 set_default TEST_HOME "$TMPDIR/el-get-test-home"
 set_default EMACS "$(which emacs)"
 set_default TEST_DIR "$(dirname $0)"
+
+if [[ -t 1 ]]; then
+    EL_GET_END="$(tput sgr0)"
+    set_default EL_GET_FAILURE_COLOR "$(tput setaf 1)" # red
+    set_default EL_GET_SUCCESS_COLOR "$(tput setaf 2)" # green
+fi
