@@ -3,4 +3,5 @@
        :type github
        :pkgname "cbbrowne/nterm"
        :info "."
-       :build ("make"))
+       :build ("make")
+       :build/berkeley-unix ("gmake"))
