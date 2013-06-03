@@ -1,6 +1,6 @@
 (:name auto-complete
-       :website "http://cx4a.org/software/auto-complete/"
+       :website "http://auto-complete.org/"
        :description "The most intelligent auto-completion extension."
        :type github
-       :pkgname "m2ym/auto-complete"
+       :pkgname "auto-complete/auto-complete"
        :depends (popup fuzzy))
