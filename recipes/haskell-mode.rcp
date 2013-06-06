@@ -2,6 +2,7 @@
        :description "A Haskell editing mode"
        :type github
        :pkgname "haskell/haskell-mode"
+       :build ("make all")
        :load "haskell-site-file.el"
        :post-init (progn
                     (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
