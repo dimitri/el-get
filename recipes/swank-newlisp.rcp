@@ -1,0 +1,17 @@
+(:name swank-newlisp
+       :website "https://github.com/kosh04/swank-newlisp"
+       :description "Swank server for newLISP"
+       :type github
+       :pkgname "kosh04/swank-newlisp"
+       :depends slime
+       :post-init (progn
+                    (defun swank-newlisp-init (port-filename coding-system)
+                      (format "%S\n" `(swank:start-server ,port-filename)))
+                    (defvar swank-newlisp-filename "swank-newlisp.lsp")
+                    (defun slime-newlisp ()
+                      (interactive)
+                      (let ((slime-lisp-implementations
+                             `((newlisp ("newlisp" "-n" ,(locate-file swank-newlisp-filename load-path))
+                                        :init swank-newlisp-init
+                                        :coding-system utf-8-unix))))
+                        (slime 'newlisp)))))
