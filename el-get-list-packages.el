@@ -85,21 +85,25 @@ matching REGEX with TYPE and ARGS as parameter."
          (builtin (plist-get def :builtin))
          (url (plist-get def :url))
          (depends (plist-get def :depends)))
-    (princ (format "%s is an `el-get' package. It is currently %s " name
-                   (if status status "not installed")))
-
-    (cond
-     ((string= status "installed")
-      (el-get-describe-princ-button "[update]" "\\[\\([^]]+\\)\\]"
-                                    'el-get-help-update package)
-      (el-get-describe-princ-button "[remove]" "\\[\\([^]]+\\)\\]"
-                                    'el-get-help-remove package))
-     ((string= status "required")
-      (el-get-describe-princ-button "[update]" "\\[\\([^]]+\\)\\]"
-                                    'el-get-help-update package))
-     (t
-      (el-get-describe-princ-button "[install]" "\\[\\([^]]+\\)\\]"
-                                    'el-get-help-install package)))
+    (princ (format "%s is an `el-get' package.  " name))
+    (if (eq type 'builtin)
+        (princ (format "It is built-in since Emacs %s" builtin))
+      (princ (format "It is currently %s "
+                     (if status
+                         status
+                       "not installed")))
+      (cond
+       ((string= status "installed")
+        (el-get-describe-princ-button "[update]" "\\[\\([^]]+\\)\\]"
+                                      'el-get-help-update package)
+        (el-get-describe-princ-button "[remove]" "\\[\\([^]]+\\)\\]"
+                                      'el-get-help-remove package))
+       ((string= status "required")
+        (el-get-describe-princ-button "[update]" "\\[\\([^]]+\\)\\]"
+                                      'el-get-help-update package))
+       (t
+        (el-get-describe-princ-button "[install]" "\\[\\([^]]+\\)\\]"
+                                      'el-get-help-install package))))
     (princ ".\n\n")
 
     (let ((website (or website
@@ -123,7 +127,7 @@ matching REGEX with TYPE and ARGS as parameter."
          'el-get-help-describe-package depends))
       (princ ".\n"))
     (if (eq type 'builtin)
-        (princ (format "The package is built in since Emacs %s.\n\n" builtin))
+        (princ (format "The package is built-in since Emacs %s.\n\n" builtin))
       (princ (format "The default installation method is %s %s\n\n" type
                      (if url (format "from %s" url) ""))))
     (princ "Full definition")
