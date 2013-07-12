@@ -1,0 +1,5 @@
+(:name ghci-completion
+       :website "https://github.com/manzyuk/ghci-completion"
+       :description "Completion for GHCi commands in inferior-haskell buffers"
+       :type github
+       :pkgname "manzyuk/ghci-completion")
