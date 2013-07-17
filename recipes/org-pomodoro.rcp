@@ -1,0 +1,5 @@
+(:name org-pomodoro
+       :description "This adds support for Pomodoro technique in org-mode."
+       :type github
+       :depends (alert)
+       :pkgname "lolownia/org-pomodoro")
