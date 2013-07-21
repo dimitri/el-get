@@ -150,12 +150,31 @@ the recipe, then return nil."
 
 (add-hook 'el-get-elpa-remove-hook 'el-get-elpa-post-remove)
 
+(defun el-get-elpa-guess-website (package)
+  "Guess website for elpa PACKAGE."
+  (let* ((repo (el-get-elpa-package-repo package))
+         (repo-name (car repo))
+         (repo-url (cdr repo))
+         (package (el-get-as-string package)))
+    (cond
+     ((or (not repo)
+          (string= "gnu" repo-name)
+          (string-match-p "elpa\\.gnu\\.org" repo-url))
+      (concat "http://elpa.gnu.org/packages/" package))
+     ((or (string= "marmalade" repo-name)
+          (string-match-p "marmalade-repo\\.org" repo-url))
+      (concat "http://marmalade-repo.org/packages/" package))
+     ((or (string= "melpa" repo-name)
+          (string-match-p "melpa.milkbox.net" repo-url))
+      (concat "http://melpa.milkbox.net/#" package)))))
+
 (el-get-register-method :elpa
   :install #'el-get-elpa-install
   :update #'el-get-elpa-update
   :remove #'el-get-elpa-remove
   :install-hook #'el-get-elpa-install-hook
-  :remove-hook #'el-get-elpa-remove-hook)
+  :remove-hook #'el-get-elpa-remove-hook
+  :guess-website #'el-get-elpa-guess-website)
 
 ;;;
 ;;; Functions to maintain a local recipe list from ELPA
