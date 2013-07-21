@@ -133,7 +133,7 @@ returning a list that contains it (and only it)."
 (defun el-get-source-name (source)
   "Return the package name (stringp) given an `el-get-sources'
 entry."
-  (if (listp source)
+  (if (and source (listp source))
       (format "%s" (or (plist-get source :name)
                        (error "Source does not have a :name property: %S" source)))
     (symbol-name source)))
