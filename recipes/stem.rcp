@@ -1,0 +1,4 @@
+(:name stem
+       :description "routines for stemming"
+       :type github
+       :pkgname "yuutayamada/stem")
