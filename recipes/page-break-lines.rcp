@@ -1,0 +1,5 @@
+(:name page-break-lines
+       :website "https://github.com/purcell/page-break-lines"
+       :description "A global mode which displays ugly form feed characters as tidy horizontal rules"
+       :type github
+       :pkgname "purcell/page-break-lines")
