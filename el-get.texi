@@ -722,6 +722,9 @@ variable) from which Emacs includes the recipe as a builtin.  For
 example, @file{package.el} (the implementation of ELPA) is part of
 Emacs 24 but needs an external recipe for previous major versions.
 
+Unlike the builtin @code{:type} no @code{:build} or @code{:info}
+properties are executed if this matches.
+
 @item :pkgname
 The name of the package for the underlying package management system
 (apt-get, fink or pacman, also supported by github and emacsmirror),
