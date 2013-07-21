@@ -1,4 +1,6 @@
 (:name browse-kill-ring
        :description "Interactively insert items from kill-ring"
        :type github
-       :pkgname "browse-kill-ring/browse-kill-ring")
+       :pkgname "browse-kill-ring/browse-kill-ring"
+       :prepare (progn
+                  (autoload 'browse-kill-ring-default-keybindings "browse-kill-ring")))
