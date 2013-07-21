@@ -1,0 +1,6 @@
+(:name pophint
+       :website "https://github.com/aki2o/emacs-pophint"
+       :description "provide navigation like the Vimperator Hint Mode of Firfox."
+       :type github
+       :pkgname "aki2o/emacs-pophint"
+       :depends (popup log4e yaxception))
