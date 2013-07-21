@@ -1,0 +1,5 @@
+(:name git-messenger
+       :description "Pops up commit messages at current line"
+       :type github
+       :pkgname "syohex/emacs-git-messenger"
+       :depends (popup))
