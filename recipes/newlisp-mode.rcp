@@ -1,0 +1,9 @@
+(:name newlisp-mode
+       :website "https://github.com/kosh04/newlisp-mode"
+       :description "A newLISP major mode"
+       :type github
+       :pkgname "kosh04/newlisp-mode"
+       :features newlisp-mode
+       :post-init (progn
+                    (add-to-list 'auto-mode-alist '("\\.lsp$" . newlisp-mode))
+                    (add-to-list 'interpreter-mode-alist '("newlisp" . newlisp-mode))))
