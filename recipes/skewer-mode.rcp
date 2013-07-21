@@ -1,0 +1,7 @@
+(:name skewer-mode
+       :description "Provides live interaction with JavaScript, CSS, and HTML in a web browser"
+       :type github
+       :pkgname "skeeto/skewer-mode"
+       :depends (js2-mode simple-httpd)
+       :features skewer-setup
+       :post-init (skewer-setup))
