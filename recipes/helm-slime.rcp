@@ -1,0 +1,8 @@
+(:name helm-slime
+       :type github
+       :pkgname "emacs-helm/helm-slime"
+       :description "Helm-sources and some utilities for SLIME."
+       :features helm-slime
+       :depends (helm slime)
+       :post-init (progn
+                 (require 'slime-c-p-c)))
