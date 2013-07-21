@@ -1,0 +1,4 @@
+(:name ggo-mode
+       :type github
+       :pkgname "mkjunker/ggo-mode"
+       :description "Major mode for editing GNU Gengetopt files")
