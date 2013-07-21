@@ -1,0 +1,9 @@
+(:name bash-completion
+       :description "Completions for shell prompts based on Bash"
+       :type github
+       :pkgname "szermatt/emacs-bash-completion"
+       :post-init (progn
+                    (add-hook 'shell-dynamic-complete-functions
+                              'bash-completion-dynamic-complete)
+                    (add-hook 'shell-command-complete-functions
+                              'bash-completion-dynamic-complete)))
