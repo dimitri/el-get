@@ -3,4 +3,4 @@
        :type github
        :pkgname "magnars/js2-refactor.el"
        :post-init (add-hook 'js2-mode-hook (lambda () (require 'js2-refactor)))
-       :depends (js2-mode dash multiple-cursors))
+       :depends (js2-mode dash s multiple-cursors))
