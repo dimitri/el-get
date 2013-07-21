@@ -1,0 +1,4 @@
+(:name packed
+       :type github
+       :pkgname "tarsius/packed"
+       :description "Package manager agnostic Emacs Lisp package utilities")
