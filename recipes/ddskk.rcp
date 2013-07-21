@@ -1,9 +1,10 @@
 (:name ddskk
        :website "http://openlab.ring.gr.jp/skk/ddskk.html"
        :description "A Japanese input method on Emacs."
-       :type http-tar
-       :options ("xzf")
-       :url "http://openlab.ring.gr.jp/skk/maintrunk/ddskk-15.1.tar.gz"
+       :type cvs
+       :module "skk/main"
+       :url ":pserver:guest@openlab.jp:/circus/cvsroot"
+       :options "login"
        :autoloads nil
        :info "doc/skk.info"
        :features ("skk-setup")
