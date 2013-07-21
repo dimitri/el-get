@@ -1,0 +1,4 @@
+(:name simple-httpd
+       :description "A simple Emacs web server"
+       :type github
+       :pkgname "skeeto/emacs-http-server")
