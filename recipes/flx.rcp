@@ -1,0 +1,5 @@
+(:name flx
+       :description "Fuzzy matching with good sorting in ido"
+       :type github
+       :pkgname "lewang/flx"
+       :features flx-ido)
