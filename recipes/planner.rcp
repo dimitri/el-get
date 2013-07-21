@@ -4,5 +4,6 @@
        :url "http://repo.or.cz/r/planner-el.git"
        :shallow nil
        :build ("make")
+       :build/berkeley-unix ("gmake")
        :features planner-autoloads
        )
