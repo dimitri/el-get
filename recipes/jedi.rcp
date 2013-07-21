@@ -3,5 +3,6 @@
        :type github
        :pkgname "tkf/emacs-jedi"
        :build (("make" "requirements"))
+       :build/berkeley-unix (("gmake" "requirements"))
        :submodule nil
        :depends (epc auto-complete))
