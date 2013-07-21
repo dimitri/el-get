@@ -119,11 +119,15 @@ the recipe, then return nil."
 (defun el-get-elpa-update-available-p (package)
   "Returns t if PACKAGE has an update available in ELPA."
   (assert (el-get-package-is-installed package) nil
-          (sprintf "Cannot update non-installed ELPA package %s" package))
-  (let ((installed-version
-         (package-desc-vers (cdr (assq package package-alist))))
-        (available-version
-         (package-desc-vers (cdr (assq package package-archive-contents)))))
+          (format "Cannot update non-installed ELPA package %s" package))
+  (let* ((pkg-version
+          (if (fboundp 'package-desc-version) ;; new in Emacs 24.4
+              #'(lambda (pkg) (package-desc-version (car pkg)))
+            #'package-desc-vers))
+         (installed-version
+          (funcall pkg-version (cdr (assq package package-alist))))
+         (available-version
+          (funcall pkg-version (cdr (assq package package-archive-contents)))))
     (version-list-< installed-version available-version)))
 
 (defun el-get-elpa-update (package url post-update-fun)
