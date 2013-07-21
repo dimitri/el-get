@@ -1,0 +1,5 @@
+(:name perl-debug
+       :description "Run perl debugger and lint."
+       :type http
+       :url "http://www.namazu.org/~tsuchiya/elisp/perl-debug.el"
+       :autoloads "perl-debug")
