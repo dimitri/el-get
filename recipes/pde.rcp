@@ -1,0 +1,6 @@
+(:name pde
+       :description "Perl Development Environment"
+       :type github
+       :pkgname "wenbinye/emacs-pde"
+       :load-path ("lisp")
+       :load "lisp/pde-load.el")
