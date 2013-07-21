@@ -625,7 +625,11 @@ PACKAGE may be either a string or the corresponding symbol."
 
     ;; el-get-post-build will care about autoloads and initializing the
     ;; package, and will change the status to "installed"
-    (el-get-build package commands nil sync 'el-get-post-install-build)))
+    (if (and (eq (el-get-package-method package) 'builtin)
+             (plist-get (el-get-package-def package) :builtin))
+        ;; Do not run :build/:info if package is :builtin.  Run post-install directly
+        (el-get-post-install-build package)
+      (el-get-build package commands nil sync 'el-get-post-install-build))))
 
 (defun el-get-do-install (package)
   "Install any PACKAGE for which you have a recipe."
