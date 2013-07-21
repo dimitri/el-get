@@ -158,7 +158,8 @@ entry."
            (delete-directory pdir 'recursive))
           ((file-exists-p pdir)
            (delete-file pdir)))
-    (funcall post-remove-fun package)))
+    (when post-remove-fun
+     (funcall post-remove-fun package))))
 
 
 ;;
