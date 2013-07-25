@@ -2,6 +2,4 @@
        :website "https://github.com/juan-leon/dired-efap"
        :description "Edit Filename At Point in a dired buffer."
        :type github
-       :pkgname "juan-leon/dired-efap"
-       :post-init (progn
-                    (define-key dired-mode-map [f2] 'dired-efap)))
+       :pkgname "juan-leon/dired-efap")
