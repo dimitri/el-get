@@ -3,4 +3,5 @@
        :type github
        :pkgname "nominolo/scion"
        :load-path "emacs"
-       :features scion)
+       :prepare (progn
+                  (autoload 'scion-mode "scion")))
