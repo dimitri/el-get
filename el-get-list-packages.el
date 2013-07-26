@@ -128,8 +128,8 @@ matching REGEX with TYPE and ARGS as parameter."
       (princ ".\n"))
     (if (eq type 'builtin)
         (princ (format "The package is built-in since Emacs %s.\n\n" builtin))
-      (princ (format "The default installation method is %s %s\n\n" type
-                     (if url (format "from %s" url) ""))))
+      (princ (format "The default installation method is %s%s.\n\n" type
+                     (if url (format " from %s" url) ""))))
     (princ "Full definition")
     (let ((file (el-get-recipe-filename package)))
       (if (not file)
