@@ -1,0 +1,5 @@
+(:name bm
+       :pkgname "joodland/bm"
+       :website "http://joodland.github.com/bm/"
+       :type github
+       :description "Visible, persistent, buffer local, bookmarks")

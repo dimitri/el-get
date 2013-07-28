@@ -1,6 +1,6 @@
 (:name pkgbuild-mode
        :description "Major mode for editing PKGBUILD files"
        :type github
-       :pkgname "cdkamat/pkgbuild-mode"
+       :pkgname "juergenhoetzel/pkgbuild-mode"
        :features pkgbuild-mode
        :post-init (add-to-list 'auto-mode-alist '("PKGBUILD$" . pkgbuild-mode)))

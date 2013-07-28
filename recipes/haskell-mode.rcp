@@ -1,4 +1,4 @@
 (:name haskell-mode
        :description "A Haskell editing mode"
        :type github
-       :pkgname "haskell/haskell-mode")
+       :pkgname "haskell/haskell-mode"))

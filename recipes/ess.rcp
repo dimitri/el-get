@@ -1,12 +1,10 @@
 (:name ess
        :description "Emacs Speaks Statistics: statistical programming within Emacs"
-       :type svn
-       :url "https://svn.r-project.org/ESS/trunk/"
+       :type github
+       :pkgname "emacs-ess/ESS"
+       :website "http://ess.r-project.org/"
        :info "doc/info/"
-       :build `,(mapcar
-                 (lambda (target)
-                   (concat "make " target " EMACS=" el-get-emacs))
-                 '("clean" "all"))
+       :build `(("make" "clean" "all" ,(concat "EMACS=" (shell-quote-argument
+                                                         el-get-emacs))))
        :load-path ("lisp")
        :features ess-site)
-

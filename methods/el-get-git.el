@@ -51,7 +51,10 @@ found."
                                     (not submodule-prop)))
          (checkout (or (plist-get source :checkout)
 		       (plist-get source :checksum)))
-         (shallow (unless (string-prefix-p "http" url)
+         ;; http may a be a dumb server, not supporting shallow clones
+         ;; it's not the case of github
+         (shallow (unless (and (string-prefix-p "http" url)
+                               (not (string-prefix-p "http://github.com" url)))
                     (el-get-plist-get-with-default source :shallow
                                                    el-get-git-shallow-clone)))
 	 (clone-args (append '("--no-pager" "clone")

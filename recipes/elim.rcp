@@ -4,7 +4,10 @@
        :type git
        :url "git://git.sv.gnu.org/elim.git"
        :build ("make")
+       :build/berkeley-unix ("gmake")
        :load-path ("./elisp")
-       :prepare (setq elim-executable
-                      (expand-file-name
-		       (concat (el-get-package-directory "elim") "elim-client"))))
+       :prepare (progn
+                  (autoload 'garak "garak")
+                  (setq elim-executable
+                        (expand-file-name
+                         (concat (el-get-package-directory "elim") "elim-client")))))

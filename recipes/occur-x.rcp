@@ -1,0 +1,7 @@
+(:name occur-x
+       :website "https://github.com/juan-leon/occur-x"
+       :description "Extra functionality for occur."
+       :type github
+       :pkgname "juan-leon/occur-x"
+       :post-init (progn
+                    (add-hook 'occur-mode-hook 'turn-on-occur-x-mode)))

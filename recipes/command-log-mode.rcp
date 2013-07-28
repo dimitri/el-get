@@ -1,0 +1,4 @@
+(:name command-log-mode
+       :type github
+       :pkgname "lewang/command-log-mode"
+       :features command-log-mode)
