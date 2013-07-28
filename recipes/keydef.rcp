@@ -1,0 +1,4 @@
+(:name keydef
+       :type github
+       :pkgname "jschaf/keydef.el"
+       :description "A simpler way to define keys, with kbd syntax")
