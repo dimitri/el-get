@@ -149,7 +149,7 @@ in `el-get-recipe-path' in order."
     (append
      el-get-sources
      (remove-if (lambda (recipe) (member (el-get-source-name recipe) packages))
-                (el-get-read-all-recipe-files)))))
+                (remove-if 'null (el-get-read-all-recipe-files))))))
 
 (defun el-get-package-def (package)
   "Return a single `el-get-sources' entry for PACKAGE."
