@@ -1,0 +1,4 @@
+(:name rusti
+       :description "Rust interactive mode"
+       :type github
+       :pkgname "ruediger/rusti.el")
