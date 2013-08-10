@@ -1,0 +1,4 @@
+(:name god-mode
+       :description "Global minor mode for entering Emacs commands without modifier keys."
+       :type github
+       :pkgname "chrisdone/god-mode")
