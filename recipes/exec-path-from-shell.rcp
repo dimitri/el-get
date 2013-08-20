@@ -1,0 +1,5 @@
+(:name exec-path-from-shell
+       :website "https://github.com/purcell/exec-path-from-shell"
+       :description "Emacs plugin for dynamic PATH loading"
+       :type github
+       :pkgname "purcell/exec-path-from-shell")
