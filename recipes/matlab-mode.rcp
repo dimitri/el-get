@@ -5,5 +5,5 @@
        :url ":pserver:anonymous@matlab-emacs.cvs.sourceforge.net:/cvsroot/matlab-emacs"
        :build ("make")
        :load-path (".")
-       :features matlab-load
-       :after (require 'cedet))
+       :features matlab-load)
+
