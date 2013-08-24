@@ -1,0 +1,4 @@
+(:name startupd
+       :description "Modular loading of Emacs configuration"
+       :type github
+       :pkgname "fgallina/startupd.el")
