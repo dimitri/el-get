@@ -4,5 +4,5 @@
        :pkgname "bruceravel/gnuplot-mode"
        :build `(("./configure")
                 ("make" ,(concat "EMACS=" el-get-emacs)
-                 "gnuplot.elc" "gnuplot-gui.elc")))
+                 "gnuplot.elc" "gnuplot-gui.elc"))
        :info "gnuplot.info")
