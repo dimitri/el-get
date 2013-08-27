@@ -3,7 +3,7 @@
        :description "It's Magit! An Emacs mode for Git."
        :type github
        :pkgname "magit/magit"
-       :depends (cl-lib)
+       :depends (cl-lib git-modes)
        :info "."
        ;; let el-get care about autoloads so that it works with all OSes
        :build (if (version<= "24.3" emacs-version)
