@@ -1,0 +1,7 @@
+(:name go-autocomplete
+       :type http
+       :localname "go-autocomplete.el"
+       :url "https://raw.github.com/nsf/gocode/master/emacs/go-autocomplete.el"
+       :shallow nil
+       :website "https://github.com/nsf/gocode"
+       :description "auto-complete-mode backend for go-mode")
