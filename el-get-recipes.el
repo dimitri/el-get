@@ -25,17 +25,16 @@
 (require 'el-get-byte-compile)
 
 (defcustom el-get-recipe-path-emacswiki
-  (concat (file-name-directory el-get-dir) "el-get/recipes/emacswiki/")
+  (expand-file-name "el-get/recipes/emacswiki/" el-get-dir)
   "Define where to keep a local copy of emacswiki recipes"
   :group 'el-get
   :type 'directory)
 
 (defcustom el-get-recipe-path-elpa
-  (concat (file-name-directory el-get-dir) "el-get/recipes/elpa/")
+  (expand-file-name "el-get/recipes/elpa/" el-get-dir)
   "Define where to keep a local copy of elpa recipes"
   :group 'el-get
   :type 'directory)
-
 
 (defvar el-get-recipe-path
   (list (concat (file-name-directory el-get-script) "recipes")
