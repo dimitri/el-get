@@ -1,5 +1,0 @@
-(:name popup-switcher
-       :description "Provides (yet another) convenient way to switch buffers"
-       :type elpa
-       :repo ("melpa" . "http://melpa.milkbox.net/packages/")
-       )
