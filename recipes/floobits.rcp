@@ -1,0 +1,5 @@
+(:name floobits
+       :website "https://floobits.com"
+       :description "Remote pair programming done right"
+       :type github
+       :pkgname "Floobits/floobits-emacs")
