@@ -1,0 +1,10 @@
+(:name go-autocomplete
+       :description "An autocompletion daemon for the Go programming language"
+       :type github
+       :pkgname "nsf/gocode"
+       :depends (auto-complete)
+       :features (go-autocomplete)
+       :build '(("go" "build"))
+       :load-path ("emacs")
+       :prepare (progn
+                  (setq exec-path (append exec-path (el-get-package-directory "gocode")))))
