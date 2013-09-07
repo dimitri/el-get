@@ -1,0 +1,8 @@
+(:name emacs-w3m
+       :description "GNU TRAMP plugin for Emacs"
+       :website "https://www.gnu.org/software/tramp/"
+       :type git
+       :module "tramp"
+       :url "git://git.savannah.gnu.org/tramp.git"
+       :build `("autoconf" ("./configure" ,(concat "--with-emacs=" el-get-emacs)) "make")
+       :build/windows-nt ("sh /usr/bin/autoconf" "sh ./configure" "make"))
