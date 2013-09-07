@@ -83,6 +83,7 @@ matching REGEX with TYPE and ARGS as parameter."
          (descr (plist-get def :description))
          (type (el-get-package-method def))
          (builtin (plist-get def :builtin))
+         (minimum-version (plist-get def :minimum-emacs-version))
          (url (plist-get def :url))
          (depends (plist-get def :depends)))
     (princ (format "%s is an `el-get' package.  " name))
@@ -126,10 +127,16 @@ matching REGEX with TYPE and ARGS as parameter."
          (format "`%s'" depends) "`\\([^`']+\\)"
          'el-get-help-describe-package depends))
       (princ ".\n"))
+    (when minimum-version
+      (princ (format "Requires minimum Emacs version: %s." minimum-version))
+      (when (version-list-< (version-to-list emacs-version)
+                            (el-get-version-to-list minimum-version))
+        (princ (format "  Warning: Your Emacs is too old (%s)!" emacs-version)))
+      (princ "\n"))
     (if (eq type 'builtin)
         (princ (format "The package is built-in since Emacs %s.\n\n" builtin))
-      (princ (format "The default installation method is %s %s\n\n" type
-                     (if url (format "from %s" url) ""))))
+      (princ (format "The default installation method is %s%s.\n\n" type
+                     (if url (format " from %s" url) ""))))
     (princ "Full definition")
     (let ((file (el-get-recipe-filename package)))
       (if (not file)
