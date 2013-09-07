@@ -45,10 +45,11 @@ PACKAGE isn't currently installed by ELPA."
                       (expand-file-name
                        (file-name-as-directory package-user-dir))))))))
 
-	 (realname (try-completion pname l)))
+	 (realnames (all-completions pname l)))
 
-    (if realname (concat (file-name-as-directory package-user-dir) realname)
-      realname)))
+    (when realnames
+      (concat (file-name-as-directory package-user-dir) (car realnames)))))
+
 
 (defun el-get-elpa-package-repo (package)
   "Get the ELPA repository cons cell for PACKAGE.
