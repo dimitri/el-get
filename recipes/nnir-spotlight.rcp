@@ -1,0 +1,4 @@
+(:name nnir-spotlight
+       :type github
+       :description "Use MacOSX sportlight as nnir backend."
+       :pkgname "renard/nnir-spotlight")
