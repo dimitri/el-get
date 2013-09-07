@@ -345,6 +345,8 @@ package names."
        (string= "installed"
                 (el-get-read-package-status package))))
 
+(defalias 'el-get-package-installed-p #'el-get-package-is-installed)
+
 (defun el-get-read-package-name (action &optional filtered)
   "Ask user for a package name in minibuffer, with completion.
 
