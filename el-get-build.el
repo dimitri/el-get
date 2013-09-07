@@ -201,9 +201,10 @@ recursion.
 	     (el-get-build
 	      package
               (list (list el-get-install-info
-                          (if (string= (substring infofile -5) ".info")
-			      infofile
-			    (concat infofile ".info"))
+                          (convert-standard-filename
+                           (if (string= (substring infofile -5) ".info")
+                               infofile
+                             (concat infofile ".info")))
                           "dir"))
               infodir-rel t nil t)))
 	  (t
