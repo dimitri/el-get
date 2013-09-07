@@ -1,6 +1,4 @@
 (:name powerline
-       :website "https://github.com/jonathanchu/emacs-powerline"
-       :description "Powerline for Emacs"
+       :description "Emacs version of the Vim powerline. This package makes Emacs' mode line much better looking. This is a proposed version 2.0 of the original Emacs Powerline."
        :type github
-       :pkgname "jonathanchu/emacs-powerline"
-       :features powerline)
+       :pkgname "milkypostman/powerline")
