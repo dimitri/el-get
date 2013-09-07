@@ -1,0 +1,4 @@
+(:name hide-lines
+       :description "Commands for hiding lines based on a regexp."
+       :type github
+       :pkgname "vapniks/hide-lines")
