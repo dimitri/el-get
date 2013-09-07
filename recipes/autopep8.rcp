@@ -1,0 +1,6 @@
+(:name autopep8
+       :description "autopep8 wrapper for emacs"
+       :type http
+       :url "https://gist.github.com/whirm/6122031/raw/28d0d47a95a9006b7fbb8d5ac5203577c52b9534/autopep8.el"
+       :features autopep8
+       )
