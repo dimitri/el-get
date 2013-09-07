@@ -1,0 +1,6 @@
+(:name tss
+       :website "https://github.com/aki2o/emacs-tss"
+       :description "provide a interface for auto-complete.el/flymake.el on typescript-mode."
+       :type github
+       :pkgname "aki2o/emacs-tss"
+       :depends (auto-complete log4e yaxception))
