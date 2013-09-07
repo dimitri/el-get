@@ -1,0 +1,7 @@
+(:name syslog-mode
+       :description "Emacs major-mode for viewing log files."
+       :type github
+       :pkgname "vapniks/syslog-mode"
+       :depends (hide-lines)
+       :post-init (progn
+                    (add-to-list 'auto-mode-alist '("/var/log.*\\'" . syslog-mode))))
