@@ -1,0 +1,6 @@
+(:name yow.lines
+       :description "Download the old version of \"yow.lines\" for `yow'."
+       :type http
+       :url "https://raw.github.com/emacsmirror/emacs/74110cbac76d632309edd38b2cee4f8c1e6eccd7/etc/yow.lines"
+       :post-init
+       (setq yow-file (expand-file-name "yow.lines" default-directory)))
