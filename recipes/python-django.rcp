@@ -1,0 +1,4 @@
+(:name python-django
+       :description "An Emacs package for managing Django projects"
+       :type github
+       :pkgname "fgallina/python-django.el")
