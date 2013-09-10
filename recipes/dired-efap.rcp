@@ -1,0 +1,5 @@
+(:name dired-efap
+       :website "https://github.com/juan-leon/dired-efap"
+       :description "Edit Filename At Point in a dired buffer."
+       :type github
+       :pkgname "juan-leon/dired-efap")
