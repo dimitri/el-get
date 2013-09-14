@@ -2,7 +2,7 @@
        :description "An autocompletion daemon for the Go programming language"
        :type github
        :pkgname "nsf/gocode"
-       :depends (company go-mode)
+       :depends (company)
        :features (company-go)
        :build '(("go" "build" "-o" "gocode"))
        :build/windows-nt (("go" "build" "-o" "gocode.exe"))
