@@ -4,7 +4,8 @@
        :pkgname "nsf/gocode"
        :depends (company)
        :features (company-go)
-       :build '(("go" "build"))
+       :build '(("go" "build" "-o" "gocode"))
+       :build/windows-nt (("go" "build" "-o" "gocode.exe"))
        :load-path ("emacs-company")
        :prepare (progn
-                  (setq exec-path (append exec-path (el-get-package-directory "gocode")))))
+                  (add-to-list 'exec-path (el-get-package-directory "gocode"))))
