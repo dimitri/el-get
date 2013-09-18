@@ -2,4 +2,6 @@
        :type github
        :pkgname "lunaryorn/flycheck"
        :description "On-the-fly syntax checking extension"
+       :build ("cd doc && makeinfo flycheck.texi")
+       :info "./doc"
        :depends (s dash cl-lib f pkg-info))
