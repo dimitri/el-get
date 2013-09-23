@@ -1,5 +1,4 @@
 (:name ansi-color
        :description "translate ANSI escape sequences into faces"
-       :type github
-       :pkgname "emacsattic/ansi-color"
-       :load "ansi-color.el")
+       :type emacswiki
+       :website "http://www.emacswiki.org/emacs/download/ansi-color.el")
