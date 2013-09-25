@@ -1049,6 +1049,10 @@ already installed packages is considered."
          (installed   (el-get-count-packages-with-status packages "installed"))
          (el-get-default-process-sync sync))
 
+    ;; load autoloads before package init so :after blocks can use the
+    ;; autoloaded functions.
+    (el-get-eval-autoloads)
+
     ;; keep the result of `el-get-init-and-install' to return it even in the
     ;; 'wait case
     (prog1
