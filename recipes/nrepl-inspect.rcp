@@ -1,0 +1,6 @@
+(:name nrepl-inspect
+       :description "Provides nrepl middleware and nrepl.el plugin to do extensible slime-style object inspection."
+       :type github
+       :pkgname "vitalreactor/nrepl-inspect"
+       :depends (nrepl)
+       :features nrepl-inspect)
