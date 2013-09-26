@@ -1051,7 +1051,8 @@ already installed packages is considered."
 
     ;; load autoloads before package init so :after blocks can use the
     ;; autoloaded functions.
-    (el-get-eval-autoloads)
+    (unless el-get-is-lazy ; :after blocks aren't run til later when lazy
+      (el-get-eval-autoloads))
 
     ;; keep the result of `el-get-init-and-install' to return it even in the
     ;; 'wait case
