@@ -1,0 +1,5 @@
+(:name yandex-weather
+       :description "Fetch Yandex Weather forecasts"
+       :type github
+       :pkgname "abstractionlayer/yandex-weather.el"
+       :load-path ("."))
