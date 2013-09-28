@@ -1,0 +1,5 @@
+(:name org-occur-goto
+       :description "Search open org buffers with an occur interface"
+       :type http
+       :url "http://www.emacswiki.org/emacs/download/org-occur-goto.el"
+       :load "org-occur-goto.el")
