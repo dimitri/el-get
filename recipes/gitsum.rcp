@@ -1,0 +1,5 @@
+(:name gitsum
+       :description "Basic darcsum feelalike for Git"
+       :type github
+       :pkgname "chneukirchen/gitsum"
+       :features gitsum)
