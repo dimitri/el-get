@@ -1,0 +1,6 @@
+(:name egit
+       :description "Emacs git history interface"
+       :type github
+       :pkgname "jimhourihan/egit"
+       :depends dash
+       :features egit)
