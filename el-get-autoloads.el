@@ -52,32 +52,33 @@
 (defun el-get-update-autoloads (package)
   "Regenerate, compile, and load any outdated packages' autoloads."
 
-  (message "el-get: updating autoloads for %s" package)
+  (when el-get-generate-autoloads
+    (message "el-get: updating autoloads for %s" package)
 
-  (let (;; Generating autoloads runs theses hooks; disable then
-        fundamental-mode-hook
-        prog-mode-hook
-        emacs-lisp-mode-hook
-        ;; use dynamic scoping to set up our loaddefs file for
-        ;; update-directory-autoloads
-        (generated-autoload-file el-get-autoload-file))
+    (let (;; Generating autoloads runs theses hooks; disable then
+          fundamental-mode-hook
+          prog-mode-hook
+          emacs-lisp-mode-hook
+          ;; use dynamic scoping to set up our loaddefs file for
+          ;; update-directory-autoloads
+          (generated-autoload-file el-get-autoload-file))
 
-    ;; make sure we can actually byte-compile it
-    (el-get-ensure-byte-compilable-autoload-file generated-autoload-file)
+      ;; make sure we can actually byte-compile it
+      (el-get-ensure-byte-compilable-autoload-file generated-autoload-file)
 
-    (when (el-get-package-is-installed package)
-      (mapc 'update-directory-autoloads
-             (remove-if-not #'file-directory-p
-                            (el-get-load-path package))))
+      (when (el-get-package-is-installed package)
+        (mapc 'update-directory-autoloads
+              (remove-if-not #'file-directory-p
+                             (el-get-load-path package))))
 
-    (el-get-save-and-kill el-get-autoload-file)
+      (el-get-save-and-kill el-get-autoload-file)
 
-    (when (file-exists-p el-get-autoload-file)
-      (message "el-get: byte-compiling autoload file")
-      (when el-get-byte-compile
-        (el-get-byte-compile-file el-get-autoload-file))
+      (when (file-exists-p el-get-autoload-file)
+        (message "el-get: byte-compiling autoload file")
+        (when el-get-byte-compile
+          (el-get-byte-compile-file el-get-autoload-file))
 
-      (el-get-eval-autoloads))))
+        (el-get-eval-autoloads)))))
 
 (defconst el-get-load-suffix-regexp
   (concat (mapconcat 'regexp-quote (get-load-suffixes) "\\|") "\\'"))
