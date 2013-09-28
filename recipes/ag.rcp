@@ -1,0 +1,5 @@
+(:name ag
+       :description "An Emacs frontend to ag, ("the silver searcher" ack replacement)"
+       :type github
+       :pkgname "Wilfred/ag.el"
+       :features ag)
