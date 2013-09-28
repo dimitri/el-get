@@ -1,0 +1,5 @@
+(:name ggtags
+       :description "Use GNU Global in Emacs"
+       :type github
+       :pkgname "leoliu/ggtags"
+       :features ggtags)
