@@ -1,0 +1,5 @@
+(:name ac-php-doc
+       :description "Emacs auto-complete plugin for PHP with quick help documentation"
+       :type github
+       :pkgname "steckerhalter/ac-php-doc"
+       :features ac-php-doc)
