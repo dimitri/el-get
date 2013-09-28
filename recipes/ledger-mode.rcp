@@ -1,7 +1,7 @@
 (:name ledger-mode
        :description "A major mode for editing ledger .dat files"
        :type http
-       :url "https://raw.github.com/jwiegley/ledger/next/lisp/ledger.el"
+       :url "https://raw.github.com/ledger/ledger/v2.6.3/ledger.el"
        :prepare (progn
                   (autoload 'ledger-mode "ledger" "Major mode for editing ledger files" t)
                   (add-to-list 'auto-mode-alist '("\\.dat$" . ledger-mode))))
