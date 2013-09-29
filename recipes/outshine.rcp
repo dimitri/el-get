@@ -1,0 +1,5 @@
+(:name outshine
+       :description "Outline with outshine outshines outline."
+       :website "https://github.com/tj64/outshine"
+       :type github
+       :pkgname tj64/outshine)
