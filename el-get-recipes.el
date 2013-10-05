@@ -275,13 +275,13 @@ object or a file path."
   (interactive (list (current-buffer)))
   (if (bufferp file-or-buffer)
       (with-current-buffer file-or-buffer
-        (el-get-check-recipe-in-current-buffer))
+        (el-get-check-recipe-in-current-buffer (buffer-file-name)))
     (with-temp-buffer
       (erase-buffer)
       (insert-file-contents file-or-buffer)
-      (el-get-check-recipe-in-current-buffer))))
+      (el-get-check-recipe-in-current-buffer file-or-buffer))))
 
-(defun el-get-check-recipe-in-current-buffer ()
+(defun el-get-check-recipe-in-current-buffer (recipe-file-name)
   (let ((recipe (save-excursion
                   (goto-char (point-min))
                   (read (current-buffer))))
@@ -290,6 +290,11 @@ object or a file path."
     (display-buffer buffer)
     (with-current-buffer buffer
       (erase-buffer)
+      (when (and recipe-file-name
+                 (not (string= (file-name-base recipe-file-name)
+                               (plist-get recipe :name))))
+        (incf numerror)
+        (insert "* File name should match recipe name.\n"))
       ;; Check if userspace property is used.
       (loop for key in '(:before :after)
             for alt in '(:prepare :post-init)
