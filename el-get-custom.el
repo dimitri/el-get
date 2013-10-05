@@ -406,6 +406,25 @@ this is the name to fetch in that system"
                 :tag "Relative paths to force-load" string)))
        (group :inline t :format "Options (`http-tar' and `cvs' only): %v"
               (const :format "" :options) (string :format "%v"))
+       (group
+        :inline t :format "%t: %v%h"
+        :tag "Checksum"
+        :doc "Used to verify downloaded package
+ (SHA1 in hex for `http', `ftp' and `emacswiki')"
+        (const :format "" :checksum) (string :format "%v"))
+       (group
+        :inline t :format "%t: %v"
+        :tag "Checkout this `git' revision"
+        (const :format "" :checkout) (string :format "%v"))
+       (group
+        :inline t :format "%t: %v%h"
+        :tag "Shallow clone"
+        :doc "git-clone with `--depth 1'"
+        (const :format "" :shallow) (boolean :format "%[Toggle%] %v\n"))
+       (group
+        :inline t :format "%t: %v" :value (:submodule t)
+        :tag "Update submodules (`git' only)"
+        (const :format "" :submodule) (boolean :format "%[Toggle%] %v\n"))
        (group :inline t :format "CVS Module: %v"
               (const :format "" :module)
               (string :format "%v"))
@@ -430,7 +449,6 @@ this is the name to fetch in that system"
        (group :inline t
               :format "`After' Function (`Post-Init' recommended instead): %v"
               (const :format "" :after) (function :format "%v"))
-       ;; TODO: `:checksum', `:checkout', `:shallow'
        )
       (repeat
        :inline t :tag "System-Specific Build Recipes"
