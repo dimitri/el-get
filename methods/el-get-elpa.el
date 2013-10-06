@@ -101,16 +101,15 @@ the recipe, then return nil."
          (package-archives (append (when elpa-repo (list elpa-repo))
                                    (when (boundp 'package-archives) package-archives))))
     (unless (and elpa-dir (file-directory-p elpa-dir))
-      ;; Make sure we have got *some* kind of record of the package archive.
+      ;; package-install does these only for interactive calls
+      (unless package--initialized
+        (package-initialize t))
+      (unless package-archive-contents
+        (package-refresh-contents))
       ;; TODO: should we refresh and retry once if package-install fails?
-      (let ((p (if (fboundp 'package-read-all-archive-contents)
-		   (package-read-all-archive-contents) ; version from emacs24
-		 (package-read-archive-contents)))     ; old version
-            ;; package-install generates autoloads, byte compiles
-            emacs-lisp-mode-hook fundamental-mode-hook prog-mode-hook)
-	(unless p
-	  (package-refresh-contents)))
-      (package-install (el-get-as-symbol package)))
+      ;; package-install generates autoloads, byte compiles
+      (let (emacs-lisp-mode-hook fundamental-mode-hook prog-mode-hook)
+        (package-install (el-get-as-symbol package))))
     ;; we symlink even when the package already is installed because it's
     ;; not an error to have installed ELPA packages before using el-get, and
     ;; that will register them
