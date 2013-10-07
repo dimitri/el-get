@@ -2,5 +2,4 @@
        :website "https://github.com/Fuco1/litable"
        :description "On-the-fly evaluation/substitution of emacs lisp code"
        :type github
-       :pkgname "Fuco1/litable"
-       :feature "litable")
+       :pkgname "Fuco1/litable")
