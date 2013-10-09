@@ -79,8 +79,12 @@
 
         (el-get-eval-autoloads)))))
 
-(defconst el-get-load-suffix-regexp
-  (concat (mapconcat 'regexp-quote (get-load-suffixes) "\\|") "\\'"))
+(defconst el-get-autoload-regexp
+  (let ((tmp nil))
+    (dolist (suf (get-load-suffixes))
+      (unless (string-match "\\.elc" suf) (push suf tmp)))
+    (concat "^[^=.].*" (regexp-opt tmp t) "\\'"))
+  "copied from `update-directory-autoloads'")
 
 (defun el-get-remove-autoloads (package)
   "Remove from `el-get-autoload-file' any autoloads associated
@@ -93,7 +97,7 @@ with the named PACKAGE"
             (autoload-modified-buffers (list (current-buffer))))
         (dolist (dir (el-get-load-path package))
           (when (file-directory-p dir)
-            (dolist (f (directory-files dir t el-get-load-suffix-regexp))
+            (dolist (f (directory-files dir t el-get-autoload-regexp))
               ;; this will clear out any autoloads associated with the file
               ;; `autoload-find-destination' signature has changed in emacs24.
               (if (> emacs-major-version 23)
