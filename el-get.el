@@ -885,6 +885,10 @@ itself.")
                (method   (el-get-package-method source))
                (remove   (el-get-method method :remove))
                (url      (plist-get source :url)))
+          ;; The package must NOT be in "installed" state when
+          ;; updating autoloads. TODO: should really have an
+          ;; "unrequired" state.
+          (el-get-save-package-status package "required")
           ;; remove the package now
           (el-get-remove-autoloads package)
           (funcall remove package url 'el-get-post-remove)
