@@ -490,7 +490,6 @@ called by `el-get' (usually at startup) for each installed package."
              (postinit (plist-get source :post-init))
              (after    (plist-get source :after))
              (pkgname  (plist-get source :pkgname))
-             (library  (or (plist-get source :library) pkgname package))
              (pdir     (el-get-package-directory package)))
 
         (el-get-error-unless-required-emacs-version source)
