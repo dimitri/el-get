@@ -1,9 +1,5 @@
 set_default () {
-  eval "
-if [ -z \$$1 ]; then
-  $1=$2
-fi
-"
+  eval ": \${$1:=$2}"
 }
 
 # http://www.linuxjournal.com/content/use-bash-trap-statement-cleanup-temporary-files
