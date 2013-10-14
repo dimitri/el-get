@@ -3,13 +3,12 @@
        :website "http://www.gnu.org/s/tramp/"
        :type git
        :url "git://git.savannah.gnu.org/tramp.git"
-       :checkout "V-2-2-7"
        :build
        `(("autoconf")
 	 ("./configure" ,(concat "--with-emacs=" el-get-emacs)
 	  "--with-contrib" ,(concat "--prefix="
 				    (expand-file-name
-				     (el-get-package-directory 
+				     (el-get-package-directory
 "tramp"))))
 	 ("make")
 	 ("make"
