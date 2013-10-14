@@ -1,0 +1,5 @@
+(:name json-mode
+       :description "Major mode for editing JSON files with emacs"
+       :type github
+       :pkgname "joshwnj/json-mode"
+       :features json-mode)
