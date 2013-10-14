@@ -395,6 +395,7 @@ makes it easier to conditionally splice a command into the list.
                       (message "el-get: %s" message)
                     (set-window-buffer (selected-window) cbuf)
                     (error "el-get: %s %s" cname errorm))
+                  (when infile (delete-file infile))
                   (when cbuf (kill-buffer cbuf))
                   (if next
                       ;; Prevent stack overflow on very long command
