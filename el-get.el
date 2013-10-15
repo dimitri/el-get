@@ -843,6 +843,22 @@ itself.")
         ;; This is the only line that really matters
         (mapc 'el-get-update (el-get-list-package-names-with-status "installed"))))))
 
+;;;###autoload
+(defun el-get-update-specific-backend (&optional backend)
+  "Perform update of user specified BACKEND."
+  (interactive)
+  (let* ((backends
+          ;; FIXME what's the proper way to get all keys in a plist
+          (remq nil (mapcar (lambda (e)
+                              (if (symbolp e)
+                                  (substring (format "%s" e) 1)))
+                            el-get-methods)))
+         (be (or backend (not (called-interactively-p)) (completing-read
+                             "Backend name: " backends nil t nil))))
+    (if (and be (member be backends))
+        (mapcar 'el-get-update (remq nil (mapcar 'car (el-get-package-types-alist
+                                                       "installed" (intern be)))))
+      (user-error "Unknown backend \"%s\"" be))))
 
 ;;;###autoload
 (defun el-get-self-update ()
