@@ -842,6 +842,24 @@ itself.")
         ;; This is the only line that really matters
         (mapc 'el-get-update (el-get-list-package-names-with-status "installed"))))))
 
+;;;###autoload
+(defun el-get-update-packages-of-type (type)
+  "Update all installed packages of type TYPE."
+  ;; TODO Update info file about this new command
+  (interactive
+   (let ((types
+          (mapcar #'el-get-keyword-name
+                  (el-get-plist-keys el-get-methods))))
+     (list (completing-read
+            "Type name: " types nil t))))
+  (when (not (el-get-method-defined-p type))
+    (user-error "Unknown package type \"%s\"" type))
+  (let ((pkgnames
+         (mapcar 'car (el-get-package-types-alist
+                       "installed" (intern type)))))
+    (if pkgnames
+        (mapcar 'el-get-update pkgnames)
+      (message "No installed packages of type \"%s\"" type))))
 
 ;;;###autoload
 (defun el-get-self-update ()
