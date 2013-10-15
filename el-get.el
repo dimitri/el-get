@@ -844,21 +844,23 @@ itself.")
         (mapc 'el-get-update (el-get-list-package-names-with-status "installed"))))))
 
 ;;;###autoload
-(defun el-get-update-specific-backend (&optional backend)
-  "Perform update of user specified BACKEND."
-  (interactive)
-  (let* ((backends
-          ;; FIXME what's the proper way to get all keys in a plist
-          (remq nil (mapcar (lambda (e)
-                              (if (symbolp e)
-                                  (substring (format "%s" e) 1)))
-                            el-get-methods)))
-         (be (or backend (not (called-interactively-p)) (completing-read
-                             "Backend name: " backends nil t nil))))
-    (if (and be (member be backends))
-        (mapcar 'el-get-update (remq nil (mapcar 'car (el-get-package-types-alist
-                                                       "installed" (intern be)))))
-      (user-error "Unknown backend \"%s\"" be))))
+(defun el-get-update-packages-of-type (type)
+  "Update all installed packages of type TYPE."
+  ;; TODO Update info file about this new command
+  (interactive
+   (let ((types
+          (mapcar #'el-get-keyword-name
+                  (el-get-plist-keys el-get-methods))))
+     (list (completing-read
+            "Type name: " types nil t))))
+  (when (not (el-get-method-defined-p type))
+    (user-error "Unknown package type \"%s\"" type))
+  (let ((pkgnames
+         (mapcar 'car (el-get-package-types-alist
+                       "installed" (intern type)))))
+    (if pkgnames
+        (mapcar 'el-get-update pkgnames)
+      (message "No installed packages of type \"%s\"" type))))
 
 ;;;###autoload
 (defun el-get-self-update ()
