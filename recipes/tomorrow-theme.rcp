@@ -7,5 +7,4 @@
        :minimum-emacs-version 24
        :autoloads nil
        :post-init (add-to-list 'custom-theme-load-path
-                               (concat (file-name-as-directory default-directory)
-                                       "GNU Emacs")))
+                               (expand-file-name "GNU Emacs" default-directory)))
