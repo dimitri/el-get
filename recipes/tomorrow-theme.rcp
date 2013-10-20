@@ -5,5 +5,7 @@
        :pkgname "chriskempson/tomorrow-theme"
        :load-path "GNU Emacs"
        :minimum-emacs-version 24
+       :autoloads nil
        :post-init (add-to-list 'custom-theme-load-path
-                               default-directory))
+                               (concat (file-name-as-directory default-directory)
+                                       "GNU Emacs")))
