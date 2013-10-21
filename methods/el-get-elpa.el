@@ -28,28 +28,14 @@
 (defun el-get-elpa-package-directory (package)
   "Return the directory where ELPA stores PACKAGE, or nil if
 PACKAGE isn't currently installed by ELPA."
-  (let* ((pname (format "%s" package))  ; easy way to cope with symbols etc.
-
-     (ls-command (if (memq system-type '(ms-dos windows-nt)) "dir /B " "ls -1 "))
-
-	 (l
-	  ;; we use try-completion to find the realname of the directory
-	  ;; ELPA used, and this wants an alist, we trick ls -i -1 into
-	  ;; that.
-	  (mapcar 'split-string
-		  (split-string
-		   (shell-command-to-string
-		    (concat
-		     ls-command
-                     (shell-quote-argument
-                      (expand-file-name
-                       (file-name-as-directory package-user-dir))))))))
-
-	 (realnames (all-completions pname l)))
-
-    (when realnames
-      (concat (file-name-as-directory package-user-dir) (car realnames)))))
-
+  ;; package directories are named <package>-<version>.
+  (let* ((pname (el-get-as-string package))
+         (version-offset (+ (length pname) 1)))
+    (loop for pkg-dir in (directory-files package-user-dir nil
+                                          (concat "^" (regexp-quote pname) "-"))
+          if (ignore-errors
+               (version-to-list (substring pkg-dir version-offset)))
+          return (expand-file-name pkg-dir package-user-dir))))
 
 (defun el-get-elpa-package-repo (package)
   "Get the ELPA repository cons cell for PACKAGE.
