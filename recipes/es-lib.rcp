@@ -1,0 +1,5 @@
+(:name es-lib
+       :website "https://github.com/sabof/es-lib"
+       :description "A collecton of emacs utilities"
+       :type github
+       :pkgname "sabof/es-lib")
