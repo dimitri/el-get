@@ -903,9 +903,9 @@ itself.")
                (remove   (el-get-method method :remove))
                (url      (plist-get source :url)))
           ;; remove the package now
+          (el-get-save-package-status package "removed")
           (el-get-remove-autoloads package)
           (funcall remove package url 'el-get-post-remove)
-          (el-get-save-package-status package "removed")
           (message "el-get remove %s" package))))))
 
 (defun el-get-reinstall (package)
