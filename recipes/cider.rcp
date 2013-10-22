@@ -1,0 +1,5 @@
+(:name cider
+       :description "Clojure Integrated Development Environment and REPL"
+       :type github
+       :pkgname "clojure-emacs/cider"
+       :depends (dash clojure-mode pkg-info))
