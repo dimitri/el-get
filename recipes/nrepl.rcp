@@ -1,5 +1,0 @@
-(:name nrepl
-       :description "An Emacs client for nREPL, the Clojure networked REPL server."
-       :type github
-       :pkgname "clojure-emacs/nrepl.el"
-       :depends (dash clojure-mode pkg-info))
