@@ -1,0 +1,4 @@
+(:name hackernews
+       :type github
+       :pkgname "clarete/hackernews.el"
+       :description "emacs client for Hacker News (news.ycombinator.com)")
