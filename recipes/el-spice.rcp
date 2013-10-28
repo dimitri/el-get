@@ -1,0 +1,5 @@
+(:name el-spice
+       :description "Additional flavour for your Emacs Lisp programming"
+       :type github
+       :depends (thingatpt+)
+       :pkgname "vedang/el-spice")
