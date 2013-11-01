@@ -9,4 +9,5 @@
        :depends undo-tree
        :build (("make" "all" "info"))
        :build/berkeley-unix (("gmake" "all" "info"))
+       :build/darwin `(("make" ,(format "EMACS=%s" el-get-emacs) "all" "info" ))
        :info "doc")
