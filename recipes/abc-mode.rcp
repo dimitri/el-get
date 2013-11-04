@@ -1,0 +1,7 @@
+(:name abc-mode
+       :description "Major mode for editing abc music files"
+       :type emacswiki
+       :prepare (progn
+                  (add-to-list 'auto-mode-alist '("\\.abc\\'"  . abc-mode))
+                  (add-to-list 'auto-mode-alist '("\\.abp\\'"  . abc-mode))
+                  (autoload 'abc-mode "abc-mode" "abc music files" t t)))
