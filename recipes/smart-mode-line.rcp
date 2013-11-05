@@ -1,0 +1,4 @@
+(:name smart-mode-line
+       :type github
+       :pkgname "Bruce-Connor/smart-mode-line"
+       :description "Colorized modeline with multiple cleanup options")

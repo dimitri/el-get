@@ -1,0 +1,5 @@
+(:name dope
+       :description "DOtemacs ProfilEr.. A per-sexp-evaltime profiler http://www.gnufans.net/~deego/emacs.html"
+       :type github
+       :pkgname "emacsmirror/dope"
+       :features dope)
