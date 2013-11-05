@@ -1,5 +1,4 @@
 (:name ag
        :description "A simple ag frontend, loosely based on ack-and-half.el."
-       :website "https://github.com/Wilfred/ag.el"
-       :type elpa
-       :repo ("marmalade" . "http://marmalade-repo.org/packages/"))
+       :type github
+       :pkgname "Wilfred/ag.el")
