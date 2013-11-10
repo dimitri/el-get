@@ -1,0 +1,8 @@
+(:name yasnippet-snippets
+       :website "https://github.com/AndreaCrotti/yasnippet-snippets"
+       :description "A collection of yasnippet snippets for many languages."
+       :type github
+       :depends yasnippet
+       :pkgname "AndreaCrotti/yasnippet-snippets"
+       :prepare (add-to-list 'yas-snippet-dirs
+                             (concat el-get-dir "yasnippet-snippets")))
