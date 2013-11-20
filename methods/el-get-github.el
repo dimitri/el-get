@@ -22,7 +22,7 @@
         'ssh "git@github.com:%USER%/%REPO%.git")
   "Plist mapping Github types to their URL format strings.")
 
-(defcustom el-get-github-default-url-type 'http
+(defcustom el-get-github-default-url-type 'https
   "The kind of URL to use for Github repositories.
 
 Choices are `http', `https', `git'. This is effectively the
