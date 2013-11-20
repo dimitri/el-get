@@ -1,0 +1,6 @@
+(:name org-ehtml
+       :description "Export Org-mode files as editable web pages."
+       :depends (elnode org-mode cl-lib)
+       :type github
+       :pkgname "eschulte/org-ehtml"
+       :load-path ("src" "test/lisp"))
