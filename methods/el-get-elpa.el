@@ -28,6 +28,7 @@
 (defun el-get-elpa-package-directory (package)
   "Return the directory where ELPA stores PACKAGE, or nil if
 PACKAGE isn't currently installed by ELPA."
+  (require 'package)
   ;; package directories are named <package>-<version>.
   (let* ((pname (el-get-as-string package))
          (version-offset (+ (length pname) 1)))
