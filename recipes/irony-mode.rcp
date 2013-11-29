@@ -1,0 +1,11 @@
+(:name irony-mode
+       :description "Emacs package using Clang for C & C++ completion, on-the-fly syntax checking and more!"
+       :depends (yasnippet auto-complete json)
+       :type github
+       :branch "develop"
+       :pkgname "Sarcasm/irony-mode"
+       :build (("mkdir -p build")
+               ("cd build && cmake ..")
+               ("make -j5 -C build install"))
+       :load-path "elisp"
+       :compile ("elisp/" "elisp/irony/"))
