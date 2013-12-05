@@ -4,8 +4,11 @@
        :type github
        :branch "develop"
        :pkgname "Sarcasm/irony-mode"
+       ;; The :compile property only builds irony-server which is the C++ part
+       ;; of irony-mode. A separate :compile property is needed to build the
+       ;; elisp interface.
        :build (("mkdir -p build")
-               ("cd build && cmake ..")
+               ("(cd build && cmake -DCMAKE_BUILD_TYPE=Release ..)")
                ("make -j5 -C build install"))
-       :load-path "elisp"
-       :compile ("elisp/" "elisp/irony/"))
+       :compile ("elisp/" "elisp/irony/")
+       :load-path "elisp")
