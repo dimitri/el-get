@@ -1,5 +1,4 @@
 (:name ruby-block
-       :description "highlight matching block"
-       :type github
-       :pkgname "adolfosousa/ruby-block.el"
-       :website "https://github.com/adolfosousa/ruby-block.el")
+       :type http 
+       :url "https://raw.github.com/emacsmirror/emacswiki.org/master/ruby-block.el"
+       :description "highlight matching block")

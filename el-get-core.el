@@ -38,6 +38,26 @@ the original object."
 (defun el-get-verbose-message (format &rest arguments)
   (when el-get-verbose (apply 'message format arguments)))
 
+(defsubst el-get-plist-keys (plist)
+  "Return a list of all keys in PLIST.
+
+Duplicates are removed."
+  (remove-duplicates
+   (loop for (k _) on plist by #'cddr
+         collect k)
+   :test #'eq))
+
+(defsubst el-get-keyword-name (keyword)
+  "Return the name of KEYWORD.
+
+This is equivalent to `symbol-name' but it only works on keywords
+and it strips the leading colon.
+
+This raises an error if KEYWORD is not a keyword."
+  (or (keywordp keyword)
+      (error "Not a keyword: %S" keyword))
+  (substring (symbol-name keyword) 1))
+
 
 ;;
 ;; el-get-methods support, those are like backends.
@@ -395,6 +415,7 @@ makes it easier to conditionally splice a command into the list.
                       (message "el-get: %s" message)
                     (set-window-buffer (selected-window) cbuf)
                     (error "el-get: %s %s" cname errorm))
+                  (when infile (delete-file infile))
                   (when cbuf (kill-buffer cbuf))
                   (if next
                       ;; Prevent stack overflow on very long command

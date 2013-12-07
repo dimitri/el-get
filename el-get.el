@@ -490,7 +490,6 @@ called by `el-get' (usually at startup) for each installed package."
              (postinit (plist-get source :post-init))
              (after    (plist-get source :after))
              (pkgname  (plist-get source :pkgname))
-             (library  (or (plist-get source :library) pkgname package))
              (pdir     (el-get-package-directory package)))
 
         (el-get-error-unless-required-emacs-version source)
@@ -843,6 +842,24 @@ itself.")
         ;; This is the only line that really matters
         (mapc 'el-get-update (el-get-list-package-names-with-status "installed"))))))
 
+;;;###autoload
+(defun el-get-update-packages-of-type (type)
+  "Update all installed packages of type TYPE."
+  ;; TODO Update info file about this new command
+  (interactive
+   (let ((types
+          (mapcar #'el-get-keyword-name
+                  (el-get-plist-keys el-get-methods))))
+     (list (completing-read
+            "Type name: " types nil t))))
+  (when (not (el-get-method-defined-p type))
+    (user-error "Unknown package type \"%s\"" type))
+  (let ((pkgnames
+         (mapcar 'car (el-get-package-types-alist
+                       "installed" (intern type)))))
+    (if pkgnames
+        (mapcar 'el-get-update pkgnames)
+      (message "No installed packages of type \"%s\"" type))))
 
 ;;;###autoload
 (defun el-get-self-update ()
@@ -886,9 +903,9 @@ itself.")
                (remove   (el-get-method method :remove))
                (url      (plist-get source :url)))
           ;; remove the package now
+          (el-get-save-package-status package "removed")
           (el-get-remove-autoloads package)
           (funcall remove package url 'el-get-post-remove)
-          (el-get-save-package-status package "removed")
           (message "el-get remove %s" package))))))
 
 (defun el-get-reinstall (package)

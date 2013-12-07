@@ -1,0 +1,4 @@
+(:name noflet
+       :description "nic's overriding flet, for fleting functions for the purpose of decorating them"
+       :type github
+       :pkgname "nicferrier/emacs-noflet")

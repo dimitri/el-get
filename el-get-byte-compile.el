@@ -36,7 +36,7 @@ newer, then compilation is skipped."
 	;; Byte-compile runs emacs-lisp-mode-hook; disable it
 	emacs-lisp-mode-hook byte-compile-warnings)
     (when (or (not (file-exists-p elc))
-	      (file-newer-than-file-p el elc))
+	      (not (file-newer-than-file-p elc el)))
       (condition-case err
 	  (byte-compile-file el)
 	((debug error) ;; catch-all, allow for debugging

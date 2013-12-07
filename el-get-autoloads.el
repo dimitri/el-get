@@ -51,36 +51,40 @@
 
 (defun el-get-update-autoloads (package)
   "Regenerate, compile, and load any outdated packages' autoloads."
+  (when (el-get-want-autoloads-p package)
+    (message "el-get: updating autoloads for %s" package)
 
-  (message "el-get: updating autoloads for %s" package)
+    (let ( ;; Generating autoloads runs theses hooks; disable then
+          fundamental-mode-hook
+          prog-mode-hook
+          emacs-lisp-mode-hook
+          ;; use dynamic scoping to set up our loaddefs file for
+          ;; update-directory-autoloads
+          (generated-autoload-file el-get-autoload-file))
 
-  (let (;; Generating autoloads runs theses hooks; disable then
-        fundamental-mode-hook
-        prog-mode-hook
-        emacs-lisp-mode-hook
-        ;; use dynamic scoping to set up our loaddefs file for
-        ;; update-directory-autoloads
-        (generated-autoload-file el-get-autoload-file))
+      ;; make sure we can actually byte-compile it
+      (el-get-ensure-byte-compilable-autoload-file generated-autoload-file)
 
-    ;; make sure we can actually byte-compile it
-    (el-get-ensure-byte-compilable-autoload-file generated-autoload-file)
+      (when (el-get-package-is-installed package)
+        (mapc 'update-directory-autoloads
+              (remove-if-not #'file-directory-p
+                             (el-get-load-path package))))
 
-    (when (el-get-package-is-installed package)
-      (mapc 'update-directory-autoloads
-             (remove-if-not #'file-directory-p
-                            (el-get-load-path package))))
+      (el-get-save-and-kill el-get-autoload-file)
 
-    (el-get-save-and-kill el-get-autoload-file)
+      (when (file-exists-p el-get-autoload-file)
+        (message "el-get: byte-compiling autoload file")
+        (when el-get-byte-compile
+          (el-get-byte-compile-file el-get-autoload-file))
 
-    (when (file-exists-p el-get-autoload-file)
-      (message "el-get: byte-compiling autoload file")
-      (when el-get-byte-compile
-        (el-get-byte-compile-file el-get-autoload-file))
+        (el-get-eval-autoloads)))))
 
-      (el-get-eval-autoloads))))
-
-(defconst el-get-load-suffix-regexp
-  (concat (mapconcat 'regexp-quote (get-load-suffixes) "\\|") "\\'"))
+(defconst el-get-autoload-regexp
+  (let ((tmp nil))
+    (dolist (suf (get-load-suffixes))
+      (unless (string-match "\\.elc" suf) (push suf tmp)))
+    (concat "^[^=.].*" (regexp-opt tmp t) "\\'"))
+  "copied from `update-directory-autoloads'")
 
 (defun el-get-remove-autoloads (package)
   "Remove from `el-get-autoload-file' any autoloads associated
@@ -93,7 +97,7 @@ with the named PACKAGE"
             (autoload-modified-buffers (list (current-buffer))))
         (dolist (dir (el-get-load-path package))
           (when (file-directory-p dir)
-            (dolist (f (directory-files dir t el-get-load-suffix-regexp))
+            (dolist (f (directory-files dir t el-get-autoload-regexp))
               ;; this will clear out any autoloads associated with the file
               ;; `autoload-find-destination' signature has changed in emacs24.
               (if (> emacs-major-version 23)

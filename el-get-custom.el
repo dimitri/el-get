@@ -199,10 +199,10 @@ definition provided by `el-get' recipes locally.
 
 :library
 
-    When using :after but not using :features, :library allows to
-    set the library against which to register the :after function
-    against `eval-after-load'.  It defaults to either :pkgname
-    or :package, in this order.  See also `el-get-eval-after-load'.
+    When lazy, :library sets the file against which to register
+    the :after and :post-init forms for `eval-after-load'.  It
+    defaults to the first :feature, :pkgname or :package, in that
+    order.  See also `el-get-eval-after-load'.
 
 :options
 
@@ -245,12 +245,11 @@ definition provided by `el-get' recipes locally.
 
 :post-init
 
-    This should be a lisp form to evaluate after loading the
-    package.  Intended for use from recipes.  This function is
-    registered for `eval-after-load' against the recipe library
-    by `el-get-init' once the :load and :features have been
-    setup.  Like `:prepare', it will be run with
-    `default-directory' set to the package directory.
+    Intended for use from recipes.  This should be a lisp form to
+    evaluate once the :load and :features have been setup.  When
+    lazy, it will be registered for `eval-after-load' against the
+    recipe :library instead.  Like `:prepare', it will be run
+    with `default-directory' set to the package directory.
 
 :after
 
