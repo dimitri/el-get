@@ -90,19 +90,18 @@
   "Remove from `el-get-autoload-file' any autoloads associated
 with the named PACKAGE"
   (when (file-exists-p el-get-autoload-file)
-    (with-temp-buffer ;; empty buffer to trick `autoload-find-destination'
-      (let ((generated-autoload-file el-get-autoload-file)
-            ;; Generating autoloads runs emacs-lisp-mode-hook; disable it
-            emacs-lisp-mode-hook
-            (autoload-modified-buffers (list (current-buffer))))
-        (dolist (dir (el-get-load-path package))
-          (when (file-directory-p dir)
-            (dolist (f (directory-files dir t el-get-autoload-regexp))
-              ;; this will clear out any autoloads associated with the file
-              ;; `autoload-find-destination' signature has changed in emacs24.
-              (if (> emacs-major-version 23)
-                  (autoload-find-destination f (autoload-file-load-name f))
-                (autoload-find-destination f)))))))
+    (let* ((files (mapcan (lambda (dir)
+                            (when (file-directory-p dir)
+                              (directory-files dir t el-get-autoload-regexp)))
+                          (el-get-load-path package)))
+           (generated-autoload-file el-get-autoload-file)
+           (load-names (mapcar #'autoload-file-load-name files)))
+      (with-current-buffer (find-file-noselect el-get-autoload-file)
+        (widen) (goto-char (point-min))
+        (while (search-forward generate-autoload-section-header nil t)
+          (when (member (nth 2 (autoload-read-section-header)) load-names)
+            ;; We found a matching section, remove it.
+            (autoload-remove-section (match-beginning 0))))))
     (el-get-update-autoloads package)))
 
 (defun el-get-want-autoloads-p (package)
