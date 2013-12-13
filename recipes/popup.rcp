@@ -2,4 +2,5 @@
        :website "https://github.com/auto-complete/popup-el"
        :description "Visual Popup Interface Library for Emacs"
        :type github
+       :submodule nil
        :pkgname "auto-complete/popup-el")
