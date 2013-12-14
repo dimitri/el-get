@@ -195,7 +195,9 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
 	    (let* ((package     (format "%s" (car pkg)))
 		   (pkg-desc    (cdr pkg))
 		   (description (package-desc-doc pkg-desc))
-		   (depends     (mapcar #'car (package-desc-reqs pkg-desc)))
+                   (pkg-deps    (package-desc-reqs pkg-desc))
+		   (depends     (remq 'emacs (mapcar #'car pkg-deps)))
+                   (emacs-dep   (assq 'emacs pkg-deps))
 		   (repo
                     (assoc (aref pkg-desc (- (length pkg-desc) 1))
                            package-archives)))
@@ -207,7 +209,10 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
 		  "(:name %s\n:auto-generated t\n:type elpa\n:description \"%s\"\n:repo %S\n"
 		  package description repo))
 		(when depends
-		  (insert (format ":depends %s\n" depends)))
+                  (insert (format ":depends %s\n" depends)))
+                (when emacs-dep
+                  (insert (format ":minimum-emacs-version %s\n"
+                                  (cadr emacs-dep))))
 		(insert ")")
 		(indent-region (point-min) (point-max)))))
 	  package-archive-contents)))
