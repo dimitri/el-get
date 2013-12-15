@@ -1,0 +1,5 @@
+(:name vc-osc
+       :type github
+       :pkgname "aspiers/vc-osc"
+       :description "vc backend for osc, the Open Build Service CLI client"
+       :website "https://github.com/aspiers/vc-osc")
