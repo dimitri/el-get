@@ -1,0 +1,5 @@
+(:name smart-mode-line
+       :description "A color coded smart mode-line."
+       :website "https://github.com/Bruce-Connor/smart-mode-line"
+       :type github
+       :pkgname "Bruce-Connor/smart-mode-line")
