@@ -1,0 +1,5 @@
+(:name erin
+       :type http
+       :url "http://www.neilvandyke.org/erin-twiki-emacs/erin.el"
+       :description "mode for editing TWiki pages"
+       :website "http://www.neilvandyke.org/erin-twiki-emacs/")
