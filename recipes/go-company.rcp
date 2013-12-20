@@ -8,4 +8,4 @@
        :build/windows-nt (("go" "build" "-o" "gocode.exe"))
        :load-path ("emacs-company")
        :prepare (progn
-                  (add-to-list 'exec-path (el-get-package-directory "gocode"))))
+                  (add-to-list 'exec-path (el-get-package-directory "go-company"))))
