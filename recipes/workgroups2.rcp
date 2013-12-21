@@ -1,0 +1,6 @@
+(:name workgroups2
+       :type github
+       :website "https://github.com/pashinin/workgroups2/wiki"
+       :pkgname "pashinin/workgroups2"
+       :load-path "src"
+       :description "Workgroups is a session manager for Emacs.")

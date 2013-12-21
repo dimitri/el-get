@@ -1,0 +1,4 @@
+(:name inf-mongo
+       :description "Run a MongoDB shell process in a buffer."
+       :type github
+       :pkgname "tobiassvn/inf-mongo")
