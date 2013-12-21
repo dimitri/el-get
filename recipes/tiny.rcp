@@ -1,0 +1,5 @@
+(:name tiny
+       :website "https://github.com/abo-abo/tiny/blob/master/README.md"
+       :description "Quickly generate linear ranges in Emacs"
+       :type github
+       :pkgname "abo-abo/tiny")
