@@ -174,6 +174,8 @@ whose value is a directory to be cleared of stale elc files."
 
 (defun el-get-byte-compile (package)
   "byte compile files for given package"
+  (interactive
+   (list (el-get-read-package-with-status "Byte compile" "installed")))
   (let ((pdir  (el-get-package-directory package))
 	(buf   "*el-get-byte-compile*")
 	(files (el-get-assemble-files-for-byte-compilation package)))
