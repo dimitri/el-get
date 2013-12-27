@@ -1,0 +1,11 @@
+(:name beamer
+       :description "AUCTeX style for the latex-beamer class"
+       :type http
+       :url "https://bitbucket.org/rivanvx/beamer/raw/tip/emacs/beamer.el"
+       :depends (auctex)
+       :post-init (progn
+                    (if (boundp 'TeX-style-path)
+                          (add-to-list 'TeX-style-path
+                                       (el-get-package-directory "beamer"))
+                        (setq TeX-style-path
+                              (el-get-package-directory "beamer")))))
