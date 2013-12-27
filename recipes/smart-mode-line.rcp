@@ -2,4 +2,5 @@
        :description "A color coded smart mode-line."
        :website "https://github.com/Bruce-Connor/smart-mode-line"
        :type github
+       :depends (dash)
        :pkgname "Bruce-Connor/smart-mode-line")
