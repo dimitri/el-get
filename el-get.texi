@@ -161,7 +161,7 @@ methods that targets @code{apt-get}, @code{brew}, @code{builtin},
 @code{bzr}, @code{cvs}, @code{darcs}, @code{elpa}, @code{emacsmirror},
 @code{emacswiki}, @code{fink}, @code{fossil}, @code{git} and
 @code{git-svn}, @code{github} @code{github-tar} and @code{github-zip},
-@code{hg}, @code{http} @code{http-tar} and @code{http-zip},
+@code{go}, @code{hg}, @code{http} @code{http-tar} and @code{http-zip},
 @code{pacman} and @code{svn}.
 
 @item Notification
