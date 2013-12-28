@@ -30,10 +30,11 @@ Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
   (replace-regexp-in-string "[^a-zA-Z0-9-_\.\+]" "_"
 			    (file-name-nondirectory url)))
 
-(defun el-get-http-retrieve-callback (status package post-install-fun &optional dest sources)
+(defun el-get-http-retrieve-callback (status package url post-install-fun &optional dest sources)
   "Callback function for `url-retrieve', store the emacs lisp file for the package."
   (let ((err (plist-get status :error)))
-    (when err (error (format "could not fetch URL: error %s %s" (car (cdr err)) (cdr (cdr err))))))
+    (when err (error (format "could not fetch URL %s: error %s %s"
+                             url (car (cdr err)) (cdr (cdr err))))))
   (let* ((pdir   (el-get-package-directory package))
 	 (dest   (or dest (format "%s%s.el" (file-name-as-directory pdir) package)))
 	 (part   (concat dest ".part"))
@@ -42,7 +43,9 @@ Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
 	 (require-final-newline nil))
     ;; prune HTTP headers before save
     (goto-char (point-min))
-    (re-search-forward "\r?\n\r?\n")
+    (or (re-search-forward "\r?\n\r?\n" nil t)
+        (error (format "Failed to find end of headers in HTTP response from %s for package %s; see buffer %s"
+                       url package (buffer-name))))
     (write-region (point) (point-max) part)
     (puthash package (sha1 (current-buffer)) el-get-http-checksums)
     (when (file-exists-p dest)
@@ -72,11 +75,11 @@ into the package :localname option or its `file-name-nondirectory' part."
 
     (if (not el-get-default-process-sync)
         (url-retrieve url 'el-get-http-retrieve-callback
-                      `(,package ,post-install-fun ,dest ,el-get-sources))
+                      `(,package ,url ,post-install-fun ,dest ,el-get-sources))
 
       (with-current-buffer (url-retrieve-synchronously url)
         (el-get-http-retrieve-callback
-	 nil package post-install-fun dest el-get-sources)))))
+	 nil package url post-install-fun dest el-get-sources)))))
 
 (defun el-get-http-compute-checksum (package)
   "Look up download time SHA1 of PACKAGE."
