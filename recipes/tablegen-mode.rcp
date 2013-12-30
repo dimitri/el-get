@@ -1,0 +1,11 @@
+(:name tablegen-mode
+       :description "Major mode for LLVM TableGen description files."
+       :website "http://llvm.org/"
+       :type http
+       :url "http://llvm.org/viewvc/llvm-project/llvm/trunk/utils/emacs/tablegen-mode.el?view=co"
+       :build (("mv" "tablegen-mode.el_view_co" "tablegen-mode.el"))
+       :prepare (progn
+                  (autoload 'tablegen-mode "tablegen-mode"
+                    "LLVM TableGen description file editing mode." t)
+                  (add-to-list 'auto-mode-alist
+                               '("\\.td\\'" . tablegen-mode))))
