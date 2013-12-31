@@ -1,0 +1,7 @@
+(:name outline-magic
+       :description "Outline mode extensions."
+       :type github
+       :pkgname "tj64/outline-magic"
+       :prepare (progn
+                  (autoload 'outline-cycle
+                    "outline-magic" "Outline visibility cycling.")))
