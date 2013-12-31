@@ -1,0 +1,8 @@
+(:name vhdl-mode
+       :description "Major mode for editing VHDL source code."
+       :website "http://www.iis.ee.ethz.ch/~zimmi/emacs/vhdl-mode.html"
+       :type http-tar
+       :url "http://www.iis.ee.ethz.ch/~zimmi/emacs/vhdl-mode-3.34.2.tar.gz"
+       :prepare (progn
+                  (add-to-list 'auto-mode-alist
+                               '("\\.vhdl?\\'" . vhdl-mode))))
