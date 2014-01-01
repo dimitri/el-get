@@ -1,11 +1,8 @@
 (:name go-company
        :description "An autocompletion daemon for the Go programming language"
-       :type github
-       :pkgname "nsf/gocode"
+       :type go
+       :pkgname "github.com/nsf/gocode"
        :depends (company)
        :features (company-go)
-       :build '(("go" "build" "-o" "gocode"))
-       :build/windows-nt (("go" "build" "-o" "gocode.exe"))
-       :load-path ("emacs-company")
-       :prepare (progn
-                  (add-to-list 'exec-path (el-get-package-directory "go-company"))))
+       :load-path ("src/github.com/nsf/gocode/emacs-company")
+       :post-init (add-to-list 'exec-path (concat default-directory "bin")))

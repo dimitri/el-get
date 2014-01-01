@@ -34,6 +34,7 @@
 (require 'el-get-git)
 (require 'el-get-github)
 (require 'el-get-git-svn)
+(require 'el-get-go)
 (require 'el-get-hg)
 (require 'el-get-http)
 (require 'el-get-http-tar)
