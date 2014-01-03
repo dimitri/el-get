@@ -1,0 +1,6 @@
+(:name flycheck-hdevtools
+       :type github
+       :pkgname "flycheck/flycheck-hdevtools"
+       :description "A Flycheck checker for Haskell using hdevtools"
+       :depends (flycheck)
+       :features haskell-hdevtools)
