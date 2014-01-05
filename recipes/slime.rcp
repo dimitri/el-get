@@ -3,7 +3,7 @@
        :type github
        :autoloads "slime-autoloads"
        :info "doc"
-       :pkgname "antifuchs/slime"
+       :pkgname "slime/slime"
        :load-path ("." "contrib")
        :build '(("sed" "-i" "s/@itemx INIT-FUNCTION/@item INIT-FUNCTION/"
                  "doc/slime.texi")
