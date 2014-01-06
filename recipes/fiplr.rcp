@@ -1,0 +1,6 @@
+(:name fiplr
+       :description "Find in Project for Emacs"
+       :type github
+       :pkgname "d11wtq/fiplr"
+       :depends grizzl
+       :features fiplr)
