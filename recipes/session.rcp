@@ -4,5 +4,4 @@
        :options ("xzf")
        :load-path ("lisp")
        :url "http://downloads.sourceforge.net/project/emacs-session/session/session-2.3a.tar.gz"
-       :autoloads nil
        )
