@@ -3,6 +3,9 @@
        :type bzr
        :url "lp:mediawiki-el"
        :prepare (progn
+                  (autoload 'mediawiki-mode "mediawiki.el"
+                    "Mode for mediawiki")
+                  (add-to-list 'auto-mode-alist '("\\.mw$" . mediawiki-mode))
                   (autoload 'mediawiki-open "mediawiki.el"
                     "Open a wiki page specified by NAME from the mediawiki engine")
                   (autoload 'mediawiki-site "mediawiki.el"
