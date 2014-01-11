@@ -100,19 +100,24 @@ project.
 either recipes, bug fixes or ideas to implement, often with code. That
 builds up an awesome community, thanks guys!
 
-     dim ~/dev/emacs/el-get git --no-pager shortlog -n -s | wc -l
-          137
-     dim ~/dev/emacs/el-get git --no-pager shortlog -n -s | head -10
-        734	Dimitri Fontaine
-        336	Ryan C. Thompson
-        114	Julien Danjou
+     ~/dev/emacs/el-get git --no-pager shortlog -n -s | wc -l
+          258
+     ~/dev/emacs/el-get git --no-pager shortlog -n -s | head -15
+       1058	Dimitri Fontaine
+        359	Ryan C. Thompson
+        159	Julien Danjou
         110	Dave Abrahams
-         73	Ryan Thompson
-         72	Sébastien Gross
-         42	Takafumi Arakaki
-         27	Alex Ott
-         25	Yakkala Yagnesh Raghava
-         21	Rüdiger Sonderfeld
+         97	Sébastien Gross
+         94	Takafumi Arakaki
+         92	yagnesh రాఘవ
+         86	Ryan Thompson
+         73	Rüdiger Sonderfeld
+         62	David Holm
+         56	Yakkala Yagnesh Raghava
+         48	Alex Ott
+         40	Shigenobu Nishikawa
+         35	Damien Cassou
+         23	Reuben Thomas
 
 
 File: el-get.info,  Node: Glossary,  Next: Installing,  Prev: Acknowledgments,  Up: Top
@@ -1035,34 +1040,34 @@ Tag Table:
 Node: Top768
 Node: Introduction1233
 Node: Acknowledgments2533
-Node: Glossary3983
-Ref: Glossary - Init5079
-Ref: Glossary - Install5381
-Ref: Glossary - Recipe6474
-Ref: Glossary - Status6898
-Ref: Glossary - Update7156
-Node: Installing7394
-Node: Install the developper version8267
-Node: Skip Emacswiki recipes when installing9012
-Node: Usage9848
-Node: Setup12137
-Node: Basic Setup12533
-Node: The el-get function13844
-Node: Distributed Setup15120
-Node: Setup Customization17162
-Node: User Init18308
-Node: Before and After properties18995
-Node: Initialization files20503
-Node: Recipes21156
-Node: Organizing recipes21631
-Node: Getting more recipes23262
-Node: Overriding package files23960
-Node: Authoring Recipes24343
-Node: Recipe format24958
-Node: Dependencies34747
-Node: Byte Compilation35093
-Node: Autoloads35659
-Node: Build36785
-Node: Recipe checker37757
+Node: Glossary4115
+Ref: Glossary - Init5211
+Ref: Glossary - Install5513
+Ref: Glossary - Recipe6606
+Ref: Glossary - Status7030
+Ref: Glossary - Update7288
+Node: Installing7526
+Node: Install the developper version8399
+Node: Skip Emacswiki recipes when installing9144
+Node: Usage9980
+Node: Setup12269
+Node: Basic Setup12665
+Node: The el-get function13976
+Node: Distributed Setup15252
+Node: Setup Customization17294
+Node: User Init18440
+Node: Before and After properties19127
+Node: Initialization files20635
+Node: Recipes21288
+Node: Organizing recipes21763
+Node: Getting more recipes23394
+Node: Overriding package files24092
+Node: Authoring Recipes24475
+Node: Recipe format25090
+Node: Dependencies34879
+Node: Byte Compilation35225
+Node: Autoloads35791
+Node: Build36917
+Node: Recipe checker37889
 
 End Tag Table

@@ -102,19 +102,24 @@ either recipes, bug fixes or ideas to implement, often with code. That
 builds up an awesome community, thanks guys!
 
 @example
-dim ~/dev/emacs/el-get git --no-pager shortlog -n -s | wc -l
-     137
-dim ~/dev/emacs/el-get git --no-pager shortlog -n -s | head -10
-   734	Dimitri Fontaine
-   336	Ryan C. Thompson
-   114	Julien Danjou
+~/dev/emacs/el-get git --no-pager shortlog -n -s | wc -l
+     258
+~/dev/emacs/el-get git --no-pager shortlog -n -s | head -15
+  1058	Dimitri Fontaine
+   359	Ryan C. Thompson
+   159	Julien Danjou
    110	Dave Abrahams
-    73	Ryan Thompson
-    72	Sébastien Gross
-    42	Takafumi Arakaki
-    27	Alex Ott
-    25	Yakkala Yagnesh Raghava
-    21	Rüdiger Sonderfeld
+    97	Sébastien Gross
+    94	Takafumi Arakaki
+    92	yagnesh రాఘవ
+    86	Ryan Thompson
+    73	Rüdiger Sonderfeld
+    62	David Holm
+    56	Yakkala Yagnesh Raghava
+    48	Alex Ott
+    40	Shigenobu Nishikawa
+    35	Damien Cassou
+    23	Reuben Thomas
 @end example
 
 @node Glossary
