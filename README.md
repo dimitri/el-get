@@ -80,7 +80,7 @@ called by el-get from a `windows-nt` Emacs, see `system-type`). When using a
 which contains the proper `install-info` version when you're not using the
 *cygwin* Emacs binary.
 
-## Stable Branch
+## The Lazy Installer
 
 To install El-Get you can use the *lazy-installer*.  This will not load it
 on startup or otherwise affect future usage of Emacs.  If you wish to ensure
@@ -104,40 +104,6 @@ Evaluating this code after copying it into your `*scratch*` buffer by typing
 `C-j` or `M-x eval-print-last-exp` will retrieve the El-Get installation
 script.  This script will then use `git` to clone El-Get and install it to
 the default location (`~/.emacs.d/el-get/el-get`).
-
-## Master Branch
-
-The lazy installer above targets the current stable release.  If you would
-rather use the current development version you must clone the `master`
-branch by ensuring the variable `el-get-master-branch` exists.
-
-```lisp
-;; So the idea is that you copy/paste this code into your *scratch* buffer,
-;; hit C-j, and you have a working developper edition of el-get.
-(url-retrieve
- "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
- (lambda (s)
-   (let (el-get-master-branch)
-     (goto-char (point-max))
-     (eval-print-last-sexp))))
-```
-
-## Upgrading from 3.1 to 4.1
-
-The development of El-Get 4.1 took a long time, and as a result a lot of
-recipes have change in non compatible ways: some sources switched from `SVN`
-to `git`, some revisited their hosting choice, etc.
-
-As a result, lots of recipe should be *reinstalled* when upgrading. The
-easiest way here might well be to just backup your `el-get-dir` directory
-and start-up fresh with the new El-Get code:
-
-    mv ~/.emacs.d/el-get ~/.emacs.d/el-get-backup-3.stable
-    mkdir ~/.emacs.d/el-get
-    M-x el-get-self-update
-
-That code sample assumes that `el-get-dir` is set to its default value, that
-is `~/.emacs.d/el-get`.
 
 # Setup
 
@@ -167,22 +133,6 @@ Here is the basic setup to add to your `user-init-file` (`.emacs`):
     (eval-print-last-sexp)))
 
 (add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
-(el-get 'sync)
-```
-
-And for those who prefer the master branch, please use the code below
-
-```lisp
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
-
-(unless (require 'el-get nil 'noerror)
-  (with-current-buffer
-      (url-retrieve-synchronously
-       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
-    (let (el-get-master-branch)
-      (goto-char (point-max))
-      (eval-print-last-sexp))))
-
 (el-get 'sync)
 ```
 

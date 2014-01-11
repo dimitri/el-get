@@ -35,6 +35,12 @@
 
 ;;; Change Log:
 ;;
+;;  5.1 - 2014-01-11 - Rolling release
+;;
+;;   - "master" branch is now considered forever stable
+;;   - many bug fixes
+;;   - many new recipes
+;;
 ;;  4.1 - 2012-08-28 - To infinity, and beyond!
 ;;
 ;;   - code refactoring
@@ -176,7 +182,7 @@
 (defgroup el-get nil "el-get customization group"
   :group 'convenience)
 
-(defconst el-get-version "4.0.7" "el-get version number")
+(defconst el-get-version "5.1" "el-get version number")
 
 (defconst el-get-script (or load-file-name buffer-file-name))
 
@@ -313,13 +319,10 @@ updated when the package itself is."
   "Message the current el-get version"
   (interactive)
   (let ((version
-	 (if (string= (cadr (split-string el-get-version "\\.")) "0")
-	     ;; devel version, add the current git sha1 (short form)
-	     (let ((default-directory (file-name-directory el-get-script)))
-	       (concat el-get-version "."
-		       (shell-command-to-string
-			"git --no-pager log -n1 --format=format:%h")))
-	   el-get-version)))
+	 (let ((default-directory (file-name-directory el-get-script)))
+           (concat el-get-version "."
+                   (shell-command-to-string
+                    "git --no-pager log -n1 --format=format:%h")))))
     (kill-new version)
     (message "el-get version %s" version)))
 

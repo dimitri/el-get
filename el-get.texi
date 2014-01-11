@@ -73,6 +73,11 @@ developer release while 3.1 is a stable release.
 Please note that this versioning policy has been picked while backing
 1.2~dev, so 1.0 was a "stable" release in fact.  Ah, history.
 
+El-Get is considered to now have reached a very stable state where it
+only receives bug fixes, code refactoring, and new recipes. The
+current version is now 5.1, which is stable, and maintained in the
+``master'' git branch.
+
 @node Acknowledgments
 @chapter Acknowledgments
 
