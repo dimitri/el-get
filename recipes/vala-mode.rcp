@@ -1,0 +1,5 @@
+(:name vala-mode
+       :description "Emacs mode for Vala language"
+       :type elpa
+       :post-init (progn
+                    (add-to-list 'auto-mode-alist '("\\.vala$" . vala-mode))))
