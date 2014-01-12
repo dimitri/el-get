@@ -1,0 +1,5 @@
+(:name actionscript-mode
+       :type github
+       :username "austinhaas"
+       :post-init (progn
+                    (add-to-list 'auto-mode-alist '("\\.as$" . actionscript-mode))))
