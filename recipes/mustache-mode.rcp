@@ -3,8 +3,8 @@
        :features mustache-mode
        :type github
        :pkgname "mustache/emacs"
-       :post-init (progn
-                    (add-to-list 'auto-mode-alist
-                                 '("\\.hs$" . mustache-mode))
-                    (add-to-list 'auto-mode-alist
-                                 '("\\.handlebars$" . mustache-mode))))
+       :prepare (progn
+                  (add-to-list 'auto-mode-alist
+                               '("\\.hs$" . mustache-mode))
+                  (add-to-list 'auto-mode-alist
+                               '("\\.handlebars$" . mustache-mode))))

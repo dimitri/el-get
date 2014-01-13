@@ -4,5 +4,5 @@
        :url "https://fsharp-mode.svn.sourceforge.net/svnroot/fsharp-mode"
        :load-path (".")
        :features (fsharp inf-fsharp)
-       :post-init (add-to-list 'auto-mode-alist
-                               '("\\.fs[iylx]?$" . fsharp-mode)))
+       :prepare (add-to-list 'auto-mode-alist
+                             '("\\.fs[iylx]?$" . fsharp-mode)))
