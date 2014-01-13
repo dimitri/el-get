@@ -3,11 +3,11 @@
        :type github
        :pkgname "myfreeweb/django-mode"
        :depends yasnippet
-       :prepare (autoload 'django-mode "django-mode" "Major mode for Django web framework." t)
+       :prepare (progn
+                  (autoload 'django-mode "django-mode" "Major mode for Django web framework." t)
+                  (add-to-list 'auto-mode-alist '("\.djhtml$" . django-html-mode)))
        :post-init
        (progn
          ;; Load yasnippet because yas/load-directory has no autoload
          (require 'yasnippet)
-         (yas/load-directory (expand-file-name "snippets"))
-         ;; django-html-mode is autoloaded, should just work
-         (add-to-list 'auto-mode-alist '("\.djhtml$" . django-html-mode))))
+         (yas/load-directory (expand-file-name "snippets"))))

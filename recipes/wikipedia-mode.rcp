@@ -2,5 +2,5 @@
        :description "Mode for editing Wikipedia articles off-line"
        :type emacswiki
        :features wikipedia-mode
-       :post-init (add-to-list 'auto-mode-alist
-                               '("\\.wiki\\.txt\\'" . wikipedia-mode)))
+       :prepare (add-to-list 'auto-mode-alist
+                             '("\\.wiki\\.txt\\'" . wikipedia-mode)))

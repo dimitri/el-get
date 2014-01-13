@@ -3,5 +3,5 @@
        :type http
        :url "https://wiki.gnome.org/Projects/Vala/Emacs?action=AttachFile&do=get&target=vala-mode.el"
        :localname "vala-mode.el"
-       :post-init (progn
-                    (add-to-list 'auto-mode-alist '("\\.vala$" . vala-mode))))
+       :prepare (progn
+                  (add-to-list 'auto-mode-alist '("\\.vala$" . vala-mode))))

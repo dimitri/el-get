@@ -4,6 +4,6 @@
        :type github
        :pkgname "kosh04/newlisp-mode"
        :features newlisp-mode
-       :post-init (progn
-                    (add-to-list 'auto-mode-alist '("\\.lsp$" . newlisp-mode))
-                    (add-to-list 'interpreter-mode-alist '("newlisp" . newlisp-mode))))
+       :prepare (progn
+                  (add-to-list 'auto-mode-alist '("\\.lsp$" . newlisp-mode))
+                  (add-to-list 'interpreter-mode-alist '("newlisp" . newlisp-mode))))
