@@ -21,18 +21,20 @@
 ;; and its methods.  See the methods directory for implementation of them.
 ;;
 
+;;; Code:
+
 (require 'el-get-core)
 (require 'el-get-byte-compile)
 
 (defcustom el-get-recipe-path-emacswiki
   (expand-file-name "el-get/recipes/emacswiki/" el-get-dir)
-  "Define where to keep a local copy of emacswiki recipes"
+  "Define where to keep a local copy of emacswiki recipes."
   :group 'el-get
   :type 'directory)
 
 (defcustom el-get-recipe-path-elpa
   (expand-file-name "el-get/recipes/elpa/" el-get-dir)
-  "Define where to keep a local copy of elpa recipes"
+  "Define where to keep a local copy of elpa recipes."
   :group 'el-get
   :type 'directory)
 
@@ -54,7 +56,7 @@ It is recommended to add new directories using code like:
   (add-to-list 'el-get-recipe-path \"~/.emacs.d/el-get-user/recipes/\")")
 
 (defcustom el-get-user-package-directory nil
-  "Define where to look for init-pkgname.el configurations. Disabled if nil."
+  "Define where to look for init-pkgname.el configurations.  Disabled if nil."
   :group 'el-get
   :type '(choice (const :tag "Off" nil) directory))
 
@@ -78,7 +80,7 @@ compiled version."
 	(load file-name-no-extension 'noerror)))))
 
 (defun el-get-recipe-dirs ()
-  "Return the elements of el-get-recipe-path that actually exist.
+  "Return the elements of `el-get-recipe-path' that actually exist.
 
 Used to avoid errors when exploring the path for recipes"
   (reduce (lambda (dir result)
@@ -94,7 +96,7 @@ Used to avoid errors when exploring the path for recipes"
 ;; recipes
 ;;
 (defun el-get-read-recipe-file (filename)
-  "Read given filename and return its content (a valid form is expected)"
+  "Read given FILENAME and return its content (a valid form is expected)."
   (condition-case err
       (with-temp-buffer
         (insert-file-contents filename)
@@ -117,11 +119,10 @@ Used to avoid errors when exploring the path for recipes"
   (let ((filename (el-get-recipe-filename package)))
     (if filename
 	(el-get-read-recipe-file filename)
-      (error "el-get can not find a recipe for package \"%s\"." package))))
+      (error "El-get can not find a recipe for package \"%s\"" package))))
 
 (defun el-get-read-all-recipe-files ()
-  "Return the list of all the file based recipes, formated like
-   `el-get-sources'
+  "Return the list of all file based recipes, formated like `el-get-sources'.
 
 Only consider any given recipe only once even if present in
 multiple dirs from `el-get-recipe-path'. The first recipe found
@@ -191,16 +192,16 @@ return 'builtin."
 (defalias 'el-get-package-type #'el-get-package-method)
 
 (defun el-get-package-types-alist (statuses &rest types)
-  "Return an alist of package names that are of given types.
+  "Return an alist of package names that are of given TYPES.
 
 Only consider packages whose status is `member' of STATUSES,
 which defaults to installed, required and removed.  Example:
 
-  (el-get-package-types-alist \"installed\" 'http 'cvs)
-"
+  (el-get-package-types-alist \"installed\" 'http 'cvs)"
   (loop for src in (apply 'el-get-list-package-names-with-status
 			  (cond ((stringp statuses) (list statuses))
-				((null statuses) '("installed" "required" "removed"))
+				((null statuses) '("installed" "required"
+                                                   "removed"))
 				(t statuses)))
 	for name = (el-get-as-symbol src)
 	for type = (el-get-package-type name)
@@ -219,7 +220,7 @@ which defaults to installed, required and removed.  Example:
   "Convert VERSION to a standard version list.
 
 Like the builtin `version-to-list', this function accepts a
-string. Unlike the builtin, it will also accept a single number,
+string.  Unlike the builtin, it will also accept a single number,
 which will be wrapped into a single-element list, or a or a list
 of numbers, which will be returned unmodified."
   (cond
@@ -236,14 +237,14 @@ of numbers, which will be returned unmodified."
    (t (error "Unrecognized version specification: %S" version))))
 
 (defun el-get-error-unless-required-emacs-version (package-or-source)
-  "Raise an error if `emacs-major-version' is less than package's requirement.
-
-Second argument PACKAGE is optional and only used to construct the error message."
+  "Raise an error if `emacs-major-version' is less than package's requirement."
   (let* ((pname (el-get-source-name package-or-source))
-         (required-version (el-get-package-required-emacs-version package-or-source))
+         (required-version (el-get-package-required-emacs-version
+                            package-or-source))
          (required-version-list (el-get-version-to-list required-version)))
     (when (version-list-< (version-to-list emacs-version) required-version-list)
-      (error "Package %s requires Emacs version %s or higher, but the current emacs is only version %s"
+      (error "Package %s requires Emacs version %s or higher, but the current\
+ Emacs is only version %s"
              pname required-version emacs-version))))
 
 (defun el-get-envpath-prepend (envname head)
@@ -337,3 +338,5 @@ object or a file path."
     numerror))
 
 (provide 'el-get-recipes)
+
+;;; el-get-recipes.el ends here
