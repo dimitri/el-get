@@ -263,6 +263,27 @@ Use this to modify environment variable such as $PATH or $PYTHONPATH."
                                   :test #'string= :from-end t)
                ":")))
 
+(defvar el-get-check--last-file-or-buffer nil
+  "The last file-or-buffer checked.")
+
+(defun el-get-check-redo ()
+  "Rerun `el-get-check-recipe' with last recipe."
+  (interactive)
+  (when el-get-check--last-file-or-buffer
+    (el-get-check-recipe
+     el-get-check--last-file-or-buffer)))
+
+(defvar el-get-check-mode-map
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map special-mode-map)
+    (define-key map "g" #'el-get-check-redo)
+    map)
+  "Mode map for `el-get-check-mode'.")
+
+(define-derived-mode el-get-check-mode special-mode "El-Get Check"
+  "Special mode for `el-get-check-recipe' buffers.
+See Info node `(el-get) Authoring Recipes'.")
+
 (defun el-get-check-recipe (file-or-buffer)
   "Check the format of the recipe.
 Please run this command before sending a pull request.
@@ -274,6 +295,7 @@ You can run this function from checker script like this:
 When used as a lisp function, FILE-OR-BUFFER must be a buffer
 object or a file path."
   (interactive (list (current-buffer)))
+  (setq el-get-check--last-file-or-buffer file-or-buffer)
   (if (bufferp file-or-buffer)
       (with-current-buffer file-or-buffer
         (el-get-check-recipe-in-current-buffer (buffer-file-name)))
@@ -290,51 +312,53 @@ object or a file path."
         (buffer (get-buffer-create "*el-get check recipe*")))
     (display-buffer buffer)
     (with-current-buffer buffer
-      (erase-buffer)
-      (when (and recipe-file-name
-                 (not (string= (file-name-base recipe-file-name)
-                               (plist-get recipe :name))))
-        (incf numerror)
-        (insert "* File name should match recipe name.\n"))
-      ;; Check if userspace property is used.
-      (loop for key in '(:before :after)
-            for alt in '(:prepare :post-init)
-            when (plist-get recipe key)
-            do (progn
-                 (insert (format
-                          "* Property %S is for user.  Use %S instead.\n"
-                          key alt))
-                 (incf numerror)))
-      (destructuring-bind (&key type url autoloads features builtin
-                                &allow-other-keys)
-          recipe
-        ;; Is github type used?
-        (when (and (eq type 'git) (string-match "//github.com/" url))
-          (insert "* Use `:type github' for github type recipe\n")
-          (incf numerror))
-        ;; Warn when `:autoloads nil' is specified.
-        (when (and (null autoloads) (plist-member recipe :autoloads))
-          (insert "* WARNING: Are you sure you don't need autoloads?
+      (let ((inhibit-read-only t))
+        (erase-buffer)
+        (when (and recipe-file-name
+                   (not (string= (file-name-base recipe-file-name)
+                                 (plist-get recipe :name))))
+          (incf numerror)
+          (insert "* File name should match recipe name.\n"))
+        ;; Check if userspace property is used.
+        (loop for key in '(:before :after)
+              for alt in '(:prepare :post-init)
+              when (plist-get recipe key)
+              do (progn
+                   (insert (format
+                            "* Property %S is for user.  Use %S instead.\n"
+                            key alt))
+                   (incf numerror)))
+        (destructuring-bind (&key type url autoloads features builtin
+                                  &allow-other-keys)
+            recipe
+          ;; Is github type used?
+          (when (and (eq type 'git) (string-match "//github.com/" url))
+            (insert "* Use `:type github' for github type recipe\n")
+            (incf numerror))
+          ;; Warn when `:autoloads nil' is specified.
+          (when (and (null autoloads) (plist-member recipe :autoloads))
+            (insert "* WARNING: Are you sure you don't need autoloads?
   This property should be used only when the library takes care of
   the autoload.\n"))
-        ;; Warn when `:features t' is specified
-        (when features
-          (insert "* WARNING: Are you sure you need features?
+          ;; Warn when `:features t' is specified
+          (when features
+            (insert "* WARNING: Are you sure you need features?
   If this library has `;;;###autoload' comment (a.k.a autoload cookie),
   you don't need `:features'.\n"))
-        ;; Check if `:builtin' is used with an integer
-        (when (integerp builtin)
-          (insert "* WARNING: Usage of integers for :builtin is obsolete.
+          ;; Check if `:builtin' is used with an integer
+          (when (integerp builtin)
+            (insert "* WARNING: Usage of integers for :builtin is obsolete.
   Use a version string like \"24.3\" instead.\n")))
-      ;; Check for required properties.
-      (loop for key in '(:description :name)
-            unless (plist-get recipe key)
-            do (progn
-                 (insert (format
-                          "* Required property %S is not defined.\n"
-                          key))
-                 (incf numerror)))
-      (insert (format "%s error(s) found." numerror)))
+        ;; Check for required properties.
+        (loop for key in '(:description :name)
+              unless (plist-get recipe key)
+              do (progn
+                   (insert (format
+                            "* Required property %S is not defined.\n"
+                            key))
+                   (incf numerror)))
+        (insert (format "%s error(s) found." numerror)))
+      (el-get-check-mode))
     numerror))
 
 (provide 'el-get-recipes)
