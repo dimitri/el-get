@@ -1025,4 +1025,12 @@ MS Windows user may need to call the script like this:
 emacs -batch -Q -l test/check-recipe.el  PATH/TO/RECIPE.rcp ...
 @end example
 
+You can also test the recipe with @command{test/test-recipe.sh}.  This
+will actually install the package in a test environment.  An interactive
+version @command{test/test-recipe-interactive.sh} is also available.
+
+@example
+test/test-recipe.sh PATH/TO/RECIPE.rcp
+@end example
+
 @bye
