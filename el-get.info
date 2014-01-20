@@ -1034,6 +1034,12 @@ convenient if you want to check multiple recipes at once.
 
      emacs -batch -Q -l test/check-recipe.el  PATH/TO/RECIPE.rcp ...
 
+   You can also test the recipe with `test/test-recipe.sh'.  This will
+actually install the package in a test environment.  An interactive
+version `test/test-recipe-interactive.sh' is also available.
+
+     test/test-recipe.sh PATH/TO/RECIPE.rcp
+
 
 
 Tag Table:
