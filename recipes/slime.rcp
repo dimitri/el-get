@@ -4,6 +4,7 @@
        :autoloads "slime-autoloads"
        :info "doc"
        :pkgname "slime/slime"
+       :depends cl-lib
        :load-path ("." "contrib")
        :build '(("sed" "-i" "s/@itemx INIT-FUNCTION/@item INIT-FUNCTION/"
                  "doc/slime.texi")
