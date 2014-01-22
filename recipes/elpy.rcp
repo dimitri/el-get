@@ -6,4 +6,4 @@
        :post-init (el-get-envpath-prepend "PYTHONPATH" default-directory)
        :depends (auto-complete yasnippet virtualenv
                  highlight-indentation find-file-in-project
-                 idomenu iedit nose jedi rope ))
+                 idomenu iedit nose jedi rope pyvenv))
