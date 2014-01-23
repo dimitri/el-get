@@ -1,0 +1,4 @@
+(:name mairix
+       :description "Mairix interface for Emacs"
+       :type http
+       :url "http://www.randomsample.de/mairix.el")
