@@ -14,5 +14,6 @@
 	 ("make"
 	  ("install")))
        :load-path ("./lisp")
+       :features tramp-loaddefs
        :info "share/info"
        :module "tramp")
