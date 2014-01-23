@@ -6,5 +6,4 @@
        :info "doc/info/"
        :build `(("make" "clean" "all" ,(concat "EMACS=" (shell-quote-argument
                                                          el-get-emacs))))
-       :load-path ("lisp")
-       :features ess-site)
+       :load "ess-autoloads.el")
