@@ -1,3 +1,4 @@
 (:name w3m-extension
        :description "Emacs-W3m extensions"
+       :depends (emacs-w3m basic-edit-toolkit)
        :type emacswiki :features w3m-extension)
