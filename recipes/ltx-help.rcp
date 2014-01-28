@@ -1,0 +1,4 @@
+(:name ltx-help
+       :description "Lookup LaTeX commands in info pages."
+       :type http
+       :url "http://mirror.switch.ch/ftp/mirror/tex/info/latex2e-help-texinfo/ltx-help.el")
