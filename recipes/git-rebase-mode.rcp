@@ -1,0 +1,4 @@
+(:name git-rebase-mode
+       :description "Major mode for editing Git rebase files."
+       :type http
+       :url "https://raw.github.com/magit/git-modes/master/git-rebase-mode.el")
