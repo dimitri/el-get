@@ -1,0 +1,6 @@
+(:name bbdb-
+       :website "https://github.com/aki2o/bbdb-"
+       :description "provide interface for more easily search/choice than BBDB."
+       :type github
+       :pkgname "aki2o/bbdb-"
+       :depends (bbdb log4e yaxception))
