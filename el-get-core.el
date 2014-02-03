@@ -397,6 +397,7 @@ makes it easier to conditionally splice a command into the list.
                                       (file-name-as-directory
                                        (expand-file-name cdir))
                                     default-directory)))
+          (unless program (error "el-get: :program argument cannot be nil"))
           (if sync
               (progn
                 (el-get-verbose-message "Running commands synchronously: %S" commands)

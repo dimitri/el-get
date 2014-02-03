@@ -63,7 +63,7 @@
 		     '((:command-name ,name
 				      :buffer-name ,name
 				      :default-directory ,pdir
-				      :program ,(executable-find "tar")
+				      :program ,(el-get-executable-find "tar")
 				      :args (,@options ,tarfile)
 				      :message ,ok
 				      :error ,ko))
