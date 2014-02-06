@@ -2,6 +2,6 @@
        :type emacswiki
        :description "major mode for editing cmd scripts"
        :load-path "."
-       :post-init (progn
-                    (add-to-list 'auto-mode-alist '("\\.[bB][Aa][Tt]\\'" . ntcmd-mode))
-                    (add-to-list 'auto-mode-alist '("\\.[Cc][Mm][Dd]\\'" . ntcmd-mode))))
+       :prepare (progn
+                  (add-to-list 'auto-mode-alist '("\\.[bB][Aa][Tt]\\'" . ntcmd-mode))
+                  (add-to-list 'auto-mode-alist '("\\.[Cc][Mm][Dd]\\'" . ntcmd-mode))))

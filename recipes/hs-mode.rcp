@@ -5,11 +5,11 @@
        :depends (peg auto-complete auto-complete-etags paredit)
        :load-path ("./src/")
        :features (hs)
-       :post-init (progn
-                    ;; From examples/init.el
-                    (add-to-list 'auto-mode-alist
-                                 (cons "\\.hs\\'" 'hs-mode))
-                    (add-to-list 'auto-mode-alist
-                                 (cons "\\.cabal\\'" 'hs-cabal-mode))
-                    (add-to-list 'auto-mode-alist
-                                 '("\\.hcr\\'" . hs-core-mode))))
+       :prepare (progn
+                  ;; From examples/init.el
+                  (add-to-list 'auto-mode-alist
+                               (cons "\\.hs\\'" 'hs-mode))
+                  (add-to-list 'auto-mode-alist
+                               (cons "\\.cabal\\'" 'hs-cabal-mode))
+                  (add-to-list 'auto-mode-alist
+                               '("\\.hcr\\'" . hs-core-mode))))
