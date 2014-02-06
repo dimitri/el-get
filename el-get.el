@@ -468,6 +468,9 @@ which defaults to the first element in `el-get-recipe-path'."
     (el-get-verbose-message "el-get-init: " init-deps)
     (loop for p in init-deps do (el-get-do-init p) collect p)))
 
+;; In case find-func.el isn't loaded yet:
+(defvar find-function-source-path nil)
+
 (defun el-get-do-init (package &optional package-status-alist)
   "Make the named PACKAGE available for use.
 
@@ -504,7 +507,9 @@ called by `el-get' (usually at startup) for each installed package."
 	  (unless (member method '(apt-get fink pacman))
 	    ;; append entries to load-path
 	    (dolist (path el-path)
-	      (el-get-add-path-to-list package 'load-path path))
+	      (el-get-add-path-to-list package 'load-path path)
+              (if find-function-source-path
+                  (el-get-add-path-to-list package 'find-function-source-path path)))
 	    ;;  and Info-directory-list
 	    (el-get-install-or-init-info package 'init))
 
