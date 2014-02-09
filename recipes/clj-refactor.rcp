@@ -1,0 +1,5 @@
+(:name clj-refactor
+       :description "A collection of simple clojure refactoring functions"
+       :type github
+       :depends (dash s clojure-mode yasnippet paredit multiple-cursors)
+       :pkgname "magnars/clj-refactor.el")
