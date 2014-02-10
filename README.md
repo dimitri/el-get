@@ -86,7 +86,7 @@ To install El-Get you can use the *lazy-installer*.  This will not load it
 on startup or otherwise affect future usage of Emacs.  If you wish to ensure
 that El-Get will be available in future Emacs session please use the code
 provided in **Basic Setup**.  Using the code below will require an internet
-connection even if El-Get is already installed, that's why it's adviced to
+connection even if El-Get is already installed, that's why it's advised to
 use it for first time installation, not for embedding into your `.emacs` (or
 your `user-init-file`).
 
