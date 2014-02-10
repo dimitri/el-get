@@ -1,4 +1,4 @@
-(:name dbgr
+(:name realgud
        :website "https://github.com/rocky/emacs-dbgr"
        :description "The Grand \"Cathedral\" Debugger rewrite: Towards a modular framework for interacting with external debuggers."
        :depends (test-simple load-relative loc-changes)
