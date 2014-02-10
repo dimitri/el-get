@@ -1,7 +1,6 @@
 (:name dtrt-indent
-       :website "http://savannah.nongnu.org/projects/dtrt-indent/"
        :description "A minor mode that guesses the indentation offset originally used for creating source code files and transparently adjusts the corresponding settings in Emacs, making it more convenient to edit foreign files."
-       :type git
-       :url "git://git.savannah.nongnu.org/dtrt-indent.git"
-       :features dtrt-indent
+       :type github
+       :pkgname "rrthomas/dtrt-indent" ; has a fix for a bug that prevents loading; change back to "jscheid/" once https://github.com/jscheid/dtrt-indent/pull/10 is addressed
+       :features (dtrt-indent)
        :post-init (dtrt-indent-mode 1))
