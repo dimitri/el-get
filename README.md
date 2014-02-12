@@ -105,6 +105,20 @@ Evaluating this code after copying it into your `*scratch*` buffer by typing
 script.  This script will then use `git` to clone El-Get and install it to
 the default location (`~/.emacs.d/el-get/el-get`).
 
+## Replicating a package set on another Emacs installation
+
+In the Emacs whose setup you wish to replicate, type `M-x ielm` for an
+Emacs Lisp prompt, and enter:
+
+```lisp
+`(setq my-packages
+              ',(mapcar #'el-get-as-symbol
+                        (el-get-list-package-names-with-status "installed")))
+```
+
+Copy the result into the new Emacs, in which you should already have
+installed El-Get, and evaluate it, followed by `(el-get 'sync my-packages)`
+
 # Setup
 
 ## Basic Setup
@@ -146,6 +160,8 @@ for it, like for example `~/.emacs.d/el-get-init-files/`).
 
 El-Get will then load that file at package initialization time. See the full
 *Info* documentation for more details and possibilities.
+
+Many `init-` packages are already available in El-Get.
 
 # Usage
 
