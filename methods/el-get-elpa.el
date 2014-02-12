@@ -93,18 +93,17 @@ the recipe, then return nil."
          (package-archives (append (when elpa-repo (list elpa-repo))
                                    (when (boundp 'package-archives) package-archives))))
 
-    (when elpa-new-repo
-      (condition-case-unless-debug nil
-          (package--download-one-archive elpa-new-repo "archive-contents")
-        (error (message "Failed to download `%s' archive." (car archive))))
-      (package-read-all-archive-contents))
-
     (unless (and elpa-dir (file-directory-p elpa-dir))
       ;; package-install does these only for interactive calls
       (unless package--initialized
         (package-initialize t))
-      (unless package-archive-contents
-        (package-refresh-contents))
+      (cond ((not package-archive-contents)
+             (package-refresh-contents))
+            (elpa-new-repo
+             (condition-case-unless-debug nil
+               (package--download-one-archive elpa-new-repo "archive-contents")
+               (error (message "Failed to download `%s' archive." (car archive))))
+             (package-read-all-archive-contents)))
       ;; TODO: should we refresh and retry once if package-install fails?
       ;; package-install generates autoloads, byte compiles
       (let (emacs-lisp-mode-hook fundamental-mode-hook prog-mode-hook)

@@ -58,4 +58,4 @@ values provided in arguments after corresponding keys."
 
 (setq package-archives `(("old-archive" . ,old-archive-path)))
 
-(el-get 'sync '(dummy-funny dummy-whammy))
+(el-get 'sync '(dummy-whammy dummy-funny))
