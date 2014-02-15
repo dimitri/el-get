@@ -1,0 +1,5 @@
+(:name ll-debug
+       :description "Provides commands to support a low level debug style."
+       :type http
+       :url "http://www.cbrunzema.de/download/ll-debug/ll-debug.el"
+       :features "ll-debug")

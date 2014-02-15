@@ -1,0 +1,6 @@
+(:name flymake-cppcheck
+       :website "https://github.com/senda-akiha/flymake-cppcheck"
+       :description "Cppcheck for Emacs with flymake-mode"
+       :type github
+       :pkgname "senda-akiha/flymake-cppcheck"
+       :depends ())

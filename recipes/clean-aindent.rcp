@@ -1,0 +1,6 @@
+(:name clean-aindent
+       :website "https://github.com/pmarinov/clean-aindent"
+       :description "Emacs extension for clean auto-indent."
+       :type github
+       :pkgname "pmarinov/clean-aindent"
+       :depends ())

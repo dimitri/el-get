@@ -1,0 +1,11 @@
+(:name rtags
+       :description "A c/c++ client/server indexer with for integration with emacs based on clang."
+       :type github
+       :website "https://github.com/Andersbakken/rtags"
+       :pkgname  "Andersbakken/rtags"
+       :build (("git submodule init")
+	       ("git submodule update")
+               ("cmake .")
+               ("make -j5"))
+       :compile "src/"
+       :load-path "src")
