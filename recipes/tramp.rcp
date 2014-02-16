@@ -8,12 +8,11 @@
 	 ("./configure" ,(concat "--with-emacs=" el-get-emacs)
 	  "--with-contrib" ,(concat "--prefix="
 				    (expand-file-name
-				     (el-get-package-directory
-"tramp"))))
+				     (el-get-package-directory "tramp"))))
 	 ("make")
 	 ("make"
 	  ("install")))
        :load-path ("./lisp")
-       :features tramp-loaddefs
+       :load "lisp/tramp-loaddefs.el"
        :info "share/info"
        :module "tramp")
