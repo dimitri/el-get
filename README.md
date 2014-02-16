@@ -86,7 +86,7 @@ To install El-Get you can use the *lazy-installer*.  This will not load it
 on startup or otherwise affect future usage of Emacs.  If you wish to ensure
 that El-Get will be available in future Emacs session please use the code
 provided in **Basic Setup**.  Using the code below will require an internet
-connection even if El-Get is already installed, that's why it's adviced to
+connection even if El-Get is already installed, that's why it's advised to
 use it for first time installation, not for embedding into your `.emacs` (or
 your `user-init-file`).
 
@@ -104,6 +104,20 @@ Evaluating this code after copying it into your `*scratch*` buffer by typing
 `C-j` or `M-x eval-print-last-exp` will retrieve the El-Get installation
 script.  This script will then use `git` to clone El-Get and install it to
 the default location (`~/.emacs.d/el-get/el-get`).
+
+## Replicating a package set on another Emacs installation
+
+In the Emacs whose setup you wish to replicate, type `M-x ielm` for an
+Emacs Lisp prompt, and enter:
+
+```lisp
+`(setq my-packages
+              ',(mapcar #'el-get-as-symbol
+                        (el-get-list-package-names-with-status "installed")))
+```
+
+Copy the result into the new Emacs, in which you should already have
+installed El-Get, and evaluate it, followed by `(el-get 'sync my-packages)`
 
 # Setup
 
@@ -146,6 +160,8 @@ for it, like for example `~/.emacs.d/el-get-init-files/`).
 
 El-Get will then load that file at package initialization time. See the full
 *Info* documentation for more details and possibilities.
+
+Many `init-` packages are already available in El-Get.
 
 # Usage
 
