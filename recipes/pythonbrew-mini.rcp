@@ -1,0 +1,7 @@
+(:name pythonbrew-mini
+       :description "Emacs integration for pythonbrew"
+       :type github
+       :features pythonbrew-mini
+       :pkgname "franckcuny/pythonbrew-mini.el"
+       :compile "pythonbrew-mini.el"
+       :post-init (pythonbrew-use-latest))
