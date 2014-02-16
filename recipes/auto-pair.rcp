@@ -1,0 +1,6 @@
+(:name auto-pair
+       :website "https://github.com/capitaomorte/autopair"
+       :description "Autopair automatically pairs braces and quotes."
+       :type github
+       :pkgname "capitaomorte/autopair"
+       :depends (fuzzy))

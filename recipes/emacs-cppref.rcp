@@ -1,0 +1,5 @@
+(:name emacs-cppref
+       :website "https://github.com/kentaro/emacs-cppref"
+       :description "A Simple C++ Reference Viewer"
+       :type github
+       :pkgname "kentaro/emacs-cppref")

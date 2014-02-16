@@ -1,0 +1,6 @@
+(:name flycheck-tip
+       :website "https://github.com/yuutayamada/flycheck-tip"
+       :description "This program can show you flycheck-errors by popup-tip."
+       :type github
+       :pkgname "yuutayamada/flycheck-tip"
+       :features flycheck-tip)
