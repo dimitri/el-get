@@ -1,0 +1,6 @@
+(:name ctxmenu
+       :website "https://github.com/aki2o/emacs-ctxmenu"
+       :description "provide a context menu like right-click."
+       :type github
+       :pkgname "aki2o/emacs-ctxmenu"
+       :depends (popup log4e yaxception))
