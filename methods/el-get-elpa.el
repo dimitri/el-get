@@ -81,18 +81,29 @@ the recipe, then return nil."
   "Ask elpa to install given PACKAGE."
   (let* ((elpa-dir (el-get-elpa-package-directory package))
          (elpa-repo (el-get-elpa-package-repo package))
+         ;; Indicates new archive requiring to download its archive-contents
+         (elpa-new-repo (when (and elpa-repo)
+                          (unless (rassoc (cdr-safe elpa-repo)
+                                          (bound-and-true-p package-archives))
+                            elpa-repo)))
          ;; Set `package-archive-base' to elpa-repo for old package.el
          (package-archive-base (or (cdr-safe elpa-repo)
                                    (bound-and-true-p package-archive-base)))
          ;; Prepend elpa-repo to `package-archives' for new package.el
          (package-archives (append (when elpa-repo (list elpa-repo))
                                    (when (boundp 'package-archives) package-archives))))
+
     (unless (and elpa-dir (file-directory-p elpa-dir))
       ;; package-install does these only for interactive calls
       (unless package--initialized
         (package-initialize t))
-      (unless package-archive-contents
-        (package-refresh-contents))
+      (cond ((not package-archive-contents)
+             (package-refresh-contents))
+            (elpa-new-repo
+             (condition-case-unless-debug nil
+               (package--download-one-archive elpa-new-repo "archive-contents")
+               (error (message "Failed to download `%s' archive." (car archive))))
+             (package-read-all-archive-contents)))
       ;; TODO: should we refresh and retry once if package-install fails?
       ;; package-install generates autoloads, byte compiles
       (let (emacs-lisp-mode-hook fundamental-mode-hook prog-mode-hook)
