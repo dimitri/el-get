@@ -1,0 +1,6 @@
+(:name solarized-emacs
+       :description "Emacs highlighting using Ethan Schoonover's Solarized color scheme"
+       :type github
+       :pkgname "bbatsov/solarized-emacs"
+       :prepare (progn
+                  (add-to-list 'custom-theme-load-path default-directory)))
