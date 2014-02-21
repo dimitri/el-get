@@ -1,0 +1,7 @@
+(:name lexbind-mode
+       :description "Display lexical binding variable state in modeline"
+       :website "https://github.com/purcell/lexbind-mode"
+       :type github
+       :pkgname "purcell/lexbind-mode"
+       :post-init (add-hook
+                   'emacs-lisp-mode-hook 'lexbind-mode))
