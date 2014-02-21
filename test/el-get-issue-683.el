@@ -63,6 +63,6 @@
 ;; Install, then set the recipe to nil in the status file, then uninstall
 (el-get-install 'a)
 (flet ((el-get-package-def (&rest ignored) nil))
-  (el-get-save-package-status 'a "installed"))
+      (el-get-save-package-status 'a "installed"))
 (el-get-remove 'a)
 (assert-package-fully-removed 'a)

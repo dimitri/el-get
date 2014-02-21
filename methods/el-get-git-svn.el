@@ -22,23 +22,23 @@
 (defun el-get-git-svn-clone (package url post-install-fun)
   "Clone the given svn PACKAGE following the URL using git."
   (let ((git-executable (el-get-executable-find "git"))
-	(pname (el-get-as-string package))
-	(name  (format "*git svn clone %s*" package))
+        (pname (el-get-as-string package))
+        (name  (format "*git svn clone %s*" package))
         (checkout (or (plist-get source :checkout)
                       (plist-get source :checksum)))
-	(ok    (format "Package %s installed." package))
-	(ko    (format "Could not install package %s." package)))
+        (ok    (format "Package %s installed." package))
+        (ko    (format "Could not install package %s." package)))
 
     (el-get-start-process-list
      package
      (list
       `(:command-name ,name
-		      :buffer-name ,name
-		      :default-directory ,el-get-dir
-		      :program ,git-executable
-		      :args ( "--no-pager" "svn" "clone" ,url ,pname)
-		      :message ,ok
-		      :error ,ko)
+                      :buffer-name ,name
+                      :default-directory ,el-get-dir
+                      :program ,git-executable
+                      :args ( "--no-pager" "svn" "clone" ,url ,pname)
+                      :message ,ok
+                      :error ,ko)
       (when checkout
         (list :command-name (format "*git checkout %s*" checkout)
               :buffer-name name
@@ -47,41 +47,41 @@
               :args (list "--no-pager" "checkout" checkout)
               :message (format "git checkout %s ok" checkout)
               :error (format "Could not checkout %s for package %s" checkout package))))
-       post-install-fun)))
+     post-install-fun)))
 
 (defun el-get-git-svn-update (package url post-update-fun)
   "Update PACKAGE using git-svn. URL is given for compatibility reasons."
   (let ((git-executable (el-get-executable-find "git"))
-	(pdir   (el-get-package-directory package))
-	(f-name (format "*git svn fetch %s*" package))
-	(f-ok   (format "Fetched package %s." package))
-	(f-ko   (format "Could not fetch package %s." package))
-	(r-name (format "*git svn rebase %s*" package))
-	(r-ok   (format "Rebased package %s." package))
-	(r-ko   (format "Could not rebase package %s." package)))
+        (pdir   (el-get-package-directory package))
+        (f-name (format "*git svn fetch %s*" package))
+        (f-ok   (format "Fetched package %s." package))
+        (f-ko   (format "Could not fetch package %s." package))
+        (r-name (format "*git svn rebase %s*" package))
+        (r-ok   (format "Rebased package %s." package))
+        (r-ko   (format "Could not rebase package %s." package)))
 
     (el-get-start-process-list
      package
      `((:command-name ,f-name
-		      :buffer-name ,f-name
-		      :default-directory ,pdir
-		      :program ,git-executable
-		      :args ("--no-pager" "svn" "fetch")
-		      :message ,f-ok
-		      :error ,f-ko)
+                      :buffer-name ,f-name
+                      :default-directory ,pdir
+                      :program ,git-executable
+                      :args ("--no-pager" "svn" "fetch")
+                      :message ,f-ok
+                      :error ,f-ko)
 
        (:command-name ,r-name
-		      :buffer-name ,r-name
-		      :default-directory ,pdir
-		      :program ,git-executable
-		      :args ("--no-pager" "svn" "rebase")
-		      :message ,r-ok
-		      :error ,r-ko))
+                      :buffer-name ,r-name
+                      :default-directory ,pdir
+                      :program ,git-executable
+                      :args ("--no-pager" "svn" "rebase")
+                      :message ,r-ok
+                      :error ,r-ko))
      post-update-fun)))
 
 (el-get-register-derived-method :git-svn :git
-  :install #'el-get-git-svn-clone
-  :update #'el-get-git-svn-update
-  :install-hook #'el-get-git-svn-clone-hook)
+                                :install #'el-get-git-svn-clone
+                                :update #'el-get-git-svn-update
+                                :install-hook #'el-get-git-svn-clone-hook)
 
 (provide 'el-get-git-svn)

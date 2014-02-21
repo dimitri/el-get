@@ -3,4 +3,4 @@
        :description "Emacs extension to provide easy nosetest integration."
        :type emacsmirror
        :pkgname nose
-)
+       )

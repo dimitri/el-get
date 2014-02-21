@@ -39,7 +39,7 @@
                                   :features (,pkg)
                                   :type http
                                   :url ,(concat "file://" pkg-source))))
-	 (el-get-packages (mapcar 'el-get-source-name el-get-sources)))
+         (el-get-packages (mapcar 'el-get-source-name el-get-sources)))
     (make-directory el-get-dir t)
     (unwind-protect
         (progn
@@ -67,5 +67,5 @@
           (should-not (file-exists-p pkg-destination)))
       (delete-file pkg-source))))
 
-;(featurep 'el-get-trivial-install-test)
-;(unload-feature 'el-get-trivial-install-test)
+                                        ;(featurep 'el-get-trivial-install-test)
+                                        ;(unload-feature 'el-get-trivial-install-test)

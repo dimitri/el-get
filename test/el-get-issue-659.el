@@ -28,26 +28,26 @@
                 :lazy nil))
        (el-get-sources
         (list initial-source))
-      (update-source
-       (append '(:features nil
-                           :lazy t
-                           :before (message "Before A")
-                           :after (message "After A")
-                           :load "a.el"
-                           :library "a"
-                           ;; This should not cause an error because it matches the
-                           ;; cached value.
-                           :prepare (message "Preparing A"))
-               initial-source))
-      (update-source-2
-       (append '(:lazy nil
-                       :before (message "Before A2")
-                       :after (progn (setq second-update-succeeded t)
-                                     (message "After A2")))
-               initial-source))
-      (invalid-update-source
-       (append '(:non-updatable-property value)
-               initial-source)))
+       (update-source
+        (append '(:features nil
+                            :lazy t
+                            :before (message "Before A")
+                            :after (message "After A")
+                            :load "a.el"
+                            :library "a"
+                            ;; This should not cause an error because it matches the
+                            ;; cached value.
+                            :prepare (message "Preparing A"))
+                initial-source))
+       (update-source-2
+        (append '(:lazy nil
+                        :before (message "Before A2")
+                        :after (progn (setq second-update-succeeded t)
+                                      (message "After A2")))
+                initial-source))
+       (invalid-update-source
+        (append '(:non-updatable-property value)
+                initial-source)))
   ;; Install A
   (el-get 'sync 'a)
   (require 'a)
@@ -72,4 +72,4 @@
     (el-get-init 'a))
   (assert (bound-and-true-p second-update-succeeded) nil
           "el-get-init should auto-update the recipe")
-)
+  )

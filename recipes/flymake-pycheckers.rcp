@@ -5,4 +5,4 @@
        :website "http://github.com/dholm/flymake-pycheckers"
        :prepare (setq pycheckers-command
                       (expand-file-name
-		       (concat (el-get-package-directory "flymake-pycheckers") "pycheckers"))))
+                       (concat (el-get-package-directory "flymake-pycheckers") "pycheckers"))))

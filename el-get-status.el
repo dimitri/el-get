@@ -65,9 +65,9 @@
              (append package-status-alist
                      (list  ; alist of (PACKAGE . PROPERTIES-LIST)
                       (cons package (list 'status status 'recipe recipe)))))
-                (lambda (p1 p2)
-                  (string< (el-get-as-string (car p1))
-                           (el-get-as-string (car p2)))))))
+           (lambda (p1 p2)
+             (string< (el-get-as-string (car p1))
+                      (el-get-as-string (car p2)))))))
     (assert (listp recipe) nil
             "Recipe must be a list")
     (with-temp-file el-get-status-file
@@ -160,7 +160,7 @@
   "Return package names that are currently in given status"
   (loop for (p . prop) in package-status-alist
         for s = (plist-get prop 'status)
-	when (member s statuses)
+        when (member s statuses)
         collect (el-get-as-string p)))
 
 (defun el-get-list-package-names-with-status (&rest statuses)
@@ -187,10 +187,10 @@
 (defun el-get-extra-packages (&rest packages)
   "Return installed or required packages that are not in given package list"
   (let ((packages
-	 ;; &rest could contain both symbols and lists
-	 (loop for p in packages
-	       when (listp p) append (mapcar 'el-get-as-symbol p)
-	       else collect (el-get-as-symbol p))))
+         ;; &rest could contain both symbols and lists
+         (loop for p in packages
+               when (listp p) append (mapcar 'el-get-as-symbol p)
+               else collect (el-get-as-symbol p))))
     (when packages
       (loop for (p . prop) in (el-get-read-status-file)
             for s = (plist-get prop 'status)
@@ -314,12 +314,12 @@ t', this error is suppressed (but nothing is updated)."
     (unless (el-get-package-is-installed package)
       (error "Package %s is not installed. Cannot update recipe." package))
     (destructuring-bind (update-p added-disallowed removed-disallowed)
-        (el-get-diagnosis-properties cached-recipe source)
-      (when (or added-disallowed removed-disallowed)
-        ;; Emit a verbose message if `noerror' is t (but still quit
-        ;; the function).
-        (funcall (if noerror 'el-get-verbose-message 'error)
-                 "Tried to add non-whitelisted properties:
+                        (el-get-diagnosis-properties cached-recipe source)
+                        (when (or added-disallowed removed-disallowed)
+                          ;; Emit a verbose message if `noerror' is t (but still quit
+                          ;; the function).
+                          (funcall (if noerror 'el-get-verbose-message 'error)
+                                   "Tried to add non-whitelisted properties:
 
 %s
 
@@ -331,15 +331,15 @@ into/from source:
 
 %s
 Maybe you should use `el-get-update' or `el-get-reinstall' on %s instead?"
-                 (if   added-disallowed (pp-to-string   added-disallowed) "()")
-                 (if removed-disallowed (pp-to-string removed-disallowed) "()")
-                 (pp-to-string cached-recipe)
-                 (el-get-source-name cached-recipe))
-        (return-from el-get-merge-properties-into-status))
-      (when update-p
-        (if save-to-file
-            (el-get-save-package-status package "installed" source)
-          (plist-put (cdr (assq package package-status-alist))
-                     'recipe source))))))
+                                   (if   added-disallowed (pp-to-string   added-disallowed) "()")
+                                   (if removed-disallowed (pp-to-string removed-disallowed) "()")
+                                   (pp-to-string cached-recipe)
+                                   (el-get-source-name cached-recipe))
+                          (return-from el-get-merge-properties-into-status))
+                        (when update-p
+                          (if save-to-file
+                              (el-get-save-package-status package "installed" source)
+                            (plist-put (cdr (assq package package-status-alist))
+                                       'recipe source))))))
 
 (provide 'el-get-status)

@@ -42,7 +42,7 @@
     (el-get-github-guess-website package)))
 
 (el-get-register-derived-method :emacsmirror :github
-  :install #'el-get-emacsmirror-clone
-  :guess-website #'el-get-emacsmirror-guess-website)
+                                :install #'el-get-emacsmirror-clone
+                                :guess-website #'el-get-emacsmirror-guess-website)
 
 (provide 'el-get-emacsmirror)

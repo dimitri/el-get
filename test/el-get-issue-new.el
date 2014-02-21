@@ -32,26 +32,26 @@ values provided in arguments after corresponding keys."
 ;;; Archives
 
 (create-package-archive old-archive-path
-    :name 'dummy-funny
-    :desc "This package goes in archive that was part of `package-archives'"
-    :version "0.3")
+                        :name 'dummy-funny
+                        :desc "This package goes in archive that was part of `package-archives'"
+                        :version "0.3")
 
 (create-package-archive new-archive-path
-    :name 'dummy-whammy
-    :desc "This package goes in archive that was introduced through a recipe"
-    :version "0.8")
+                        :name 'dummy-whammy
+                        :desc "This package goes in archive that was introduced through a recipe"
+                        :version "0.8")
 
 ;;; Recipes
 
 (add-to-list 'el-get-sources
              `(:name dummy-funny
-               :type elpa
-               :repo ("old-archive" . ,old-archive-path)))
+                     :type elpa
+                     :repo ("old-archive" . ,old-archive-path)))
 
 (add-to-list 'el-get-sources
              `(:name dummy-whammy
-               :type elpa
-               :repo ("new-archive" . ,new-archive-path)))
+                     :type elpa
+                     :repo ("new-archive" . ,new-archive-path)))
 
 ;; Only old-archive is specified in `package-archives' and will remain
 ;; active regardless of recipe.

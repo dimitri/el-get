@@ -4,22 +4,22 @@
        :type github
        :pkgname "wanderlust/wanderlust"
        :build (mapcar
-           (lambda (target-and-dirs)
-         (list el-get-emacs
-               (mapcar (lambda (pkg)
-                 (mapcar (lambda (d) `("-L" ,d)) (el-get-load-path pkg)))
-                   (append
-                '("apel" "flim" "semi")
-                (when (el-get-package-exists-p "bbdb") (list "bbdb"))))
-               "--eval" (el-get-print-to-string
-                 '(progn (setq wl-install-utils t)
-                     (setq wl-info-lang "en")
-                     (setq wl-news-lang "en")))
+               (lambda (target-and-dirs)
+                 (list el-get-emacs
+                       (mapcar (lambda (pkg)
+                                 (mapcar (lambda (d) `("-L" ,d)) (el-get-load-path pkg)))
+                               (append
+                                '("apel" "flim" "semi")
+                                (when (el-get-package-exists-p "bbdb") (list "bbdb"))))
+                       "--eval" (el-get-print-to-string
+                                 '(progn (setq wl-install-utils t)
+                                         (setq wl-info-lang "en")
+                                         (setq wl-news-lang "en")))
 
-               (split-string "-batch -q -no-site-file -l WL-MK -f")
-               target-and-dirs))
-       '(("wl-texinfo-format" "doc")
-     ("compile-wl-package"  "site-lisp" "icons")
-     ("install-wl-package" "site-lisp" "icons")))
+                       (split-string "-batch -q -no-site-file -l WL-MK -f")
+                       target-and-dirs))
+               '(("wl-texinfo-format" "doc")
+                 ("compile-wl-package"  "site-lisp" "icons")
+                 ("install-wl-package" "site-lisp" "icons")))
        :info "doc/wl.info"
        :load-path ("site-lisp/wl" "utils"))

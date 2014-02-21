@@ -69,15 +69,15 @@ Will automatically compile the init file as needed and load the
 compiled version."
   (when el-get-user-package-directory
     (let* ((init-file-name (format "init-%s.el" package))
-	   (package-init-file
-	    (expand-file-name init-file-name el-get-user-package-directory))
-	   (file-name-no-extension (file-name-sans-extension package-init-file))
-	   (compiled-init-file (concat file-name-no-extension ".elc")))
+           (package-init-file
+            (expand-file-name init-file-name el-get-user-package-directory))
+           (file-name-no-extension (file-name-sans-extension package-init-file))
+           (compiled-init-file (concat file-name-no-extension ".elc")))
       (when (file-exists-p package-init-file)
-	(when el-get-byte-compile
-	  (el-get-byte-compile-file package-init-file))
-	(el-get-verbose-message "el-get: load %S" file-name-no-extension)
-	(load file-name-no-extension 'noerror)))))
+        (when el-get-byte-compile
+          (el-get-byte-compile-file package-init-file))
+        (el-get-verbose-message "el-get: load %S" file-name-no-extension)
+        (load file-name-no-extension 'noerror)))))
 
 (defun el-get-recipe-dirs ()
   "Return the elements of `el-get-recipe-path' that actually exist.
@@ -107,18 +107,18 @@ Used to avoid errors when exploring the path for recipes"
 (defun el-get-recipe-filename (package)
   "Return the name of the file that contains the recipe for PACKAGE, if any."
   (let ((package-el  (concat (el-get-as-string package) ".el"))
-	(package-rcp (concat (el-get-as-string package) ".rcp")))
+        (package-rcp (concat (el-get-as-string package) ".rcp")))
     (loop for dir in el-get-recipe-path
-	  for recipe-el  = (expand-file-name package-el dir)
-	  for recipe-rcp = (expand-file-name package-rcp dir)
-	  if (file-exists-p recipe-el)  return recipe-el
-	  if (file-exists-p recipe-rcp) return recipe-rcp)))
+          for recipe-el  = (expand-file-name package-el dir)
+          for recipe-rcp = (expand-file-name package-rcp dir)
+          if (file-exists-p recipe-el)  return recipe-el
+          if (file-exists-p recipe-rcp) return recipe-rcp)))
 
 (defun el-get-read-recipe (package)
   "Return the source definition for PACKAGE, from the recipes."
   (let ((filename (el-get-recipe-filename package)))
     (if filename
-	(el-get-read-recipe-file filename)
+        (el-get-read-recipe-file filename)
       (error "El-get can not find a recipe for package \"%s\"" package))))
 
 (defun el-get-read-all-recipe-files ()
@@ -154,23 +154,23 @@ in `el-get-recipe-path' in order."
 (defun el-get-package-def (package)
   "Return a single `el-get-sources' entry for PACKAGE."
   (let ((source (loop for src in el-get-sources
-		      when (string= package (el-get-source-name src))
-		      return src)))
+                      when (string= package (el-get-source-name src))
+                      return src)))
 
     (cond ((or (null source) (symbolp source))
-	   ;; not in `el-get-sources', or only mentioned by name
-	   ;; (compatibility from pre 3.1 era)
-	   (el-get-read-recipe package))
+           ;; not in `el-get-sources', or only mentioned by name
+           ;; (compatibility from pre 3.1 era)
+           (el-get-read-recipe package))
 
-	  ((null (plist-get source :type))
-	   ;; we got a list with no :type, that's an override plist
-	   (loop with def = (el-get-read-recipe package)
-		 for (prop override) on source by 'cddr
-		 do (plist-put def prop override)
-		 finally return def))
+          ((null (plist-get source :type))
+           ;; we got a list with no :type, that's an override plist
+           (loop with def = (el-get-read-recipe package)
+                 for (prop override) on source by 'cddr
+                 do (plist-put def prop override)
+                 finally return def))
 
-	  ;; none of the previous, must be a full definition
-	  (t source))))
+          ;; none of the previous, must be a full definition
+          (t source))))
 
 (defun el-get-package-method (package-or-source)
   "Return the :type property (called method) of PACKAGE-OR-SOURCE.
@@ -199,22 +199,22 @@ which defaults to installed, required and removed.  Example:
 
   (el-get-package-types-alist \"installed\" 'http 'cvs)"
   (loop for src in (apply 'el-get-list-package-names-with-status
-			  (cond ((stringp statuses) (list statuses))
-				((null statuses) '("installed" "required"
+                          (cond ((stringp statuses) (list statuses))
+                                ((null statuses) '("installed" "required"
                                                    "removed"))
-				(t statuses)))
-	for name = (el-get-as-symbol src)
-	for type = (el-get-package-type name)
-	when (or (null types) (memq 'all types) (memq type types))
-	collect (cons name type)))
+                                (t statuses)))
+        for name = (el-get-as-symbol src)
+        for type = (el-get-package-type name)
+        when (or (null types) (memq 'all types) (memq type types))
+        collect (cons name type)))
 
 (defun el-get-package-required-emacs-version (package-or-source)
   (let* ((def (if (or (symbolp package-or-source) (stringp package-or-source))
                   (el-get-package-def package-or-source)
                 package-or-source)))
     (el-get-plist-get-with-default
-        def :minimum-emacs-version
-      0)))
+     def :minimum-emacs-version
+     0)))
 
 (defun el-get-version-to-list (version)
   "Convert VERSION to a standard version list.
@@ -330,24 +330,24 @@ object or a file path."
                    (incf numerror)))
         (destructuring-bind (&key type url autoloads features builtin
                                   &allow-other-keys)
-            recipe
-          ;; Is github type used?
-          (when (and (eq type 'git) (string-match "//github.com/" url))
-            (insert "* Use `:type github' for github type recipe\n")
-            (incf numerror))
-          ;; Warn when `:autoloads nil' is specified.
-          (when (and (null autoloads) (plist-member recipe :autoloads))
-            (insert "* WARNING: Are you sure you don't need autoloads?
+                            recipe
+                            ;; Is github type used?
+                            (when (and (eq type 'git) (string-match "//github.com/" url))
+                              (insert "* Use `:type github' for github type recipe\n")
+                              (incf numerror))
+                            ;; Warn when `:autoloads nil' is specified.
+                            (when (and (null autoloads) (plist-member recipe :autoloads))
+                              (insert "* WARNING: Are you sure you don't need autoloads?
   This property should be used only when the library takes care of
   the autoload.\n"))
-          ;; Warn when `:features t' is specified
-          (when features
-            (insert "* WARNING: Are you sure you need features?
+                            ;; Warn when `:features t' is specified
+                            (when features
+                              (insert "* WARNING: Are you sure you need features?
   If this library has `;;;###autoload' comment (a.k.a autoload cookie),
   you don't need `:features'.\n"))
-          ;; Check if `:builtin' is used with an integer
-          (when (integerp builtin)
-            (insert "* WARNING: Usage of integers for :builtin is obsolete.
+                            ;; Check if `:builtin' is used with an integer
+                            (when (integerp builtin)
+                              (insert "* WARNING: Usage of integers for :builtin is obsolete.
   Use a version string like \"24.3\" instead.\n")))
         ;; Check for required properties.
         (loop for key in '(:description :name)

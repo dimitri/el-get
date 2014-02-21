@@ -41,14 +41,14 @@
 (define-widget 'el-get-symbol 'symbol
   "A string or a symbol, rendered as a symbol"
   :match 'el-get-symbol-match
-)
+  )
 ;;; END "Fuzzy" data structure support
 
 (defconst el-get-build-recipe-body
   '(choice :tag "Format"
 
            (repeat :tag "List of shell commands"
-                    (string :doc "Note: arguments will not be shell-quoted.
+                   (string :doc "Note: arguments will not be shell-quoted.
 Choose `Evaluated expression' format for a more portable recipe" :format "%v%h"))
            (sexp :tag "Evaluated expression" :format "%t: %v%h"
                  :value `(("./configure" ,(concat "--with-emacs=" el-get-emacs)) ("make") ("make" ("install")))

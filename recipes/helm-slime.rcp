@@ -5,4 +5,4 @@
        :features helm-slime
        :depends (helm slime)
        :post-init (progn
-                 (require 'slime-c-p-c)))
+                    (require 'slime-c-p-c)))

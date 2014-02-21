@@ -5,15 +5,15 @@
        :branch "flim-1_14-wl"
        :pkgname "wanderlust/flim"
        :build
-        (mapcar
-         (lambda (target)
-           (list el-get-emacs
-                 (mapcar (lambda (pkg)
-                           (mapcar (lambda (d) `("-L" ,d)) (el-get-load-path pkg)))
-                         '("apel"))
+       (mapcar
+        (lambda (target)
+          (list el-get-emacs
+                (mapcar (lambda (pkg)
+                          (mapcar (lambda (d) `("-L" ,d)) (el-get-load-path pkg)))
+                        '("apel"))
 
-                 (split-string "-batch -q -no-site-file -l FLIM-MK -f")
-                 target
-                 "prefix" "site-lisp" "site-lisp"))
-         '("compile-flim" "install-flim"))
+                (split-string "-batch -q -no-site-file -l FLIM-MK -f")
+                target
+                "prefix" "site-lisp" "site-lisp"))
+        '("compile-flim" "install-flim"))
        :load-path ("site-lisp/flim"))

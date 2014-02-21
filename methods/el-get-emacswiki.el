@@ -45,9 +45,9 @@ filename.el ;;; filename.el --- description"
   (format "%s%s.el" el-get-emacswiki-base-url package))
 
 (el-get-register-derived-method :emacswiki :http
-  :install #'el-get-emacswiki-install
-  :update #'el-get-emacswiki-install
-  :guess-website #'el-get-emacswiki-guess-website)
+                                :install #'el-get-emacswiki-install
+                                :update #'el-get-emacswiki-install
+                                :guess-website #'el-get-emacswiki-guess-website)
 
 ;;;
 ;;; Functions to maintain a local recipe list from EmacsWiki
@@ -55,30 +55,30 @@ filename.el ;;; filename.el --- description"
 (defun el-get-emacswiki-retrieve-package-list ()
   "return a list of (URL PACKAGE DESCRIPTION) from emacswiki"
   (loop for line in
-	(split-string
-	 (with-current-buffer
-	     (url-retrieve-synchronously el-get-emacswiki-elisp-file-list-url)
-	   ;; prune HTTP headers
-	   (goto-char (point-min))
-	   (re-search-forward "^$" nil 'move)
-	   (forward-char)
-	   (delete-region (point-min) (point))
-	   (buffer-string))
-	 "\n")
-	for filename = (substring line 0 (string-match " " line))
-	for description = (if (string-match "--?-? " line)
-			      (substring line (match-end 0)) "")
-	for url = (format "%s%s" el-get-emacswiki-base-url filename)
-	collect (list url filename description)))
+        (split-string
+         (with-current-buffer
+             (url-retrieve-synchronously el-get-emacswiki-elisp-file-list-url)
+           ;; prune HTTP headers
+           (goto-char (point-min))
+           (re-search-forward "^$" nil 'move)
+           (forward-char)
+           (delete-region (point-min) (point))
+           (buffer-string))
+         "\n")
+        for filename = (substring line 0 (string-match " " line))
+        for description = (if (string-match "--?-? " line)
+                              (substring line (match-end 0)) "")
+        for url = (format "%s%s" el-get-emacswiki-base-url filename)
+        collect (list url filename description)))
 
 (defun el-get-emacswiki-build-local-recipes (&optional target-dir)
   "retrieve the index of elisp pages at emacswiki and turn them
 into a local recipe file set"
   (interactive)
   (let ((target-dir (or target-dir
-			(car command-line-args-left)
-			el-get-recipe-path-emacswiki))
-	(coding-system-for-write 'utf-8))
+                        (car command-line-args-left)
+                        el-get-recipe-path-emacswiki))
+        (coding-system-for-write 'utf-8))
     (unless (file-directory-p target-dir) (make-directory target-dir 'recursive))
     (loop
      for (url package description) in (el-get-emacswiki-retrieve-package-list)
@@ -86,13 +86,13 @@ into a local recipe file set"
      for rfile  = (expand-file-name recipe target-dir)
      unless (file-exists-p rfile)
      do (with-temp-file (expand-file-name rfile target-dir)
-	  (message "%s: %s" package description)
-	  (insert
-	   (format
-	    "(:name %s\n:auto-generated t\n:type emacswiki\n:description \"%s\"\n:website \"%s\")\n"
-	    (file-name-sans-extension package) description url))
-	  ;; (encode-coding-region (point-min) (point-max) 'utf-8)
-	  (indent-region (point-min) (point-max))))))
+          (message "%s: %s" package description)
+          (insert
+           (format
+            "(:name %s\n:auto-generated t\n:type emacswiki\n:description \"%s\"\n:website \"%s\")\n"
+            (file-name-sans-extension package) description url))
+          ;; (encode-coding-region (point-min) (point-max) 'utf-8)
+          (indent-region (point-min) (point-max))))))
 
 ;;;###autoload
 (defun el-get-emacswiki-refresh (&optional target-dir in-process)
@@ -105,9 +105,9 @@ this with a prefix arg (noninteractively: set optional arg
 `in-process' non-nil)."
   (interactive
    (list (let ((dummy (unless (file-directory-p el-get-recipe-path-emacswiki)
-			(make-directory el-get-recipe-path-emacswiki))))
-	   (read-directory-name "emacswiki recipes go to: "
-				el-get-recipe-path-emacswiki))
+                        (make-directory el-get-recipe-path-emacswiki))))
+           (read-directory-name "emacswiki recipes go to: "
+                                el-get-recipe-path-emacswiki))
          current-prefix-arg))
   (if in-process
       (progn

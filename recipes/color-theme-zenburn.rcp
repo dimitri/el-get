@@ -4,4 +4,4 @@
        :type github
        :pkgname "bbatsov/zenburn-emacs"
        :post-init (add-to-list 'custom-theme-load-path
-			       default-directory))
+                               default-directory))

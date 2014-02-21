@@ -8,7 +8,7 @@
   "0")
 
 (el-get-register-derived-method :builtin-with-checksum :builtin
-  :compute-checksum #'el-get-builtin-compute-checksum)
+                                :compute-checksum #'el-get-builtin-compute-checksum)
 
 (setq debug-on-error t
       el-get-verbose t

@@ -3,5 +3,5 @@
        :type github
        :pkgname "purcell/skewer-less"
        :depends (skewer-mode)
-       
+
        )

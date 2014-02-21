@@ -2,4 +2,4 @@
        :description "Insert operators with surrounding spaces smartly."
        :type github
        :pkgname "xwl/smart-operator"
-)
+       )

@@ -5,8 +5,8 @@
        :load-path ("./emacs")
        :build ("LC_MESSAGES=C ./make-wc.sh --prefix=`pwd`/build\
                --disable-gnome-applet --disable-fep --without-gtk2"
-           "make"
-           "make install")
+               "make"
+               "make install")
        :post-init
        ((setq uim-el-agent (concat
                             (file-name-as-directory

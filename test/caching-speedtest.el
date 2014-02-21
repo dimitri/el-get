@@ -15,7 +15,7 @@
 (defmacro suppress-messages (&rest body)
   "Run body with `message' redefined as a no-op."
   `(flet ((message (&rest ignored) nil))
-     (progn ,@body)))
+         (progn ,@body)))
 (put 'suppress-messages 'lisp-indent-function
      (get 'progn 'lisp-indent-function))
 

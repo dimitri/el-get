@@ -36,7 +36,7 @@
   (unless (file-exists-p file)
     (write-region
      (replace-regexp-in-string ";; no-byte-compile: t\n" ""
-			       (autoload-rubric file)) nil file)))
+                               (autoload-rubric file)) nil file)))
 
 (defun el-get-load-fast (file)
   "Load the compiled version of FILE if it exists; else load FILE verbatim"
@@ -123,8 +123,8 @@ is nil, marks all installed packages as needing new autoloads."
        (concat (file-name-sans-extension el-get-autoload-file) ".elc"))))
 
   (let ((packages
-	 (if package (list package)
-	   (el-get-list-package-names-with-status "installed"))))
+         (if package (list package)
+           (el-get-list-package-names-with-status "installed"))))
     (mapc 'el-get-update-autoloads packages)))
 
 (provide 'el-get-autoloads)

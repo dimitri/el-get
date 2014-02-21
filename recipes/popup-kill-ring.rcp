@@ -1,4 +1,4 @@
 (:name popup-kill-ring
-	   :description "Interactively insert item from kill-ring"
-	   :type emacswiki
-	   :depends (popup pos-tip))
+       :description "Interactively insert item from kill-ring"
+       :type emacswiki
+       :depends (popup pos-tip))

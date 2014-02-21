@@ -205,17 +205,17 @@
 ;;
 ;; Now load the rest of the el-get code
 ;;
-(require 'el-get-core)			; core facilities used everywhere
-(require 'el-get-custom)		; user tweaks and `el-get-sources'
-(require 'el-get-methods)		; support for `el-get-methods', backends
-(require 'el-get-recipes)		; support for dealing with recipes
-(require 'el-get-status)		; support for dealing with status
-(require 'el-get-build)			; building packages
-(require 'el-get-byte-compile)		; byte compiling in a subprocess
-(require 'el-get-dependencies)		; topological-sort of package dep graph
-(require 'el-get-notify)		; notification support (dbus, growl...)
-(require 'el-get-list-packages)		; menu and `el-get-describe' facilities
-(require 'el-get-autoloads)		; manages updating el-get's loaddefs.el
+(require 'el-get-core)                  ; core facilities used everywhere
+(require 'el-get-custom)                ; user tweaks and `el-get-sources'
+(require 'el-get-methods)               ; support for `el-get-methods', backends
+(require 'el-get-recipes)               ; support for dealing with recipes
+(require 'el-get-status)                ; support for dealing with status
+(require 'el-get-build)                 ; building packages
+(require 'el-get-byte-compile)          ; byte compiling in a subprocess
+(require 'el-get-dependencies)          ; topological-sort of package dep graph
+(require 'el-get-notify)                ; notification support (dbus, growl...)
+(require 'el-get-list-packages)         ; menu and `el-get-describe' facilities
+(require 'el-get-autoloads)             ; manages updating el-get's loaddefs.el
 
 ;;
 ;; And then define some more code-level customs.  They stay here so that
@@ -319,7 +319,7 @@ updated when the package itself is."
   "Message the current el-get version"
   (interactive)
   (let ((version
-	 (let ((default-directory (file-name-directory el-get-script)))
+         (let ((default-directory (file-name-directory el-get-script)))
            (concat el-get-version "."
                    (shell-command-to-string
                     "git --no-pager log -n1 --format=format:%h")))))
@@ -357,7 +357,7 @@ Completions are offered from all known package names, after
 removing any packages in FILTERED."
   (let ((packages   (el-get-read-all-recipe-names)))
     (completing-read (format "%s package: " action)
-		     (set-difference packages filtered :test 'string=) nil t)))
+                     (set-difference packages filtered :test 'string=) nil t)))
 
 (defun el-get-read-recipe-name (action)
   "Ask user for a recipe name, with completion from the list of known recipe files.
@@ -373,15 +373,15 @@ If no recipe file exists for PACKAGE, create a new one in DIR,
 which defaults to the first element in `el-get-recipe-path'."
   (interactive (list (el-get-read-recipe-name "Find or create")))
   (let* ((package-el (concat (el-get-as-string package) ".rcp"))
-	 (recipe-file (or
-		       ;; If dir was specified, open or create the
-		       ;; recipe file in that directory.
-		       (when dir (expand-file-name package-el dir))
-		       ;; Next, try to find an existing recipe file anywhere.
-		       (el-get-recipe-filename package)
-		       ;; Lastly, create a new recipe file in the first
-		       ;; directory in `el-get-recipe-path'
-		       (expand-file-name package-el
+         (recipe-file (or
+                       ;; If dir was specified, open or create the
+                       ;; recipe file in that directory.
+                       (when dir (expand-file-name package-el dir))
+                       ;; Next, try to find an existing recipe file anywhere.
+                       (el-get-recipe-filename package)
+                       ;; Lastly, create a new recipe file in the first
+                       ;; directory in `el-get-recipe-path'
+                       (expand-file-name package-el
                                          (car el-get-recipe-path)))))
     (find-file recipe-file)))
 
@@ -411,37 +411,37 @@ which defaults to the first element in `el-get-recipe-path'."
                  form))
          ;; Allow either function (symbol or lambda) or single lisp form
          (form
-         (cond
-          ;; Nil means do nothing
-          ((null form) nil)
-          ;; A symbol is the name of a function to call
-          ((symbolp form)
-           ;; Convert it to a quoted call to that function
-           (prog1 `(,form)
-             (warn "The :%s form for package %s uses the old-style function form instead of a lisp form. The value should be changed from `%S' to `%S'"
-                   fname package form `(,form))
-             (unless (symbol-function form)
-               (warn "The function %s, which is called in the :%s form for package %s, does not seem to be defined. Calling it will probably fail."
-                     form fname package))))
-          ;; A non-symbol function (like a lambda or something)
-          ((functionp form)
-           ;; Convert it to a quoted call to that function
-           (prog1 `(,form)
-             (if (and (listp form)
-                      (equal (subseq form 0 2) '(lambda ())))
-                 ;; It's a zero-arg function, so it can be trivially
-                 ;; rewritten as a progn. Inform the user of such.
-                 (warn "The :%s form for package %s uses the old-style lambda form instead of a lisp form. The leading \"(lambda ()\" should be replaced with \"(progn\"."
-                       fname package)
-               ;; Otherwise, provide a less informative warning
-               (warn "The :%s form for package %s uses the old-style function form instead of a lisp form."
-                     fname package))))
-          ;; A list is interpreted as a single lisp form to be passed
-          ;; directly to `eval'.
-          ((listp form) form)
-          ;; Anything else is an error
-          (t (error "Unknown :%s form for package %s: `%S'"
-                    fname package form)))))
+          (cond
+           ;; Nil means do nothing
+           ((null form) nil)
+           ;; A symbol is the name of a function to call
+           ((symbolp form)
+            ;; Convert it to a quoted call to that function
+            (prog1 `(,form)
+              (warn "The :%s form for package %s uses the old-style function form instead of a lisp form. The value should be changed from `%S' to `%S'"
+                    fname package form `(,form))
+              (unless (symbol-function form)
+                (warn "The function %s, which is called in the :%s form for package %s, does not seem to be defined. Calling it will probably fail."
+                      form fname package))))
+           ;; A non-symbol function (like a lambda or something)
+           ((functionp form)
+            ;; Convert it to a quoted call to that function
+            (prog1 `(,form)
+              (if (and (listp form)
+                       (equal (subseq form 0 2) '(lambda ())))
+                  ;; It's a zero-arg function, so it can be trivially
+                  ;; rewritten as a progn. Inform the user of such.
+                  (warn "The :%s form for package %s uses the old-style lambda form instead of a lisp form. The leading \"(lambda ()\" should be replaced with \"(progn\"."
+                        fname package)
+                ;; Otherwise, provide a less informative warning
+                (warn "The :%s form for package %s uses the old-style function form instead of a lisp form."
+                      fname package))))
+           ;; A list is interpreted as a single lisp form to be passed
+           ;; directly to `eval'.
+           ((listp form) form)
+           ;; Anything else is an error
+           (t (error "Unknown :%s form for package %s: `%S'"
+                     fname package form)))))
     (when form
       (assert (listp form))
       (el-get-verbose-message "el-get: Evaluating :%s form for package %s"
@@ -454,7 +454,7 @@ which defaults to the first element in `el-get-recipe-path'."
 (defun el-get-lazy-run-package-support (form fname package)
   "Like `el-get-run-package-support', but using `eval-after-load' to wait until PACKAGE is loaded."
   (el-get-eval-after-load package
-    `(el-get-run-package-support ',form ',fname ',package)))
+                          `(el-get-run-package-support ',form ',fname ',package)))
 
 
 (defun el-get-init (package &optional package-status-alist)
@@ -487,7 +487,7 @@ called by `el-get' (usually at startup) for each installed package."
              (feats    (el-get-as-list (plist-get source :features)))
              (el-path  (el-get-as-list (el-get-load-path package)))
              (lazy     (el-get-plist-get-with-default source :lazy
-                         el-get-is-lazy))
+                                                      el-get-is-lazy))
              (prepare  (plist-get source :prepare))
              (before   (plist-get source :before))
              (postinit (plist-get source :post-init))
@@ -497,29 +497,29 @@ called by `el-get' (usually at startup) for each installed package."
 
         (el-get-error-unless-required-emacs-version source)
 
-	;; a builtin package initialisation is about calling recipe and user
-	;; code only, no load-path nor byte-compiling support needed here.
-	(unless (eq method 'builtin)
-	  ;; append entries to load-path and Info-directory-list
-	  (unless (member method '(apt-get fink pacman))
-	    ;; append entries to load-path
-	    (dolist (path el-path)
-	      (el-get-add-path-to-list package 'load-path path))
-	    ;;  and Info-directory-list
-	    (el-get-install-or-init-info package 'init))
+        ;; a builtin package initialisation is about calling recipe and user
+        ;; code only, no load-path nor byte-compiling support needed here.
+        (unless (eq method 'builtin)
+          ;; append entries to load-path and Info-directory-list
+          (unless (member method '(apt-get fink pacman))
+            ;; append entries to load-path
+            (dolist (path el-path)
+              (el-get-add-path-to-list package 'load-path path))
+            ;;  and Info-directory-list
+            (el-get-install-or-init-info package 'init))
 
-	  (when el-get-byte-compile-at-init
-	    ;; If the package has been updated outside el-get, the .el files will be
-	    ;; out of date, so just check if we need to recompile them.
-	    ;;
-	    ;; when using el-get-update to update packages, though, there's no
-	    ;; need to byte compile at init.
-	    (el-get-byte-compile package))
+          (when el-get-byte-compile-at-init
+            ;; If the package has been updated outside el-get, the .el files will be
+            ;; out of date, so just check if we need to recompile them.
+            ;;
+            ;; when using el-get-update to update packages, though, there's no
+            ;; need to byte compile at init.
+            (el-get-byte-compile package))
 
-	  ;; load any autoloads file if needed
-	  (unless (eq autoloads t)
-	    (dolist (file (el-get-as-list autoloads))
-	      (el-get-load-fast file))))
+          ;; load any autoloads file if needed
+          (unless (eq autoloads t)
+            (dolist (file (el-get-as-list autoloads))
+              (el-get-load-fast file))))
 
         ;; first, the :prepare function, usually defined in the recipe
         (el-get-run-package-support prepare "prepare" package)
@@ -559,8 +559,8 @@ called by `el-get' (usually at startup) for each installed package."
           (funcall el-get-maybe-lazy-runsupp
                    after "after" package)))
     (debug error
-     (el-get-installation-failed package err)))
-    ;; and call the global init hooks
+           (el-get-installation-failed package err)))
+  ;; and call the global init hooks
   (run-hook-with-args 'el-get-post-init-hooks package)
 
   ;; return the package
@@ -586,27 +586,27 @@ PACKAGE may be either a string or the corresponding symbol."
   (let ((package (pop el-get-next-packages)))
     (el-get-verbose-message "el-get-install-next-packages: %s" package)
     (if package
-	;; el-get-do-install will either init the package, installing it
-	;; first only when necessary to do so
-	(el-get-do-install (el-get-as-string package))
+        ;; el-get-do-install will either init the package, installing it
+        ;; first only when necessary to do so
+        (el-get-do-install (el-get-as-string package))
       ;; no more packages to install in the dependency walk, clean up
       (remove-hook 'el-get-post-init-hooks 'el-get-install-next-packages))))
 
 (defun el-get-post-install-build (package)
   "Function to call after building the package while installing it."
   (el-get-save-package-status package "installed")
-  (el-get-invalidate-autoloads package)	; that will also update them
+  (el-get-invalidate-autoloads package) ; that will also update them
   (el-get-do-init package)
   (run-hook-with-args 'el-get-post-install-hooks package))
 
 (defun el-get-post-install (package)
   "Post install PACKAGE. This will get run by a sentinel."
   (let* ((sync             el-get-default-process-sync)
-	 (type             (el-get-package-type package))
-	 (hooks            (el-get-method type :install-hook))
-	 (commands         (el-get-build-commands package))
-	 (checksum         (plist-get (el-get-package-def package) :checksum))
-	 (compute-checksum (el-get-method type :compute-checksum)))
+         (type             (el-get-package-type package))
+         (hooks            (el-get-method type :install-hook))
+         (commands         (el-get-build-commands package))
+         (checksum         (plist-get (el-get-package-def package) :checksum))
+         (compute-checksum (el-get-method type :compute-checksum)))
 
     ;; check the checksum of the package here, as early as possible
     (when (and checksum (not compute-checksum))
@@ -615,14 +615,14 @@ PACKAGE may be either a string or the corresponding symbol."
        package type))
     (when compute-checksum
       (let ((computed (funcall compute-checksum package)))
-	(if checksum
-	    (if (equal computed (el-get-as-string checksum))
-		(el-get-verbose-message "el-get: package %s passed checksum with \"%s\"."
-					package computed)
-	      (error "Checksum verification failed. Required: \"%s\", actual: \"%s\"."
-		     checksum computed))
-	  (el-get-verbose-message "el-get: pakage %s checksum is %s."
-				  package computed))))
+        (if checksum
+            (if (equal computed (el-get-as-string checksum))
+                (el-get-verbose-message "el-get: package %s passed checksum with \"%s\"."
+                                        package computed)
+              (error "Checksum verification failed. Required: \"%s\", actual: \"%s\"."
+                     checksum computed))
+          (el-get-verbose-message "el-get: pakage %s checksum is %s."
+                                  package computed))))
 
     ;; post-install is the right place to run install-hook
     (run-hook-with-args hooks package)
@@ -643,10 +643,10 @@ PACKAGE may be either a string or the corresponding symbol."
         (el-get-verbose-message "el-get: `%s' package is already installed" package)
         (el-get-do-init package))
     (let* ((status   (el-get-read-package-status package))
-	   (source   (el-get-package-def package))
-	   (method   (el-get-package-method source))
-	   (install  (el-get-method method :install))
-	   (url      (plist-get source :url))
+           (source   (el-get-package-def package))
+           (method   (el-get-package-method source))
+           (install  (el-get-method method :install))
+           (url      (plist-get source :url))
            (pdir     (el-get-package-directory package)))
 
       (el-get-error-unless-required-emacs-version source)
@@ -676,46 +676,46 @@ PACKAGE may be either a string or the corresponding symbol."
      (list (el-get-read-package-with-status "Reload" "installed"))))
   (el-get-verbose-message "el-get-reload: %s" package)
   (el-get-with-status-sources package-status-alist
-    (let* ((all-features features)
-           (package-features (el-get-package-features package))
-           (package-files (el-get-package-files package))
-           (other-features
-            (remove-if (lambda (x) (memq x package-features)) all-features)))
-      (unwind-protect
-          (progn
-            ;; We cannot let-bind `features' here, becauses the changes
-            ;; made by `el-get-init' must persist.
-            (setq features other-features)
-            ;; Reload all loaded files in package dir if they still
-            ;; exist.
-            (loop for file in package-files
-                  ;; We convert errors to warnings here, because some
-                  ;; files don't like being loaded more than once in a
-                  ;; session. Example: "cedet-remove-builtin.el" from
-                  ;; CEDET.
-                  do (condition-case e
-                         (load file 'noerror)
-                       (error (warn "Error while reloading file %s in package %s: %S\n\n This package may require a restart of emacs to complete the update process."
-                                    file package (cdr e)))))
-            ;; Redo package initialization
-            (el-get-init package package-status-alist)
-            ;; Reload all features provided by the package. This ensures
-            ;; that autoloaded packages (which normally don't load
-            ;; anything until one of their entry points is called) are
-            ;; forced to reload immediately if they were already loaded.
-            (loop for f in package-features
-                  do (require f nil 'noerror)))
-        ;; We have to add all the removed features back in no matter
-        ;; what, or else we would be lying about what has been loaded.
-        ;; This covers the corner case where an updated package no
-        ;; longer provides a certain feature. Technically that feature
-        ;; is still provided, so not adding it back would be wrong.
-        (let ((missing-features
-               (remove-if (lambda (x) (memq x features)) package-features)))
-          (when missing-features
-            (warn "Adding %S back onto features, because the reloaded package did not provide them."
-                  missing-features)
-            (setq features (append missing-features features))))))))
+                              (let* ((all-features features)
+                                     (package-features (el-get-package-features package))
+                                     (package-files (el-get-package-files package))
+                                     (other-features
+                                      (remove-if (lambda (x) (memq x package-features)) all-features)))
+                                (unwind-protect
+                                    (progn
+                                      ;; We cannot let-bind `features' here, becauses the changes
+                                      ;; made by `el-get-init' must persist.
+                                      (setq features other-features)
+                                      ;; Reload all loaded files in package dir if they still
+                                      ;; exist.
+                                      (loop for file in package-files
+                                            ;; We convert errors to warnings here, because some
+                                            ;; files don't like being loaded more than once in a
+                                            ;; session. Example: "cedet-remove-builtin.el" from
+                                            ;; CEDET.
+                                            do (condition-case e
+                                                   (load file 'noerror)
+                                                 (error (warn "Error while reloading file %s in package %s: %S\n\n This package may require a restart of emacs to complete the update process."
+                                                              file package (cdr e)))))
+                                      ;; Redo package initialization
+                                      (el-get-init package package-status-alist)
+                                      ;; Reload all features provided by the package. This ensures
+                                      ;; that autoloaded packages (which normally don't load
+                                      ;; anything until one of their entry points is called) are
+                                      ;; forced to reload immediately if they were already loaded.
+                                      (loop for f in package-features
+                                            do (require f nil 'noerror)))
+                                  ;; We have to add all the removed features back in no matter
+                                  ;; what, or else we would be lying about what has been loaded.
+                                  ;; This covers the corner case where an updated package no
+                                  ;; longer provides a certain feature. Technically that feature
+                                  ;; is still provided, so not adding it back would be wrong.
+                                  (let ((missing-features
+                                         (remove-if (lambda (x) (memq x features)) package-features)))
+                                    (when missing-features
+                                      (warn "Adding %S back onto features, because the reloaded package did not provide them."
+                                            missing-features)
+                                      (setq features (append missing-features features))))))))
 
 (defun el-get-post-update-build (package)
   "Function to call after building the package while updating it."
@@ -730,9 +730,9 @@ PACKAGE may be either a string or the corresponding symbol."
 (defun el-get-post-update (package)
   "Post update PACKAGE. This will get run by a sentinel."
   (let* ((sync el-get-default-process-sync)
-	 (type     (el-get-package-type package))
-	 (hooks    (el-get-method type :update-hook))
-	 (commands (el-get-build-commands package)))
+         (type     (el-get-package-type package))
+         (hooks    (el-get-method type :update-hook))
+         (commands (el-get-build-commands package)))
 
     ;; post-update is the right place to run update-hook
     (run-hook-with-args hooks package)
@@ -746,7 +746,7 @@ This happens if the cached recipe and the current one have
 different install methods."
   (let* ((source   (el-get-package-def package))
          (old-source (el-get-read-package-status-recipe package))
-	 (method   (el-get-package-method source))
+         (method   (el-get-package-method source))
          (old-method (el-get-package-method old-source)))
     (not (eq method old-method))))
 
@@ -757,9 +757,9 @@ different install methods."
           "Package %s cannot be updated because it is not installed.")
   (let* ((package (el-get-as-symbol package))
          (source   (el-get-package-def package))
-	 (method   (el-get-package-method source))
-	 (update   (el-get-method method :update))
-	 (url      (plist-get source :url)))
+         (method   (el-get-package-method source))
+         (update   (el-get-method method :update))
+         (url      (plist-get source :url)))
     (assert (null (remove-if 'el-get-package-is-installed
                              (el-get-dependencies package)))
             nil
@@ -842,8 +842,8 @@ itself.")
               (unless refreshed
                 (apply orig-package-refresh-contents args)
                 (setq refreshed t))))
-        ;; This is the only line that really matters
-        (mapc 'el-get-update (el-get-list-package-names-with-status "installed"))))))
+            ;; This is the only line that really matters
+            (mapc 'el-get-update (el-get-list-package-names-with-status "installed"))))))
 
 ;;;###autoload
 (defun el-get-update-packages-of-type (type)
@@ -869,8 +869,8 @@ itself.")
   "Update el-get itself.  The standard recipe takes care of reloading the code."
   (interactive)
   (let ((el-get-default-process-sync t)
-	(el-get-dir
-	 (expand-file-name ".." (file-name-directory el-get-script))))
+        (el-get-dir
+         (expand-file-name ".." (file-name-directory el-get-script))))
     (el-get-update "el-get")))
 
 
@@ -897,19 +897,19 @@ itself.")
            (or (ignore-errors (el-get-package-def package))
                (list :name package :type 'builtin))))
       (el-get-with-status-sources package-status-alist
-        (let* ((source   (or (ignore-errors (el-get-package-def package))
-                             fallback-source))
-               ;; Put the fallback source into `el-get-sources' so that
-               ;; other functions will pick it up.
-               (el-get-sources (cons source el-get-sources))
-               (method   (el-get-package-method source))
-               (remove   (el-get-method method :remove))
-               (url      (plist-get source :url)))
-          ;; remove the package now
-          (el-get-save-package-status package "removed")
-          (el-get-remove-autoloads package)
-          (funcall remove package url 'el-get-post-remove)
-          (message "el-get remove %s" package))))))
+                                  (let* ((source   (or (ignore-errors (el-get-package-def package))
+                                                       fallback-source))
+                                         ;; Put the fallback source into `el-get-sources' so that
+                                         ;; other functions will pick it up.
+                                         (el-get-sources (cons source el-get-sources))
+                                         (method   (el-get-package-method source))
+                                         (remove   (el-get-method method :remove))
+                                         (url      (plist-get source :url)))
+                                    ;; remove the package now
+                                    (el-get-save-package-status package "removed")
+                                    (el-get-remove-autoloads package)
+                                    (funcall remove package url 'el-get-post-remove)
+                                    (message "el-get remove %s" package))))))
 
 (defun el-get-reinstall (package)
   "Remove PACKAGE and then install it again."
@@ -931,7 +931,7 @@ explicitly declared in the user-init-file (.emacs)."
   (let* ((packages-to-keep (el-get-dependencies
                             (mapcar 'el-get-as-symbol
                                     (add-to-list 'packages 'el-get))))
-	 (packages-to-remove (set-difference
+         (packages-to-remove (set-difference
                               (mapcar 'el-get-as-symbol
                                       (el-get-list-package-names-with-status
                                        "installed")) packages-to-keep)))
@@ -950,13 +950,13 @@ explicitly declared in the user-init-file (.emacs)."
 (defun el-get-write-recipe (source dir &optional filename)
   "Given an SOURCE entry, write it to FILENAME"
   (let* (;; Replace a package name with its definition
-	 (source (if (symbolp source) (el-get-read-recipe source) source))
-	 ;; Autogenerate filename if unspecified
-	 (filename (or filename (format "%s.rcp" (el-get-source-name source)))))
+         (source (if (symbolp source) (el-get-read-recipe source) source))
+         ;; Autogenerate filename if unspecified
+         (filename (or filename (format "%s.rcp" (el-get-source-name source)))))
     ;; Filepath is dir/file
     (let ((filepath (format "%s/%s" dir filename)))
       (with-temp-file filepath
-	(insert (el-get-print-to-string source))))))
+        (insert (el-get-print-to-string source))))))
 
 ;;;###autoload
 (defun el-get-make-recipes (&optional dir)
@@ -964,10 +964,10 @@ explicitly declared in the user-init-file (.emacs)."
 entry which is not a symbol and is not already a known recipe."
   (interactive "Dsave recipes in directory: ")
   (let* ((all (mapcar 'el-get-source-name (el-get-read-all-recipes)))
-	 (new (loop for r in el-get-sources
-		    when (and (not (symbolp r))
-			      (not (member (el-get-source-name r) all)))
-		    collect r)))
+         (new (loop for r in el-get-sources
+                    when (and (not (symbolp r))
+                              (not (member (el-get-source-name r) all)))
+                    collect r)))
     (dolist (r new)
       (message "el-get: preparing recipe file for %s" (el-get-source-name r))
       (el-get-write-recipe r dir)))
@@ -979,17 +979,17 @@ entry which is not a symbol and is not already a known recipe."
   (interactive
    (list (el-get-read-package-with-status "Checksum" "installed")))
   (el-get-with-status-sources package-status-alist
-    (let* ((type             (el-get-package-type package))
-           (checksum         (plist-get (el-get-package-def package) :checksum))
-           (compute-checksum (el-get-method type :compute-checksum)))
-      (when (and checksum (not compute-checksum))
-        (error "package method %s does not support checksums" type))
-      (when compute-checksum
-        (let ((checksum (funcall compute-checksum package)))
-          (message "Checksum for package %s is: %s. It has been copied to the kill-ring."
-                   package checksum)
-          (kill-new checksum)
-          checksum)))))
+                              (let* ((type             (el-get-package-type package))
+                                     (checksum         (plist-get (el-get-package-def package) :checksum))
+                                     (compute-checksum (el-get-method type :compute-checksum)))
+                                (when (and checksum (not compute-checksum))
+                                  (error "package method %s does not support checksums" type))
+                                (when compute-checksum
+                                  (let ((checksum (funcall compute-checksum package)))
+                                    (message "Checksum for package %s is: %s. It has been copied to the kill-ring."
+                                             package checksum)
+                                    (kill-new checksum)
+                                    checksum)))))
 
 (defun el-get-self-checksum ()
   "Compute the checksum of the running version of el-get itself.
@@ -1011,19 +1011,19 @@ considered \"required\"."
   (let* ((p-s-alist   (el-get-read-status-file))
          (required    (el-get-filter-package-alist-with-status p-s-alist "required"))
          (installed   (el-get-filter-package-alist-with-status p-s-alist "installed"))
-	 (to-init     (if packages
-			  (loop for p in packages
-				when (member (el-get-as-string p) installed)
-				collect p)
-			(mapcar 'el-get-as-symbol installed)))
-	 (init-deps   (el-get-dependencies to-init))
-	 (to-install  (if packages
-			  (loop for p in packages
-				unless (member p init-deps)
-				collect p)
-			(mapcar 'el-get-as-symbol required)))
-	 (install-deps (el-get-dependencies to-install))
-	 done)
+         (to-init     (if packages
+                          (loop for p in packages
+                                when (member (el-get-as-string p) installed)
+                                collect p)
+                        (mapcar 'el-get-as-symbol installed)))
+         (init-deps   (el-get-dependencies to-init))
+         (to-install  (if packages
+                          (loop for p in packages
+                                unless (member p init-deps)
+                                collect p)
+                        (mapcar 'el-get-as-symbol required)))
+         (install-deps (el-get-dependencies to-install))
+         done)
     (el-get-verbose-message "el-get-init-and-install: install %S" install-deps)
     (el-get-verbose-message "el-get-init-and-install: init %S" init-deps)
 
@@ -1063,8 +1063,8 @@ already installed packages is considered."
   (add-to-list 'load-path (file-name-as-directory el-get-dir))
 
   (let* ((packages
-	  ;; (el-get 'sync 'a 'b my-package-list)
-	  (loop for p in packages when (listp p) append p else collect p))
+          ;; (el-get 'sync 'a 'b my-package-list)
+          (loop for p in packages when (listp p) append p else collect p))
          (total       (length packages))
          (installed   (el-get-count-packages-with-status packages "installed"))
          (el-get-default-process-sync sync))
@@ -1077,7 +1077,7 @@ already installed packages is considered."
     ;; keep the result of `el-get-init-and-install' to return it even in the
     ;; 'wait case
     (prog1
-	(el-get-init-and-install (mapcar 'el-get-as-symbol packages))
+        (el-get-init-and-install (mapcar 'el-get-as-symbol packages))
 
       ;; now is a good time to care about autoloads
       (el-get-eval-autoloads))))

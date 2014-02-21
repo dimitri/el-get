@@ -43,8 +43,8 @@
     (el-get-http-tar-install package url post-install-fun)))
 
 (el-get-register-derived-method :github-tar :http-tar
-  :install #'el-get-github-tar-install
-  :update #'el-get-github-tar-install
-  :guess-website #'el-get-github-guess-website)
+                                :install #'el-get-github-tar-install
+                                :update #'el-get-github-tar-install
+                                :guess-website #'el-get-github-guess-website)
 
 (provide 'el-get-github-tar)

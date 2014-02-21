@@ -11,8 +11,8 @@
                           el-get-dir)
                  "autoloads" "lisp" "docs"))
        :build/berkeley-unix `(("mkdir" "-p" ,(expand-file-name (format "%s/emms" user-emacs-directory)))
-                ("gmake" ,(format "EMACS=%s" el-get-emacs)
-                 ,(format "SITEFLAG=\\\"--no-site-file -L %s/emacs-w3m/ \\\""
-                          el-get-dir)
-                 "autoloads" "lisp" "docs"))
+                              ("gmake" ,(format "EMACS=%s" el-get-emacs)
+                               ,(format "SITEFLAG=\\\"--no-site-file -L %s/emacs-w3m/ \\\""
+                                        el-get-dir)
+                               "autoloads" "lisp" "docs"))
        :depends emacs-w3m)

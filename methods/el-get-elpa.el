@@ -71,11 +71,11 @@ the recipe, then return nil."
       ;; that would be true on Vista, where by default only administrator is
       ;; granted to use the feature --- so hardcode those systems out
       (if (memq system-type '(ms-dos windows-nt))
-	  ;; the symlink is a docs/debug feature, mkdir is ok enough
-	  (make-directory (el-get-package-directory package))
-	(message "%s"
-		 (shell-command
-		  (format "cd %s && ln -s \"%s\" \"%s\"" el-get-dir elpa-dir package)))))))
+          ;; the symlink is a docs/debug feature, mkdir is ok enough
+          (make-directory (el-get-package-directory package))
+        (message "%s"
+                 (shell-command
+                  (format "cd %s && ln -s \"%s\" \"%s\"" el-get-dir elpa-dir package)))))))
 
 (defun el-get-elpa-install (package url post-install-fun)
   "Ask elpa to install given PACKAGE."
@@ -101,7 +101,7 @@ the recipe, then return nil."
              (package-refresh-contents))
             (elpa-new-repo
              (condition-case-unless-debug nil
-               (package--download-one-archive elpa-new-repo "archive-contents")
+                 (package--download-one-archive elpa-new-repo "archive-contents")
                (error (message "Failed to download `%s' archive." (car archive))))
              (package-read-all-archive-contents)))
       ;; TODO: should we refresh and retry once if package-install fails?
@@ -147,7 +147,7 @@ the recipe, then return nil."
   "Do remove the ELPA bits for package, now"
   (let ((p-elpa-dir (el-get-elpa-package-directory package)))
     (if p-elpa-dir
-	(dired-delete-file p-elpa-dir 'always)
+        (dired-delete-file p-elpa-dir 'always)
       (message "el-get: could not find ELPA dir for %s." package))))
 
 (add-hook 'el-get-elpa-remove-hook 'el-get-elpa-post-remove)
@@ -171,12 +171,12 @@ the recipe, then return nil."
       (concat "http://melpa.milkbox.net/#" package)))))
 
 (el-get-register-method :elpa
-  :install #'el-get-elpa-install
-  :update #'el-get-elpa-update
-  :remove #'el-get-elpa-remove
-  :install-hook #'el-get-elpa-install-hook
-  :remove-hook #'el-get-elpa-remove-hook
-  :guess-website #'el-get-elpa-guess-website)
+                        :install #'el-get-elpa-install
+                        :update #'el-get-elpa-update
+                        :remove #'el-get-elpa-remove
+                        :install-hook #'el-get-elpa-install-hook
+                        :remove-hook #'el-get-elpa-remove-hook
+                        :guess-website #'el-get-elpa-guess-website)
 
 ;;;
 ;;; Functions to maintain a local recipe list from ELPA
@@ -189,7 +189,7 @@ TARGET-DIR is the target directory
 DO-NOT-UPDATE will not update the package archive contents before running this."
   (interactive)
   (let ((target-dir (or target-dir
-			(car command-line-args-left)
+                        (car command-line-args-left)
                         el-get-recipe-path-elpa))
         (coding-system-for-write 'utf-8)
         pkg package description)
@@ -203,29 +203,29 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
       (make-directory target-dir 'recursive))
 
     (mapc (lambda (pkg)
-	    (let* ((package     (format "%s" (car pkg)))
-		   (pkg-desc    (cdr pkg))
-		   (description (package-desc-doc pkg-desc))
+            (let* ((package     (format "%s" (car pkg)))
+                   (pkg-desc    (cdr pkg))
+                   (description (package-desc-doc pkg-desc))
                    (pkg-deps    (package-desc-reqs pkg-desc))
-		   (depends     (remq 'emacs (mapcar #'car pkg-deps)))
+                   (depends     (remq 'emacs (mapcar #'car pkg-deps)))
                    (emacs-dep   (assq 'emacs pkg-deps))
-		   (repo
+                   (repo
                     (assoc (aref pkg-desc (- (length pkg-desc) 1))
                            package-archives)))
-	      (with-temp-file (expand-file-name (concat package ".rcp")
-						target-dir)
-		(message "%s:%s" package description)
-		(insert
-		 (format
-		  "(:name %s\n:auto-generated t\n:type elpa\n:description \"%s\"\n:repo %S\n"
-		  package description repo))
-		(when depends
+              (with-temp-file (expand-file-name (concat package ".rcp")
+                                                target-dir)
+                (message "%s:%s" package description)
+                (insert
+                 (format
+                  "(:name %s\n:auto-generated t\n:type elpa\n:description \"%s\"\n:repo %S\n"
+                  package description repo))
+                (when depends
                   (insert (format ":depends %s\n" depends)))
                 (when emacs-dep
                   (insert (format ":minimum-emacs-version %s\n"
                                   (cadr emacs-dep))))
-		(insert ")")
-		(indent-region (point-min) (point-max)))))
-	  package-archive-contents)))
+                (insert ")")
+                (indent-region (point-min) (point-max)))))
+          package-archive-contents)))
 
 (provide 'el-get-elpa)

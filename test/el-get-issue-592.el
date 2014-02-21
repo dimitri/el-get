@@ -4,16 +4,16 @@
 
 (require 'cl)
 (let* ((debug-on-error t)
-      ;; (el-get-byte-compile nil)
-      (el-get-verbose t)
-      (el-get-default-process-sync t)
-      (recipe-stub
-       '(:name test-pkg
-               :type builtin
-               :build (("echo" "BUILDING TEST PACKAGE")
-                       ("sh" "-c" "echo 't' > test-pkg.el"))))
-      (recipe1 (append recipe-stub '(:compile ".")))
-      (recipe2 (append recipe-stub '(:compile nil))))
+       ;; (el-get-byte-compile nil)
+       (el-get-verbose t)
+       (el-get-default-process-sync t)
+       (recipe-stub
+        '(:name test-pkg
+                :type builtin
+                :build (("echo" "BUILDING TEST PACKAGE")
+                        ("sh" "-c" "echo 't' > test-pkg.el"))))
+       (recipe1 (append recipe-stub '(:compile ".")))
+       (recipe2 (append recipe-stub '(:compile nil))))
   ;; Install with recipe1, which does compilation
   (let ((el-get-sources (list recipe1)))
     (el-get 'sync 'test-pkg)

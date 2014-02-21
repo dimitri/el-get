@@ -28,7 +28,7 @@
 
 Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
   (replace-regexp-in-string "[^a-zA-Z0-9-_\.\+]" "_"
-			    (file-name-nondirectory url)))
+                            (file-name-nondirectory url)))
 
 (defun el-get-http-retrieve-callback (status package url post-install-fun &optional dest sources)
   "Callback function for `url-retrieve', store the emacs lisp file for the package."
@@ -36,11 +36,11 @@ Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
     (when err (error (format "could not fetch URL %s: error %s %s"
                              url (car (cdr err)) (cdr (cdr err))))))
   (let* ((pdir   (el-get-package-directory package))
-	 (dest   (or dest (format "%s%s.el" (file-name-as-directory pdir) package)))
-	 (part   (concat dest ".part"))
-	 (el-get-sources (if sources sources el-get-sources))
-	 (buffer-file-coding-system 'no-conversion)
-	 (require-final-newline nil))
+         (dest   (or dest (format "%s%s.el" (file-name-as-directory pdir) package)))
+         (part   (concat dest ".part"))
+         (el-get-sources (if sources sources el-get-sources))
+         (buffer-file-coding-system 'no-conversion)
+         (require-final-newline nil))
     ;; prune HTTP headers before save
     (goto-char (point-min))
     (or (re-search-forward "\r?\n\r?\n" nil t)
@@ -58,9 +58,9 @@ Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
 (defun el-get-http-dest-filename (package &optional url)
   "Return where to store the file at given URL for given PACKAGE"
   (let* ((pdir   (el-get-package-directory package))
-	 (url    (or url (plist-get (el-get-package-def package) :url)))
-	 (fname  (or (plist-get (el-get-package-def package) :localname)
-		     (el-get-filename-from-url url))))
+         (url    (or url (plist-get (el-get-package-def package) :url)))
+         (fname  (or (plist-get (el-get-package-def package) :localname)
+                     (el-get-filename-from-url url))))
     (expand-file-name fname pdir)))
 
 (defun el-get-http-install (package url post-install-fun &optional dest)
@@ -69,7 +69,7 @@ Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
 Should dest be omitted (nil), the url content will get written
 into the package :localname option or its `file-name-nondirectory' part."
   (let* ((pdir   (el-get-package-directory package))
-	 (dest   (or dest (el-get-http-dest-filename package url))))
+         (dest   (or dest (el-get-http-dest-filename package url))))
     (unless (file-directory-p pdir)
       (make-directory pdir))
 
@@ -79,7 +79,7 @@ into the package :localname option or its `file-name-nondirectory' part."
 
       (with-current-buffer (url-retrieve-synchronously url)
         (el-get-http-retrieve-callback
-	 nil package url post-install-fun dest el-get-sources)))))
+         nil package url post-install-fun dest el-get-sources)))))
 
 (defun el-get-http-compute-checksum (package)
   "Look up download time SHA1 of PACKAGE."
@@ -87,9 +87,9 @@ into the package :localname option or its `file-name-nondirectory' part."
     (unless checksum
       ;; compute the checksum
       (setq checksum
-	    (with-temp-buffer
-	      (insert-file-contents-literally (el-get-http-dest-filename package))
-	      (sha1 (current-buffer))))
+            (with-temp-buffer
+              (insert-file-contents-literally (el-get-http-dest-filename package))
+              (sha1 (current-buffer))))
       (puthash package checksum el-get-http-checksums))
     checksum))
 
@@ -97,12 +97,12 @@ into the package :localname option or its `file-name-nondirectory' part."
   (plist-get (el-get-package-def package) :url))
 
 (el-get-register-method :http
-  :install #'el-get-http-install
-  :update #'el-get-http-install
-  :remove #'el-get-rmdir
-  :install-hook #'el-get-http-install-hook
-  :compute-checksum #'el-get-http-compute-checksum
-  :guess-website #'el-get-http-guess-website)
+                        :install #'el-get-http-install
+                        :update #'el-get-http-install
+                        :remove #'el-get-rmdir
+                        :install-hook #'el-get-http-install-hook
+                        :compute-checksum #'el-get-http-compute-checksum
+                        :guess-website #'el-get-http-guess-website)
 
 (el-get-register-method-alias :ftp :http)
 
