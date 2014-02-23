@@ -1,0 +1,4 @@
+(:name company-mode
+       :description "Modular in-buffer completion framework for Emacs"
+       :type github
+       :pkgname "company-mode/company-mode")
