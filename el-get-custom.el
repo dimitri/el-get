@@ -118,16 +118,13 @@ definition provided by `el-get' recipes locally.
     Where to fetch the package, only meaningful for `git' and
     `http' types.
 
-:username, :pkgname
+:pkgname
 
-    For the `github' type, these specify the user name and repo
-    name to clone from Github. For example, for el-get, the user
-    name would be \"dimitri\", and the repo name would be
-    \"el-get\". As described above, the `:pkgname' property is
-    only required if the repo name on Github differs from the
-    Emacs package name. Note that the `emacsmirror' type is just
-    like the `github' type with `:username' set to
-    \"emacsmirror\".
+    For the `github' type, this specifies the repo name to clone
+    from Github. For example, for el-get, the package name would
+    be \"dimitri/el-get\". Note that the `emacsmirror' type is
+    just like the `github' type with the prefix \"emacsmirror/\"
+    automatically supplied.
 
 :build
 
