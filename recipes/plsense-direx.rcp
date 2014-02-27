@@ -1,0 +1,6 @@
+(:name plsense-direx
+       :website "https://github.com/aki2o/plsense-direx"
+       :description "Perl Package Explorer."
+       :type github
+       :pkgname "aki2o/plsense-direx"
+       :depends (direx plsense log4e yaxception))
