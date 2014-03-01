@@ -81,14 +81,14 @@ into the package :localname option or its `file-name-nondirectory' part."
         (el-get-http-retrieve-callback
          nil package url post-install-fun dest el-get-sources)))))
 
-(defun el-get-http-compute-checksum (package)
+(defun el-get-http-compute-checksum (package &optional url)
   "Look up download time SHA1 of PACKAGE."
   (let ((checksum (gethash package el-get-http-checksums)))
     (unless checksum
       ;; compute the checksum
       (setq checksum
             (with-temp-buffer
-              (insert-file-contents-literally (el-get-http-dest-filename package))
+              (insert-file-contents-literally (el-get-http-dest-filename package url))
               (sha1 (current-buffer))))
       (puthash package checksum el-get-http-checksums))
     checksum))
