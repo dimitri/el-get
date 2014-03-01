@@ -85,11 +85,10 @@
         (let ((inhibit-read-only t)
               (name (el-get-package-name package)))
           (re-search-forward
-           (format "^..%s[[:blank:]]" (regexp-quote name)))
-          (delete-region (line-beginning-position) (1+ (line-end-position)))
-          (el-get-print-package
-           name status
-           (plist-get (or recipe (el-get-package-def package)) :description)))))
+           (format "^..%s[[:blank:]]+[^[:blank:]]+"
+                   (regexp-quote name)))
+          (delete-region (match-beginning 0) (match-end 0))
+          (el-get-print-package name status))))
     ;; Return the new alist
     new-package-status-alist))
 

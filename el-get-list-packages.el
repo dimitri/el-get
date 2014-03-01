@@ -325,7 +325,7 @@ in el-get package menu."
       (run-mode-hooks 'el-get-package-menu-mode-hook)
     (run-hooks 'el-get-package-menu-mode-hook)))
 
-(defun el-get-print-package (package-name status desc)
+(defun el-get-print-package (package-name status &optional desc)
   (let ((face
          (cond
           ((string= status "installed")
@@ -338,15 +338,14 @@ in el-get package menu."
            (setq status "available")
            'default))))
     (indent-to 2 1)
-    (insert (propertize package-name 'font-lock-face face))
+    (insert package-name)
     (indent-to 30 1)
-    (insert (propertize status 'font-lock-face face))
+    (insert status)
     (when desc
       (indent-to 41 1)
-      (insert (propertize
-               (replace-regexp-in-string "\n" " " desc)
-               'font-lock-face face)))
-    (insert "\n")))
+      (insert (replace-regexp-in-string "\n" " " desc) "\n"))
+    (put-text-property (line-beginning-position) (line-end-position)
+                       'font-lock-face face)))
 
 (defun el-get-list-all-packages ()
   (with-current-buffer (get-buffer-create "*el-get packages*")
@@ -374,7 +373,7 @@ in el-get package menu."
               (let ((package-name (el-get-as-string (plist-get package :name))))
                 (el-get-print-package package-name
                                       (el-get-read-package-status package-name)
-                                      (plist-get package :description))))
+                                      (or (plist-get package :description) ""))))
             packages))
     (goto-char (point-min))
     (current-buffer)))
