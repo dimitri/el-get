@@ -48,6 +48,7 @@
       package-name
     (intern (format ":%s" package-name))))
 
+(defvar el-get-package-menu-buffer) ; from el-get-list-packages.el
 (defun el-get-save-package-status (package status &optional recipe)
   "Save given package status"
   (let* ((package (el-get-as-symbol package))
@@ -74,6 +75,21 @@
       (insert (el-get-print-to-string new-package-status-alist 'pretty)))
     ;; Update cache
     (setq el-get-status-cache new-package-status-alist)
+    ;; Update package menu, if it exists
+    (save-excursion
+      (when (and (bound-and-true-p el-get-package-menu-buffer)
+                 (buffer-live-p el-get-package-menu-buffer)
+                 (set-buffer el-get-package-menu-buffer)
+                 (eq major-mode 'el-get-package-menu-mode))
+        (goto-char (point-min))
+        (let ((inhibit-read-only t)
+              (name (el-get-package-name package)))
+          (re-search-forward
+           (format "^..%s[[:blank:]]" (regexp-quote name)))
+          (delete-region (line-beginning-position) (1+ (line-end-position)))
+          (el-get-print-package
+           name status
+           (plist-get (or recipe (el-get-package-def package)) :description)))))
     ;; Return the new alist
     new-package-status-alist))
 

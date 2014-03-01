@@ -19,6 +19,10 @@
 (require 'el-get-core)
 (require 'cl)
 
+(defvar el-get-package-menu-buffer nil
+  "Global var holding pointing to the package menu buffer, so
+  that it can be updated from `el-get-save-package-status'")
+
 (define-button-type 'el-get-help-package-def
   :supertype 'help-xref
   'help-function (lambda (package) (find-file (el-get-recipe-filename package)))
@@ -273,7 +277,6 @@ in el-get package menu."
           (el-get-remove package-name)
           (message "Deleting %s..." package-name))))
       (forward-line))
-    (el-get-package-menu-revert)
     (goto-char current-point)
     (beginning-of-line)))
 
@@ -301,12 +304,19 @@ in el-get package menu."
   (define-key el-get-package-menu-mode-map "h" 'el-get-package-menu-quick-help)
   (define-key el-get-package-menu-mode-map "q" 'quit-window))
 
+(defun el-get-package-on-kill ()
+  "Add this to `kill-buffer-query-functions' to clear `el-get-package-menu-buffer'."
+  (setq el-get-package-menu-buffer nil)
+  t)
+
 (defun el-get-package-menu-mode ()
   "Major mode for browsing a list of packages.
 
 \\{el-get-package-menu-mode-map}"
   (kill-all-local-variables)
   (use-local-map el-get-package-menu-mode-map)
+  (add-hook 'kill-buffer-query-functions #'el-get-package-on-kill t t)
+  (setq el-get-package-menu-buffer (current-buffer))
   (setq major-mode 'el-get-package-menu-mode)
   (setq mode-name "Package-Menu")
   (setq buffer-read-only t)
