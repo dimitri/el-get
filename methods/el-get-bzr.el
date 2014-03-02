@@ -57,9 +57,9 @@
      post-update-fun)))
 
 (el-get-register-method :bzr
-                        :install #'el-get-bzr-branch
-                        :update #'el-get-bzr-pull
-                        :remove #'el-get-rmdir
-                        :install-hook el-get-bzr-branch-hook)
+  :install #'el-get-bzr-branch
+  :update #'el-get-bzr-pull
+  :remove #'el-get-rmdir
+  :install-hook el-get-bzr-branch-hook)
 
 (provide 'el-get-bzr)

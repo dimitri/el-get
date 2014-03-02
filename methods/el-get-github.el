@@ -91,7 +91,7 @@ USERNAME and REPONAME are strings."
     (el-get-github-url-private 'https username reponame)))
 
 (el-get-register-derived-method :github :git
-                                :install #'el-get-github-clone
-                                :guess-website #'el-get-github-guess-website)
+  :install #'el-get-github-clone
+  :guess-website #'el-get-github-guess-website)
 
 (provide 'el-get-github)

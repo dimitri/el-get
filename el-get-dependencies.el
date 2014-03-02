@@ -18,11 +18,11 @@
 (defun el-get-dependencies (packages)
   "Return the list of packages to install in order."
   (multiple-value-bind (plist all-sorted-p non-sorted)
-                       (topological-sort
-                        (apply 'append (mapcar 'el-get-dependencies-graph (el-get-as-list packages))))
-                       (if all-sorted-p
-                           plist
-                         (error "Couldn't sort package dependencies for \"%s\"" package))))
+      (topological-sort
+       (apply 'append (mapcar 'el-get-dependencies-graph (el-get-as-list packages))))
+    (if all-sorted-p
+        plist
+      (error "Couldn't sort package dependencies for \"%s\"" package))))
 
 (defun el-get-dependencies-graph (package)
   "Return the graph of packages on which PACKAGE depends"
@@ -60,36 +60,36 @@ in the topological ordering (i.e., the first value)."
               and whose cdr is a list of dependants of vertex."
                   (or (gethash v entries)
                       (puthash v (cons 0 '()) entries))))
-          ;; populate entries initially
-          (dolist (gvertex graph)
-            (destructuring-bind (vertex &rest dependencies) gvertex
-                                (let ((ventry (entry vertex)))
-                                  (dolist (dependency dependencies)
-                                    (let ((dentry (entry dependency)))
-                                      (unless (funcall test dependency vertex)
-                                        (incf (car ventry))
-                                        (push vertex (cdr dentry))))))))
-          ;; L is the list of sorted elements, and S the set of vertices
-          ;; with no outstanding dependencies.
-          (let ((L '())
-                (S (loop for entry being each hash-value of entries
-                         using (hash-key vertex)
-                         when (zerop (car entry)) collect vertex)))
-            ;; Until there are no vertices with no outstanding dependencies,
-            ;; process vertices from S, adding them to L.
-            (do* () ((endp S))
-                 (let* ((v (pop S)) (ventry (entry v)))
-                   (remhash v entries)
-                   (dolist (dependant (cdr ventry) (push v L))
-                     (when (zerop (decf (car (entry dependant))))
-                       (push dependant S)))))
-            ;; return (1) the list of sorted items, (2) whether all items
-            ;; were sorted, and (3) if there were unsorted vertices, the
-            ;; hash table mapping these vertices to their dependants
-            (let ((all-sorted-p (zerop (hash-table-count entries))))
-              (values (nreverse L)
-                      all-sorted-p
-                      (unless all-sorted-p
-                        entries)))))))
+      ;; populate entries initially
+      (dolist (gvertex graph)
+        (destructuring-bind (vertex &rest dependencies) gvertex
+          (let ((ventry (entry vertex)))
+            (dolist (dependency dependencies)
+              (let ((dentry (entry dependency)))
+                (unless (funcall test dependency vertex)
+                  (incf (car ventry))
+                  (push vertex (cdr dentry))))))))
+      ;; L is the list of sorted elements, and S the set of vertices
+      ;; with no outstanding dependencies.
+      (let ((L '())
+            (S (loop for entry being each hash-value of entries
+                     using (hash-key vertex)
+                     when (zerop (car entry)) collect vertex)))
+        ;; Until there are no vertices with no outstanding dependencies,
+        ;; process vertices from S, adding them to L.
+        (do* () ((endp S))
+          (let* ((v (pop S)) (ventry (entry v)))
+            (remhash v entries)
+            (dolist (dependant (cdr ventry) (push v L))
+              (when (zerop (decf (car (entry dependant))))
+                (push dependant S)))))
+        ;; return (1) the list of sorted items, (2) whether all items
+        ;; were sorted, and (3) if there were unsorted vertices, the
+        ;; hash table mapping these vertices to their dependants
+        (let ((all-sorted-p (zerop (hash-table-count entries))))
+          (values (nreverse L)
+                  all-sorted-p
+                  (unless all-sorted-p
+                    entries)))))))
 
 (provide 'el-get-dependencies)

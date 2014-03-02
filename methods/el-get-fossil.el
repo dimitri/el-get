@@ -159,10 +159,10 @@ using `el-get-rmdir' as usual."
   (el-get-rmdir package))
 
 (el-get-register-method :fossil
-                        :install #'el-get-fossil-clone
-                        :update #'el-get-fossil-update
-                        :remove #'el-get-fossil-rmdir
-                        :install-hook #'el-get-fossil-clone-hook
-                        :compute-checksum #'el-get-fossil-compute-checksum)
+  :install #'el-get-fossil-clone
+  :update #'el-get-fossil-update
+  :remove #'el-get-fossil-rmdir
+  :install-hook #'el-get-fossil-clone-hook
+  :compute-checksum #'el-get-fossil-compute-checksum)
 
 (provide 'el-get-fossil)

@@ -171,12 +171,12 @@ the recipe, then return nil."
       (concat "http://melpa.milkbox.net/#" package)))))
 
 (el-get-register-method :elpa
-                        :install #'el-get-elpa-install
-                        :update #'el-get-elpa-update
-                        :remove #'el-get-elpa-remove
-                        :install-hook #'el-get-elpa-install-hook
-                        :remove-hook #'el-get-elpa-remove-hook
-                        :guess-website #'el-get-elpa-guess-website)
+  :install #'el-get-elpa-install
+  :update #'el-get-elpa-update
+  :remove #'el-get-elpa-remove
+  :install-hook #'el-get-elpa-install-hook
+  :remove-hook #'el-get-elpa-remove-hook
+  :guess-website #'el-get-elpa-guess-website)
 
 ;;;
 ;;; Functions to maintain a local recipe list from ELPA

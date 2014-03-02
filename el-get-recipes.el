@@ -213,8 +213,8 @@ which defaults to installed, required and removed.  Example:
                   (el-get-package-def package-or-source)
                 package-or-source)))
     (el-get-plist-get-with-default
-     def :minimum-emacs-version
-     0)))
+        def :minimum-emacs-version
+      0)))
 
 (defun el-get-version-to-list (version)
   "Convert VERSION to a standard version list.
@@ -330,24 +330,24 @@ object or a file path."
                    (incf numerror)))
         (destructuring-bind (&key type url autoloads features builtin
                                   &allow-other-keys)
-                            recipe
-                            ;; Is github type used?
-                            (when (and (eq type 'git) (string-match "//github.com/" url))
-                              (insert "* Use `:type github' for github type recipe\n")
-                              (incf numerror))
-                            ;; Warn when `:autoloads nil' is specified.
-                            (when (and (null autoloads) (plist-member recipe :autoloads))
-                              (insert "* WARNING: Are you sure you don't need autoloads?
+            recipe
+          ;; Is github type used?
+          (when (and (eq type 'git) (string-match "//github.com/" url))
+            (insert "* Use `:type github' for github type recipe\n")
+            (incf numerror))
+          ;; Warn when `:autoloads nil' is specified.
+          (when (and (null autoloads) (plist-member recipe :autoloads))
+            (insert "* WARNING: Are you sure you don't need autoloads?
   This property should be used only when the library takes care of
   the autoload.\n"))
-                            ;; Warn when `:features t' is specified
-                            (when features
-                              (insert "* WARNING: Are you sure you need features?
+          ;; Warn when `:features t' is specified
+          (when features
+            (insert "* WARNING: Are you sure you need features?
   If this library has `;;;###autoload' comment (a.k.a autoload cookie),
   you don't need `:features'.\n"))
-                            ;; Check if `:builtin' is used with an integer
-                            (when (integerp builtin)
-                              (insert "* WARNING: Usage of integers for :builtin is obsolete.
+          ;; Check if `:builtin' is used with an integer
+          (when (integerp builtin)
+            (insert "* WARNING: Usage of integers for :builtin is obsolete.
   Use a version string like \"24.3\" instead.\n")))
         ;; Check for required properties.
         (loop for key in '(:description :name)

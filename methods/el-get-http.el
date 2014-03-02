@@ -97,12 +97,12 @@ into the package :localname option or its `file-name-nondirectory' part."
   (plist-get (el-get-package-def package) :url))
 
 (el-get-register-method :http
-                        :install #'el-get-http-install
-                        :update #'el-get-http-install
-                        :remove #'el-get-rmdir
-                        :install-hook #'el-get-http-install-hook
-                        :compute-checksum #'el-get-http-compute-checksum
-                        :guess-website #'el-get-http-guess-website)
+  :install #'el-get-http-install
+  :update #'el-get-http-install
+  :remove #'el-get-rmdir
+  :install-hook #'el-get-http-install-hook
+  :compute-checksum #'el-get-http-compute-checksum
+  :guess-website #'el-get-http-guess-website)
 
 (el-get-register-method-alias :ftp :http)
 

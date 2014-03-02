@@ -26,10 +26,10 @@
     (funcall post-install-fun package)))
 
 (el-get-register-method :builtin
-                        :install #'el-get-builtin-install
-                        :update #'el-get-builtin-install
-                        :remove #'el-get-rmdir
-                        :install-hook #'el-get-builtin-install-hook)
+  :install #'el-get-builtin-install
+  :update #'el-get-builtin-install
+  :remove #'el-get-rmdir
+  :install-hook #'el-get-builtin-install-hook)
 
 (el-get-register-method-alias :no-op :builtin)
 

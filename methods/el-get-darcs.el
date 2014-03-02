@@ -57,9 +57,9 @@
      post-update-fun)))
 
 (el-get-register-method :darcs
-                        :install #'el-get-darcs-get
-                        :update #'el-get-darcs-pull
-                        :remove #'el-get-rmdir
-                        :install-hook #'el-get-darcs-get-hook)
+  :install #'el-get-darcs-get
+  :update #'el-get-darcs-pull
+  :remove #'el-get-rmdir
+  :install-hook #'el-get-darcs-get-hook)
 
 (provide 'el-get-darcs)

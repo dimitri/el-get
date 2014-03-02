@@ -52,10 +52,10 @@
 (add-hook 'el-get-http-zip-install-hook 'el-get-http-unpack-cleanup-extract-hook)
 
 (el-get-register-method :http-zip
-                        :install #'el-get-http-zip-install
-                        :update #'el-get-http-zip-install
-                        :remove #'el-get-rmdir
-                        :install-hook #'el-get-http-zip-install-hook
-                        :update-hook #'el-get-http-zip-install-hook)
+  :install #'el-get-http-zip-install
+  :update #'el-get-http-zip-install
+  :remove #'el-get-rmdir
+  :install-hook #'el-get-http-zip-install-hook
+  :update-hook #'el-get-http-zip-install-hook)
 
 (provide 'el-get-http-zip)

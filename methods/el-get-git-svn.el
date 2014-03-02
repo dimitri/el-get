@@ -80,8 +80,8 @@
      post-update-fun)))
 
 (el-get-register-derived-method :git-svn :git
-                                :install #'el-get-git-svn-clone
-                                :update #'el-get-git-svn-update
-                                :install-hook #'el-get-git-svn-clone-hook)
+  :install #'el-get-git-svn-clone
+  :update #'el-get-git-svn-update
+  :install-hook #'el-get-git-svn-clone-hook)
 
 (provide 'el-get-git-svn)

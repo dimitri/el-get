@@ -73,10 +73,10 @@
 (add-hook 'el-get-http-tar-install-hook 'el-get-http-unpack-cleanup-extract-hook)
 
 (el-get-register-method :http-tar
-                        :install #'el-get-http-tar-install
-                        :update #'el-get-http-tar-install
-                        :remove #'el-get-rmdir
-                        :install-hook #'el-get-http-tar-install-hook
-                        :update-hook #'el-get-http-tar-install-hook)
+  :install #'el-get-http-tar-install
+  :update #'el-get-http-tar-install
+  :remove #'el-get-rmdir
+  :install-hook #'el-get-http-tar-install-hook
+  :update-hook #'el-get-http-tar-install-hook)
 
 (provide 'el-get-http-tar)

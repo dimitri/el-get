@@ -64,10 +64,10 @@
 (add-hook 'el-get-pacman-remove-hook 'el-get-dpkg-remove-symlink)
 
 (el-get-register-method :pacman
-                        :install #'el-get-pacman-install
-                        :update #'el-get-pacman-install
-                        :remove #'el-get-pacman-remove
-                        :install-hook #'el-get-pacman-install-hook
-                        :remove-hook #'el-get-pacman-remove-hook)
+  :install #'el-get-pacman-install
+  :update #'el-get-pacman-install
+  :remove #'el-get-pacman-remove
+  :install-hook #'el-get-pacman-install-hook
+  :remove-hook #'el-get-pacman-remove-hook)
 
 (provide 'el-get-pacman)

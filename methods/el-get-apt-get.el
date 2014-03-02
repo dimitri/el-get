@@ -151,10 +151,10 @@ password prompt."
 (add-hook 'el-get-apt-get-remove-hook 'el-get-dpkg-remove-symlink)
 
 (el-get-register-method :apt-get
-                        :install #'el-get-apt-get-install
-                        :update #'el-get-apt-get-install
-                        :remove #'el-get-apt-get-remove
-                        :install-hook #'el-get-apt-get-install-hook
-                        :remove-hook #'el-get-apt-get-remove-hook)
+  :install #'el-get-apt-get-install
+  :update #'el-get-apt-get-install
+  :remove #'el-get-apt-get-remove
+  :install-hook #'el-get-apt-get-install-hook
+  :remove-hook #'el-get-apt-get-remove-hook)
 
 (provide 'el-get-apt-get)

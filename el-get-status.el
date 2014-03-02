@@ -314,12 +314,12 @@ t', this error is suppressed (but nothing is updated)."
     (unless (el-get-package-is-installed package)
       (error "Package %s is not installed. Cannot update recipe." package))
     (destructuring-bind (update-p added-disallowed removed-disallowed)
-                        (el-get-diagnosis-properties cached-recipe source)
-                        (when (or added-disallowed removed-disallowed)
-                          ;; Emit a verbose message if `noerror' is t (but still quit
-                          ;; the function).
-                          (funcall (if noerror 'el-get-verbose-message 'error)
-                                   "Tried to add non-whitelisted properties:
+        (el-get-diagnosis-properties cached-recipe source)
+      (when (or added-disallowed removed-disallowed)
+        ;; Emit a verbose message if `noerror' is t (but still quit
+        ;; the function).
+        (funcall (if noerror 'el-get-verbose-message 'error)
+                 "Tried to add non-whitelisted properties:
 
 %s
 
@@ -331,15 +331,15 @@ into/from source:
 
 %s
 Maybe you should use `el-get-update' or `el-get-reinstall' on %s instead?"
-                                   (if   added-disallowed (pp-to-string   added-disallowed) "()")
-                                   (if removed-disallowed (pp-to-string removed-disallowed) "()")
-                                   (pp-to-string cached-recipe)
-                                   (el-get-source-name cached-recipe))
-                          (return-from el-get-merge-properties-into-status))
-                        (when update-p
-                          (if save-to-file
-                              (el-get-save-package-status package "installed" source)
-                            (plist-put (cdr (assq package package-status-alist))
-                                       'recipe source))))))
+                 (if   added-disallowed (pp-to-string   added-disallowed) "()")
+                 (if removed-disallowed (pp-to-string removed-disallowed) "()")
+                 (pp-to-string cached-recipe)
+                 (el-get-source-name cached-recipe))
+        (return-from el-get-merge-properties-into-status))
+      (when update-p
+        (if save-to-file
+            (el-get-save-package-status package "installed" source)
+          (plist-put (cdr (assq package package-status-alist))
+                     'recipe source))))))
 
 (provide 'el-get-status)

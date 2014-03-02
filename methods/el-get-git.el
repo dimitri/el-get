@@ -56,7 +56,7 @@ found."
          (shallow (unless (and (string-prefix-p "http" url)
                                (not (string-prefix-p "http://github.com" url)))
                     (el-get-plist-get-with-default source :shallow
-                                                   el-get-git-shallow-clone)))
+                      el-get-git-shallow-clone)))
          (clone-args (append '("--no-pager" "clone")
                              (when shallow '("--depth" "1"))
                              (cond
@@ -160,10 +160,10 @@ found."
       (shell-command-to-string cmd))))
 
 (el-get-register-method :git
-                        :install #'el-get-git-clone
-                        :update #'el-get-git-pull
-                        :remove #'el-get-rmdir
-                        :install-hook #'el-get-git-clone-hook
-                        :compute-checksum #'el-get-git-compute-checksum)
+  :install #'el-get-git-clone
+  :update #'el-get-git-pull
+  :remove #'el-get-rmdir
+  :install-hook #'el-get-git-clone-hook
+  :compute-checksum #'el-get-git-compute-checksum)
 
 (provide 'el-get-git)

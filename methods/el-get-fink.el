@@ -77,10 +77,10 @@
 (add-hook 'el-get-fink-remove-hook 'el-get-dpkg-remove-symlink)
 
 (el-get-register-method :fink
-                        :install #'el-get-fink-install
-                        :update #'el-get-fink-install
-                        :remove #'el-get-fink-remove
-                        :install-hook #'el-get-fink-install-hook
-                        :remove-hook #'el-get-fink-remove-hook)
+  :install #'el-get-fink-install
+  :update #'el-get-fink-install
+  :remove #'el-get-fink-remove
+  :install-hook #'el-get-fink-install-hook
+  :remove-hook #'el-get-fink-remove-hook)
 
 (provide 'el-get-fink)

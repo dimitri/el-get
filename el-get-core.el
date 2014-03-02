@@ -391,7 +391,7 @@ makes it easier to conditionally splice a command into the list.
                               (mapcar #'shell-quote-argument (plist-get c :args))
                             (plist-get c :args)))
                  (sync    (el-get-plist-get-with-default c :sync
-                                                         el-get-default-process-sync))
+                            el-get-default-process-sync))
                  (stdin   (plist-get c :stdin))
                  (default-directory (if cdir
                                         (file-name-as-directory
