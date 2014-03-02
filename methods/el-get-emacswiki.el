@@ -41,12 +41,19 @@ filename.el ;;; filename.el --- description"
   (let ((url (or url (format "%s%s.el" el-get-emacswiki-base-url package))))
     (el-get-http-install package url post-install-fun)))
 
+(defun el-get-emacswiki-compute-checksum (package)
+  "Download a single-file PACKAGE over HTTP from emacswiki."
+  (let ((url (or (plist-get (el-get-package-def package) :url)
+                 (format "%s%s.el" el-get-emacswiki-base-url package))))
+    (el-get-http-compute-checksum package url)))
+
 (defun el-get-emacswiki-guess-website (package)
   (format "%s%s.el" el-get-emacswiki-base-url package))
 
 (el-get-register-derived-method :emacswiki :http
   :install #'el-get-emacswiki-install
   :update #'el-get-emacswiki-install
+  :compute-checksum #'el-get-emacswiki-compute-checksum
   :guess-website #'el-get-emacswiki-guess-website)
 
 ;;;
