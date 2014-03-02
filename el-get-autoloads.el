@@ -19,14 +19,6 @@
 (defvar el-get-outdated-autoloads nil
   "List of package names whose autoloads are outdated")
 
-(defun el-get-save-and-kill (file)
-  "Save and kill all buffers visiting the named FILE"
-  (let (buf)
-    (while (setq buf (find-buffer-visiting file))
-      (with-current-buffer buf
-        (save-buffer)
-        (kill-buffer)))))
-
 (defun el-get-ensure-byte-compilable-autoload-file (file)
   "If FILE doesn't already exist, create it as a byte-compilable
   autoload file (the default created by autoload.el has a local
@@ -60,7 +52,8 @@
           emacs-lisp-mode-hook
           ;; use dynamic scoping to set up our loaddefs file for
           ;; update-directory-autoloads
-          (generated-autoload-file el-get-autoload-file))
+          (generated-autoload-file el-get-autoload-file)
+          (visited (get-file-buffer el-get-autoload-file)))
 
       ;; make sure we can actually byte-compile it
       (el-get-ensure-byte-compilable-autoload-file generated-autoload-file)
@@ -68,9 +61,12 @@
       (when (el-get-package-is-installed package)
         (mapc 'update-directory-autoloads
               (remove-if-not #'file-directory-p
-                             (el-get-load-path package))))
+                             (el-get-load-path package)))
 
-      (el-get-save-and-kill el-get-autoload-file)
+        (let ((visiting (get-file-buffer el-get-autoload-file)))
+          ;; `update-directory-autoloads' leaves file open
+          (when (and (not visited) visiting)
+            (kill-buffer visiting))))
 
       (when (file-exists-p el-get-autoload-file)
         (message "el-get: byte-compiling autoload file")
