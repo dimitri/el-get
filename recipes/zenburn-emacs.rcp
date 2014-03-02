@@ -1,0 +1,8 @@
+(:name zenburn-emacs
+       :description "Zenburn for Emacs is a direct port of the popular Zenburn theme for vim, developed by Jani Nurminen."
+       :website "https://github.com/bbatsov/zenburn-emacs"
+       :minimum-emacs-version "24"
+       :type github
+       :pkgname "bbatsov/zenburn-emacs"
+       :post-init (add-to-list 'custom-theme-load-path
+                               default-directory))
