@@ -1065,8 +1065,6 @@ already installed packages is considered."
   (let* ((packages
           ;; (el-get 'sync 'a 'b my-package-list)
           (loop for p in packages when (listp p) append p else collect p))
-         (total       (length packages))
-         (installed   (el-get-count-packages-with-status packages "installed"))
          (el-get-default-process-sync sync))
 
     ;; load autoloads before package init so :after blocks can use the
