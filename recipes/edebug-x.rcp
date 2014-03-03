@@ -1,0 +1,5 @@
+(:name edebug-x
+       :website "https://github.com/ScottyB/edebug-x"
+       :description "Utilities for making edebug easier to use"
+       :type github
+       :pkgname "ScottyB/edebug-x")
