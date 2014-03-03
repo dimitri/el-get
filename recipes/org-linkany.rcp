@@ -1,0 +1,6 @@
+(:name org-linkany
+       :website "https://github.com/aki2o/org-linkany"
+       :description "insert link using anything.el/helm.el on org-mode."
+       :type github
+       :pkgname "aki2o/org-linkany"
+       :depends (log4e yaxception))
