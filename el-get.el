@@ -1017,6 +1017,9 @@ considered \"required\"."
                                 collect p)
                         (mapcar 'el-get-as-symbol installed)))
          (init-deps   (el-get-dependencies to-init))
+         (req-inits   (loop for p in init-deps
+                                unless (member (el-get-as-string p) installed)
+                                collect p))
          (to-install  (if packages
                           (loop for p in packages
                                 unless (member p init-deps)
@@ -1024,6 +1027,10 @@ considered \"required\"."
                         (mapcar 'el-get-as-symbol required)))
          (install-deps (el-get-dependencies to-install))
          done)
+    (when req-inits       ; we can't init a pkg unless it's installed!
+      (setq install-deps (append req-inits install-deps))
+      (setq init-deps (set-difference init-deps req-inits)))
+
     (el-get-verbose-message "el-get-init-and-install: install %S" install-deps)
     (el-get-verbose-message "el-get-init-and-install: init %S" init-deps)
 
