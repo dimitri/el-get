@@ -162,16 +162,16 @@ matching REGEX with TYPE and ARGS as parameter."
                                       'el-get-help-package-def package)))
     (princ (el-get-print-to-string def))))
 
-(defun el-get-describe (package)
+(defun el-get-describe (package &optional interactive-p)
   "Generate a description for PACKAGE."
   (interactive
    (list
-    (el-get-read-package-name "Describe")))
+    (el-get-read-package-name "Describe") t))
 
   (if (null package)
       (message "You didn't specify a package")
     (help-setup-xref (list #'el-get-describe package)
-                     (called-interactively-p 'interactive))
+                     interactive-p)
     (save-excursion
       (with-help-window (help-buffer)
         (el-get-describe-1 package)
