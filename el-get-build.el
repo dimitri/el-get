@@ -155,11 +155,25 @@ recursion.
     (el-get-start-process-list
      package process-list build-info-then-post-build-fun)))
 
+(defvar el-get-info-paths-to-add nil
+  "A list of paths to add to `Info-directory-list' after info is loaded")
+
 (defun el-get-set-info-path (package infodir-rel)
-  (eval-after-load "info"
-    `(progn
-       (info-initialize) ;; ok because Emacs won't initialize twice
-       (el-get-add-path-to-list ',package 'Info-directory-list ,infodir-rel))))
+  (cond ((featurep 'info)
+         (info-initialize)) ;; ok because Emacs won't initialize twice
+        ((null el-get-info-paths-to-add)
+         (eval-after-load 'info
+           '(progn (info-initialize) ;; ok because Emacs won't initialize twice
+                   (setq Info-directory-list (nconc el-get-info-paths-to-add
+                                                    Info-directory-list)
+                         el-get-info-paths-to-add nil)))))
+  ;; We can't just put this call inside `eval-after-load' because the
+  ;; package could be removed before info is loaded (and removing
+  ;; elements from `after-load-alist' is a bit too tricky).
+  (el-get-add-path-to-list package
+                           (if (featurep 'info) 'Info-directory-list
+                             'el-get-info-paths-to-add)
+                           infodir-rel))
 
 (defun el-get-install-or-init-info (package build-or-init)
   "Call `el-get-install-info' to create the necessary \"dir\"
