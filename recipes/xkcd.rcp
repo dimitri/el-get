@@ -1,0 +1,5 @@
+(:name xkcd
+       :type github
+       :description "Read xkcd from Emacs"
+       :pkgname "vibhavp/emacs-xkcd"
+       :depends (json))
