@@ -2,5 +2,4 @@
        :website "https://github.com/danielevans/handlebars-mode"
        :description "Emacs Major Mode for Handlebars"
        :type git
-       :url "git@github.com:danielevans/handlebars-mode.git"
-       :features handlebars-mode)
+       :url "git@github.com:danielevans/handlebars-mode.git")
