@@ -84,11 +84,11 @@
         (goto-char (point-min))
         (let ((inhibit-read-only t)
               (name (el-get-package-name package)))
-          (re-search-forward
-           (format "^..%s[[:blank:]]+[^[:blank:]]+"
-                   (regexp-quote name)))
-          (delete-region (match-beginning 0) (match-end 0))
-          (el-get-print-package name status))))
+          (when (re-search-forward
+                 (format "^..%s[[:blank:]]+[^[:blank:]]+"
+                         (regexp-quote name)) nil t)
+            (delete-region (match-beginning 0) (match-end 0))
+            (el-get-print-package name status)))))
     ;; Return the new alist
     new-package-status-alist))
 
