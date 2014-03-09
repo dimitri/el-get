@@ -1,0 +1,7 @@
+(:name lisp-magick-doc
+			 :description "Look up documentation on lisp-magick (both on C-style and LISP names)"
+			 :website "https://github.com/pft/elisp-assorted"
+			 :type builtin
+			 ;; This is a "pseudo" package. Actual elisp file is installed
+			 ;; by the package elisp-assorted
+			 :depends (elisp-assorted))
