@@ -1,9 +1,8 @@
 (:name realgud
-       :website "https://github.com/rocky/emacs-dbgr"
-       :description "The Grand \"Cathedral\" Debugger rewrite: Towards a modular framework for interacting with external debuggers."
-       :depends (test-simple load-relative loc-changes)
        :type github
        :pkgname "rocky/emacs-dbgr"
+       :description "The Grand \"Cathedral\" Debugger rewrite: Towards a modular framework for interacting with external debuggers."
+       :depends (test-simple load-relative loc-changes)
        :build
        (let ((load-path-env (mapconcat 'identity load-path ":")))
          (mapcar
@@ -13,5 +12,4 @@
                           (shell-quote-argument load-path-env)
                           (shell-quote-argument command))))
           '("./autogen.sh" "./configure" "make")))
-       :features (loc-changes load-relative test-simple)
-       )
+       :features (realgud))
