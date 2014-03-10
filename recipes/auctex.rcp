@@ -7,6 +7,8 @@
        :build `(("./autogen.sh")
                 ("./configure"
                  "--without-texmf-dir"
+                 "--with-packagelispdir=$(pwd)"
+                 "--with-packagedatadir=$(pwd)"
                  ,(cond
                    ((eq system-type 'darwin)  "--with-lispdir=`pwd`")
                    (t ""))
