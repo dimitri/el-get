@@ -1,0 +1,7 @@
+(:name elite-for-emacs
+       :website "http://www.elite-for-emacs.org/"
+       :description "Elite clone for Emacs."
+       :type http-tar
+       :options ("xzf")
+       :url "http://www.elite-for-emacs.org/elite-for-emacs-0.1.tar.gz"
+       :prepare (autoload 'elite-for-emacs "elite-for-emacs" nil t))
