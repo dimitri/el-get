@@ -2,8 +2,5 @@
        :description "An awesome Python auto-completion for Emacs"
        :type github
        :pkgname "tkf/emacs-jedi"
-       :build (("make" "requirements"))
-       :build/windows-nt (("make" "requirements" "PYTHON=python.exe" "BINDIR=Scripts"))
-       :build/berkeley-unix (("gmake" "requirements"))
        :submodule nil
-       :depends (epc auto-complete))
+       :depends (epc auto-complete python-environment))
