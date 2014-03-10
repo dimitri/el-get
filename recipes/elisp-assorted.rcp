@@ -1,0 +1,8 @@
+(:name elisp-assorted
+  :website "https://github.com/pft/elisp-assorted"
+  :description
+  "Various emacs lisp libraries: taggit.el, cddb.el, css-complete.el, gothic.el, lisp-magick-doc.el, nyquist.el, srt-mode.el, yiddish.el, disk-usage.el, twitter-numbering.el"
+  :type github
+  :pkgname "pft/elisp-assorted"
+  :depends (twittering-mode)
+  :build '(("rm" "poor-mans-bidi.el")))
