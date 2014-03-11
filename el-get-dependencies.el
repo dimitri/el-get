@@ -54,7 +54,7 @@ list of objects sorted toplogically.  The second is a boolean
 indicating whether all of the objects in the input graph are present
 in the topological ordering (i.e., the first value)."
   (let ((entries (make-hash-table :test test)))
-    (flet ((entry (v)
+    (cl-flet ((entry (v)
                   "Return the entry for vertex.  Each entry is a cons whose
               car is the number of outstanding dependencies of vertex
               and whose cdr is a list of dependants of vertex."
