@@ -1,0 +1,4 @@
+(:name temp-buffer-browse
+       :type github
+       :description "temp buffer browse mode"
+       :pkgname "leoliu/temp-buffer-browse")
