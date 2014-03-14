@@ -1,0 +1,4 @@
+(:name window-margin
+       :description "Automatic margins for visual-line-mode wrapping"
+       :type github
+       :pkgname "rrthomas/window-margin.el") ; go to nslater/ once https://github.com/nslater/window-margin.el/pull/1 addressed
