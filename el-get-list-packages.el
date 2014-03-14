@@ -341,11 +341,13 @@ in el-get package menu."
     (insert package-name)
     (indent-to 30 1)
     (insert status)
+    (put-text-property (line-beginning-position) (line-end-position)
+                       'font-lock-face face)
     (when desc
       (indent-to 41 1)
-      (insert (replace-regexp-in-string "\n" " " desc) "\n"))
-    (put-text-property (line-beginning-position) (line-end-position)
-                       'font-lock-face face)))
+      (insert (propertize (replace-regexp-in-string "\n" " " desc)
+                          'font-lock-face face)
+              "\n"))))
 
 (defun el-get-list-all-packages ()
   (with-current-buffer (get-buffer-create "*el-get packages*")
