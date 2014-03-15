@@ -829,21 +829,30 @@ itself.")
   (when (or no-prompt
             (yes-or-no-p
              "Do you really want to update all installed packages? "))
-    ;; The let and flet forms here ensure that
-    ;; `package-refresh-contents' is only called once, regardless of
-    ;; how many ELPA-type packages need to be installed. Without this,
-    ;; a refresh would happen for every ELPA package, which is totally
-    ;; unnecessary when updating them all at once.
-    (let ((refreshed nil)
-          (orig-package-refresh-contents
-           (ignore-errors (symbol-function 'package-refresh-contents))))
-      (flet ((package-refresh-contents
-              (&rest args)
-              (unless refreshed
-                (apply orig-package-refresh-contents args)
-                (setq refreshed t))))
-        ;; This is the only line that really matters
-        (mapc 'el-get-update (el-get-list-package-names-with-status "installed"))))))
+    (let ((el-get-package-refresh-contents-enable-hack t)
+          (el-get-package-refresh-contents-refreshed nil))
+      ;; This is the only line that really matters
+      (mapc 'el-get-update (el-get-list-package-names-with-status "installed")))))
+
+(defvar el-get-package-refresh-contents-enable-hack nil)
+(defvar el-get-package-refresh-contents-refreshed)
+
+(defadvice package-refresh-contents (around el-get-package-refresh-contents-hack
+                                            activate)
+  "This advice ensures that `package-refresh-contents' is only
+called once, regardless of how many ELPA-type packages need to be
+installed. Without this, a refresh would happen for every ELPA
+package, which is totally unnecessary when updating them all at
+once.
+
+`el-get-package-refresh-contents-enable-hack' and
+`el-get-package-refresh-contents-refreshed' must be let-bound to
+t and nil respectively to enable advice."
+  (if el-get-package-refresh-contents-enable-hack
+      (unless el-get-package-refresh-contents-refreshed
+        ad-do-it
+        (setq el-get-package-refresh-contents-refreshed t))
+    ad-do-it))
 
 ;;;###autoload
 (defun el-get-update-packages-of-type (type)
