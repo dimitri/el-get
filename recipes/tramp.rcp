@@ -13,6 +13,8 @@
          ("make"
           ("install")))
        :load-path ("./lisp")
-       :load "lisp/tramp-loaddefs.el"
+       ;; tramp-loaddefs.el uses `tramp-verion' before it's defined,
+       ;; work around this by loading trampver.el first.
+       :autoloads ("trampver.el" "tramp-loaddefs.el")
        :info "share/info"
        :module "tramp")
