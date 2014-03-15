@@ -109,9 +109,10 @@ definition provided by `el-get' recipes locally.
 
 :branch
 
-    Which branch to fetch when using `git' (and by extension,
-    `github' and `emacsmirror', which are derived form `git').
-    Also supported in the installer in `el-get-install'.
+    Which branch to pull when using `git' (and by extension,
+    `github' and `emacsmirror', which are derived form `git') and
+    `hg' backends.  Also supported when installing el-get using
+    `el-get-install'.
 
 :url
 
@@ -297,22 +298,34 @@ definition provided by `el-get' recipes locally.
     with the following meaning:
 
       * `http', `ftp' and `emacswiki' with the SHA1 of the downloaded file
-      * `git' in which it is an alias for `:checkout' (see below)
+      * `git' and `hg' in which it is an alias for `:checkout' (see below)
+
+    In the `git' and `hg' recipe types, note that while
+    `:checkout' will accept other things like branches, tags, and
+    so forth,`:checksum' must only be given a commit hash. This
+    will effectively lock the repository at a particular
+    revision. Note also that `:checksum' must be set to the full
+    hash, not just the first 6 or 8 characters (this restriction
+    may be removed in the future).
 
 :checkout
 
-    A git refspec (branch, tag, commit hash) that should be
-    checked out after cloning the git repository. If provided,
-    this overrides any value for the `:branch' property. Unlike
-    the `:branch' property, this can be any valid argument to
-    `git checkout', including a tag name or a commit hash. The
-    intended use of this property is to \"lock\" a repository at
-    a particular revision, regardless of what happens to the repo
-    upstream.
+    For `git' or `hg' recipes, a branch name, tag, or other valid
+    argument to `git checkout'/`hg update'. If provided, this
+    overrides any value for the `:branch' property. Unlike the
+    `:branch' property, this can be any valid argument to
+    `checkout', including a tag name or a commit hash.
 
-    Currently this property only has meaning for `git' type
-    recipes. Other VCS-based methods may implement support in the
-    future.
+    When given a commit hash or tag, this will lock the repo at
+    that specific revision. When given a branch name, this will
+    always update the repo to the latest version of that branch,
+    regardless of any changes made locally (in contrast to simply
+    using the `:branch' property, which will cause el-get-to try
+    to merge your local changes).
+
+    Currently this property only has meaning for `git' and `hg'
+    type recipes. Other VCS-based methods may implement support
+    in the future.
 
 :shallow
 
