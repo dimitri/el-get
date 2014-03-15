@@ -34,7 +34,7 @@ Enable this if you want el-get to honor these settings"
   (let ((proxy (or (getenv "HTTP_PROXY")
                    (if (and (featurep 'url-vars)
                             (assoc "http" url-proxy-services))
-                       (cadr (assoc "http" url-proxy-services))
+                       (cdr (assoc "http" url-proxy-services))
                      nil)))
         port ret
         (user "")
