@@ -8,22 +8,17 @@
        :features package
        :post-init
        (progn
-         (setq package-user-dir
-               (expand-file-name
-                (convert-standard-filename
-                 (concat (file-name-as-directory
-                          default-directory)
-                         "elpa")))
-               package-directory-list
-               (list (file-name-as-directory package-user-dir)
-                     "/usr/share/emacs/site-lisp/elpa/"))
-         (make-directory package-user-dir t)
-         (unless (boundp 'package-subdirectory-regexp)
-           (defconst package-subdirectory-regexp
-             "^\\([^.].*\\)-\\([0-9]+\\(?:[.][0-9]+\\)*\\)$"
-             "Regular expression matching the name of
- a package subdirectory. The first subexpression is the package
- name. The second subexpression is the version string."))
+         ;; add package.rcp's old `package-user-dir' to
+         ;; `package-directory-list', in case there are
+         ;; packages installed there from before
+         (let ((old-package-user-dir
+                (expand-file-name
+                 (convert-standard-filename
+                  (concat (file-name-as-directory
+                           default-directory)
+                          "elpa")))))
+           (when (file-directory-p old-package-user-dir)
+             (add-to-list 'package-directory-list old-package-user-dir)))
          ;; Ensure `package-archives' is defined
          (setq package-archives (bound-and-true-p package-archives))
          ;; Ensure needed entries are in `package-archives' without
