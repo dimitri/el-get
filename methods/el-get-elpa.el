@@ -126,6 +126,10 @@ the recipe, then return nil."
           (funcall pkg-version (cdr (assq package package-alist))))
          (available-package (cdr (assq package package-archive-contents))))
     (when available-package
+      ;; `available-package' can be empty in Emacs > 24.3 when it is
+      ;; already installed and the version is the same as the latest
+      ;; one available.  For discussion see also:
+      ;; https://github.com/dimitri/el-get/issues/1637
       (version-list-< installed-version
                       (funcall pkg-version available-package)))))
 
