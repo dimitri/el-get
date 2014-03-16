@@ -3,6 +3,12 @@
 ;; use url-retrieve-synchronously in init file
 ;;
 ;; Drop the -L . option from the README.md for this very test.
+;;
+;;
+;; https://github.com/dimitri/el-get/issues/1457
+;;
+;; The basic setup installer should make el-get available immediately.
+
 
 (require 'cl)
 ;; Unload el-get and delete it from the load path
@@ -33,7 +39,8 @@
              (unload-feature feat 'force)
              (assert (not (require feat nil t)) Nil
                      "%s should not be loadable now" feat)))
-  (assert (not (require 'el-get nil t)) nil
+  (assert (not (or (require 'el-get nil t)
+                   (boundp 'el-get-sources))) nil
           "el-get should not be loadable now"))
 
 (unless (require 'el-get nil t)
@@ -44,5 +51,5 @@
     (eval-print-last-sexp))
   (message "el-get is ready now"))
 
-;; Make sure el-get is now available
-(require 'el-get)
+(assert (and (featurep 'el-get)
+             (boundp 'el-get-sources)) nil "el-get MUST have been loaded!")
