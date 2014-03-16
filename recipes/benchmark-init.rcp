@@ -1,0 +1,4 @@
+(:name benchmark-init
+       :description "Benchmark your Emacs initialization."
+       :type github
+       :pkgname "dholm/benchmark-init-el")
