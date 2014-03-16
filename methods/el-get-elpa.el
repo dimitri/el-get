@@ -131,6 +131,8 @@ the recipe, then return nil."
 
 (defun el-get-elpa-update (package url post-update-fun)
   "Ask elpa to update given PACKAGE."
+  (unless package--initialized
+    (package-initialize t))
   (package-refresh-contents)
   (when (el-get-elpa-update-available-p package)
     (el-get-elpa-remove package url nil)
