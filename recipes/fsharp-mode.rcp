@@ -3,9 +3,4 @@
        :type github
        :pkgname "rneatherway/emacs-fsharp-mode-bin"
        :website "https://github.com/fsharp/fsharpbinding"
-       :depends (auto-complete popup pos-tip s dash)
-       :prepare (progn
-                  (autoload 'fsharp-mode "fsharp-mode"
-                    "Major mode for editing F# code." t)
-                  (add-to-list 'auto-mode-alist
-                               '("\\.fs[iylx]?$" . fsharp-mode))))
+       :depends (auto-complete popup pos-tip s dash))
