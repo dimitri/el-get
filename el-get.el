@@ -963,7 +963,7 @@ explicitly declared in the user-init-file (.emacs)."
   "Loop over `el-get-sources' and write a recipe file for each
 entry which is not a symbol and is not already a known recipe."
   (interactive "Dsave recipes in directory: ")
-  (let* ((all (mapcar 'el-get-source-name (el-get-read-all-recipes)))
+  (let* ((all (mapcar 'el-get-source-name (el-get-read-all-recipe-files)))
          (new (loop for r in el-get-sources
                     when (and (not (symbolp r))
                               (not (member (el-get-source-name r) all)))
