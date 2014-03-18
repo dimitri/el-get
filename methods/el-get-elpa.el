@@ -124,12 +124,19 @@ the recipe, then return nil."
             #'package-desc-vers))
          (installed-version
           (funcall pkg-version (cdr (assq package package-alist))))
-         (available-version
-          (funcall pkg-version (cdr (assq package package-archive-contents)))))
-    (version-list-< installed-version available-version)))
+         (available-package (cdr (assq package package-archive-contents))))
+    (when available-package
+      ;; `available-package' can be empty in Emacs > 24.3 when it is
+      ;; already installed and the version is the same as the latest
+      ;; one available.  For discussion see also:
+      ;; https://github.com/dimitri/el-get/issues/1637
+      (version-list-< installed-version
+                      (funcall pkg-version available-package)))))
 
 (defun el-get-elpa-update (package url post-update-fun)
   "Ask elpa to update given PACKAGE."
+  (unless package--initialized
+    (package-initialize t))
   (package-refresh-contents)
   (when (el-get-elpa-update-available-p package)
     (el-get-elpa-remove package url nil)
