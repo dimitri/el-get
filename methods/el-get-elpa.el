@@ -133,11 +133,21 @@ the recipe, then return nil."
       (version-list-< installed-version
                       (funcall pkg-version available-package)))))
 
+(defvar el-get-elpa-do-refresh t
+  "Whether to call `package-refresh-contents' during `el-get-elpa-update'.
+
+Let-bind this variable to `once' around many `el-get-elpa-update'
+calls to ensure `package-refresh-contents' is only called the
+first time.")
+
 (defun el-get-elpa-update (package url post-update-fun)
   "Ask elpa to update given PACKAGE."
   (unless package--initialized
     (package-initialize t))
-  (package-refresh-contents)
+  (when el-get-elpa-do-refresh
+   (package-refresh-contents)
+   (when (eq el-get-elpa-do-refresh 'once)
+     (setq el-get-elpa-do-refresh nil)))
   (when (el-get-elpa-update-available-p package)
     (el-get-elpa-remove package url nil)
     (package-install (el-get-as-symbol package)))
