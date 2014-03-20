@@ -1,0 +1,4 @@
+(:name helm-swoop
+       :type github
+       :pkgname "ShingoFukuyama/helm-swoop"
+       :depends (helm))
