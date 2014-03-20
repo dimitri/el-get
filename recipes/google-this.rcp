@@ -1,0 +1,4 @@
+(:name google-this
+       :description "A set of Emacs functions and bindings to Google under point."
+       :type github
+       :pkgname "Bruce-Connor/emacs-google-this")
