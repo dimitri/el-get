@@ -102,9 +102,9 @@ the recipe, then return nil."
             (elpa-new-repo
              (condition-case-unless-debug nil
                  (package--download-one-archive elpa-new-repo "archive-contents")
-               (error (message "Failed to download `%s' archive from `%s'."
-                               (cdr elpa-new-repo)
-                               (car elpa-new-repo))))
+               (error (message "Failed to download `archive-contents' for `%s' from `%s'."
+                               (car elpa-new-repo)
+                               (cdr elpa-new-repo))))
              (package-read-all-archive-contents)))
       ;; TODO: should we refresh and retry once if package-install fails?
       ;; package-install generates autoloads, byte compiles
