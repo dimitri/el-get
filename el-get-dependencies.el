@@ -14,6 +14,7 @@
 
 (require 'cl)
 (require 'el-get-core)
+(require 'el-get-recipes)
 
 (defun el-get-dependencies (packages)
   "Return the list of packages to install in order."
@@ -22,7 +23,7 @@
        (apply 'append (mapcar 'el-get-dependencies-graph (el-get-as-list packages))))
     (if all-sorted-p
         plist
-      (error "Couldn't sort package dependencies for \"%s\"" package))))
+      (error "Couldn't sort package dependencies for \"%s\"" packages))))
 
 (defun el-get-dependencies-graph (package)
   "Return the graph of packages on which PACKAGE depends"
@@ -53,14 +54,14 @@ hash-tables.  Topological-sort returns two values.  The first is a
 list of objects sorted toplogically.  The second is a boolean
 indicating whether all of the objects in the input graph are present
 in the topological ordering (i.e., the first value)."
-  (let ((entries (make-hash-table :test test))
-        ;; avoid obsolete `flet' & backward-incompatible `cl-flet'
-        (entry (lambda (v)
-                 "Return the entry for vertex.  Each entry is a cons whose
+  (let* ((entries (make-hash-table :test test))
+         ;; avoid obsolete `flet' & backward-incompatible `cl-flet'
+         (entry (lambda (v)
+                  "Return the entry for vertex.  Each entry is a cons whose
               car is the number of outstanding dependencies of vertex
               and whose cdr is a list of dependants of vertex."
-                 (or (gethash v entries)
-                     (puthash v (cons 0 '()) entries)))))
+                  (or (gethash v entries)
+                      (puthash v (cons 0 '()) entries)))))
     ;; populate entries initially
     (dolist (gvertex graph)
       (destructuring-bind (vertex &rest dependencies) gvertex

@@ -14,6 +14,9 @@
 
 (require 'el-get-core)
 (require 'el-get-byte-compile)
+(require 'el-get-recipes)
+
+(declare-function info-initialize "info" nil)
 
 ;; debian uses ginstall-info and it's compatible to fink's install-info on
 ;; MacOSX, so:

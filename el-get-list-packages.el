@@ -19,6 +19,11 @@
 (require 'el-get-core)
 (require 'cl)
 
+(declare-function el-get-install "el-get" (package))
+(declare-function el-get-remove "el-get" (package))
+(declare-function el-get-update "el-get" (package))
+(declare-function el-get-read-package-name "el-get" (action &optional filtered))
+
 (defvar el-get-package-menu-buffer nil
   "Global var holding pointing to the package menu buffer, so
   that it can be updated from `el-get-save-package-status'")

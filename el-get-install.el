@@ -1,4 +1,4 @@
-;;; el-get-install.el --- installer for the lazy
+;;; el-get-install.el --- installer for the lazy -*- no-byte-compile: t -*-
 ;;
 ;; Copyright (C) 2010 Dimitri Fontaine
 ;;

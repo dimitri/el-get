@@ -191,90 +191,6 @@
 (require 'el-get-list-packages)         ; menu and `el-get-describe' facilities
 (require 'el-get-autoloads)             ; manages updating el-get's loaddefs.el
 
-;;
-;; Define some code-level customs.  They stay here so that it's easier
-;; for elisp programmers to find them and know about them.  If that is
-;; too lame of an excuse, let's move them to el-get-custom.el.
-;;
-(defcustom el-get-post-init-hooks nil
-  "Hooks to run after a package init.
-Each hook is a unary function accepting a package"
-  :group 'el-get
-  :type 'hook)
-
-(defcustom el-get-post-install-hooks nil
-  "Hooks to run after installing a package.
-Each hook is a unary function accepting a package"
-  :group 'el-get
-  :type 'hook)
-
-(defcustom el-get-post-update-hooks nil
-  "Hooks to run after updating a package.
-Each hook is a unary function accepting a package"
-  :group 'el-get
-  :type 'hook)
-
-(defcustom el-get-post-error-hooks nil
-  "Hooks to run after package installation fails.
-Each hook is a binay function accepting a package and error data"
-  :group 'el-get
-  :type 'hook)
-
-(defcustom el-get-byte-compile t
-  "Whether or not to byte-compile packages. Can be used to
-disable byte-compilation globally, unless this process is not
-controlled by `el-get' itself.
-
-The cases when `el-get' loses control are with \"advanced\"
-packaging systems (apt-get, fink, pacman, elpa) or when the
-recipe contains a :build rule (using a Makefile for example)."
-  :group 'el-get
-  :type 'boolean)
-
-(defcustom el-get-verbose nil
-  "Non-nil means print messages describing progress of el-get even for fast operations."
-  :group 'el-get
-  :type 'boolean)
-
-(defcustom el-get-byte-compile-at-init nil
-  "Whether or not to byte-compile packages at init.
-
-Turn this to t if you happen to update your packages from under
-`el-get', e.g. doing `cd el-get-dir/package && git pull`
-directly."
-  :group 'el-get
-  :type 'boolean)
-
-(defcustom el-get-generate-autoloads t
-  "Whether or not to generate autoloads for packages. Can be used
-to disable autoloads globally."
-  :group 'el-get
-  :type 'boolean)
-
-(defcustom el-get-is-lazy nil
-  "Whether or not to defer evaluation of :post-init and :after
-functions until libraries are required.  Will also have el-get
-skip the :load and :features properties when set.  See :lazy to
-force their evaluation on some packages only."
-  :group 'el-get
-  :type 'boolean)
-
-(defcustom el-get-auto-update-cached-recipes t
-  "When non-nil, auto-update certain properties in cached recipes.
-
-When El-get installs a package, it stores a copy of the package's
-recipe that becomes independent from the recipe in
-`el-get-sources'. The cached copy is updated only when the
-package itself is updated or reinstalled. However, if this
-preference is t (the default), select properties of the cached
-recipe copy will be updated from `el-get-sources' whenever the
-package is initialized (see
-`el-get-status-recipe-updatable-properties').
-
-If this is set to nil, then the cached copy will *only* be
-updated when the package itself is."
-  :group 'el-get
-  :type 'boolean)
 
 (defvar el-get-next-packages nil
   "List of packages to install next, used when dealing with dependencies.")
@@ -532,7 +448,7 @@ called by `el-get' (usually at startup) for each installed package."
           (funcall maybe-lazy-eval `(el-get-load-package-user-init-file ',package))
           (funcall el-get-maybe-lazy-runsupp
                    after "after" package)))
-    (debug error
+    (debug err
            (el-get-installation-failed package err)))
   ;; and call the global init hooks
   (run-hook-with-args 'el-get-post-init-hooks package)
@@ -728,7 +644,7 @@ different install methods."
   "Update "
   (el-get-error-unless-package-p package)
   (assert (el-get-package-is-installed package) nil
-          "Package %s cannot be updated because it is not installed.")
+          "Package %s cannot be updated because it is not installed." package)
   (let* ((package (el-get-as-symbol package))
          (source   (el-get-package-def package))
          (method   (el-get-package-method source))

@@ -14,7 +14,13 @@
 
 (require 'cl)
 (require 'el-get-core)
+(require 'el-get-custom)
 (require 'autoload)
+
+(declare-function el-get-package-is-installed "el-get" (package))
+(declare-function el-get-byte-compile-file "el-get-byte-compile" (el))
+(declare-function el-get-package-def "el-get-recipes" (package))
+(declare-function el-get-list-package-names-with-status "el-get-status" (&rest statuses))
 
 (defvar el-get-outdated-autoloads nil
   "List of package names whose autoloads are outdated")
