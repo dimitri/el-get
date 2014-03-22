@@ -178,33 +178,7 @@
 
 ;;; Code:
 
-;; first some essential variables, used in other parts of the code.
-(defgroup el-get nil "el-get customization group"
-  :group 'convenience)
 
-(defconst el-get-version "5.1" "el-get version number")
-
-(defconst el-get-script (or load-file-name buffer-file-name))
-
-(defcustom el-get-dir "~/.emacs.d/el-get/"
-  "Path where to install the packages."
-  :group 'el-get
-  :type 'directory)
-
-(defcustom el-get-status-file
-  (concat (file-name-as-directory el-get-dir) ".status.el")
-  "Define where to store and read the package statuses")
-
-(defvar el-get-autoload-file
-  (concat (file-name-as-directory el-get-dir) ".loaddefs.el")
-  "Where generated autoloads are saved")
-
-(defvar el-get-emacs (concat invocation-directory invocation-name)
-  "Where to find the currently running emacs, a facility for :build commands")
-
-;;
-;; Now load the rest of the el-get code
-;;
 (require 'el-get-core)                  ; core facilities used everywhere
 (require 'el-get-custom)                ; user tweaks and `el-get-sources'
 (require 'el-get-methods)               ; support for `el-get-methods', backends
@@ -218,9 +192,9 @@
 (require 'el-get-autoloads)             ; manages updating el-get's loaddefs.el
 
 ;;
-;; And then define some more code-level customs.  They stay here so that
-;; it's easier for elisp programmers to find them and know about them.  If
-;; that is too lame of an excuse, let's move them to el-get-custom.el.
+;; Define some code-level customs.  They stay here so that it's easier
+;; for elisp programmers to find them and know about them.  If that is
+;; too lame of an excuse, let's move them to el-get-custom.el.
 ;;
 (defcustom el-get-post-init-hooks nil
   "Hooks to run after a package init.

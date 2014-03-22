@@ -23,6 +23,31 @@
 
 (require 'el-get-core)
 
+;;; First, some essential variables, used in other parts of the code.
+(defgroup el-get nil "el-get customization group"
+  :group 'convenience)
+
+(defconst el-get-version "5.1" "el-get version number")
+
+(defconst el-get-script (or load-file-name buffer-file-name))
+
+(defcustom el-get-dir "~/.emacs.d/el-get/"
+  "Path where to install the packages."
+  :group 'el-get
+  :type 'directory)
+
+(defcustom el-get-status-file
+  (concat (file-name-as-directory el-get-dir) ".status.el")
+  "Define where to store and read the package statuses")
+
+(defvar el-get-autoload-file
+  (concat (file-name-as-directory el-get-dir) ".loaddefs.el")
+  "Where generated autoloads are saved")
+
+(defvar el-get-emacs (concat invocation-directory invocation-name)
+  "Where to find the currently running emacs, a facility for :build commands")
+
+
 ;;; "Fuzzy" data structure customization widgets
 (defun el-get-repeat-value-to-internal (widget element-or-list)
   (el-get-as-list element-or-list))
