@@ -13,6 +13,7 @@
 ;;     Please see the README.md file from the same distribution
 
 (require 'el-get-core)
+(require 'el-get-recipes)
 
 (defcustom el-get-git-clone-hook nil
   "Hook run after git clone."

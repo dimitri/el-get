@@ -13,6 +13,7 @@
 ;;     Please see the README.md file from the same distribution
 
 (require 'el-get-core)
+(require 'el-get-recipes)
 
 (defcustom el-get-cvs-checkout-hook nil
   "Hook run after cvs checkout."
@@ -29,7 +30,8 @@ Enable this if you want el-get to honor these settings"
   :type 'boolean
   :group 'el-get)
 
-(defun el-get-parse-proxy ()
+(defvar url-proxy-services)
+(defun el-get-parse-proxy (url)
   "Parse HTTP_PROXY or use `url-proxy-services'"
   (let ((proxy (or (getenv "HTTP_PROXY")
                    (if (and (featurep 'url-vars)
@@ -61,7 +63,7 @@ Enable this if you want el-get to honor these settings"
 
 (defun el-get-cvs-checkout-proxy-url (url)
   "Checkout proxy URL"
-  (let ((proxy (el-get-parse-proxy))
+  (let ((proxy (el-get-parse-proxy url))
         (cvs-proxy "")
         tmp
         (ret url))

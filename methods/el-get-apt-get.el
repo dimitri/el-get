@@ -13,6 +13,7 @@
 ;;     Please see the README.md file from the same distribution
 
 (require 'el-get-core)
+(require 'el-get-recipes)
 
 (defcustom el-get-apt-get (executable-find "apt-get")
   "The apt-get executable."
@@ -49,6 +50,9 @@
 ;; get the global value of package, which has been set before calling
 ;; run-hooks.
 ;;
+(defvar el-get-brew-base)
+(defvar el-get-fink-base)
+(defvar el-get-pacman-base)
 (defun el-get-dpkg-symlink (package)
   "ln -s /usr/share/emacs/site-lisp/package ~/.emacs.d/el-get/package"
   (let* ((pdir    (el-get-package-directory package))
@@ -65,7 +69,8 @@
 
 (defun el-get-dpkg-remove-symlink (package)
   "rm -f ~/.emacs.d/el-get/package"
-  (let* ((pdir    (el-get-package-directory package)))
+  (let* ((pdir    (el-get-package-directory package))
+         (pname   (el-get-as-string package)))
     (when (file-symlink-p pdir)
       (let ((command (concat "cd " el-get-dir " && rm -f " pname)))
         (message command)

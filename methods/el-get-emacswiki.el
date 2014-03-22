@@ -12,6 +12,8 @@
 ;; Install
 ;;     Please see the README.md file from the same distribution
 
+(require 'el-get-recipes)
+(require 'el-get-notify)
 (require 'el-get-http)
 
 (defcustom el-get-emacswiki-base-url
