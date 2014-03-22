@@ -6,6 +6,7 @@
   (require-final-newline . t)
   (indent-tabs-mode))
  (emacs-lisp-mode
+  (byte-compile-warnings . (not cl-functions))
   (whitespace-style face trailing lines-tail)
   (whitespace-line-column . 80)
   (eval ignore-errors
