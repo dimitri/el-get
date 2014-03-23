@@ -123,19 +123,19 @@ the recipe, then return nil."
   "Returns t if PACKAGE has an update available in ELPA."
   (assert (el-get-package-is-installed package) nil
           (format "Cannot update non-installed ELPA package %s" package))
-  (let* ((pkg-version
-          (if (fboundp 'package-desc-version) ;; new in Emacs 24.4
-              #'(lambda (pkg) (package-desc-version (car pkg)))
-            #'package-desc-vers))
-         (installed-version
-          (funcall pkg-version (cdr (assq package package-alist))))
-         (available-package (cdr (assq package package-archive-contents))))
+  (let ((pkg-version
+         (if (fboundp 'package-desc-version) ;; new in Emacs 24.4
+             #'package-desc-version #'package-desc-vers))
+        (installed-version
+         (car (el-get-as-list (cdr (assq package package-alist)))))
+        (available-package
+         (car (el-get-as-list (cdr (assq package package-archive-contents))))))
     (when available-package
       ;; `available-package' can be empty in Emacs > 24.3 when it is
       ;; already installed and the version is the same as the latest
       ;; one available.  For discussion see also:
       ;; https://github.com/dimitri/el-get/issues/1637
-      (version-list-< installed-version
+      (version-list-< (funcall pkg-version installed-version)
                       (funcall pkg-version available-package)))))
 
 (defvar el-get-elpa-do-refresh t
@@ -226,8 +226,10 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
 
     (mapc (lambda (pkg)
             (let* ((package     (format "%s" (car pkg)))
-                   (pkg-desc    (cdr pkg))
-                   (description (package-desc-doc pkg-desc))
+                   (pkg-desc    (car (el-get-as-list (cdr pkg))))
+                   (get-summary (if (fboundp #'package-desc-summary)
+                                    #'package-desc-summary #'package-desc-doc))
+                   (description (funcall get-summary pkg-desc))
                    (pkg-deps    (package-desc-reqs pkg-desc))
                    (depends     (remq 'emacs (mapcar #'car pkg-deps)))
                    (emacs-dep   (assq 'emacs pkg-deps))
