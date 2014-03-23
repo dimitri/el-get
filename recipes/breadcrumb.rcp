@@ -1,6 +1,5 @@
 (:name breadcrumb
        :website "http://breadcrumbemacs.sourceforge.net/"
        :description "Breadcrumb is an add-on module for Emacs that allows you to set a series of quick bookmarks in the file buffers, and jump back to them quickly."
-       :type http
-       :url "http://downloads.sourceforge.net/project/breadcrumbemacs/Breadcrumb%20for%20Emacs/1.1.3/breadcrumb-1.1.3.zip"
-       :build ("unzip breadcrumb-1.1.3.zip"))
+       :type http-zip
+       :url "http://downloads.sourceforge.net/project/breadcrumbemacs/Breadcrumb%20for%20Emacs/1.1.3/breadcrumb-1.1.3.zip")

@@ -9,4 +9,4 @@
                       "rng-loc"
                     '(add-to-list 'rng-schema-locating-files (concat el-get-dir "html5/schemas.xml")))
        :features whattf-dt
-       :build ("make relaxng"))
+       :build (("make" "relaxng")))

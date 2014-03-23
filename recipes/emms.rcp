@@ -7,12 +7,12 @@
        :features emms-setup
        :build `(("mkdir" "-p" ,(expand-file-name (format "%s/emms" user-emacs-directory)))
                 ("make" ,(format "EMACS=%s" el-get-emacs)
-                 ,(format "SITEFLAG=\\\"--no-site-file -L %s/emacs-w3m/ \\\""
-                          el-get-dir)
+                 ,(format "SITEFLAG=--no-site-file -L %s"
+                          (shell-quote-argument (el-get-package-directory "emacs-w3m")))
                  "autoloads" "lisp" "docs"))
        :build/berkeley-unix `(("mkdir" "-p" ,(expand-file-name (format "%s/emms" user-emacs-directory)))
                               ("gmake" ,(format "EMACS=%s" el-get-emacs)
-                               ,(format "SITEFLAG=\\\"--no-site-file -L %s/emacs-w3m/ \\\""
-                                        el-get-dir)
+                               ,(format "SITEFLAG=--no-site-file -L %s"
+                                        (shell-quote-argument (el-get-package-directory "emacs-w3m")))
                                "autoloads" "lisp" "docs"))
        :depends emacs-w3m)

@@ -2,5 +2,5 @@
        :description "Google Client"
        :type svn
        :url "https://emacspeak.googlecode.com/svn/trunk/lisp/g-client/"
-       :build `(,(concat "make EMACS=" el-get-emacs))
+       :build `(("make" ,(format "EMACS=%s" el-get-emacs)))
        :features g)

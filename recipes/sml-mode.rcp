@@ -5,7 +5,7 @@
        :url "http://www.iro.umontreal.ca/~monnier/elisp/sml-mode.tar.gz"
        :build `,(mapcar
                  (lambda (target)
-                   (concat "make " target " EMACS=" el-get-emacs))
+                   (list "make" target (format "EMACS=%s" el-get-emacs)))
                  '("clean" "default"))
        :load-path (".")
        :load ("sml-mode-startup.el"))
