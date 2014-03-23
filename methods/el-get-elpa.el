@@ -123,20 +123,20 @@ the recipe, then return nil."
   "Returns t if PACKAGE has an update available in ELPA."
   (assert (el-get-package-is-installed package) nil
           (format "Cannot update non-installed ELPA package %s" package))
-  (let ((pkg-version
-         (if (fboundp 'package-desc-version) ;; new in Emacs 24.4
-             #'package-desc-version #'package-desc-vers))
-        (installed-version
-         (car (el-get-as-list (cdr (assq package package-alist)))))
-        (available-package
-         (car (el-get-as-list (cdr (assq package package-archive-contents))))))
-    (when available-package
-      ;; `available-package' can be empty in Emacs > 24.3 when it is
-      ;; already installed and the version is the same as the latest
-      ;; one available.  For discussion see also:
-      ;; https://github.com/dimitri/el-get/issues/1637
-      (version-list-< (funcall pkg-version installed-version)
-                      (funcall pkg-version available-package)))))
+  (let* ((pkg-version
+          (if (fboundp 'package-desc-version) ;; new in Emacs 24.4
+              #'package-desc-version #'package-desc-vers))
+         (installed-version
+          (funcall pkg-version (car (el-get-as-list (cdr (assq package package-alist))))))
+         (available-packages
+          (el-get-as-list (cdr (assq package package-archive-contents)))))
+    ;; Emacs 24.4 keeps lists of available packages. `package-alist'
+    ;; is sorted by version, but `package-archive-contents' is not, so
+    ;; we should loop through it.
+    (some (lambda (pkg)
+            (version-list-< installed-version
+                            (funcall pkg-version pkg)))
+          available-packages)))
 
 (defvar el-get-elpa-do-refresh t
   "Whether to call `package-refresh-contents' during `el-get-elpa-update'.
