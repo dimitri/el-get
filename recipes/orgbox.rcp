@@ -1,0 +1,4 @@
+(:name orgbox
+       :description "Gnus Desktop Notification global minor mode"
+       :type github
+       :pkgname "yasuhito/orgbox")
