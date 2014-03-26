@@ -1,4 +1,4 @@
 (:name orgbox
-       :description "Gnus Desktop Notification global minor mode"
+       :description "Mailbox-like task scheduling in Org"
        :type github
        :pkgname "yasuhito/orgbox")
