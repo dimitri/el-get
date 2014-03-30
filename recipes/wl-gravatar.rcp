@@ -1,4 +1,6 @@
 (:name wl-gravatar
-       :description "Gravatar fetch/store functions"
+       :description "Gravatar support for Wanderlust."
        :type github
-       :pkgname "dabrahams/wl-gravatar")
+       :pkgname "dabrahams/wl-gravatar"
+       :depends (gravatar wanderlust)
+       :prepare (autoload 'wl-gravatar-insert "wl-gravatar"))
