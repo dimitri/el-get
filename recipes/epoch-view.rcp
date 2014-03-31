@@ -1,0 +1,5 @@
+(:name epoch-view
+       :description "Minor mode to visualize epoch timestamps"
+       :type github
+       :pkgname "emacsmirror/epoch-view"
+       :features epoch-view)
