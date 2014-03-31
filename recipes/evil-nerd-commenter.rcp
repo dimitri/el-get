@@ -1,0 +1,6 @@
+(:name evil-nerd-commenter
+       :website "http://github.com/redguardtoo/evil-nerd-commenter"
+       :description "Comment/uncomment lines efficiently. Like Nerd Commenter in Vim"
+       :type github
+       :pkgname "redguardtoo/evil-nerd-commenter"
+       :depends evil)
