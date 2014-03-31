@@ -1,0 +1,9 @@
+(:name haskellmode-emacs
+       :description "Haskell 2010 community editing mode"
+       :type darcs
+       :url "http://code.haskell.org/haskellmode-emacs"
+       :build ("make compile")
+       :load "haskell-site-file.el"
+       :post-init (progn
+                    (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+                    (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)))
