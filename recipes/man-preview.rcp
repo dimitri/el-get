@@ -1,0 +1,5 @@
+(:name man-preview
+       :description "Preview nroff man file source."
+       :website "http://user42.tuxfamily.org/man-preview/"
+       :type http
+       :url "ftp://download.tuxfamily.org/user42/man-preview.el")
