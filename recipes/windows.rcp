@@ -1,5 +1,7 @@
 (:name windows
        :description "Window manager for GNU Emacs."
+       :website "http://www.gentei.org/~yuuji/software/"
        :type http
        :url "http://www.gentei.org/~yuuji/software/windows.el"
+       :depends (revive)
        :features "windows")
