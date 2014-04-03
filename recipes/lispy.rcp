@@ -1,0 +1,4 @@
+(:name lispy
+       :description "vi-like paredit."
+       :type github
+       :pkgname "abo-abo/lispy")
