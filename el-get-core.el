@@ -41,6 +41,17 @@ the original object."
 (defun el-get-verbose-message (format &rest arguments)
   (when el-get-verbose (apply 'message format arguments)))
 
+(defmacro el-get-with-errors-as-warnings (prefix &rest body)
+  (declare (indent 1) (debug t))
+  (let ((error-var (make-symbol "err")))
+    `(condition-case ,error-var
+         (progn ,@body)
+       ((debug error)
+        (display-warning 'el-get
+                         (concat ,prefix (error-message-string ,error-var))
+                         :error)
+        nil))))
+
 (defsubst el-get-plist-keys (plist)
   "Return a list of all keys in PLIST.
 
