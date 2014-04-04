@@ -14,9 +14,9 @@
 
 (require 'cl)                           ; yes I like loop
 (require 'bytecomp)
-(require 'el-get-status)
 
 (declare-function el-get-build-commands "el-get-build" (package))
+(declare-function el-get-read-package-with-status "el-get-status" (action &rest statuses))
 
 ;; byte-recompile-file:
 ;;
