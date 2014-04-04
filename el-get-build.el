@@ -17,6 +17,7 @@
 (require 'el-get-recipes)
 
 (declare-function info-initialize "info" nil)
+(defvar Info-directory-list)
 
 ;; debian uses ginstall-info and it's compatible to fink's install-info on
 ;; MacOSX, so:

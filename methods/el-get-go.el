@@ -50,6 +50,6 @@
   :install #'el-get-go-install
   :update #'el-get-go-install
   :remove #'el-get-rmdir
-  :install-hook #'el-get-go-install-hook)
+  :install-hook 'el-get-go-install-hook)
 
 (provide 'el-get-go)

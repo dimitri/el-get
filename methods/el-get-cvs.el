@@ -145,6 +145,6 @@ Enable this if you want el-get to honor these settings"
   :install #'el-get-cvs-checkout
   :update #'el-get-cvs-update
   :remove #'el-get-rmdir
-  :install-hook #'el-get-cvs-checkout-hook)
+  :install-hook 'el-get-cvs-checkout-hook)
 
 (provide 'el-get-cvs)

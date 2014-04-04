@@ -164,7 +164,7 @@ found."
   :install #'el-get-git-clone
   :update #'el-get-git-pull
   :remove #'el-get-rmdir
-  :install-hook #'el-get-git-clone-hook
+  :install-hook 'el-get-git-clone-hook
   :compute-checksum #'el-get-git-compute-checksum)
 
 (provide 'el-get-git)

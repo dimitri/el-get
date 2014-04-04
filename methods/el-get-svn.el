@@ -71,6 +71,6 @@
   :install #'el-get-svn-checkout
   :update #'el-get-svn-update
   :remove #'el-get-rmdir
-  :install-hook #'el-get-svn-checkout-hook)
+  :install-hook 'el-get-svn-checkout-hook)
 
 (provide 'el-get-svn)

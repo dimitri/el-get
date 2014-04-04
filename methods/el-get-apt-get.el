@@ -159,7 +159,7 @@ password prompt."
   :install #'el-get-apt-get-install
   :update #'el-get-apt-get-install
   :remove #'el-get-apt-get-remove
-  :install-hook #'el-get-apt-get-install-hook
-  :remove-hook #'el-get-apt-get-remove-hook)
+  :install-hook 'el-get-apt-get-install-hook
+  :remove-hook 'el-get-apt-get-remove-hook)
 
 (provide 'el-get-apt-get)

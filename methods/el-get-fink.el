@@ -80,7 +80,7 @@
   :install #'el-get-fink-install
   :update #'el-get-fink-install
   :remove #'el-get-fink-remove
-  :install-hook #'el-get-fink-install-hook
-  :remove-hook #'el-get-fink-remove-hook)
+  :install-hook 'el-get-fink-install-hook
+  :remove-hook 'el-get-fink-remove-hook)
 
 (provide 'el-get-fink)
