@@ -1,6 +1,6 @@
 ![Color El-Get logo](https://raw.github.com/dimitri/el-get/master/logo/el-get.png)
 El-Get allows you to install and manage `elisp` code for Emacs. It supports
-lots of differents types of sources and is able to *install* them, *update*
+lots of different types of sources and is able to *install* them, *update*
 them and *remove* them, but more importantly it will *init* them for you.
 That means it will `require` the *features* you need, `load` the necessary
 files, set the *Info* paths so that `C-h i` shows the new documentation you
