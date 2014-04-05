@@ -13,6 +13,7 @@
 ;;     Please see the README.md file from the same distribution
 
 (require 'el-get-core)
+(require 'el-get-recipes)
 (require 'sha1)
 
 (defcustom el-get-http-install-hook nil
@@ -100,7 +101,7 @@ into the package :localname option or its `file-name-nondirectory' part."
   :install #'el-get-http-install
   :update #'el-get-http-install
   :remove #'el-get-rmdir
-  :install-hook #'el-get-http-install-hook
+  :install-hook 'el-get-http-install-hook
   :compute-checksum #'el-get-http-compute-checksum
   :guess-website #'el-get-http-guess-website)
 

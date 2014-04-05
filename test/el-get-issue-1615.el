@@ -17,4 +17,4 @@
       ;;
       ;; This value is from `emacs-w3m'.
       (url ":pserver:anonymous@cvs.namazu.org:/storage/cvsroot"))
-  (el-get-parse-proxy))
+  (el-get-parse-proxy url))

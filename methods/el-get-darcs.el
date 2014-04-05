@@ -13,6 +13,7 @@
 ;;     Please see the README.md file from the same distribution
 
 (require 'el-get-core)
+(require 'el-get-custom)
 
 (defcustom el-get-darcs-get-hook nil
   "Hook run after darcs get."
@@ -60,6 +61,6 @@
   :install #'el-get-darcs-get
   :update #'el-get-darcs-pull
   :remove #'el-get-rmdir
-  :install-hook #'el-get-darcs-get-hook)
+  :install-hook 'el-get-darcs-get-hook)
 
 (provide 'el-get-darcs)

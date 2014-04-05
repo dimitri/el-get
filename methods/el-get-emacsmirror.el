@@ -13,6 +13,7 @@
 ;;     Please see the README.md file from the same distribution
 
 (require 'el-get-core)
+(require 'el-get-recipes)
 (require 'el-get-git)
 (require 'el-get-github)
 

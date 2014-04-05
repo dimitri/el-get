@@ -29,7 +29,7 @@
   :install #'el-get-builtin-install
   :update #'el-get-builtin-install
   :remove #'el-get-rmdir
-  :install-hook #'el-get-builtin-install-hook)
+  :install-hook 'el-get-builtin-install-hook)
 
 (el-get-register-method-alias :no-op :builtin)
 

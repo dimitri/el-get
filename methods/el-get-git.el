@@ -13,6 +13,7 @@
 ;;     Please see the README.md file from the same distribution
 
 (require 'el-get-core)
+(require 'el-get-recipes)
 
 (defcustom el-get-git-clone-hook nil
   "Hook run after git clone."
@@ -163,7 +164,7 @@ found."
   :install #'el-get-git-clone
   :update #'el-get-git-pull
   :remove #'el-get-rmdir
-  :install-hook #'el-get-git-clone-hook
+  :install-hook 'el-get-git-clone-hook
   :compute-checksum #'el-get-git-compute-checksum)
 
 (provide 'el-get-git)

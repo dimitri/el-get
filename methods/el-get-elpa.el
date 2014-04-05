@@ -13,7 +13,10 @@
 ;;     Please see the README.md file from the same distribution
 
 (require 'el-get-core)
+(require 'el-get-recipes)
 (require 'package nil t)
+
+(declare-function el-get-package-is-installed "el-get" (package))
 
 (defcustom el-get-elpa-install-hook nil
   "Hook run after ELPA package install."
@@ -193,8 +196,8 @@ first time.")
   :install #'el-get-elpa-install
   :update #'el-get-elpa-update
   :remove #'el-get-elpa-remove
-  :install-hook #'el-get-elpa-install-hook
-  :remove-hook #'el-get-elpa-remove-hook
+  :install-hook 'el-get-elpa-install-hook
+  :remove-hook 'el-get-elpa-remove-hook
   :guess-website #'el-get-elpa-guess-website)
 
 ;;;

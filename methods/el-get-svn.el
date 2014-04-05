@@ -13,6 +13,7 @@
 ;;     Please see the README.md file from the same distribution
 
 (require 'el-get-core)
+(require 'el-get-recipes)
 
 (defcustom el-get-svn (executable-find "svn")
   "The svn executable."
@@ -70,6 +71,6 @@
   :install #'el-get-svn-checkout
   :update #'el-get-svn-update
   :remove #'el-get-rmdir
-  :install-hook #'el-get-svn-checkout-hook)
+  :install-hook 'el-get-svn-checkout-hook)
 
 (provide 'el-get-svn)

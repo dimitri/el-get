@@ -76,7 +76,7 @@
   :install #'el-get-http-tar-install
   :update #'el-get-http-tar-install
   :remove #'el-get-rmdir
-  :install-hook #'el-get-http-tar-install-hook
-  :update-hook #'el-get-http-tar-install-hook)
+  :install-hook 'el-get-http-tar-install-hook
+  :update-hook 'el-get-http-tar-install-hook)
 
 (provide 'el-get-http-tar)

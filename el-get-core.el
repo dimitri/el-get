@@ -24,6 +24,9 @@
 (require 'bytecomp)
 (require 'autoload)
 
+(declare-function el-get-package-def "el-get-recipes" (package))
+(declare-function el-get-installation-failed "el-get" (package signal-data))
+
 (defun el-get-print-to-string (object &optional pretty)
   "Return string representation of lisp object.
 

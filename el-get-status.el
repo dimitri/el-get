@@ -23,6 +23,9 @@
 (require 'pp)
 (require 'el-get-core)
 
+(declare-function el-get-install "el-get" (package))
+(declare-function el-get-package-is-installed "el-get" (package))
+
 (defun el-get-package-name (package-symbol)
   "Returns a package name as a string."
   (cond ((keywordp package-symbol)
@@ -96,9 +99,9 @@
   "Convert OLD-STATUS-LIST, a property list, to the new format"
   ;; first backup the old status just in case
   (with-temp-file (format "%s.old" el-get-status-file)
-    (insert (el-get-print-to-string ps)))
+    (insert (el-get-print-to-string old-status-list)))
   ;; now convert to the new format, fetching recipes as we go
-  (loop for (p s) on ps by 'cddr
+  (loop for (p s) on old-status-list by 'cddr
         for psym = (el-get-package-symbol p)
         when psym
         collect

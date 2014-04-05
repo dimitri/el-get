@@ -67,7 +67,7 @@
   :install #'el-get-pacman-install
   :update #'el-get-pacman-install
   :remove #'el-get-pacman-remove
-  :install-hook #'el-get-pacman-install-hook
-  :remove-hook #'el-get-pacman-remove-hook)
+  :install-hook 'el-get-pacman-install-hook
+  :remove-hook 'el-get-pacman-remove-hook)
 
 (provide 'el-get-pacman)

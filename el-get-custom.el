@@ -23,6 +23,116 @@
 
 (require 'el-get-core)
 
+(declare-function widget-editable-list-match "wid-edit" (widget value))
+
+;;; First, some essential variables, used in other parts of the code.
+(defgroup el-get nil "el-get customization group"
+  :group 'convenience)
+
+(defconst el-get-version "5.1" "el-get version number")
+
+(defconst el-get-script (or load-file-name buffer-file-name))
+
+(defcustom el-get-dir "~/.emacs.d/el-get/"
+  "Path where to install the packages."
+  :group 'el-get
+  :type 'directory)
+
+(defcustom el-get-status-file
+  (concat (file-name-as-directory el-get-dir) ".status.el")
+  "Define where to store and read the package statuses")
+
+(defvar el-get-autoload-file
+  (concat (file-name-as-directory el-get-dir) ".loaddefs.el")
+  "Where generated autoloads are saved")
+
+(defvar el-get-emacs (concat invocation-directory invocation-name)
+  "Where to find the currently running emacs, a facility for :build commands")
+
+;;
+;; Define some code-level customs.
+;;
+(defcustom el-get-post-init-hooks nil
+  "Hooks to run after a package init.
+Each hook is a unary function accepting a package"
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-post-install-hooks nil
+  "Hooks to run after installing a package.
+Each hook is a unary function accepting a package"
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-post-update-hooks nil
+  "Hooks to run after updating a package.
+Each hook is a unary function accepting a package"
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-post-error-hooks nil
+  "Hooks to run after package installation fails.
+Each hook is a binay function accepting a package and error data"
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-byte-compile t
+  "Whether or not to byte-compile packages. Can be used to
+disable byte-compilation globally, unless this process is not
+controlled by `el-get' itself.
+
+The cases when `el-get' loses control are with \"advanced\"
+packaging systems (apt-get, fink, pacman, elpa) or when the
+recipe contains a :build rule (using a Makefile for example)."
+  :group 'el-get
+  :type 'boolean)
+
+(defcustom el-get-verbose nil
+  "Non-nil means print messages describing progress of el-get even for fast operations."
+  :group 'el-get
+  :type 'boolean)
+
+(defcustom el-get-byte-compile-at-init nil
+  "Whether or not to byte-compile packages at init.
+
+Turn this to t if you happen to update your packages from under
+`el-get', e.g. doing `cd el-get-dir/package && git pull`
+directly."
+  :group 'el-get
+  :type 'boolean)
+
+(defcustom el-get-generate-autoloads t
+  "Whether or not to generate autoloads for packages. Can be used
+to disable autoloads globally."
+  :group 'el-get
+  :type 'boolean)
+
+(defcustom el-get-is-lazy nil
+  "Whether or not to defer evaluation of :post-init and :after
+functions until libraries are required.  Will also have el-get
+skip the :load and :features properties when set.  See :lazy to
+force their evaluation on some packages only."
+  :group 'el-get
+  :type 'boolean)
+
+(defcustom el-get-auto-update-cached-recipes t
+  "When non-nil, auto-update certain properties in cached recipes.
+
+When El-get installs a package, it stores a copy of the package's
+recipe that becomes independent from the recipe in
+`el-get-sources'. The cached copy is updated only when the
+package itself is updated or reinstalled. However, if this
+preference is t (the default), select properties of the cached
+recipe copy will be updated from `el-get-sources' whenever the
+package is initialized (see
+`el-get-status-recipe-updatable-properties').
+
+If this is set to nil, then the cached copy will *only* be
+updated when the package itself is."
+  :group 'el-get
+  :type 'boolean)
+
+
 ;;; "Fuzzy" data structure customization widgets
 (defun el-get-repeat-value-to-internal (widget element-or-list)
   (el-get-as-list element-or-list))

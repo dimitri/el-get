@@ -93,7 +93,7 @@
   :install #'el-get-brew-install
   :update #'el-get-brew-update
   :remove #'el-get-brew-remove
-  :install-hook #'el-get-brew-install-hook
-  :remove-hook #'el-get-brew-remove-hook)
+  :install-hook 'el-get-brew-install-hook
+  :remove-hook 'el-get-brew-remove-hook)
 
 (provide 'el-get-brew)

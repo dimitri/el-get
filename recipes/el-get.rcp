@@ -5,4 +5,5 @@
        :branch  "master"
        :pkgname "dimitri/el-get"
        :info    "."
+       :compile ("el-get.*\\.el$" "methods/")
        :load    "el-get.el")
