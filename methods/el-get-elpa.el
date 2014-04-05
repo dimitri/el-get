@@ -17,6 +17,9 @@
 (require 'package nil t)
 
 (declare-function el-get-package-is-installed "el-get" (package))
+;; pretend these old functions exist to keep byte compiler in 24.4 quiet
+(declare-function package-desc-doc "package" (desc))
+(declare-function package-desc-vers "package" (desc))
 
 (defcustom el-get-elpa-install-hook nil
   "Hook run after ELPA package install."
@@ -79,6 +82,12 @@ the recipe, then return nil."
         (message "%s"
                  (shell-command
                   (format "cd %s && ln -s \"%s\" \"%s\"" el-get-dir elpa-dir package)))))))
+
+(eval-when-compile
+  ;; `condition-case-unless-debug' was introduced in 24.1, but was
+  ;; actually added in 23.1 as `condition-case-no-debug'
+  (unless (fboundp 'condition-case-unless-debug)
+    (defalias 'condition-case-unless-debug 'condition-case-no-debug)))
 
 (defun el-get-elpa-install (package url post-install-fun)
   "Ask elpa to install given PACKAGE."
