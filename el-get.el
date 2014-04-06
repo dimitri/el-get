@@ -722,7 +722,7 @@ itself.")
     (let ((el-get-elpa-do-refresh 'once))
       (mapc 'el-get-update (el-get-list-package-names-with-status "installed")))))
 
-(eval-when-compile
+(eval-and-compile
   (unless (fboundp 'user-error)         ; new in 24.3
     (defun user-error (format &rest args)
       "Signal a pilot error, making error message by passing all args to `format'.

@@ -304,7 +304,7 @@ object or a file path."
       (insert-file-contents file-or-buffer)
       (el-get-check-recipe-in-current-buffer file-or-buffer))))
 
-(eval-when-compile
+(eval-and-compile
   (unless (fboundp 'file-name-base)     ; new in 24.3
     (defun file-name-base (&optional filename)
       "Return the base name of the FILENAME: no directory, no extension.
