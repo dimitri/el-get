@@ -1,0 +1,6 @@
+(:name guide-key-tip
+       :website "https://github.com/aki2o/guide-key-tip"
+       :description "Interface of guide-key.el using pos-tip.el"
+       :type github
+       :pkgname "aki2o/guide-key-tip"
+       :depends (guide-key pos-tip))
