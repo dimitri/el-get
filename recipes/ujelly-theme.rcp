@@ -3,4 +3,4 @@
        :type github
        :pkgname "marktran/color-theme-ujelly"
        :minimum-emacs-version 24
-       :post-init (add-to-list 'custom-theme-load-path default-directory))
+       :prepare (add-to-list 'custom-theme-load-path default-directory))

@@ -2,5 +2,5 @@
        :description "Gruber Darker color theme for Emacs 24"
        :type github
        :pkgname "rexim/gruber-darker-theme"
-       :post-init (add-to-list 'custom-theme-load-path
-                               default-directory))
+       :prepare (add-to-list 'custom-theme-load-path
+                             default-directory))

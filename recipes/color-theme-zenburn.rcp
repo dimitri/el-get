@@ -3,5 +3,5 @@
        :website "https://github.com/bbatsov/zenburn-emacs"
        :type github
        :pkgname "bbatsov/zenburn-emacs"
-       :post-init (add-to-list 'custom-theme-load-path
-                               default-directory))
+       :prepare (add-to-list 'custom-theme-load-path
+                             default-directory))
