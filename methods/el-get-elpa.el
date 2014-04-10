@@ -74,8 +74,8 @@ the recipe, then return nil."
       ;; that would be true on Vista, where by default only administrator is
       ;; granted to use the feature --- so hardcode those systems out
       (if (memq system-type '(ms-dos windows-nt))
-	  ;; in windows, we have to actually copy the directories, since
-          ;; symlink is not exactly reliabe on those systems
+          ;; in windows, we have to actually copy the directories,
+          ;; since symlink is not exactly reliable on those systems
           (copy-directory (el-get-elpa-package-directory package)
                           (file-name-as-directory (expand-file-name package el-get-dir)))
         (message "%s"
