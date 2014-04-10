@@ -3,5 +3,5 @@
        :website "https://github.com/djcb/dream-theme"
        :type github
        :pkgname "djcb/dream-theme"
-       :post-init (add-to-list 'custom-theme-load-path
-                               default-directory))
+       :prepare (add-to-list 'custom-theme-load-path
+                             default-directory))
