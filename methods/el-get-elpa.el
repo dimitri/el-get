@@ -74,8 +74,10 @@ the recipe, then return nil."
       ;; that would be true on Vista, where by default only administrator is
       ;; granted to use the feature --- so hardcode those systems out
       (if (memq system-type '(ms-dos windows-nt))
-          ;; the symlink is a docs/debug feature, mkdir is ok enough
-          (make-directory (el-get-package-directory package))
+          ;; in windows, we have to actually copy the directories,
+          ;; since symlink is not exactly reliable on those systems
+          (copy-directory (el-get-elpa-package-directory package)
+                          (file-name-as-directory (expand-file-name package el-get-dir)))
         (message "%s"
                  (shell-command
                   (format "cd %s && ln -s \"%s\" \"%s\"" el-get-dir elpa-dir package)))))))
@@ -155,7 +157,12 @@ first time.")
      (setq el-get-elpa-do-refresh nil)))
   (when (el-get-elpa-update-available-p package)
     (el-get-elpa-remove package url nil)
-    (package-install (el-get-as-symbol package)))
+    (package-install (el-get-as-symbol package))
+    ;; in windows, we don't have real symlinks, so its better to remove
+    ;; the directory and copy everything again
+    (when (memq system-type '(ms-dos windows-nt))
+      (delete-directory (el-get-elpa-package-directory) t)
+      (el-get-elpa-symlink-package package)))
   (funcall post-update-fun package))
 
 (defun el-get-elpa-remove (package url post-remove-fun)
