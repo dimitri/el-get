@@ -17,6 +17,9 @@
 (require 'package nil t)
 
 (declare-function el-get-package-is-installed "el-get" (package))
+;; pretend these old functions exist to keep byte compiler in 24.4 quiet
+(declare-function package-desc-doc "package" (desc))
+(declare-function package-desc-vers "package" (desc))
 
 (defcustom el-get-elpa-install-hook nil
   "Hook run after ELPA package install."
@@ -82,6 +85,12 @@ the recipe, then return nil."
                  (shell-command
                   (format "cd %s && ln -s \"%s\" \"%s\"" el-get-dir elpa-dir package)))))))
 
+(eval-when-compile
+  ;; `condition-case-unless-debug' was introduced in 24.1, but was
+  ;; actually added in 23.1 as `condition-case-no-debug'
+  (unless (fboundp 'condition-case-unless-debug)
+    (defalias 'condition-case-unless-debug 'condition-case-no-debug)))
+
 (defun el-get-elpa-install (package url post-install-fun)
   "Ask elpa to install given PACKAGE."
   (let* ((elpa-dir (el-get-elpa-package-directory package))
@@ -127,18 +136,18 @@ the recipe, then return nil."
           (format "Cannot update non-installed ELPA package %s" package))
   (let* ((pkg-version
           (if (fboundp 'package-desc-version) ;; new in Emacs 24.4
-              #'(lambda (pkg) (package-desc-version (car pkg)))
-            #'package-desc-vers))
+              #'package-desc-version #'package-desc-vers))
          (installed-version
-          (funcall pkg-version (cdr (assq package package-alist))))
-         (available-package (cdr (assq package package-archive-contents))))
-    (when available-package
-      ;; `available-package' can be empty in Emacs > 24.3 when it is
-      ;; already installed and the version is the same as the latest
-      ;; one available.  For discussion see also:
-      ;; https://github.com/dimitri/el-get/issues/1637
-      (version-list-< installed-version
-                      (funcall pkg-version available-package)))))
+          (funcall pkg-version (car (el-get-as-list (cdr (assq package package-alist))))))
+         (available-packages
+          (el-get-as-list (cdr (assq package package-archive-contents)))))
+    ;; Emacs 24.4 keeps lists of available packages. `package-alist'
+    ;; is sorted by version, but `package-archive-contents' is not, so
+    ;; we should loop through it.
+    (some (lambda (pkg)
+            (version-list-< installed-version
+                            (funcall pkg-version pkg)))
+          available-packages)))
 
 (defvar el-get-elpa-do-refresh t
   "Whether to call `package-refresh-contents' during `el-get-elpa-update'.
@@ -233,8 +242,10 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
 
     (mapc (lambda (pkg)
             (let* ((package     (format "%s" (car pkg)))
-                   (pkg-desc    (cdr pkg))
-                   (description (package-desc-doc pkg-desc))
+                   (pkg-desc    (car (el-get-as-list (cdr pkg))))
+                   (get-summary (if (fboundp #'package-desc-summary)
+                                    #'package-desc-summary #'package-desc-doc))
+                   (description (funcall get-summary pkg-desc))
                    (pkg-deps    (package-desc-reqs pkg-desc))
                    (depends     (remq 'emacs (mapcar #'car pkg-deps)))
                    (emacs-dep   (assq 'emacs pkg-deps))

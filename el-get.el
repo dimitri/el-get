@@ -722,6 +722,19 @@ itself.")
     (let ((el-get-elpa-do-refresh 'once))
       (mapc 'el-get-update (el-get-list-package-names-with-status "installed")))))
 
+(eval-and-compile
+  (unless (fboundp 'user-error)         ; new in 24.3
+    (defun user-error (format &rest args)
+      "Signal a pilot error, making error message by passing all args to `format'.
+In Emacs, the convention is that error messages start with a capital
+letter but *do not* end with a period.  Please follow this convention
+for the sake of consistency.
+This is just like `error' except that `user-error's are expected to be the
+result of an incorrect manipulation on the part of the user, rather than the
+result of an actual problem."
+      (while t
+        (signal 'user-error (list (apply #'format format args)))))))
+
 ;;;###autoload
 (defun el-get-update-packages-of-type (type)
   "Update all installed packages of type TYPE."
