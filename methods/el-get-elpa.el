@@ -170,7 +170,7 @@ first time.")
     ;; in windows, we don't have real symlinks, so its better to remove
     ;; the directory and copy everything again
     (when (memq system-type '(ms-dos windows-nt))
-      (delete-directory (el-get-elpa-package-directory) t)
+      (delete-directory (el-get-elpa-package-directory package) t)
       (el-get-elpa-symlink-package package)))
   (funcall post-update-fun package))
 
