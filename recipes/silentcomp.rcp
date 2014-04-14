@@ -2,4 +2,4 @@
        :description "Compile time setup for proper compilation"
        :type http
        :url "http://larch.cs.iastate.edu/emacs/ecb/silentcomp.el"
-       :load "silentcomp.el")
+       :features silentcomp)
