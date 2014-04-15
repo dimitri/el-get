@@ -284,6 +284,27 @@ Use this to modify environment variable such as $PATH or $PYTHONPATH."
   "Special mode for `el-get-check-recipe' buffers.
 See Info node `(el-get) Authoring Recipes'.")
 
+(defvar el-get-check-suppressed-warnings ()
+  "List of `el-get-check-recipe' warnings to suppress.
+
+Current possibe elements are: `features'.")
+
+(defun el-get-check-recipe-batch ()
+  "emacs -Q -batch -f el-get-check-recipe-batch [-Wno-<warning>...] *.rcp"
+  (setq vc-handled-backends nil) ; avoid loading VC during batch mode
+  (dolist (arg command-line-args-left)
+    (if (string-match "^-Wno-\\(.*\\)" arg)
+        (push (intern (match-string 1 arg)) el-get-check-suppressed-warnings)
+      (let ((warning-prefix-function
+             (lambda (level entry)
+               (list level (format "%s:%s" arg
+                                   (format (nth 1 entry) ""))))))
+        (el-get-check-recipe arg))))
+  ;; IMPORTANT: Remove args. Otherwise emacs will go and visit every
+  ;; file after we're done. This takes a LONG time (as in 10 times as
+  ;; long).
+  (setq command-line-args-left nil))
+
 (defun el-get-check-recipe (file-or-buffer)
   "Check the format of the recipe.
 Please run this command before sending a pull request.
@@ -326,44 +347,51 @@ FILENAME defaults to `buffer-file-name'."
                    (not (string= (file-name-base recipe-file-name)
                                  (plist-get recipe :name))))
           (incf numerror)
-          (insert "* File name should match recipe name.\n"))
+          (lwarn '(el-get recipe) :error
+                 "File name should match recipe name."))
         ;; Check if userspace property is used.
         (loop for key in '(:before :after)
               for alt in '(:prepare :post-init)
               when (plist-get recipe key)
               do (progn
-                   (insert (format
-                            "* Property %S is for user.  Use %S instead.\n"
-                            key alt))
+                   (lwarn '(el-get recipe) :warning
+                          "Property %S is for user.  Use %S instead."
+                          key alt)
                    (incf numerror)))
-        (destructuring-bind (&key type url autoloads features builtin
+        (destructuring-bind (&key type url autoloads feats builtin
                                   &allow-other-keys)
             recipe
+          ;; let-binding `features' causes `provide' to throw error
+          (setq feats (plist-get recipe :features))
           ;; Is github type used?
           (when (and (eq type 'git) (string-match "//github.com/" url))
-            (insert "* Use `:type github' for github type recipe\n")
+            (lwarn '(el-get recipe) :warning
+                   "Use `:type github' for github type recipe")
             (incf numerror))
           ;; Warn when `:autoloads nil' is specified.
           (when (and (null autoloads) (plist-member recipe :autoloads))
-            (insert "* WARNING: Are you sure you don't need autoloads?
+            (lwarn '(el-get recipe) :warning
+                   "Are you sure you don't need autoloads?
   This property should be used only when the library takes care of
-  the autoload.\n"))
+  the autoload."))
           ;; Warn when `:features t' is specified
-          (when features
-            (insert "* WARNING: Are you sure you need features?
+          (when (and (not (memq 'features el-get-check-suppressed-warnings))
+                     feats)
+            (lwarn '(el-get recipe) :warning
+                   "Are you sure you need features?
   If this library has `;;;###autoload' comment (a.k.a autoload cookie),
-  you don't need `:features'.\n"))
+  you don't need `:features'."))
           ;; Check if `:builtin' is used with an integer
           (when (integerp builtin)
-            (insert "* WARNING: Usage of integers for :builtin is obsolete.
-  Use a version string like \"24.3\" instead.\n")))
+            (lwarn '(el-get recipe) :warning
+                   "Usage of integers for :builtin is obsolete.
+  Use a version string like \"24.3\" instead.")))
         ;; Check for required properties.
         (loop for key in '(:description :name)
               unless (plist-get recipe key)
               do (progn
-                   (insert (format
-                            "* Required property %S is not defined.\n"
-                            key))
+                   (lwarn '(el-get recipe) :error
+                          "Required property %S is not defined." key)
                    (incf numerror)))
         (insert (format "%s error(s) found." numerror)))
       (el-get-check-mode))
