@@ -1,0 +1,5 @@
+(:name omnisharp-mode
+       :description "IDE-like features for editing files in C# solutions."
+       :type github
+       :pkgname "sp3ctum/omnisharp-emacs"
+       :depends (dash popup flycheck auto-complete))
