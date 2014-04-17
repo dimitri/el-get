@@ -12,4 +12,4 @@
                  (lambda (target)
                    (list "make" target (concat "EMACS=" (shell-quote-argument el-get-emacs))))
                  '("oldorg"))
-       :load-path ("." "lisp" "contrib/lisp"))
+       :load-path ("." "contrib/lisp" "lisp"))
