@@ -348,8 +348,8 @@ in el-get package menu."
     (insert status)
     (put-text-property (line-beginning-position) (line-end-position)
                        'font-lock-face face)
+    (indent-to 41 1)
     (when desc
-      (indent-to 41 1)
       (insert (propertize (replace-regexp-in-string "\n" " " desc)
                           'font-lock-face face)
               "\n"))))

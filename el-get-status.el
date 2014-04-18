@@ -88,7 +88,7 @@
         (let ((inhibit-read-only t)
               (name (el-get-package-name package)))
           (when (re-search-forward
-                 (format "^..%s[[:blank:]]+[^[:blank:]]+"
+                 (format "^..%s[[:blank:]]+[^[:blank:]]+[[:blank:]]+"
                          (regexp-quote name)) nil t)
             (delete-region (match-beginning 0) (match-end 0))
             (el-get-print-package name status)))))
