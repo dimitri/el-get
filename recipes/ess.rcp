@@ -6,4 +6,6 @@
        :info "doc/info/"
        :build `(("make" "clean" "all" ,(concat "EMACS=" (shell-quote-argument
                                                          el-get-emacs))))
-       :load "ess-autoloads.el")
+       :load "ess-autoloads.el"
+       :prepare (progn
+                  (autoload 'R-mode "ess-site" nil t)))
