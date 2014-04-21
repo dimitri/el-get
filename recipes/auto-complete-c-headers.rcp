@@ -3,4 +3,9 @@
        :description "An auto-complete source for C/C++ header files."
        :type github
        :pkgname "mooz/auto-complete-c-headers"
-       :depends auto-complete)
+       :depends auto-complete
+       :prepare (progn (defun ac--c-headers-init ()
+                         (require 'auto-complete-c-headers)
+                         (add-to-list 'ac-sources 'ac-source-c-headers))
+                       (add-hook 'c-mode-hook 'ac--c-headers-init)
+                       (add-hook 'c++-mode-hook 'ac--c-headers-init)))
