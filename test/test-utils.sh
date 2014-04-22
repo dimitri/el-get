@@ -3,7 +3,7 @@ set_default () {
 }
 
 # http://www.linuxjournal.com/content/use-bash-trap-statement-cleanup-temporary-files
-function on_exit()
+on_exit()
 {
     for i in "${on_exit_items[@]}"
     do
@@ -11,7 +11,7 @@ function on_exit()
     done
 }
 
-function add_on_exit()
+add_on_exit()
 {
     local n=${#on_exit_items[*]}
     on_exit_items[$n]="$*"
