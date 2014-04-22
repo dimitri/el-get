@@ -5,42 +5,11 @@ if [ -z "$1" ]; then
   exit 0
 fi
 
-set_default () {
-  eval "
-if [ -z \$$1 ]; then
-  $1=$2
-fi
-"
-}
-
-# http://www.linuxjournal.com/content/use-bash-trap-statement-cleanup-temporary-files
-on_exit ()
-{
-    for i in "${on_exit_items[@]}"
-    do
-        eval $i
-    done
-}
-
-add_on_exit ()
-{
-    local n=${#on_exit_items[*]}
-    on_exit_items[$n]="$*"
-    if [[ $n -eq 0 ]]; then
-        trap on_exit EXIT
-    fi
-}
-
-set_default EL_GET_LIB_DIR "$(dirname "$(dirname "$(readlink -f "$0")")")"
-set_default TMPDIR "$(dirname "$(mktemp --dry-run)")"
-set_default TEST_HOME "$TMPDIR/el-get-test-home"
-set_default EMACS "$(which emacs)"
+source "$(dirname $0)"/test-utils.sh
 
 # 5 seconds in between tests to avoid accidental DoS from running too
 # many tests in a short time
 set_default DELAY_BETWEEN_TESTS 5
-
-set_default RECIPE_DIR "$EL_GET_LIB_DIR/recipes"
 
 get_recipe_file () {
   for x in "$1" "$RECIPE_DIR/$1" "$RECIPE_DIR/$1.rcp" "$RECIPE_DIR/$1.el"; do

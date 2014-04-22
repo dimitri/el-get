@@ -5,20 +5,8 @@ if [ -z "$1" ]; then
   exit 0
 fi
 
-set_default () {
-  eval "
-if [ -z \$$1 ]; then
-  $1=$2
-fi
-"
-}
+source "$(dirname $0)"/test-utils.sh
 
-set_default EL_GET_LIB_DIR "$(dirname "$(dirname "$(readlink -f "$0")")")"
-set_default TMPDIR "$(dirname "$(mktemp --dry-run)")"
-set_default TEST_HOME "$TMPDIR/el-get-test-home"
-set_default EMACS "$(which emacs)"
-
-RECIPE_DIR="$EL_GET_LIB_DIR/recipes"
 
 get_recipe_file () {
   for x in "$1" "$RECIPE_DIR/$1" "$RECIPE_DIR/$1.rcp" "$RECIPE_DIR/$1.el"; do

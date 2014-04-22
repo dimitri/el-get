@@ -5,19 +5,7 @@ if [ -z "$1" ]; then
   exit 0
 fi
 
-set_default () {
-  eval "
-if [ -z \$$1 ]; then
-  $1=$2
-fi
-"
-}
-
-set_default EL_GET_LIB_DIR "$(dirname "$(dirname "$(readlink -f "$0")")")"
-set_default TMPDIR "$(dirname "$(mktemp --dry-run)")"
-set_default TEST_HOME "$TMPDIR/el-get-test-home"
-set_default EMACS "$(which emacs)"
-set_default TEST_DIR "$(dirname $0)"
+source "$(dirname $0)"/test-utils.sh
 
 run_test () {
   for x in "$1" "$TEST_DIR/$1" "$TEST_DIR/$1.el" "$TEST_DIR/el-get-issue-$1.el"; do

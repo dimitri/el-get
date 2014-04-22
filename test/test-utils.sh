@@ -24,7 +24,9 @@ set_default EL_GET_LIB_DIR "$(dirname "$(dirname "$(readlink -f "$0")")")"
 set_default TMPDIR "$(dirname "$(mktemp --dry-run)")"
 set_default TEST_HOME "$TMPDIR/el-get-test-home"
 set_default EMACS "$(which emacs)"
+
 set_default TEST_DIR "$(dirname $0)"
+set_default RECIPE_DIR "$EL_GET_LIB_DIR/recipes"
 
 if [[ -t 1 ]]; then
     EL_GET_END="$(tput sgr0)"
