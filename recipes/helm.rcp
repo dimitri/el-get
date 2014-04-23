@@ -2,5 +2,6 @@
        :description "Emacs incremental and narrowing framework"
        :type github
        :pkgname "emacs-helm/helm"
-       :compile nil
-       :features helm-config)
+       ;; Helm has a lot of optional dependencies that would be required in
+       ;; order to compile it.
+       :compile nil)
