@@ -20,27 +20,25 @@ add_on_exit()
     fi
 }
 
-get_recipe_file () {
-  for x in "$1" "$RECIPE_DIR/$1" "$RECIPE_DIR/$1.rcp" "$RECIPE_DIR/$1.el"; do
-    if [ -e "$x" ]; then
-      echo "$x"
-      break
+get_file () {
+  # <name> <fmts>...
+  name=$1
+  shift
+  for fmt in "$@" ; do
+    file=$(printf "$fmt" "$name")
+    if [ -e "$file" ]; then
+      echo "$file"
+      return 0
     fi
   done
+  echo "*** ERROR $name: Could not find file ***"
+  return 1
 }
 
-test_recipe () {
-  # $1 = <interactive|batch>
-  # $2 = <recipe>
+emacs_with_test_home() {
   mode=$1
-  recipe_file="$(get_recipe_file "$2")"
+  testfile=$2
 
-  if [ ! -n "$recipe_file" ]; then
-    echo "*** Skipping nonexistent recipe $2 ***"
-    return 1
-  fi
-  echo "*** Testing el-get recipe $recipe_file ***"
-  mkdir -p "$TEST_HOME"/.emacs.d
   if [ -n "$DO_NOT_CLEAN" ]; then
     echo "Running test without removing $TEST_HOME first";
   else
@@ -49,6 +47,21 @@ test_recipe () {
   fi
   mkdir -p "$TEST_HOME"/.emacs.d/el-get/
   TMPDIR="$TEST_HOME"
+
+  [ "$mode" = batch ] && args=(-Q -batch) || args=(-Q)
+
+  HOME="$TEST_HOME" "$EMACS" "${args[@]}" -L "$EL_GET_LIB_DIR" \
+      -l "$EL_GET_LIB_DIR/el-get.el" -l "$EL_GET_LIB_DIR/test/test-setup.el" \
+      -l "$testfile"
+  return $?
+}
+
+test_recipe () {
+  # $1 = <interactive|batch>
+  # $2 = <recipe>
+  mode=$1
+  recipe_file=$(get_file "$2" "%s" "$RECIPE_DIR/%s" \
+      "$RECIPE_DIR/%s.rcp" "$RECIPE_DIR/%s.el") || return 1
 
   lisp_temp_file=`mktemp`
   add_on_exit "rm -f $lisp_temp_file"
@@ -73,11 +86,8 @@ test_recipe () {
 
 EOF
 
-  [ "$mode" = batch ] && args=(-Q -batch) || args=(-Q)
-
-  HOME="$TEST_HOME" "$EMACS" "${args[@]}" -L "$EL_GET_LIB_DIR" \
-      -l "$EL_GET_LIB_DIR/el-get.el" -l "$EL_GET_LIB_DIR/test/test-setup.el" \
-      -l "$lisp_temp_file"
+  echo "*** Testing el-get recipe $recipe_file ***"
+  emacs_with_test_home "$mode" "$lisp_temp_file"
   return $?
 }
 
@@ -85,33 +95,12 @@ run_test () {
   # $1 = <interactive|batch>
   # $2 = <test>
   mode=$1
+  testfile=$(get_file "$2" "%s" "$TEST_DIR/%s" \
+      "$TEST_DIR/%s.el" "$TEST_DIR/el-get-issue-%s.el") || return 1
 
-  for x in "$2" "$TEST_DIR/$2" "$TEST_DIR/$2.el" "$TEST_DIR/el-get-issue-$2.el"; do
-    if [ -f "$x" ]; then
-      testfile="$x"
-    fi
-  done
-  if [ -z "$testfile" ]; then
-    echo "*** ERROR $2: Could not find test file ***"
-    return 1
-  else
-    echo "*** Running el-get test $testfile ***"
-    if [ -n "$DO_NOT_CLEAN" ]; then
-      echo "Running test without removing $TEST_HOME first";
-    else
-      add_on_exit "rm -rf $TEST_HOME"
-      rm -rf "$TEST_HOME"
-    fi
-    mkdir -p "$TEST_HOME"/.emacs.d/el-get/
-    TMPDIR="$TEST_HOME"
-
-    [ "$mode" = batch ] && args=(-Q -batch) || args=(-Q)
-
-    HOME="$TEST_HOME" "$EMACS" "${args[@]}" -L "$EL_GET_LIB_DIR" \
-      -l "$EL_GET_LIB_DIR/el-get.el" -l "$EL_GET_LIB_DIR/test/test-setup.el" \
-      -l "$testfile"
-    return $?
-  fi
+  echo "*** Running el-get test $testfile ***"
+  emacs_with_test_home "$mode" "$testfile"
+  return $?
 }
 
 
