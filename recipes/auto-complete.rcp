@@ -5,6 +5,7 @@
        :pkgname "auto-complete/auto-complete"
        :depends (popup fuzzy)
        :features auto-complete-config
-       :post-init (progn (add-to-list 'ac-dictionary-directories
-                                      (expand-file-name "ac-dict" user-emacs-directory))
-                         (ac-config-default)))
+       :post-init (progn
+                    (add-to-list 'ac-dictionary-directories
+                                 (expand-file-name "dict" default-directory))
+                    (ac-config-default)))
