@@ -8,5 +8,4 @@
        :build `("./autogen.sh" "./configure" "make")
        :features bbdb-loaddefs
        :autoloads nil
-       :info "doc"
-       :post-init (bbdb-initialize))
+       :info "doc")
