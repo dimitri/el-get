@@ -37,7 +37,7 @@ test_recipe () {
 
   if [ ! -n "$recipe_file" ]; then
     echo "*** Skipping nonexistent recipe $2 ***"
-    return
+    return 1
   fi
   echo "*** Testing el-get recipe $recipe_file ***"
   mkdir -p "$TEST_HOME"/.emacs.d
@@ -79,6 +79,39 @@ EOF
       -l "$EL_GET_LIB_DIR/el-get.el" -l "$EL_GET_LIB_DIR/test/test-setup.el" \
       -l "$lisp_temp_file"
   return $?
+}
+
+run_test () {
+  # $1 = <interactive|batch>
+  # $2 = <test>
+  mode=$1
+
+  for x in "$2" "$TEST_DIR/$2" "$TEST_DIR/$2.el" "$TEST_DIR/el-get-issue-$2.el"; do
+    if [ -f "$x" ]; then
+      testfile="$x"
+    fi
+  done
+  if [ -z "$testfile" ]; then
+    echo "*** ERROR $2: Could not find test file ***"
+    return 1
+  else
+    echo "*** Running el-get test $testfile ***"
+    if [ -n "$DO_NOT_CLEAN" ]; then
+      echo "Running test without removing $TEST_HOME first";
+    else
+      add_on_exit "rm -rf $TEST_HOME"
+      rm -rf "$TEST_HOME"
+    fi
+    mkdir -p "$TEST_HOME"/.emacs.d/el-get/
+    TMPDIR="$TEST_HOME"
+
+    [ "$mode" = batch ] && args=(-Q -batch) || args=(-Q)
+
+    HOME="$TEST_HOME" "$EMACS" "${args[@]}" -L "$EL_GET_LIB_DIR" \
+      -l "$EL_GET_LIB_DIR/el-get.el" -l "$EL_GET_LIB_DIR/test/test-setup.el" \
+      -l "$testfile"
+    return $?
+  fi
 }
 
 
