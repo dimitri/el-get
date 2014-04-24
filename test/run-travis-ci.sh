@@ -1,5 +1,7 @@
 #!/bin/bash
 
+$EMACS --version
+
 set -ex
 
 # for now, just require no warnings or errors during compilation

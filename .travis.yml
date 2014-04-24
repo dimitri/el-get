@@ -1,14 +1,14 @@
 language: emacs-lisp
 before_install:
   - if [ "$EMACS" = 'emacs-snapshot' ]; then
-      sudo add-apt-repository -y ppa:cassou/emacs &&
-      sudo apt-get update -qq &&
+      sudo add-apt-repository -y ppa:cassou/emacs || exit $?;
+      sudo apt-get update -qq || exit $?;
       sudo apt-get install -qq
-          emacs-snapshot-el emacs-snapshot-gtk emacs-snapshot;
+          emacs-snapshot-el emacs-snapshot-gtk emacs-snapshot || exit $?;
     fi
   - if [ $($EMACS -Q -batch --eval '(message "%d" emacs-major-version)' 2>&1) -lt 24 ] ; then
       mkdir pkg &&
-      curl -o pkg/package.el http://repo.or.cz/w/emacs.git/blob_plain/1a0a666f941c99882093d7bd08ced15033bc3f0c:/lisp/emacs-lisp/package.el;
+      curl --silent --show-error -L -o pkg/package.el https://github.com/mirrors/emacs/raw/1a0a666f941c99882093d7bd08ced15033bc3f0c/lisp/emacs-lisp/package.el;
     fi
 env:
   - EMACS=emacs
