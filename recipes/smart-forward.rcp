@@ -1,7 +1,11 @@
 (:name smart-forward
        :type github
        :pkgname "magnars/smart-forward.el"
-       :description "Semantic navigation based on expand-region"
+       :description "Semantic navigation based on expand-region."
        :website "https://github.com/magnars/smart-forward.el"
-       :features smart-forward
-       :depends (expand-region))
+       :depends (expand-region)
+       :prepare (progn
+                  (autoload 'smart-up "smart-forward" nil t)
+                  (autoload 'smart-down "smart-forward" nil t)
+                  (autoload 'smart-backward "smart-forward" nil t)
+                  (autoload 'smart-forward "smart-forward" nil t)))
