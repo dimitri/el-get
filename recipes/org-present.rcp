@@ -1,0 +1,4 @@
+(:name org-present
+       :description "Ultra-minimalist presentation minor-mode for Emacs org-mode"
+       :type github
+       :pkgname "rlister/org-present")
