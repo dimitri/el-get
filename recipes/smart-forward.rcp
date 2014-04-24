@@ -4,9 +4,4 @@
        :description "Semantic navigation based on expand-region"
        :website "https://github.com/magnars/smart-forward.el"
        :features smart-forward
-       :depends (expand-region)
-       :post-init (progn
-                    (global-set-key (kbd "M-<up>") 'smart-up)
-                    (global-set-key (kbd "M-<down>") 'smart-down)
-                    (global-set-key (kbd "M-<left>") 'smart-backward)
-                    (global-set-key (kbd "M-<right>") 'smart-forward)))
+       :depends (expand-region))
