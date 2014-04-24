@@ -10,7 +10,7 @@
                          (expand-file-name
                           "mu"
                           (el-get-package-directory 'mu4e))))
-       :build `(("autoreconf -i")
+       :build `(("autoreconf" "-i")
                 ("./configure")
                 ("make"))
        :load-path "mu4e"
