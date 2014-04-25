@@ -297,9 +297,11 @@ Current possibe elements are: `features'.")
         (push (intern (match-string 1 arg)) el-get-check-suppressed-warnings)
       (let ((warning-prefix-function
              (lambda (level entry)
-               (list level (format "%s:%s" arg
+               (list level (format "%s:%s" el-get-check--last-file-or-buffer
                                    (format (nth 1 entry) ""))))))
-        (el-get-check-recipe arg))))
+        (condition-case err
+            (el-get-check-recipe arg)
+          (error (lwarn '(el-get) :emergency "%s" (error-message-string err)))))))
   ;; IMPORTANT: Remove args. Otherwise emacs will go and visit every
   ;; file after we're done. This takes a LONG time (as in 10 times as
   ;; long).
@@ -333,68 +335,86 @@ FILENAME defaults to `buffer-file-name'."
       (file-name-sans-extension
        (file-name-nondirectory (or filename (buffer-file-name)))))))
 
+(defvar el-get-check-warning-buffer)
+
+(defun el-get-check-warning (level message &rest args)
+  (declare (indent 1))
+  (display-warning '(el-get recipe) (apply #'format message args)
+                   level el-get-check-warning-buffer))
+
 (defun el-get-check-recipe-in-current-buffer (recipe-file-name)
-  (let ((recipe (save-excursion
-                  (goto-char (point-min))
-                  (read (current-buffer))))
+  (let ((inhibit-read-only t)
         (numerror 0)
-        (buffer (get-buffer-create "*el-get check recipe*")))
-    (display-buffer buffer)
-    (with-current-buffer buffer
-      (let ((inhibit-read-only t))
-        (erase-buffer)
-        (when (and recipe-file-name
-                   (not (string= (file-name-base recipe-file-name)
-                                 (plist-get recipe :name))))
-          (incf numerror)
-          (lwarn '(el-get recipe) :error
-                 "File name should match recipe name."))
-        ;; Check if userspace property is used.
-        (loop for key in '(:before :after)
-              for alt in '(:prepare :post-init)
-              when (plist-get recipe key)
-              do (progn
-                   (lwarn '(el-get recipe) :warning
-                          "Property %S is for user.  Use %S instead."
-                          key alt)
-                   (incf numerror)))
-        (destructuring-bind (&key type url autoloads feats builtin
-                                  &allow-other-keys)
-            recipe
-          ;; let-binding `features' causes `provide' to throw error
-          (setq feats (plist-get recipe :features))
-          ;; Is github type used?
-          (when (and (eq type 'git) (string-match "//github.com/" url))
-            (lwarn '(el-get recipe) :warning
-                   "Use `:type github' for github type recipe")
-            (incf numerror))
-          ;; Warn when `:autoloads nil' is specified.
-          (when (and (null autoloads) (plist-member recipe :autoloads))
-            (lwarn '(el-get recipe) :warning
-                   "Are you sure you don't need autoloads?
+        (el-get-check-warning-buffer (get-buffer-create "*el-get check recipe*")))
+    (display-buffer el-get-check-warning-buffer)
+    (with-current-buffer el-get-check-warning-buffer
+      (erase-buffer)
+      (el-get-check-mode))
+    (let ((recipe (save-excursion
+                    (goto-char (point-min))
+                    (prog1 (read (current-buffer))
+                      (let ((lvl-err (condition-case err
+                                         (progn (read (current-buffer))
+                                                `(:warning . "Extra data following recipe"))
+                                       (end-of-file nil)
+                                       (error `(:error . ,(error-message-string err))))))
+                        (when lvl-err
+                         (incf numerror)
+                         (let ((el-get-check--last-file-or-buffer
+                                (format "%s:%d:%d" recipe-file-name
+                                        (line-number-at-pos) (current-column))))
+                           (el-get-check-warning (car lvl-err) (cdr lvl-err)))))))))
+      (when (and recipe-file-name
+                 (not (string= (file-name-base recipe-file-name)
+                               (plist-get recipe :name))))
+        (incf numerror)
+        (el-get-check-warning :error
+          "File name should match recipe name."))
+      ;; Check if userspace property is used.
+      (loop for key in '(:before :after)
+            for alt in '(:prepare :post-init)
+            when (plist-get recipe key)
+            do (progn
+                 (el-get-check-warning :warning
+                   "Property %S is for user.  Use %S instead."
+                   key alt)
+                 (incf numerror)))
+      (destructuring-bind (&key type url autoloads feats builtin
+                                &allow-other-keys)
+          recipe
+        ;; let-binding `features' causes `provide' to throw error
+        (setq feats (plist-get recipe :features))
+        ;; Is github type used?
+        (when (and (eq type 'git) (string-match "//github.com/" url))
+          (el-get-check-warning :warning
+            "Use `:type github' for github type recipe")
+          (incf numerror))
+        ;; Warn when `:autoloads nil' is specified.
+        (when (and (null autoloads) (plist-member recipe :autoloads))
+          (el-get-check-warning :warning
+            "Are you sure you don't need autoloads?
   This property should be used only when the library takes care of
   the autoload."))
-          ;; Warn when `:features t' is specified
-          (when (and (not (memq 'features el-get-check-suppressed-warnings))
-                     feats)
-            (lwarn '(el-get recipe) :warning
-                   "Are you sure you need features?
+        ;; Warn when `:features t' is specified
+        (when (and (not (memq 'features el-get-check-suppressed-warnings))
+                   feats)
+          (el-get-check-warning :warning
+            "Are you sure you need features?
   If this library has `;;;###autoload' comment (a.k.a autoload cookie),
   you don't need `:features'."))
-          ;; Check if `:builtin' is used with an integer
-          (when (integerp builtin)
-            (lwarn '(el-get recipe) :warning
-                   "Usage of integers for :builtin is obsolete.
+        ;; Check if `:builtin' is used with an integer
+        (when (integerp builtin)
+          (el-get-check-warning :warning
+            "Usage of integers for :builtin is obsolete.
   Use a version string like \"24.3\" instead.")))
-        ;; Check for required properties.
-        (loop for key in '(:description :name)
-              unless (plist-get recipe key)
-              do (progn
-                   (lwarn '(el-get recipe) :error
-                          "Required property %S is not defined." key)
-                   (incf numerror)))
-        (insert (format "%s error(s) found." numerror)))
-      (el-get-check-mode))
+      ;; Check for required properties.
+      (loop for key in '(:description :name)
+            unless (plist-get recipe key)
+            do (progn
+                 (el-get-check-warning :error
+                   "Required property %S is not defined." key)
+                 (incf numerror)))
+      (insert (format "\n%s: %s error(s) found." recipe-file-name numerror)))
     numerror))
 
 (provide 'el-get-recipes)
