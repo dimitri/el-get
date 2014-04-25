@@ -5,8 +5,8 @@
        :url "git://doxymacs.git.sourceforge.net/gitroot/doxymacs/doxymacs"
        :load-path ("./lisp")
        :build ("./bootstrap" "./configure" "make")
-       :build/darwin("sed -i -e 's/-fexpensive-optimizations//' ./c/Makefile.am"
-                     "sed -i -e 's/inline/static inline/' ./c/doxymacs_parser.c"
-                     "./bootstrap" "./configure" "make")
-       :features doxymacs
-       )
+       :build/darwin ("sed -i -e 's/-fexpensive-optimizations//' ./c/Makefile.am"
+                      "sed -i -e 's/inline/static inline/' ./c/doxymacs_parser.c"
+                      "./bootstrap" "./configure" "make")
+       :prepare (progn
+                  (autoload 'doxymacs-mode "doxymacs" nil t)))
