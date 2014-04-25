@@ -291,21 +291,23 @@ Current possibe elements are: `features'.")
 
 (defun el-get-check-recipe-batch ()
   "emacs -Q -batch -f el-get-check-recipe-batch [-Wno-<warning>...] *.rcp"
+  (assert noninteractive nil
+          "`el-get-check-recipe-batch' should only be used with -batch")
   (setq vc-handled-backends nil) ; avoid loading VC during batch mode
-  (dolist (arg command-line-args-left)
-    (if (string-match "^-Wno-\\(.*\\)" arg)
-        (push (intern (match-string 1 arg)) el-get-check-suppressed-warnings)
-      (let ((warning-prefix-function
-             (lambda (level entry)
-               (list level (format "%s:%s" el-get-check--last-file-or-buffer
-                                   (format (nth 1 entry) ""))))))
-        (condition-case err
-            (el-get-check-recipe arg)
-          (error (lwarn '(el-get) :emergency "%s" (error-message-string err)))))))
-  ;; IMPORTANT: Remove args. Otherwise emacs will go and visit every
-  ;; file after we're done. This takes a LONG time (as in 10 times as
-  ;; long).
-  (setq command-line-args-left nil))
+  (loop for arg in command-line-args-left
+        if (string-match "^-Wno-\\(.*\\)" arg)
+        do (push (intern (match-string 1 arg)) el-get-check-suppressed-warnings)
+        else summing
+        (let ((warning-prefix-function
+               (lambda (level entry)
+                 (list level (format "%s:%s" el-get-check--last-file-or-buffer
+                                     (format (nth 1 entry) ""))))))
+          (condition-case err
+              (el-get-check-recipe arg)
+            (error (lwarn '(el-get) :emergency "%s" (error-message-string err)))))
+        into errors
+        finally (progn (message "%d warning/error(s) total." errors)
+                       (kill-emacs (if (zerop errors) 0 1)))))
 
 (defun el-get-check-recipe (file-or-buffer)
   "Check the format of the recipe.
