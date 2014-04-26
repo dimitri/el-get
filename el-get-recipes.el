@@ -287,7 +287,8 @@ See Info node `(el-get) Authoring Recipes'.")
 (defvar el-get-check-suppressed-warnings ()
   "List of `el-get-check-recipe' warnings to suppress.
 
-Current possibe elements are: `features'.")
+Current possibe elements are:
+ `features', `github', `autoloads'")
 
 (defun el-get-check-recipe-batch ()
   "emacs -Q -batch -f el-get-check-recipe-batch [-Wno-<warning>...] *.rcp"
@@ -325,7 +326,6 @@ object or a file path."
       (with-current-buffer file-or-buffer
         (el-get-check-recipe-in-current-buffer (buffer-file-name)))
     (with-temp-buffer
-      (erase-buffer)
       (insert-file-contents file-or-buffer)
       (el-get-check-recipe-in-current-buffer file-or-buffer))))
 
@@ -387,12 +387,14 @@ FILENAME defaults to `buffer-file-name'."
         ;; let-binding `features' causes `provide' to throw error
         (setq feats (plist-get recipe :features))
         ;; Is github type used?
-        (when (and (eq type 'git) (string-match "//github.com/" url))
+        (when (and (not (memq 'github el-get-check-suppressed-warnings))
+                   (eq type 'git) (string-match "//github.com/" url))
           (el-get-check-warning :warning
             "Use `:type github' for github type recipe")
           (incf numerror))
         ;; Warn when `:autoloads nil' is specified.
-        (when (and (null autoloads) (plist-member recipe :autoloads))
+        (when (and (not (memq 'autoloads el-get-check-suppressed-warnings))
+                   (null autoloads) (plist-member recipe :autoloads))
           (el-get-check-warning :warning
             "Are you sure you don't need autoloads?
   This property should be used only when the library takes care of
