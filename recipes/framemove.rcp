@@ -1,5 +1,5 @@
 (:name framemove
-       :Description "FrameMove allows you to move focus between frames using arrow keys."
-       :Website "http://www.emacswiki.org/emacs/FrameMove"
+       :description "FrameMove allows you to move focus between frames using arrow keys."
+       :website "http://www.emacswiki.org/emacs/FrameMove"
        :type emacswiki
        :features framemove)

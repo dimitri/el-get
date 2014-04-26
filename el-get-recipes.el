@@ -24,6 +24,7 @@
 ;;; Code:
 
 (require 'el-get-core)
+(require 'el-get-custom)
 (require 'el-get-byte-compile)
 
 (defcustom el-get-recipe-path-emacswiki

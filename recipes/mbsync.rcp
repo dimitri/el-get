@@ -1,4 +1,5 @@
 (:name mbsync
        :type github
+       :description "Wrap calling mbsync in Emacs Lisp, with a gnus hook"
        :pkgname "dimitri/mbsync-el"
        :features mbsync)
