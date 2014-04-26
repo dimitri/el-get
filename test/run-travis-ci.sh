@@ -11,7 +11,7 @@ $EMACS -Q -L pkg/ -L . -L methods/ -batch --eval '(setq byte-compile-error-on-wa
 if [ "$EMACS" = emacs ] ; then # only run this for 1 emacs version
      $EMACS -Q -L . -batch -l el-get-recipes -f el-get-check-recipe-batch \
          -Wno-features -Wno-github -Wno-autoloads \
-         recipes/*.rcp
+         recipes/
 fi
 
 # TODO: actually run some tests

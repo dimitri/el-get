@@ -291,6 +291,16 @@ See Info node `(el-get) Authoring Recipes'.")
 Current possibe elements are:
  `features', `github', `autoloads'")
 
+(defun el-get-check-recipe-batch-1 (recipe-file)
+  (let ((warning-prefix-function
+         (lambda (level entry)
+           (list level (format "%s:%s" el-get-check--last-file-or-buffer
+                               (format (nth 1 entry) ""))))))
+    (condition-case err
+        (el-get-check-recipe (file-relative-name recipe-file))
+      (error (lwarn '(el-get) :emergency "%s" (error-message-string err))
+             1))))
+
 (defun el-get-check-recipe-batch ()
   "emacs -Q -batch -f el-get-check-recipe-batch [-Wno-<warning>...] *.rcp"
   (assert noninteractive nil
@@ -300,13 +310,10 @@ Current possibe elements are:
         if (string-match "^-Wno-\\(.*\\)" arg)
         do (push (intern (match-string 1 arg)) el-get-check-suppressed-warnings)
         else summing
-        (let ((warning-prefix-function
-               (lambda (level entry)
-                 (list level (format "%s:%s" el-get-check--last-file-or-buffer
-                                     (format (nth 1 entry) ""))))))
-          (condition-case err
-              (el-get-check-recipe arg)
-            (error (lwarn '(el-get) :emergency "%s" (error-message-string err)))))
+        (if (file-directory-p arg)
+            (reduce #'+ (directory-files arg t "\\.rcp$" t)
+                    :key #'el-get-check-recipe-batch-1 :initial-value 0)
+          (el-get-check-recipe-batch-1 arg))
         into errors
         finally (progn (message "%d warning/error(s) total." errors)
                        (kill-emacs (if (zerop errors) 0 1)))))
