@@ -1,0 +1,6 @@
+(:name owdriver
+       :website "https://github.com/aki2o/owdriver"
+       :description "Do various action to other windows quickly"
+       :type github
+       :pkgname "aki2o/owdriver"
+       :depends (smartrep log4e yaxception))
