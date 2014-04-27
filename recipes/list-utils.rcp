@@ -1,0 +1,4 @@
+(:name list-utils
+       :description "List-manipulation utility functions."
+       :type github
+       :pkgname "rolandwalker/list-utils")
