@@ -1,0 +1,5 @@
+(:name doc-mode-nschum
+       :description "Convenient editing of in-code documentation."
+       :website "http://nschum.de/src/emacs/doc-mode/"
+       :type http
+       :url "http://nschum.de/src/emacs/doc-mode/doc-mode.el")
