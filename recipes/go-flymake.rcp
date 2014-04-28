@@ -3,6 +3,7 @@
        :type go
        :pkgname "github.com/dougm/goflymake"
        :depends go-mode
-       :features go-flymake
        :load-path "src/github.com/dougm/goflymake"
-       :post-init (add-to-list 'exec-path (concat default-directory "bin")))
+       :post-init (progn
+                    (add-to-list 'exec-path (concat default-directory "bin"))
+                    (eval-after-load 'go-mode '(require 'go-flymake))))
