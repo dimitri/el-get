@@ -3,5 +3,5 @@
        :type github
        :pkgname "terranpro/magit-gerrit"
        :depends (magit)
-       :post-init (eval-after-load "magit"
+       :post-init (eval-after-load 'magit
                     '(require 'magit-gerrit)))
