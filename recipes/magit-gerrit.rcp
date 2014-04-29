@@ -1,0 +1,6 @@
+(:name magit-gerrit
+       :type github
+       :description "Magit plugin for Gerrit Code Review"
+       :pkgname "terranpro/magit-gerrit"
+       :depends (magit)
+       :post-init (eval-after-load 'magit '(require 'magit-gerrit)))
