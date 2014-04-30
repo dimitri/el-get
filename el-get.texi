@@ -748,7 +748,7 @@ your own types here, see @var{el-get-methods}.
 
 @item :branch
 Which branch to fetch when using git (and by extension, github and
-emacsmirror, which are derived form git).  Also supported in the
+emacsmirror, which are derived from git).  Also supported in the
 installer in el-get-install.
 
 @item :url
