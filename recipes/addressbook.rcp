@@ -1,0 +1,8 @@
+(:name addressbook
+       :description "Simple vCard based addressbook for Emacs"
+       :type cvs
+       :module "addressbook"
+       :url ":pserver:anoncvs@cvs.savannah.nongnu.org:/sources/addressbook"
+       :build (("make" "abook.info")
+               ("ln" "-fs" "abook.info" "addressbook.info"))
+       :info ".")
