@@ -1,4 +1,3 @@
 (:name apt-utils
        :description "Emacs interface to APT (Debian package management)"
-       :type http
-       :url "http://www.emacswiki.org/emacs/download/apt-utils.el")
+       :type emacswiki)
