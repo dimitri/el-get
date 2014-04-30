@@ -1,0 +1,5 @@
+(:name elwm
+       :description "Lightweight window manager for emacs"
+       :type github
+       :pkgname "Fuco1/elwm"
+       :depends dash)

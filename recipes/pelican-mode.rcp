@@ -1,0 +1,5 @@
+(:name pelican-mode
+       :website "https://github.com/emacsmirror/pelican-mode"
+       :description "Emacs utilities for the pelican blogging package"
+       :type github
+       :pkgname "emacsmirror/pelican-mode")

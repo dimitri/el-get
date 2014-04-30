@@ -1,4 +1,0 @@
-(:name virtualenv
-       :description "Virtualenv for Python"
-       :type github
-       :pkgname "aculich/virtualenv.el")

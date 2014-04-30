@@ -1,0 +1,5 @@
+(:name auto-complete-auctex
+       :description "Auto-completion for AuCTeX."
+       :type github
+       :pkgname "monsanto/auto-complete-auctex"
+       :prepare (autoload 'ac-auctex-setup "auto-complete-auctex"))

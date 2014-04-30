@@ -1,6 +1,6 @@
 ![Color El-Get logo](https://raw.github.com/dimitri/el-get/master/logo/el-get.png)
 El-Get allows you to install and manage `elisp` code for Emacs. It supports
-lots of differents types of sources and is able to *install* them, *update*
+lots of different types of sources and is able to *install* them, *update*
 them and *remove* them, but more importantly it will *init* them for you.
 That means it will `require` the *features* you need, `load` the necessary
 files, set the *Info* paths so that `C-h i` shows the new documentation you
@@ -80,13 +80,13 @@ called by el-get from a `windows-nt` Emacs, see `system-type`). When using a
 which contains the proper `install-info` version when you're not using the
 *cygwin* Emacs binary.
 
-## Stable Branch
+## The Lazy Installer
 
 To install El-Get you can use the *lazy-installer*.  This will not load it
 on startup or otherwise affect future usage of Emacs.  If you wish to ensure
 that El-Get will be available in future Emacs session please use the code
 provided in **Basic Setup**.  Using the code below will require an internet
-connection even if El-Get is already installed, that's why it's adviced to
+connection even if El-Get is already installed, that's why it's advised to
 use it for first time installation, not for embedding into your `.emacs` (or
 your `user-init-file`).
 
@@ -105,39 +105,19 @@ Evaluating this code after copying it into your `*scratch*` buffer by typing
 script.  This script will then use `git` to clone El-Get and install it to
 the default location (`~/.emacs.d/el-get/el-get`).
 
-## Master Branch
+## Replicating a package set on another Emacs installation
 
-The lazy installer above targets the current stable release.  If you would
-rather use the current development version you must clone the `master`
-branch by ensuring the variable `el-get-master-branch` exists.
+In the Emacs whose setup you wish to replicate, type `M-x ielm` for an
+Emacs Lisp prompt, and enter:
 
 ```lisp
-;; So the idea is that you copy/paste this code into your *scratch* buffer,
-;; hit C-j, and you have a working developper edition of el-get.
-(url-retrieve
- "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
- (lambda (s)
-   (let (el-get-master-branch)
-     (goto-char (point-max))
-     (eval-print-last-sexp))))
+`(setq my-packages
+              ',(mapcar #'el-get-as-symbol
+                        (el-get-list-package-names-with-status "installed")))
 ```
 
-## Upgrading from 3.1 to 4.1
-
-The development of El-Get 4.1 took a long time, and as a result a lot of
-recipes have change in non compatible ways: some sources switched from `SVN`
-to `git`, some revisited their hosting choice, etc.
-
-As a result, lots of recipe should be *reinstalled* when upgrading. The
-easiest way here might well be to just backup your `el-get-dir` directory
-and start-up fresh with the new El-Get code:
-
-    mv ~/.emacs.d/el-get ~/.emacs.d/el-get-backup-3.stable
-    mkdir ~/.emacs.d/el-get
-    M-x el-get-self-update
-
-That code sample assumes that `el-get-dir` is set to its default value, that
-is `~/.emacs.d/el-get`.
+Copy the result into the new Emacs, in which you should already have
+installed El-Get, and evaluate it, followed by `(el-get 'sync my-packages)`
 
 # Setup
 
@@ -170,22 +150,6 @@ Here is the basic setup to add to your `user-init-file` (`.emacs`):
 (el-get 'sync)
 ```
 
-And for those who prefer the master branch, please use the code below
-
-```lisp
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
-
-(unless (require 'el-get nil 'noerror)
-  (with-current-buffer
-      (url-retrieve-synchronously
-       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
-    (let (el-get-master-branch)
-      (goto-char (point-max))
-      (eval-print-last-sexp))))
-
-(el-get 'sync)
-```
-
 ## Package Setup
 
 The easiest way to setup a given package is to add its initialization code
@@ -196,6 +160,8 @@ for it, like for example `~/.emacs.d/el-get-init-files/`).
 
 El-Get will then load that file at package initialization time. See the full
 *Info* documentation for more details and possibilities.
+
+Many `init-` packages are already available in El-Get.
 
 # Usage
 

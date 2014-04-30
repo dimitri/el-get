@@ -2,4 +2,4 @@
        :description "Continuous syntax checking for Emacs."
        :type github
        :pkgname "illusori/emacs-flymake"
-)
+       )

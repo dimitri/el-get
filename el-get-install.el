@@ -1,4 +1,4 @@
-;;; el-get-install.el --- installer for the lazy
+;;; el-get-install.el --- installer for the lazy -*- no-byte-compile: t -*-
 ;;
 ;; Copyright (C) 2010 Dimitri Fontaine
 ;;
@@ -18,8 +18,8 @@
 
 (let ((el-get-root
        (file-name-as-directory
-	(or (bound-and-true-p el-get-dir)
-	    (concat (file-name-as-directory user-emacs-directory) "el-get")))))
+        (or (bound-and-true-p el-get-dir)
+            (concat (file-name-as-directory user-emacs-directory) "el-get")))))
 
   (when (file-directory-p el-get-root)
     (add-to-list 'load-path el-get-root))
@@ -30,22 +30,22 @@
       (make-directory el-get-root t))
 
     (let* ((package   "el-get")
-	   (buf       (switch-to-buffer "*el-get bootstrap*"))
-	   (pdir      (file-name-as-directory (concat el-get-root package)))
-	   (git       (or (executable-find "git")
-			  (error "Unable to find `git'")))
-	   (url       (or (bound-and-true-p el-get-git-install-url)
-			  "http://github.com/dimitri/el-get.git"))
-	   (default-directory el-get-root)
-	   (process-connection-type nil)   ; pipe, no pty (--no-progress)
+           (buf       (switch-to-buffer "*el-get bootstrap*"))
+           (pdir      (file-name-as-directory (concat el-get-root package)))
+           (git       (or (executable-find "git")
+                          (error "Unable to find `git'")))
+           (url       (or (bound-and-true-p el-get-git-install-url)
+                          "http://github.com/dimitri/el-get.git"))
+           (default-directory el-get-root)
+           (process-connection-type nil)   ; pipe, no pty (--no-progress)
 
-	   ;; First clone el-get
-	   (status
-	    (call-process
-	     git nil `(,buf t) t "--no-pager" "clone" "-v" url package)))
+           ;; First clone el-get
+           (status
+            (call-process
+             git nil `(,buf t) t "--no-pager" "clone" "-v" url package)))
 
       (unless (zerop status)
-	(error "Couldn't clone el-get from the Git repository: %s" url))
+        (error "Couldn't clone el-get from the Git repository: %s" url))
 
       ;; switch branch if we have to
       (let* ((branch (cond
@@ -64,19 +64,19 @@
              (remote-branch (format "origin/%s" branch))
              (default-directory pdir)
              (bstatus
-               (if (string-equal branch "master")
-                 0
-                 (call-process git nil (list buf t) t "checkout" "-t" remote-branch))))
+              (if (string-equal branch "master")
+                  0
+                (call-process git nil (list buf t) t "checkout" "-t" remote-branch))))
         (unless (zerop bstatus)
           (error "Couldn't `git checkout -t %s`" branch)))
 
       (add-to-list 'load-path pdir)
       (load package)
       (let ((el-get-default-process-sync t) ; force sync operations for installer
-            (el-get-verbose t))		    ; let's see it all
+            (el-get-verbose t))             ; let's see it all
         (el-get-post-install "el-get"))
       (unless (boundp 'el-get-install-skip-emacswiki-recipes)
         (el-get-emacswiki-build-local-recipes))
       (with-current-buffer buf
-	(goto-char (point-max))
-	(insert "\nCongrats, el-get is installed and ready to serve!")))))
+        (goto-char (point-max))
+        (insert "\nCongrats, el-get is installed and ready to serve!")))))

@@ -1,0 +1,4 @@
+(:name ov
+       :description "Overlay library for Emacs Lisp"
+       :type github
+       :pkgname "ShingoFukuyama/ov.el")

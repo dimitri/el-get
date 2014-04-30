@@ -1,0 +1,5 @@
+(:name python-environment
+       :description "Python virtualenv API for Emacs Lisp"
+       :type github
+       :pkgname "tkf/emacs-python-environment"
+       :depends (deferred))

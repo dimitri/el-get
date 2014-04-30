@@ -3,8 +3,12 @@
        :type github
        :autoloads "slime-autoloads"
        :info "doc"
-       :pkgname "antifuchs/slime"
+       :pkgname "slime/slime"
+       :depends cl-lib
        :load-path ("." "contrib")
-       :build '(("make" "-C" "doc" "slime.info"))
+       :build '(("sed" "-i" "s/@itemx INIT-FUNCTION/@item INIT-FUNCTION/"
+                 "doc/slime.texi")
+                ("make" "-C" "doc" "slime.info"))
+       :build/darwin '(("make" "-C" "doc" "slime.info"))
        :build/berkeley-unix '(("gmake" "-C" "doc" "slime.info"))
        :post-init (slime-setup))

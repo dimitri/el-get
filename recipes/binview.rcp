@@ -1,0 +1,12 @@
+(:name binview
+       :description "Binary file inspector."
+       :website "http://litchie.net/programs/binview.html"
+       :type http
+       :url "http://litchie.net/programs/binview.el"
+       :prepare (progn
+                  (autoload 'binview-from-point "binview" nil t)
+                  (autoload 'binview-char "binview" nil t)
+                  (autoload 'binview-byte "binview" nil t)
+                  (autoload 'binview-uint16 "binview" nil t)
+                  (autoload 'binview-uint32 "binview" nil t)
+                  (autoload 'binview-int32 "binview" nil t)))

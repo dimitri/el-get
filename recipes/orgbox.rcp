@@ -1,0 +1,4 @@
+(:name orgbox
+       :description "Mailbox-like task scheduling in Org"
+       :type github
+       :pkgname "yasuhito/orgbox")

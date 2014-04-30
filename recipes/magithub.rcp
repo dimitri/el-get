@@ -1,5 +1,0 @@
-(:name magithub
-       :description "Magit extensions for using GitHub"
-       :type github
-       :pkgname "nex3/magithub"
-       :depends magit)

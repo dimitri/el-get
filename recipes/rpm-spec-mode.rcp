@@ -1,0 +1,5 @@
+(:name rpm-spec-mode
+       :type github
+       :pkgname "bjorlykke/rpm-spec-mode"
+       :description "mode for editing rpm .spec files"
+       :website "https://github.com/bjorlykke/rpm-spec-mode")

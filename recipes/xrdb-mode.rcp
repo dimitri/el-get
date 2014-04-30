@@ -1,0 +1,4 @@
+(:name xrdb-mode
+       :description "mode for editing X resource database files"
+       :type http
+       :url "http://www.python.org/emacs/xrdb-mode.el")

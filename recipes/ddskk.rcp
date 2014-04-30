@@ -8,9 +8,9 @@
        :autoloads nil
        :info "doc/skk.info"
        :features ("skk-setup")
-;; The "correct" way would be actually installing ddskk into some subdirectory.
-;; But it needs significant work due to the limitation of the Makefile
-;; thus here we are trying to emulate the Makefile behaviour.
+       ;; The "correct" way would be actually installing ddskk into some subdirectory.
+       ;; But it needs significant work due to the limitation of the Makefile
+       ;; thus here we are trying to emulate the Makefile behaviour.
        :build `((,el-get-emacs "-batch" "-q" "-no-site-file" "-l" "SKK-MK" "-f" "SKK-MK-compile")
                 (,el-get-emacs "-batch" "-q" "-no-site-file" "-l" "SKK-MK" "-f" "SKK-MK-compile-info")
                 ("mv" "skk-setup.el.in" "skk-setup.el")))

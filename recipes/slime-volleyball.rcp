@@ -1,0 +1,8 @@
+(:name slime-volleyball
+       :type github
+       :pkgname "fitzsim/slime-volleyball"
+       :minimum-emacs-version "24.3" ;; TODO probably 24.4
+       :description "A slime volleyball clone for GNU Emacs."
+       :prepare (progn ;; required until #1 is accepted.
+                  (autoload 'slime-volleyball "slime-volleyball"
+                    "A slime volleyball clone for GNU Emacs." 'interactive)))

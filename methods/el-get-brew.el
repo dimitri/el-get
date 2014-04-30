@@ -37,18 +37,18 @@
 (defun el-get-brew-install (package url post-install-fun)
   "brew install PACKAGE"
   (let* ((name (format "*brew install %s*" package))
-	 (pkgname (el-get-as-string package))
-	 (ok   (format "Package %s installed." package))
-	 (ko   (format "Could not install package %s." package)))
+         (pkgname (el-get-as-string package))
+         (ok   (format "Package %s installed." package))
+         (ko   (format "Could not install package %s." package)))
     (el-get-start-process-list
      package
      `((:command-name ,name
-		      :buffer-name ,name
+                      :buffer-name ,name
                       :default-directory ,el-get-dir
-		      :program ,el-get-brew
-		      :args ("install" ,pkgname)
-		      :message ,ok
-		      :error ,ko))
+                      :program ,el-get-brew
+                      :args ("install" ,pkgname)
+                      :message ,ok
+                      :error ,ko))
      post-install-fun)))
 
 (add-hook 'el-get-brew-install-hook 'el-get-dpkg-symlink)
@@ -56,35 +56,35 @@
 (defun el-get-brew-update (package url post-update-fun)
   "brew update PACKAGE"
   (let* ((name (format "*brew update %s*" package))
-	 (pkgname (el-get-as-string package))
-	 (ok   (format "Package %s updated." package))
-	 (ko   (format "Could not update package %s." package)))
+         (pkgname (el-get-as-string package))
+         (ok   (format "Package %s updated." package))
+         (ko   (format "Could not update package %s." package)))
     (el-get-start-process-list
      package
      `((:command-name ,name
-		      :buffer-name ,name
+                      :buffer-name ,name
                       :default-directory ,el-get-dir
-		      :program ,el-get-brew
-		      :args ("upgrade" ,pkgname)
-		      :message ,ok
-		      :error ,ko))
+                      :program ,el-get-brew
+                      :args ("upgrade" ,pkgname)
+                      :message ,ok
+                      :error ,ko))
      post-update-fun)))
 
 (defun el-get-brew-remove (package url post-remove-fun)
   "brew remove PACKAGE. URL is there for API compliance."
   (let* ((name (format "*brew remove %s*" package))
          (pkgname (el-get-as-string package))
-	 (ok   (format "Package %s removed." package))
-	 (ko   (format "Could not remove package %s." package)))
+         (ok   (format "Package %s removed." package))
+         (ko   (format "Could not remove package %s." package)))
     (el-get-start-process-list
      package
      `((:command-name ,name
-		      :buffer-name ,name
+                      :buffer-name ,name
                       :default-directory ,el-get-dir
-		      :program ,el-get-brew
-		      :args ("remove" ,pkgname)
-		      :message ,ok
-		      :error ,ko))
+                      :program ,el-get-brew
+                      :args ("remove" ,pkgname)
+                      :message ,ok
+                      :error ,ko))
      post-remove-fun)))
 
 (add-hook 'el-get-brew-remove-hook 'el-get-dpkg-remove-symlink)
@@ -93,7 +93,7 @@
   :install #'el-get-brew-install
   :update #'el-get-brew-update
   :remove #'el-get-brew-remove
-  :install-hook #'el-get-brew-install-hook
-  :remove-hook #'el-get-brew-remove-hook)
+  :install-hook 'el-get-brew-install-hook
+  :remove-hook 'el-get-brew-remove-hook)
 
 (provide 'el-get-brew)

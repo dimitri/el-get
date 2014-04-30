@@ -1,0 +1,9 @@
+(:name go-lint
+       :description "lint for the Go source code"
+       :type go
+       :pkgname "github.com/golang/lint/golint"
+       :features golint
+       :load-path "src/github.com/golang/lint/misc/emacs"
+       :post-init (progn
+                    (add-to-list 'exec-path (concat default-directory "bin"))
+                    (el-get-envpath-prepend "PATH" (concat default-directory "bin"))))

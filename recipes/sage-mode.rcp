@@ -1,0 +1,7 @@
+(:name sage-mode
+       :description "Sage integration with Emacs."
+       :type hg
+       :url "http://bitbucket.org/gvol/sage-mode"
+       :load-path ("emacs")
+       :features sage
+       :build '(("./make-spkg.sh" "hg")))

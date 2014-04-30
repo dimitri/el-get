@@ -5,14 +5,14 @@
        :url "git://git.savannah.gnu.org/tramp.git"
        :build
        `(("autoconf")
-	 ("./configure" ,(concat "--with-emacs=" el-get-emacs)
-	  "--with-contrib" ,(concat "--prefix="
-				    (expand-file-name
-				     (el-get-package-directory
-"tramp"))))
-	 ("make")
-	 ("make"
-	  ("install")))
+         ("./configure" ,(concat "--with-emacs=" el-get-emacs)
+          "--with-contrib" ,(concat "--prefix="
+                                    (expand-file-name
+                                     (el-get-package-directory "tramp"))))
+         ("make")
+         ("make" "install"))
        :load-path ("./lisp")
-       :info "share/info"
-       :module "tramp")
+       ;; tramp-loaddefs.el uses `tramp-verion' before it's defined,
+       ;; work around this by loading trampver.el first.
+       :autoloads ("trampver.el" "tramp-loaddefs.el")
+       :info "share/info")

@@ -1,4 +1,4 @@
 (:name ruby-block
-       :type http 
+       :type http
        :url "https://raw.github.com/emacsmirror/emacswiki.org/master/ruby-block.el"
        :description "highlight matching block")

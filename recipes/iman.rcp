@@ -1,0 +1,6 @@
+(:name iman
+       :description "Call man & Info viewers with completion."
+       :website "http://homepage1.nifty.com/bmonkey/emacs/index.html"
+       :type http
+       :url "http://homepage1.nifty.com/bmonkey/emacs/elisp/iman.el"
+       :depends (completing-help))

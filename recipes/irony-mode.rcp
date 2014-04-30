@@ -1,0 +1,14 @@
+(:name irony-mode
+       :description "Emacs package using Clang for C & C++ completion, on-the-fly syntax checking and more!"
+       :depends (yasnippet auto-complete json)
+       :type github
+       :branch "develop"
+       :pkgname "Sarcasm/irony-mode"
+       ;; The :compile property only builds irony-server which is the C++ part
+       ;; of irony-mode. A separate :compile property is needed to build the
+       ;; elisp interface.
+       :build (("mkdir" "-p" "build")
+               "(cd build && cmake -DCMAKE_BUILD_TYPE=Release ..)"
+               ("make" "-C" "build" "install"))
+       :compile ("elisp/" "elisp/irony/")
+       :load-path "elisp")

@@ -1,4 +1,4 @@
-This is el-get.info, produced by makeinfo version 4.13 from el-get.texi.
+This is el-get.info, produced by makeinfo version 4.8 from el-get.texi.
 
 INFO-DIR-SECTION Emacs
 START-INFO-DIR-ENTRY
@@ -69,6 +69,11 @@ release while 3.1 is a stable release.
    Please note that this versioning policy has been picked while backing
 1.2~dev, so 1.0 was a "stable" release in fact.  Ah, history.
 
+   El-Get is considered to now have reached a very stable state where it
+only receives bug fixes, code refactoring, and new recipes. The current
+version is now 5.1, which is stable, and maintained in the "master" git
+branch.
+
 
 File: el-get.info,  Node: Acknowledgments,  Next: Glossary,  Prev: Introduction,  Up: Top
 
@@ -88,25 +93,31 @@ project, getting a commit bit and some management duties. He manages
 tests and issues on github as much as he can spares time to El-Get.
 
    Dave Abrahams contributed lots of code and efforts to make things
-right™. He's still using El-Get, but decided to retire from the project.
+right™. He's still using El-Get, but decided to retire from the
+project.
 
    Lots of people (more than we can list here) did contribute to El-Get
 either recipes, bug fixes or ideas to implement, often with code. That
 builds up an awesome community, thanks guys!
 
-     dim ~/dev/emacs/el-get git --no-pager shortlog -n -s | wc -l
-          137
-     dim ~/dev/emacs/el-get git --no-pager shortlog -n -s | head -10
-        734	Dimitri Fontaine
-        336	Ryan C. Thompson
-        114	Julien Danjou
+     ~/dev/emacs/el-get git --no-pager shortlog -n -s | wc -l
+          258
+     ~/dev/emacs/el-get git --no-pager shortlog -n -s | head -15
+       1058	Dimitri Fontaine
+        359	Ryan C. Thompson
+        159	Julien Danjou
         110	Dave Abrahams
-         73	Ryan Thompson
-         72	Sébastien Gross
-         42	Takafumi Arakaki
-         27	Alex Ott
-         25	Yakkala Yagnesh Raghava
-         21	Rüdiger Sonderfeld
+         97	Sébastien Gross
+         94	Takafumi Arakaki
+         92	yagnesh రాఘవ
+         86	Ryan Thompson
+         73	Rüdiger Sonderfeld
+         62	David Holm
+         56	Yakkala Yagnesh Raghava
+         48	Alex Ott
+         40	Shigenobu Nishikawa
+         35	Damien Cassou
+         23	Reuben Thomas
 
 
 File: el-get.info,  Node: Glossary,  Next: Installing,  Prev: Acknowledgments,  Up: Top
@@ -155,8 +166,8 @@ Method
      implements methods that targets `apt-get', `brew', `builtin',
      `bzr', `cvs', `darcs', `elpa', `emacsmirror', `emacswiki', `fink',
      `fossil', `git' and `git-svn', `github' `github-tar' and
-     `github-zip', `hg', `http' `http-tar' and `http-zip', `pacman' and
-     `svn'.
+     `github-zip', `go', `hg', `http' `http-tar' and `http-zip',
+     `pacman' and `svn'.
 
 Notification
      El-Get notifies its user when a package is done installing,
@@ -1023,40 +1034,46 @@ convenient if you want to check multiple recipes at once.
 
      emacs -batch -Q -l test/check-recipe.el  PATH/TO/RECIPE.rcp ...
 
+   You can also test the recipe with `test/test-recipe.sh'.  This will
+actually install the package in a test environment.  An interactive
+version `test/test-recipe-interactive.sh' is also available.
+
+     test/test-recipe.sh PATH/TO/RECIPE.rcp
+
 
 
 Tag Table:
-Node: Top769
-Node: Introduction1234
-Node: Acknowledgments2308
-Node: Glossary3758
-Ref: Glossary - Init4854
-Ref: Glossary - Install5156
-Ref: Glossary - Recipe6243
-Ref: Glossary - Status6667
-Ref: Glossary - Update6925
-Node: Installing7163
-Node: Install the developper version8036
-Node: Skip Emacswiki recipes when installing8781
-Node: Usage9617
-Node: Setup11906
-Node: Basic Setup12302
-Node: The el-get function13613
-Node: Distributed Setup14889
-Node: Setup Customization16931
-Node: User Init18077
-Node: Before and After properties18764
-Node: Initialization files20272
-Node: Recipes20925
-Node: Organizing recipes21400
-Node: Getting more recipes23031
-Node: Overriding package files23729
-Node: Authoring Recipes24112
-Node: Recipe format24727
-Node: Dependencies34516
-Node: Byte Compilation34862
-Node: Autoloads35428
-Node: Build36554
-Node: Recipe checker37526
+Node: Top768
+Node: Introduction1233
+Node: Acknowledgments2533
+Node: Glossary4115
+Ref: Glossary - Init5211
+Ref: Glossary - Install5513
+Ref: Glossary - Recipe6606
+Ref: Glossary - Status7030
+Ref: Glossary - Update7288
+Node: Installing7526
+Node: Install the developper version8399
+Node: Skip Emacswiki recipes when installing9144
+Node: Usage9980
+Node: Setup12269
+Node: Basic Setup12665
+Node: The el-get function13976
+Node: Distributed Setup15252
+Node: Setup Customization17294
+Node: User Init18440
+Node: Before and After properties19127
+Node: Initialization files20635
+Node: Recipes21288
+Node: Organizing recipes21763
+Node: Getting more recipes23394
+Node: Overriding package files24092
+Node: Authoring Recipes24475
+Node: Recipe format25090
+Node: Dependencies34879
+Node: Byte Compilation35225
+Node: Autoloads35791
+Node: Build36917
+Node: Recipe checker37889
 
 End Tag Table

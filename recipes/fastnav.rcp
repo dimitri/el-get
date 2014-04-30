@@ -5,4 +5,4 @@
        :pkgname "gleber/fastnav.el"
        :load-path "."
        :post-init (progn
-            (require 'fastnav)))
+                    (require 'fastnav)))

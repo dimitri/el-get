@@ -1,0 +1,7 @@
+(:name go-errcheck
+       :description "Program for checking for unchecked errors in go code"
+       :type go
+       :pkgname "github.com/kisielk/errcheck"
+       :post-init (progn
+                    (add-to-list 'exec-path (concat default-directory "bin"))
+                    (el-get-envpath-prepend "PATH" (concat default-directory "bin"))))

@@ -1,0 +1,4 @@
+(:name gnus-desktop-notify
+       :description "Gnus Desktop Notification global minor mode"
+       :type http
+       :url "http://www.thregr.org/~wavexx/hacks/gnus-desktop-notify/gnus-desktop-notify.el")

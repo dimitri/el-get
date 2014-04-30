@@ -5,6 +5,11 @@
        :url "git://doxymacs.git.sourceforge.net/gitroot/doxymacs/doxymacs"
        :load-path ("./lisp")
        :build ("./bootstrap" "./configure" "make")
-       :features doxymacs
-       )
-
+       :build/darwin ("sed -i -e 's/-fexpensive-optimizations//' ./c/Makefile.am"
+                      "sed -i -e 's/inline/static inline/' ./c/doxymacs_parser.c"
+                      "./bootstrap" "./configure" "make")
+       :prepare (progn
+                  ;; Predefine the `doxymacs-mode' variable or smart-mode-line
+                  ;; will go bonkers trying to find it.
+                  (defvar doxymacs-mode nil)
+                  (autoload 'doxymacs-mode "doxymacs" nil t)))

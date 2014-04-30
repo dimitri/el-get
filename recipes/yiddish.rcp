@@ -1,0 +1,7 @@
+(:name yiddish
+			 :description "Write Yiddish like Singer (yiddish input method)"
+			 :website "https://github.com/pft/elisp-assorted"
+			 :type builtin
+			 ;; This is a "pseudo" package. Actual elisp file is installed
+			 ;; by the package elisp-assorted
+			 :depends (elisp-assorted))

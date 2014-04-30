@@ -1,0 +1,6 @@
+(:name org-doing
+       :website "http://omouse.github.io/org-doing/"
+       :description "Keep track of what you're doing right now and what you've worked on before."
+       :type github
+       :pkgname "omouse/org-doing"
+       :depends (org-mode))

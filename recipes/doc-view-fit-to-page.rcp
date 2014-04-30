@@ -1,0 +1,5 @@
+(:name doc-view-fit-to-page
+       :type github
+       :website "https://github.com/laysakura/doc-view-fit-to-page"
+       :description "Fit-to-page extension for DocViewMode"
+       :pkgname "laysakura/doc-view-fit-to-page")

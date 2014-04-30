@@ -1,0 +1,7 @@
+(:name flycheck-cask
+       :type github
+       :pkgname "flycheck/flycheck-cask"
+       :description "Cask support for Flycheck"
+       :depends (flycheck)
+       :post-init (eval-after-load 'flycheck
+                    '(add-hook 'flycheck-mode-hook 'flycheck-cask-setup)))

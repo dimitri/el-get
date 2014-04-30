@@ -17,9 +17,9 @@
 ;; NOTE: this will probably benefit from some autoloading magic, later.
 ;;
 (add-to-list 'load-path
-	     (expand-file-name
-	      "methods"
-	      (file-name-directory (or load-file-name buffer-file-name))))
+             (expand-file-name
+              "methods"
+              (file-name-directory (or load-file-name buffer-file-name))))
 
 (require 'el-get-apt-get)
 (require 'el-get-builtin)
@@ -34,6 +34,7 @@
 (require 'el-get-git)
 (require 'el-get-github)
 (require 'el-get-git-svn)
+(require 'el-get-go)
 (require 'el-get-hg)
 (require 'el-get-http)
 (require 'el-get-http-tar)

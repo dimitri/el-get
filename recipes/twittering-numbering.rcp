@@ -1,0 +1,8 @@
+(:name twittering-numbering
+			 :description
+			 "Twittering-numbering adds link numbers to a twittering buffer, in the same fashion (and roughly the same code) as w3m-link-numbering-mode"
+			 :website "https://github.com/pft/elisp-assorted"
+			 :type builtin
+			 ;; This is a "pseudo" package. Actual elisp file is installed
+			 ;; by the package elisp-assorted
+			 :depends (elisp-assorted))

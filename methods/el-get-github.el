@@ -52,8 +52,8 @@ FROM is a literal string, not a regexp."
                      package)))
          (user-and-repo (split-string user-slash-repo "/" 'omit-nulls)))
     (assert (= (length user-and-repo) 2) nil
-              "Github pkgname %s must be of the form username/reponame"
-                user-slash-repo)
+            "Github pkgname %s must be of the form username/reponame"
+            user-slash-repo)
     (cons (first user-and-repo) (second user-and-repo))))
 
 (defun el-get-github-url-private (url-type username reponame)

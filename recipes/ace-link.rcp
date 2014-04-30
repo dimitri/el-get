@@ -1,0 +1,6 @@
+(:name ace-link
+       :website "https://github.com/abo-abo/ace-link/"
+       :description "ace-jump-mode for links in help/info buffers"
+       :type github
+       :pkgname "abo-abo/ace-link"
+       :depends (ace-jump-mode noflet))

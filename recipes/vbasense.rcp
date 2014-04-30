@@ -1,0 +1,6 @@
+(:name vbasense
+       :website "https://github.com/aki2o/emacs-vbasense"
+       :description "provide a environment like Visual Basic Editor."
+       :type github
+       :pkgname "aki2o/emacs-vbasense"
+       :depends (auto-complete log4e yaxception))

@@ -1,0 +1,7 @@
+(:name disk-usage
+			 :description "Disk-usage shows sorted disk usage in a directory in a dedicated buffer"
+			 :website "https://github.com/pft/elisp-assorted"
+			 :type builtin
+			 ;; This is a "pseudo" package. Actual elisp file is installed
+			 ;; by the package elisp-assorted
+			 :depends (elisp-assorted))

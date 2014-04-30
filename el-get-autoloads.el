@@ -14,18 +14,16 @@
 
 (require 'cl)
 (require 'el-get-core)
+(require 'el-get-custom)
 (require 'autoload)
+
+(declare-function el-get-package-is-installed "el-get" (package))
+(declare-function el-get-byte-compile-file "el-get-byte-compile" (el))
+(declare-function el-get-package-def "el-get-recipes" (package))
+(declare-function el-get-list-package-names-with-status "el-get-status" (&rest statuses))
 
 (defvar el-get-outdated-autoloads nil
   "List of package names whose autoloads are outdated")
-
-(defun el-get-save-and-kill (file)
-  "Save and kill all buffers visiting the named FILE"
-  (let (buf)
-    (while (setq buf (find-buffer-visiting file))
-      (with-current-buffer buf
-        (save-buffer)
-        (kill-buffer)))))
 
 (defun el-get-ensure-byte-compilable-autoload-file (file)
   "If FILE doesn't already exist, create it as a byte-compilable
@@ -36,7 +34,7 @@
   (unless (file-exists-p file)
     (write-region
      (replace-regexp-in-string ";; no-byte-compile: t\n" ""
-			       (autoload-rubric file)) nil file)))
+                               (autoload-rubric file)) nil file)))
 
 (defun el-get-load-fast (file)
   "Load the compiled version of FILE if it exists; else load FILE verbatim"
@@ -60,7 +58,8 @@
           emacs-lisp-mode-hook
           ;; use dynamic scoping to set up our loaddefs file for
           ;; update-directory-autoloads
-          (generated-autoload-file el-get-autoload-file))
+          (generated-autoload-file el-get-autoload-file)
+          (visited (get-file-buffer el-get-autoload-file)))
 
       ;; make sure we can actually byte-compile it
       (el-get-ensure-byte-compilable-autoload-file generated-autoload-file)
@@ -68,9 +67,12 @@
       (when (el-get-package-is-installed package)
         (mapc 'update-directory-autoloads
               (remove-if-not #'file-directory-p
-                             (el-get-load-path package))))
+                             (el-get-load-path package)))
 
-      (el-get-save-and-kill el-get-autoload-file)
+        (let ((visiting (get-file-buffer el-get-autoload-file)))
+          ;; `update-directory-autoloads' leaves file open
+          (when (and (not visited) visiting)
+            (kill-buffer visiting))))
 
       (when (file-exists-p el-get-autoload-file)
         (message "el-get: byte-compiling autoload file")
@@ -90,19 +92,18 @@
   "Remove from `el-get-autoload-file' any autoloads associated
 with the named PACKAGE"
   (when (file-exists-p el-get-autoload-file)
-    (with-temp-buffer ;; empty buffer to trick `autoload-find-destination'
-      (let ((generated-autoload-file el-get-autoload-file)
-            ;; Generating autoloads runs emacs-lisp-mode-hook; disable it
-            emacs-lisp-mode-hook
-            (autoload-modified-buffers (list (current-buffer))))
-        (dolist (dir (el-get-load-path package))
-          (when (file-directory-p dir)
-            (dolist (f (directory-files dir t el-get-autoload-regexp))
-              ;; this will clear out any autoloads associated with the file
-              ;; `autoload-find-destination' signature has changed in emacs24.
-              (if (> emacs-major-version 23)
-                  (autoload-find-destination f (autoload-file-load-name f))
-                (autoload-find-destination f)))))))
+    (let* ((files (mapcan (lambda (dir)
+                            (when (file-directory-p dir)
+                              (directory-files dir t el-get-autoload-regexp)))
+                          (el-get-load-path package)))
+           (generated-autoload-file el-get-autoload-file)
+           (load-names (mapcar #'autoload-file-load-name files)))
+      (with-current-buffer (find-file-noselect el-get-autoload-file)
+        (widen) (goto-char (point-min))
+        (while (search-forward generate-autoload-section-header nil t)
+          (when (member (nth 2 (autoload-read-section-header)) load-names)
+            ;; We found a matching section, remove it.
+            (autoload-remove-section (match-beginning 0))))))
     (el-get-update-autoloads package)))
 
 (defun el-get-want-autoloads-p (package)
@@ -124,8 +125,8 @@ is nil, marks all installed packages as needing new autoloads."
        (concat (file-name-sans-extension el-get-autoload-file) ".elc"))))
 
   (let ((packages
-	 (if package (list package)
-	   (el-get-list-package-names-with-status "installed"))))
+         (if package (list package)
+           (el-get-list-package-names-with-status "installed"))))
     (mapc 'el-get-update-autoloads packages)))
 
 (provide 'el-get-autoloads)

@@ -1,0 +1,4 @@
+(:name window-margin
+       :description "Automatic margins for visual-line-mode wrapping"
+       :type github
+       :pkgname "aculich/window-margin.el")

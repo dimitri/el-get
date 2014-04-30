@@ -8,6 +8,6 @@
        (progn
          ;; Load yasnippet because yas/load-directory has no autoload
          (require 'yasnippet)
-	 (yas/load-directory (expand-file-name "snippets"))
-	 ;; django-html-mode is autoloaded, should just work
-	 (add-to-list 'auto-mode-alist '("\.djhtml$" . django-html-mode))))
+         (yas/load-directory (expand-file-name "snippets"))
+         ;; django-html-mode is autoloaded, should just work
+         (add-to-list 'auto-mode-alist '("\.djhtml$" . django-html-mode))))

@@ -1,0 +1,5 @@
+(:name function-args
+       :description "Shows C++ function arguments using Semantic"
+       :type github
+       :pkgname "abo-abo/function-args"
+       )

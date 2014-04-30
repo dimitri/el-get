@@ -1,0 +1,6 @@
+(:name direx-grep
+       :website "https://github.com/aki2o/direx-grep"
+       :description "Grep node of direx.el using incremental search like anything.el/helm.el"
+       :type github
+       :pkgname "aki2o/direx-grep"
+       :depends (direx))

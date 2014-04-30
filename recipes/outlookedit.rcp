@@ -1,0 +1,5 @@
+(:name outlookedit
+       :description "Use Emacs as Editor for Microsoft Outlook."
+       :type github
+       :pkgname "dholm/outlookedit"
+       :features (outlookedit))

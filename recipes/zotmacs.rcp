@@ -6,4 +6,4 @@
        :type hg
        :after (progn
                 (autoload 'org-zotero-mode "org-zotero" "" t))
-)
+       )

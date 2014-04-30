@@ -1,0 +1,8 @@
+(:name structured-haskell-mode
+       :description "Structured Haskell editing operations."
+       :type github
+       :pkgname "chrisdone/structured-haskell-mode"
+       :depends (haskell-mode)
+       :build `(("cabal" "configure")
+                ("cabal" "install"))
+       :load-path "elisp")

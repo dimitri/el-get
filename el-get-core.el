@@ -24,6 +24,9 @@
 (require 'bytecomp)
 (require 'autoload)
 
+(declare-function el-get-package-def "el-get-recipes" (package))
+(declare-function el-get-installation-failed "el-get" (package signal-data))
+
 (defun el-get-print-to-string (object &optional pretty)
   "Return string representation of lisp object.
 
@@ -88,12 +91,12 @@ call for doing the named package action in the given method.")
                               (intern (format ":%s" required-arg))
                               (symbol-value required-arg))))
     (loop for optional-arg in '(install-hook update-hook remove-hook
-                                compute-checksum guess-website)
-        if (symbol-value optional-arg)
-        do (setq method-def
-                 (plist-put method-def
-                            (intern (format ":%s" optional-arg))
-                            (symbol-value optional-arg))))
+                                             compute-checksum guess-website)
+          if (symbol-value optional-arg)
+          do (setq method-def
+                   (plist-put method-def
+                              (intern (format ":%s" optional-arg))
+                              (symbol-value optional-arg))))
     (setq el-get-methods (plist-put el-get-methods name method-def))))
 
 (put 'el-get-register-method 'lisp-indent-function
@@ -136,13 +139,13 @@ convert it to a string and return that."
   "If STRING-OR-SYMBOL is already a symbol, return it.  Otherwise
 convert it to a symbol and return that."
   (if (symbolp string-or-symbol) string-or-symbol
-      (intern string-or-symbol)))
+    (intern string-or-symbol)))
 
 (defun el-get-as-list (element-or-list)
   "If ELEMENT-OR-LIST is already a list, return it.  Otherwise
 returning a list that contains it (and only it)."
   (if (listp element-or-list) element-or-list
-      (list element-or-list)))
+    (list element-or-list)))
 
 (defun el-get-list-of-strings-p (obj)
   (or (null obj)
@@ -179,7 +182,7 @@ entry."
           ((file-exists-p pdir)
            (delete-file pdir)))
     (when post-remove-fun
-     (funcall post-remove-fun package))))
+      (funcall post-remove-fun package))))
 
 
 ;;
@@ -188,10 +191,10 @@ entry."
 (defun el-get-duplicates (list)
   "Return duplicates found in list."
   (loop with dups and once
-	for elt in list
-	if (member elt once) collect elt into dups
-	else collect elt into once
-	finally return dups))
+        for elt in list
+        if (member elt once) collect elt into dups
+        else collect elt into once
+        finally return dups))
 
 (defun el-get-flatten (arg)
   "Return a version of ARG as a one-level list
@@ -206,7 +209,7 @@ entry."
   "Return the list of absolute directory names to be added to
 `load-path' by the named PACKAGE."
   (let* ((source   (el-get-package-def package))
-	 (el-path  (if (plist-member source :load-path)
+         (el-path  (if (plist-member source :load-path)
                        (el-get-flatten (plist-get source :load-path))
                      '(".")))
          (pkg-dir (el-get-package-directory package)))
@@ -231,16 +234,16 @@ given method."
   "Return the absolute directory name of the named PACKAGE."
   (file-name-as-directory
    (expand-file-name (el-get-as-string package)
-		     (expand-file-name el-get-dir))))
+                     (expand-file-name el-get-dir))))
 
 (defun el-get-add-path-to-list (package list path)
   "(add-to-list LIST PATH) checking for path existence within
 given package directory."
   (let* ((pdir     (el-get-package-directory package))
-	 (fullpath (expand-file-name (or path ".") pdir)))
+         (fullpath (expand-file-name (or path ".") pdir)))
     (unless (file-directory-p fullpath)
       (error "el-get could not find directory `%s' for package %s, at %s"
-	     path package fullpath))
+             path package fullpath))
     (add-to-list list fullpath)))
 
 (defun el-get-package-exists-p (package)
@@ -249,7 +252,7 @@ directory or a symlink in el-get-dir."
   (let ((pdir (el-get-package-directory package)))
     ;; seems overkill as file-directory-p will always be true
     (or (file-directory-p pdir)
-	(file-symlink-p   pdir))))
+        (file-symlink-p   pdir))))
 
 
 ;;
@@ -378,73 +381,76 @@ makes it easier to conditionally splice a command into the list.
     (setq commands (cdr commands)))
   (condition-case err
       (if commands
-        (let* ((c       (car commands))
-               (next    (cdr commands))
-               (cdir    (plist-get c :default-directory))
-               (cname   (plist-get c :command-name))
-               (cbuf    (plist-get c :buffer-name))
-               (killed  (when (get-buffer cbuf) (kill-buffer cbuf)))
-               (filter  (plist-get c :process-filter))
-               (program (plist-get c :program))
-               (shell   (plist-get c :shell))
-               (args    (if shell
-			    (mapcar #'shell-quote-argument (plist-get c :args))
-			  (plist-get c :args)))
-               (sync    (el-get-plist-get-with-default c :sync
-                          el-get-default-process-sync))
-	       (stdin   (plist-get c :stdin))
-               (default-directory (if cdir
-                                      (file-name-as-directory
-                                       (expand-file-name cdir))
-                                    default-directory)))
-          (if sync
-              (progn
-                (el-get-verbose-message "Running commands synchronously: %S" commands)
-                (let* ((startf (if shell #'call-process-shell-command #'call-process))
-                       (infile (when stdin (make-temp-file "el-get")))
-                       (dummy  (when infile
-                                 (with-temp-file infile
-                                   (insert (el-get-print-to-string stdin)))))
-                       (dummy  (message "el-get is waiting for %S to complete" cname))
-                       (status (apply startf program infile cbuf t args))
-                       (message (plist-get c :message))
-                       (errorm  (plist-get c :error)))
-                  (when el-get-verbose
-                    (message "%S" (with-current-buffer cbuf (buffer-string))))
-                  (if (eq 0 status)
-                      (message "el-get: %s" message)
-                    (set-window-buffer (selected-window) cbuf)
-                    (error "el-get: %s %s" cname errorm))
-                  (when infile (delete-file infile))
-                  (when cbuf (kill-buffer cbuf))
-                  (if next
-                      ;; Prevent stack overflow on very long command
-                      ;; lists. This allows
-                      ;; `el-get-start-process-list' (but not other
-                      ;; functions) to recurse indefinitely.
-                      (let ((max-specpdl-size (+ 100 max-specpdl-size)))
-                        (el-get-start-process-list package next final-func))
-                    (when (functionp final-func)
-                      (funcall final-func package)))))
-            ;; async case
-            (el-get-verbose-message "Running commands asynchronously: %S" commands)
-            (let* ((startf (if shell #'start-process-shell-command #'start-process))
-                   (process-connection-type nil) ; pipe, don't pretend we're a pty
-                   (proc (apply startf cname cbuf program args)))
-              ;; add the properties to the process, then set the sentinel
-              (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
-              (process-put proc :el-get-sources el-get-sources)
-              (process-put proc :el-get-package package)
-              (process-put proc :el-get-final-func final-func)
-              (process-put proc :el-get-start-process-list next)
-	      (when stdin
-		(process-send-string proc (el-get-print-to-string stdin))
-		(process-send-eof proc))
-              (set-process-sentinel proc 'el-get-start-process-list-sentinel)
-              (when filter (set-process-filter proc filter)))))
-	;; no commands, still run the final-func
-	(when (functionp final-func)
-	  (funcall final-func package)))
+          (let* ((c       (car commands))
+                 (next    (cdr commands))
+                 (cdir    (plist-get c :default-directory))
+                 (cname   (plist-get c :command-name))
+                 (cbuf    (plist-get c :buffer-name))
+                 (killed  (when (get-buffer cbuf) (kill-buffer cbuf)))
+                 (filter  (plist-get c :process-filter))
+                 (shell   (plist-get c :shell))
+                 (program (if shell
+                              (shell-quote-argument (plist-get c :program))
+                            (plist-get c :program)))
+                 (args    (if shell
+                              (mapcar #'shell-quote-argument (plist-get c :args))
+                            (plist-get c :args)))
+                 (sync    (el-get-plist-get-with-default c :sync
+                            el-get-default-process-sync))
+                 (stdin   (plist-get c :stdin))
+                 (default-directory (if cdir
+                                        (file-name-as-directory
+                                         (expand-file-name cdir))
+                                      default-directory)))
+            (unless program (error "el-get: :program argument cannot be nil"))
+            (if sync
+                (progn
+                  (el-get-verbose-message "Running commands synchronously: %S" commands)
+                  (let* ((startf (if shell #'call-process-shell-command #'call-process))
+                         (infile (when stdin (make-temp-file "el-get")))
+                         (dummy  (when infile
+                                   (with-temp-file infile
+                                     (insert (el-get-print-to-string stdin)))))
+                         (dummy  (message "el-get is waiting for %S to complete" cname))
+                         (status (apply startf program infile cbuf t args))
+                         (message (plist-get c :message))
+                         (errorm  (plist-get c :error)))
+                    (when el-get-verbose
+                      (message "%S" (with-current-buffer cbuf (buffer-string))))
+                    (if (eq 0 status)
+                        (message "el-get: %s" message)
+                      (set-window-buffer (selected-window) cbuf)
+                      (error "el-get: %s %s" cname errorm))
+                    (when infile (delete-file infile))
+                    (when cbuf (kill-buffer cbuf))
+                    (if next
+                        ;; Prevent stack overflow on very long command
+                        ;; lists. This allows
+                        ;; `el-get-start-process-list' (but not other
+                        ;; functions) to recurse indefinitely.
+                        (let ((max-specpdl-size (+ 100 max-specpdl-size)))
+                          (el-get-start-process-list package next final-func))
+                      (when (functionp final-func)
+                        (funcall final-func package)))))
+              ;; async case
+              (el-get-verbose-message "Running commands asynchronously: %S" commands)
+              (let* ((startf (if shell #'start-process-shell-command #'start-process))
+                     (process-connection-type nil) ; pipe, don't pretend we're a pty
+                     (proc (apply startf cname cbuf program args)))
+                ;; add the properties to the process, then set the sentinel
+                (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
+                (process-put proc :el-get-sources el-get-sources)
+                (process-put proc :el-get-package package)
+                (process-put proc :el-get-final-func final-func)
+                (process-put proc :el-get-start-process-list next)
+                (when stdin
+                  (process-send-string proc (el-get-print-to-string stdin))
+                  (process-send-eof proc))
+                (set-process-sentinel proc 'el-get-start-process-list-sentinel)
+                (when filter (set-process-filter proc filter)))))
+        ;; no commands, still run the final-func
+        (when (functionp final-func)
+          (funcall final-func package)))
     ((debug error)
      (el-get-installation-failed package err))))
 
@@ -466,7 +472,7 @@ Baring variable named \"el-get-NAME\", it will call
 `executable-find' on NAME and use the output of that, or error
 out if it's nil."
   (let ((fname (intern (format "el-get-%s-executable" name)))
-	(vname (intern (format "el-get-%s" name))))
+        (vname (intern (format "el-get-%s" name))))
     (cond
      ((fboundp fname)
       (funcall fname))
@@ -475,21 +481,21 @@ out if it's nil."
      ;; (bound-and-true-p vname) won't cut it
      ((ignore-errors (symbol-value vname))
       (let ((command (symbol-value vname)))
-	(unless (and (file-exists-p command)
-		     (file-executable-p command))
-	  (error
-	   (concat "The variable `%s' points to \"%s\", "
-		   "which is not an executable file name on your system.")
-	   name command))
-	command))
+        (unless (and (file-exists-p command)
+                     (file-executable-p command))
+          (error
+           (concat "The variable `%s' points to \"%s\", "
+                   "which is not an executable file name on your system.")
+           name command))
+        command))
 
      (t
       (let ((command (executable-find name)))
-	(unless command
-	  (error
-	   "The command named '%s' can not be found with `executable-find'"
-	   name))
-	command)))))
+        (unless command
+          (error
+           "The command named '%s' can not be found with `executable-find'"
+           name))
+        command)))))
 
 (defun el-get-plist-get-with-default (plist prop def)
   "Same as (plist-get PLIST PROP), but falls back to DEF.

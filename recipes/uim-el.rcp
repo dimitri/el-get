@@ -3,10 +3,11 @@
        :type svn
        :url "http://uim.googlecode.com/svn/trunk/"
        :load-path ("./emacs")
-       :build ("LC_MESSAGES=C ./make-wc.sh --prefix=`pwd`/build\
-               --disable-gnome-applet --disable-fep --without-gtk2"
-           "make"
-           "make install")
+       :build `(("env" "LC_MESSAGES=C" "./make-wc.sh"
+                 ,(format "--prefix=%s/build" (el-get-package-directory "uim-el"))
+                 "--disable-gnome-applet" "--disable-fep" "--without-gtk2")
+                "make"
+                ("make" "install"))
        :post-init
        ((setq uim-el-agent (concat
                             (file-name-as-directory

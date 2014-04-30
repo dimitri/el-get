@@ -1,0 +1,13 @@
+(:name google-calendar
+       :description "Access Google Calendar from Emacs"
+       :type github
+       :pkgname "bateast/google-calendar"
+       :depends (google-contacts json)
+       :prepare (progn
+                  (autoload 'google-calendar/get-calendar "google-calendar.el" nil t)
+                  (autoload 'google-calendar/fetch-calendars "google-calendar.el" nil t))
+       :post-init (let ((source-file (expand-file-name "google-calendar.org" (el-get-package-directory "google-calendar")))
+                        (target-file (expand-file-name "google-calendar.el" (el-get-package-directory "google-calendar"))))
+                    (when (not (file-exists-p target-file))
+                      (require 'ob-tangle)
+                      (org-babel-tangle-file source-file target-file "emacs-lisp"))))

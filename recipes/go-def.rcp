@@ -1,0 +1,5 @@
+(:name go-def
+       :description "Required for go-mode godef functions"
+       :type go
+       :pkgname "code.google.com/p/rog-go/exp/cmd/godef"
+       :post-init (add-to-list 'exec-path (concat default-directory "bin")))

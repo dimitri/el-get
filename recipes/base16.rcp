@@ -1,0 +1,7 @@
+(:name base16
+       :description "Base16 color theme for GNU Emacs"
+       :website "http://chriskempson.github.io/base16/"
+       :type github
+       :pkgname "neil477/base16-emacs"
+       :minimum-emacs-version 24
+       :prepare (add-to-list 'custom-theme-load-path default-directory))

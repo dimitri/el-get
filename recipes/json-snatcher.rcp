@@ -1,0 +1,4 @@
+(:name json-snatcher
+       :description "Find the path to a value in JSON"
+       :type github
+       :pkgname "Sterlingg/json-snatcher")

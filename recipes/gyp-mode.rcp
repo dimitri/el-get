@@ -1,0 +1,9 @@
+(:name gyp-mode
+       :description "Major mode for editing gyp files"
+       :type http
+       :url "https://gyp.googlecode.com/svn/trunk/tools/emacs/gyp.el"
+       :prepare (progn
+                  (autoload 'gyp-mode "gyp"
+                    "Major mode for editing gyp files")
+                  (add-to-list 'auto-mode-alist '("\\.gyp$" . gyp-mode))
+                  (add-to-list 'auto-mode-alist '("\\.gypi$" . gyp-mode))))
