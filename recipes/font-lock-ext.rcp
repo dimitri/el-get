@@ -1,0 +1,4 @@
+(:name font-lock-ext
+       :description "Extensions to Emacs font-lock.el."
+       :type github
+       :pkgname "sensorflo/font-lock-ext")
