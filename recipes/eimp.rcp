@@ -1,0 +1,6 @@
+(:name eimp
+       :description "Emacs Image Manipulation Package"
+       :website "https://mph-emacs-pkgs.alioth.debian.org/EimpEl.html"
+       :type http
+       :url "https://alioth.debian.org/scm/viewvc.php/*checkout*/mph-emacs-pkgs/elisp/eimp.el?root=mph-emacs-pkgs"
+       :localname "eimp.el")

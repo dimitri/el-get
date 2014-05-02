@@ -1,0 +1,7 @@
+(:name scroll-in-place
+       :description "Improved vertical scrolling commands"
+       :website "http://www.cs.utah.edu/~eeide/emacs/"
+       :type http
+       :url "http://www.cs.utah.edu/~eeide/emacs/scroll-in-place.el.gz"
+       :prepare (defalias 'screen-width 'display-pixel-width)
+       :features scroll-in-place)
