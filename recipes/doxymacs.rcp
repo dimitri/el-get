@@ -9,7 +9,4 @@
                       "sed -i -e 's/inline/static inline/' ./c/doxymacs_parser.c"
                       "./bootstrap" "./configure" "make")
        :prepare (progn
-                  ;; Predefine the `doxymacs-mode' variable or smart-mode-line
-                  ;; will go bonkers trying to find it.
-                  (defvar doxymacs-mode nil)
                   (autoload 'doxymacs-mode "doxymacs" nil t)))
