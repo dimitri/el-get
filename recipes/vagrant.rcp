@@ -1,0 +1,5 @@
+(:name vagrant
+       :description "Manage a vagrant box from emacs"
+       :type github
+       :pkgname "ottbot/vagrant.el"
+       :features vagrant)
