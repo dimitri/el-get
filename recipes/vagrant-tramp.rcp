@@ -1,0 +1,7 @@
+(:name vagrant-tramp
+       :description "TRAMP method for Vagrant boxes"
+       :type github
+       :pkgname "dougm/vagrant-tramp"
+       :post-init (progn
+                    (setq vagrant-tramp-ssh (concat default-directory "bin/vagrant-tramp-ssh"))
+                    (eval-after-load 'tramp '(require 'vagrant-tramp))))
