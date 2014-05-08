@@ -1,0 +1,5 @@
+(:name go-test
+       :description "Go unit test runner"
+       :type github
+       :pkgname "nlamirault/gotest.el"
+       :depends (f s go-mode))
