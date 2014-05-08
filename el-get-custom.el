@@ -58,6 +58,14 @@ Each hook is a unary function accepting a package"
   :group 'el-get
   :type 'hook)
 
+(defvar find-function-source-path)
+(defun el-get-add-load-path-to-ffsp (package)
+  "Adds a package's :load-path to `find-function-source-path'.
+Can be added to `el-get-post-init-hooks'."
+  (setq find-function-source-path
+        (append (el-get-load-path package)
+                (bound-and-true-p find-function-source-path))))
+
 (defcustom el-get-post-install-hooks nil
   "Hooks to run after installing a package.
 Each hook is a unary function accepting a package"
