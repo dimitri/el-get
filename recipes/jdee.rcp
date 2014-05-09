@@ -4,4 +4,4 @@
        :type svn
        :url "https://jdee.svn.sourceforge.net/svnroot/jdee/trunk/jdee"
        ;; :build ("touch `find . -name Makefile`" "make")
-       :load-path ("lisp" "elib"))
+       :load-path ("lisp"))
