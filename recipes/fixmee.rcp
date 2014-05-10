@@ -2,5 +2,4 @@
        :description "Quickly navigate to FIXME notices in code."
        :type github
        :pkgname "rolandwalker/fixmee"
-       :depends (button-lock nav-flash back-button smartrep string-utils
-                             tabulated-list))
+       :depends (button-lock tabulated-list))
