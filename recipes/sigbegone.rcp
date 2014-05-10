@@ -1,0 +1,4 @@
+(:name sigbegone
+       :description "Emacs add-on that visually de-emphasizes emails sigs."
+       :type http
+       :url "http://www.neilvandyke.org/sigbegone/sigbegone.el")
