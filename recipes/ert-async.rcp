@@ -1,0 +1,4 @@
+(:name ert-async
+       :description "Async support for Emacs Lisp Regression Testing (ERT)."
+       :type github
+       :pkgname "rejeep/ert-async.el")
