@@ -1,0 +1,4 @@
+(:name sphinx-doc
+       :description "Generate Sphinx friendly docstrings for Python functions in Emacs"
+       :type github
+       :pkgname "naiquevin/sphinx-doc.el")
