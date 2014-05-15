@@ -1,0 +1,7 @@
+(:name tbemail
+       :description "Provide syntax highlighting for email editing via Thunderbird's \"External Editor\" extension."
+       :website "http://os.inf.tu-dresden.de/~mp26/emacs.shtml"
+       :type http
+       :url "http://os.inf.tu-dresden.de/~mp26/download/tbemail.el"
+       :prepare (progn
+                  (autoload 'tbemail-mode "tbemail" nil t)))
