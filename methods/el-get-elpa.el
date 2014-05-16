@@ -79,8 +79,10 @@ the recipe, then return nil."
 (defun el-get-elpa-symlink-package (package)
   "ln -s ../elpa/<package> ~/.emacs.d/el-get/<package>"
   (let* ((package  (el-get-as-string package))
-         (elpa-dir (file-relative-name
-                    (el-get-elpa-package-directory package) el-get-dir)))
+         (pkg-dir (el-get-elpa-package-directory package))
+         (elpa-dir (if pkg-dir
+                       (file-relative-name pkg-dir el-get-dir)
+                     (error "No package directory for `%s' found" package))))
     (unless (el-get-package-exists-p package)
       ;; better style would be to check for (fboundp 'make-symbolic-link) but
       ;; that would be true on Vista, where by default only administrator is
