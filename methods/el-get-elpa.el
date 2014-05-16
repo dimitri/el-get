@@ -194,10 +194,13 @@ first time.")
 
 (defun el-get-elpa-post-remove (package)
   "Do remove the ELPA bits for package, now"
-  (let ((p-elpa-dir (el-get-elpa-package-directory package)))
-    (if p-elpa-dir
-        (dired-delete-file p-elpa-dir 'always)
-      (message "el-get: could not find ELPA dir for %s." package))))
+  (let* ((pkg (el-get-as-symbol package))
+         (pkg-descs (cdr (assq pkg package-alist))))
+    (dolist (pkg-desc pkg-descs)
+      (with-no-warnings
+        (if (version< emacs-version "24.4")
+            (package-delete pkg (package-desc-version pkg-desc))
+          (package-delete pkg-desc))))))
 
 (add-hook 'el-get-elpa-remove-hook 'el-get-elpa-post-remove)
 
