@@ -194,10 +194,14 @@ first time.")
 
 (defun el-get-elpa-post-remove (package)
   "Do remove the ELPA bits for package, now"
-  (let ((p-elpa-dir (el-get-elpa-package-directory package)))
-    (if p-elpa-dir
-        (dired-delete-file p-elpa-dir 'always)
-      (message "el-get: could not find ELPA dir for %s." package))))
+  (let* ((pkg (el-get-as-symbol package))
+         (descs (cdr (assq pkg package-alist))))
+    (if (listp descs)
+        ;; 24.4+ case, we have a list of descriptors that we can
+        ;; call `package-delete' on.
+        (mapc #'package-delete descs)
+      ;; Otherwise, just delete the package directory.
+      (delete-directory (el-get-elpa-package-directory pkg) 'recursive))))
 
 (add-hook 'el-get-elpa-remove-hook 'el-get-elpa-post-remove)
 
