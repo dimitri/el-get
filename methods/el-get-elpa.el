@@ -38,11 +38,20 @@ PACKAGE isn't currently installed by ELPA."
   ;; package directories are named <package>-<version>.
   (let* ((pname (el-get-as-string package))
          (version-offset (+ (length pname) 1)))
-    (loop for pkg-dir in (directory-files package-user-dir nil
-                                          (concat "^" (regexp-quote pname) "-"))
-          if (ignore-errors
-               (version-to-list (substring pkg-dir version-offset)))
-          return (expand-file-name pkg-dir package-user-dir))))
+    (loop for pkg-base-dir in (cons package-user-dir
+                                    (when (boundp 'package-directory-list)
+                                      package-directory-list))
+          with dir = nil
+          when (file-directory-p pkg-base-dir)
+          do
+          (setq dir
+                (loop for pkg-dir in (directory-files
+                                      pkg-base-dir nil
+                                      (concat "\\`" (regexp-quote pname) "-"))
+                      if (ignore-errors
+                           (version-to-list (substring pkg-dir version-offset)))
+                      return (expand-file-name pkg-dir pkg-base-dir)))
+          and when dir return dir)))
 
 (defun el-get-elpa-package-repo (package)
   "Get the ELPA repository cons cell for PACKAGE.
