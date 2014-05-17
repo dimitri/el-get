@@ -22,4 +22,7 @@
                  ("compile-wl-package"  "site-lisp" "icons")
                  ("install-wl-package" "site-lisp" "icons")))
        :info "doc/wl.info"
-       :load-path ("site-lisp/wl" "utils"))
+       :load-path ("site-lisp/wl" "utils")
+       :post-init (progn
+                    (setq wl-icon-directory
+                          (expand-file-name "etc/icons" default-directory))))
