@@ -52,6 +52,7 @@ emacs_with_test_home() {
 
   HOME="$TEST_HOME" "$EMACS" "${args[@]}" -L "$EL_GET_LIB_DIR" \
       -l "$EL_GET_LIB_DIR/el-get.el" -l "$EL_GET_LIB_DIR/test/test-setup.el" \
+      --eval '(setq enable-local-variables :safe)' \
       -l "$testfile"
   return $?
 }
