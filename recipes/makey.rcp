@@ -1,0 +1,4 @@
+(:name makey
+       :description "Interactive commandline mode"
+       :type github
+       :pkgname "mickeynp/makey")
