@@ -1,0 +1,5 @@
+(:name tdtd
+       :description "Emacs mode for dtd"
+       :type github
+       :pkgname "tkg/tdtd"
+       :build (\` (((\, el-get-emacs) (\, (split-string "-batch -Q -nw -l tdtd-make-regexp.el -l tdtd-font-maker.el -f dtd-make-tdtd-font"))))))
