@@ -1,0 +1,5 @@
+(:name color-identifiers-mode
+       :description "Emacs minor mode to highlight each source code identifier uniquely based on its name"
+       :type github
+       :pkgname "ankurdave/color-identifiers-mode"
+       :depends (dash python))
