@@ -1,0 +1,5 @@
+(:name edts
+       :description "Erlang Development Tool Suite."
+       :type github
+       :pkgname "tjarvstrand/edts"
+       :build ("make"))
