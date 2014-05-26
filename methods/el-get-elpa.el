@@ -17,9 +17,33 @@
 (require 'package nil t)
 
 (declare-function el-get-package-is-installed "el-get" (package))
-;; pretend these old functions exist to keep byte compiler in 24.4 quiet
-(declare-function package-desc-doc "package" (desc))
-(declare-function package-desc-vers "package" (desc))
+
+;;; package.el compat functions
+(eval-and-compile
+  ;; Use the 24.4 accessor names
+  (unless (fboundp 'package-desc-summary)
+    (defalias 'package-desc-summary 'package-desc-doc))
+  (unless (fboundp 'package-desc-version)
+    (defalias 'package-desc-version 'package-desc-vers))
+
+  ;; In 24.4 each package has a *list* of descriptors, pretend it's so
+  ;; in 24.3 and below as well.
+  (defun el-get-elpa-descs (alist-elem)
+    "Return a list of descriptors for PKG from ALIST-ELEM.
+
+ALIST-ELEM should be an element from `package-alist' or
+`package-archive-contents'."
+    (el-get-as-list (cdr alist-elem)))
+
+  (defun el-get-elpa-delete-package (pkg)
+    "A wrapper for `package-delete', deletes all versions."
+    (let ((descs (cdr (assq pkg package-alist))))
+      (if (listp descs)
+          ;; 24.4+ case, we have a list of descriptors that we can
+          ;; call `package-delete' on.
+          (mapc #'package-delete descs)
+        ;; Otherwise, just delete the package directory.
+        (delete-directory (el-get-elpa-package-directory pkg) 'recursive)))))
 
 (defcustom el-get-elpa-install-hook nil
   "Hook run after ELPA package install."
@@ -145,19 +169,16 @@ the recipe, then return nil."
   "Returns t if PACKAGE has an update available in ELPA."
   (assert (el-get-package-is-installed package) nil
           (format "Cannot update non-installed ELPA package %s" package))
-  (let* ((pkg-version
-          (if (fboundp 'package-desc-version) ;; new in Emacs 24.4
-              #'package-desc-version #'package-desc-vers))
-         (installed-version
-          (funcall pkg-version (car (el-get-as-list (cdr (assq package package-alist))))))
+  (let* ((installed-version
+          (package-desc-version (car (el-get-elpa-descs (assq package package-alist)))))
          (available-packages
-          (el-get-as-list (cdr (assq package package-archive-contents)))))
+          (el-get-elpa-descs (assq package package-archive-contents))))
     ;; Emacs 24.4 keeps lists of available packages. `package-alist'
     ;; is sorted by version, but `package-archive-contents' is not, so
     ;; we should loop through it.
     (some (lambda (pkg)
             (version-list-< installed-version
-                            (funcall pkg-version pkg)))
+                            (package-desc-version pkg)))
           available-packages)))
 
 (defvar el-get-elpa-do-refresh t
@@ -194,14 +215,7 @@ first time.")
 
 (defun el-get-elpa-post-remove (package)
   "Do remove the ELPA bits for package, now"
-  (let* ((pkg (el-get-as-symbol package))
-         (descs (cdr (assq pkg package-alist))))
-    (if (listp descs)
-        ;; 24.4+ case, we have a list of descriptors that we can
-        ;; call `package-delete' on.
-        (mapc #'package-delete descs)
-      ;; Otherwise, just delete the package directory.
-      (delete-directory (el-get-elpa-package-directory pkg) 'recursive))))
+  (el-get-elpa-delete-package package))
 
 (add-hook 'el-get-elpa-remove-hook 'el-get-elpa-post-remove)
 
@@ -257,10 +271,8 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
 
     (mapc (lambda (pkg)
             (let* ((package     (format "%s" (car pkg)))
-                   (pkg-desc    (car (el-get-as-list (cdr pkg))))
-                   (get-summary (if (fboundp #'package-desc-summary)
-                                    #'package-desc-summary #'package-desc-doc))
-                   (description (funcall get-summary pkg-desc))
+                   (pkg-desc    (car (el-get-elpa-descs pkg)))
+                   (description (package-desc-summary pkg-desc))
                    (pkg-deps    (package-desc-reqs pkg-desc))
                    (depends     (remq 'emacs (mapcar #'car pkg-deps)))
                    (emacs-dep   (assq 'emacs pkg-deps))
