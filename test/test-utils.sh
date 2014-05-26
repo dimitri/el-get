@@ -73,7 +73,7 @@ test_recipe () {
         el-get-default-process-sync t
         pdef (el-get-read-recipe-file "$recipe_file")
         pname (plist-get pdef :name)
-        el-get-sources (list pdef))
+        el-get-sources (cons pdef (bound-and-true-p el-get-sources)))
   (el-get (quote sync) pname)
   (message "*** Initial install successful ***")
   (el-get-update pname)
