@@ -38,11 +38,20 @@ PACKAGE isn't currently installed by ELPA."
   ;; package directories are named <package>-<version>.
   (let* ((pname (el-get-as-string package))
          (version-offset (+ (length pname) 1)))
-    (loop for pkg-dir in (directory-files package-user-dir nil
-                                          (concat "^" (regexp-quote pname) "-"))
-          if (ignore-errors
-               (version-to-list (substring pkg-dir version-offset)))
-          return (expand-file-name pkg-dir package-user-dir))))
+    (loop for pkg-base-dir in (cons package-user-dir
+                                    (when (boundp 'package-directory-list)
+                                      package-directory-list))
+          with dir = nil
+          when (file-directory-p pkg-base-dir)
+          do
+          (setq dir
+                (loop for pkg-dir in (directory-files
+                                      pkg-base-dir nil
+                                      (concat "\\`" (regexp-quote pname) "-"))
+                      if (ignore-errors
+                           (version-to-list (substring pkg-dir version-offset)))
+                      return (expand-file-name pkg-dir pkg-base-dir)))
+          and when dir return dir)))
 
 (defun el-get-elpa-package-repo (package)
   "Get the ELPA repository cons cell for PACKAGE.
@@ -70,8 +79,10 @@ the recipe, then return nil."
 (defun el-get-elpa-symlink-package (package)
   "ln -s ../elpa/<package> ~/.emacs.d/el-get/<package>"
   (let* ((package  (el-get-as-string package))
-         (elpa-dir (file-relative-name
-                    (el-get-elpa-package-directory package) el-get-dir)))
+         (pkg-dir (el-get-elpa-package-directory package))
+         (elpa-dir (if pkg-dir
+                       (file-relative-name pkg-dir el-get-dir)
+                     (error "No package directory for `%s' found" package))))
     (unless (el-get-package-exists-p package)
       ;; better style would be to check for (fboundp 'make-symbolic-link) but
       ;; that would be true on Vista, where by default only administrator is
@@ -183,10 +194,13 @@ first time.")
 
 (defun el-get-elpa-post-remove (package)
   "Do remove the ELPA bits for package, now"
-  (let ((p-elpa-dir (el-get-elpa-package-directory package)))
-    (if p-elpa-dir
-        (dired-delete-file p-elpa-dir 'always)
-      (message "el-get: could not find ELPA dir for %s." package))))
+  (let* ((pkg (el-get-as-symbol package))
+         (pkg-descs (cdr (assq pkg package-alist))))
+    (dolist (pkg-desc pkg-descs)
+      (with-no-warnings
+        (if (version< emacs-version "24.4")
+            (package-delete pkg (package-desc-version pkg-desc))
+          (package-delete pkg-desc))))))
 
 (add-hook 'el-get-elpa-remove-hook 'el-get-elpa-post-remove)
 
