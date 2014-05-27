@@ -75,7 +75,7 @@
       (let ((el-get-default-process-sync t) ; force sync operations for installer
             (el-get-verbose t))             ; let's see it all
         (el-get-post-install "el-get"))
-      (unless (boundp 'el-get-install-skip-emacswiki-recipes)
+      (if (boundp 'el-get-install-skip-emacswiki-recipes)
         (el-get-emacswiki-build-local-recipes))
       (with-current-buffer buf
         (goto-char (point-max))
