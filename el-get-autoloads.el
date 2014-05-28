@@ -42,7 +42,7 @@
 
 (defun el-get-eval-autoloads ()
   "Evaluate the autoloads from the autoload file."
-  (when (and el-get-generate-autoloads
+  (when (and el-get-use-autoloads
              (file-exists-p el-get-autoload-file))
     (el-get-verbose-message "el-get: evaluating autoload file")
     (el-get-load-fast el-get-autoload-file)))

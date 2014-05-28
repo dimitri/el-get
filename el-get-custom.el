@@ -109,8 +109,10 @@ directly."
   :group 'el-get
   :type 'boolean)
 
-(defcustom el-get-generate-autoloads t
-  "Whether or not to generate autoloads for packages. Can be used
+(define-obsolete-variable-alias 'el-get-generate-autoloads 'el-get-use-autoloads
+  "June, 2014")
+(defcustom el-get-use-autoloads t
+  "Whether or not to use the generated autoloads for packages. Can be used
 to disable autoloads globally."
   :group 'el-get
   :type 'boolean)
