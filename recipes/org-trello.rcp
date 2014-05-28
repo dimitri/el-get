@@ -1,0 +1,5 @@
+(:name org-trello
+       :description "Org minor mode - 2-way sync org & trello"
+       :type github
+       :pkgname "org-trello/org-trello"
+       :depends (dash request elnode esxml s db))
