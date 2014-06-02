@@ -4,5 +4,4 @@
        :pkgname "chrisdone/structured-haskell-mode"
        :depends (haskell-mode)
        :build `(("cabal" "install"))
-       :features shm
        :load-path "elisp")
