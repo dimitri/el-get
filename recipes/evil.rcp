@@ -6,7 +6,7 @@
        :type git
        :url "git://gitorious.org/evil/evil.git"
        :features evil
-       :depends undo-tree
+       :depends (undo-tree goto-chg)
        :build (("make" "all" "info"))
        :build/berkeley-unix (("gmake" "all" "info"))
        :build/darwin `(("make" ,(format "EMACS=%s" el-get-emacs) "all" "info" ))
