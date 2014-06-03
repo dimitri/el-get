@@ -68,7 +68,8 @@ absolute filename obtained with expand-file-name is executable."
   (let ((fullname (expand-file-name name))
         (exe      (executable-find name)))
     (cond ((string-match "^\./" name)   name)
-          ((file-executable-p fullname) fullname)
+          ((and (file-regular-p fullname)
+                (file-executable-p fullname)) fullname)
           (t (or exe name)))))
 
 (defun el-get-build
