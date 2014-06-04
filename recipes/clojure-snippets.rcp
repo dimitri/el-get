@@ -1,0 +1,5 @@
+(:name clojure-snippets
+       :description "yasnippet 0.7.0+ snippets for clojure"
+       :depends yasnippet
+       :type github
+       :pkgname "mpenet/clojure-snippets")
