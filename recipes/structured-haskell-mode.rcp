@@ -3,6 +3,5 @@
        :type github
        :pkgname "chrisdone/structured-haskell-mode"
        :depends (haskell-mode)
-       :build `(("cabal" "configure")
-                ("cabal" "install"))
+       :build `(("cabal" "install"))
        :load-path "elisp")
