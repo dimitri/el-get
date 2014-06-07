@@ -35,6 +35,7 @@ Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
                              url (car (cdr err)) (cdr (cdr err))))))
   (let* ((pdir   (el-get-package-directory package))
          (dest   (or dest (format "%s%s.el" (file-name-as-directory pdir) package)))
+         (part   (concat dest ".part"))
          (buffer-file-coding-system 'no-conversion)
          (require-final-newline nil))
     ;; prune HTTP headers before save
@@ -43,7 +44,10 @@ Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
         (error (format "Failed to find end of headers in HTTP response from %s for package %s; see buffer %s"
                        url package (buffer-name))))
     (delete-region (point-min) (point))
-    (write-file dest)
+    ;; we write to a temporary .part file first to avoid
+    ;; auto-compression
+    (write-file part)
+    (rename-file part dest t)
     (kill-buffer))
   (funcall post-install-fun package))
 
