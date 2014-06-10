@@ -1,0 +1,5 @@
+(:name gnus-x-gm-raw
+       :description "Search mail of Gmail using X-GM-RAW as web interface"
+       :type github
+       :pkgname "aki2o/gnus-x-gm-raw"
+       :depends (log4e yaxception))
