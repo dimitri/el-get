@@ -3,5 +3,5 @@
        :type github
        :pkgname "joddie/pcre2el"
        :postinit (progn
-		   (autoload (quote rxt-mode) "pcre2el" t)
-		   (autoload (quote rxt-global-mode) "pcre2el" t)))
+                   (autoload (quote rxt-mode) "pcre2el" t)
+                   (autoload (quote rxt-global-mode) "pcre2el" t)))
