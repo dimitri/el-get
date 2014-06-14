@@ -135,9 +135,13 @@
                    (insert-file-contents-literally el-get-status-file)
                    (read-from-string (buffer-string))))))
          (p-s
-          (if (or (null ps) (consp (car ps))) ; check for an alist, new format
-              ps
-            (el-get-convert-from-old-status-format ps))))
+          (cond
+           ((null ps) ;; nothing installed, we should install el-get
+            (list (list 'el-get 'status "required")))
+           ;; ps is an alist, no conversion needed
+           ((consp (car ps)) ps)
+           ;; looks like we might have an old format status list
+           (t (el-get-convert-from-old-status-format ps)))))
     ;; double check some status "conditions"
     ;;
     ;; a package with status "installed" and a missing directory is
