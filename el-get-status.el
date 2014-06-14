@@ -135,7 +135,7 @@
                    (insert-file-contents-literally el-get-status-file)
                    (read-from-string (buffer-string))))))
          (p-s
-          (if (consp (car ps))         ; check for an alist, new format
+          (if (or (null ps) (consp (car ps))) ; check for an alist, new format
               ps
             (el-get-convert-from-old-status-format ps))))
     ;; double check some status "conditions"
