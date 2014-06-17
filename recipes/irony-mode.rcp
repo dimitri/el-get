@@ -1,5 +1,7 @@
 (:name irony-mode
        :description "A C/C++ minor mode for Emacs powered by libclang"
-       :depends (cl-lib)
        :type github
-       :pkgname "Sarcasm/irony-mode")
+       :pkgname "Sarcasm/irony-mode"
+       :depends (cl-lib)
+       ;; ignore server/test/elisp/
+       :compile "\\.el$")
