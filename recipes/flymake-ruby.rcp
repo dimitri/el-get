@@ -4,4 +4,5 @@
        :pkgname "purcell/flymake-ruby"
        :website "http://github.com/purcell/flymake-ruby"
        :depends (flymake-easy)
+       :features flymake-ruby
        :post-init (add-hook 'ruby-mode-hook 'flymake-ruby-load))
