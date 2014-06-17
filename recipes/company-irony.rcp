@@ -1,0 +1,5 @@
+(:name company-irony
+       :description "company-mode completion back-end for irony-mode"
+       :type github
+       :depends (company-mode irony-mode cl-lib)
+       :pkgname "Sarcasm/company-irony")
