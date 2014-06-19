@@ -1,0 +1,4 @@
+(:name cucumber
+       :description "Emacs mode for editing Cucumber plain text stories"
+       :type github
+       :pkgname "michaelklishin/cucumber.el")

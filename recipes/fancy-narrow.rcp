@@ -1,0 +1,4 @@
+(:name fancy-narrow
+       :description "Emacs package to immitate narrow-to-region with more eye-candy"
+       :type github
+       :pkgname "Bruce-Connor/fancy-narrow")

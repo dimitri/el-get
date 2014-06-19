@@ -1,0 +1,4 @@
+(:name mark-tools
+       :description "A simple library for navigating the global and local mark rings in Emacs"
+       :type github
+       :pkgname "stsquad/emacs-mark-tools")
