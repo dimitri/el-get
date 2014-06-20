@@ -146,11 +146,31 @@ is the one considered."
 
   We first look in `el-get-sources' then in each directory listed
 in `el-get-recipe-path' in order."
-  (let ((packages (mapcar 'el-get-source-name el-get-sources)))
-    (append
-     el-get-sources
-     (remove-if (lambda (recipe) (member (el-get-source-name recipe) packages))
-                (remove-if 'null (el-get-read-all-recipe-files))))))
+  (let* ((s-recipes (mapcar (lambda (s) (cons (plist-get s :name) s))
+                            el-get-sources))
+         (file-recipes (el-get-read-all-recipe-files)))
+    (setq file-recipes
+          (mapcar (lambda (f-recipe)
+                    (let* ((pkg (plist-get f-recipe :name))
+                           (s-recipe (assq pkg s-recipes)))
+                      (if (null s-recipe) f-recipe
+                        (setq s-recipes (assq-delete-all pkg s-recipes))
+                        (el-get-recipe-merge f-recipe (cdr s-recipe)))))
+                  file-recipes))
+    (append (mapcar #'cdr s-recipes) file-recipes)))
+
+(defun el-get-recipe-merge (r1 r2)
+  "Merge recipe R1 into R2.
+
+If R2 has a `:type' it completely replaces R1, otherwise, R1
+fields are the default value and R2 may override them."
+  (if (plist-get r2 :type)
+      r2
+    (loop with merged
+          for (prop val) on (append r2 r1) by 'cddr
+          unless (plist-member merged prop)
+          nconc (list prop val) into merged
+          finally return merged)))
 
 (defun el-get-package-def (package)
   "Return a single `el-get-sources' entry for PACKAGE."
@@ -165,11 +185,7 @@ in `el-get-recipe-path' in order."
 
           ((null (plist-get source :type))
            ;; we got a list with no :type, that's an override plist
-           (loop with def = (el-get-read-recipe package)
-                 for (prop override) on source by 'cddr
-                 do (plist-put def prop override)
-                 finally return def))
-
+           (el-get-recipe-merge (el-get-read-recipe package) source))
           ;; none of the previous, must be a full definition
           (t source))))
 
