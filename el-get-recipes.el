@@ -122,6 +122,14 @@ Used to avoid errors when exploring the path for recipes"
         (el-get-read-recipe-file filename)
       (error "El-get can not find a recipe for package \"%s\"" package))))
 
+(defun el-get-all-recipe-file-names ()
+  "Return the list of all file based recipe names.
+
+The result may have duplicates."
+  (loop for dir in (el-get-recipe-dirs)
+        nconc (mapcar #'file-name-base
+                      (directory-files dir nil "^[^.].*\.\\(rcp\\|el\\)$"))))
+
 (defun el-get-read-all-recipe-files ()
   "Return the list of all file based recipes, formated like `el-get-sources'.
 

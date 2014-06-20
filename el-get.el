@@ -221,7 +221,8 @@
 
 This is useful to use for providing completion candidates for
 package names."
-  (mapcar 'el-get-source-name (el-get-read-all-recipes)))
+  (delete-dups (append (mapcar #'el-get-source-name el-get-sources)
+                       (el-get-all-recipe-file-names))))
 
 (defun el-get-error-unless-package-p (package)
   "Raise an error if PACKAGE does not name a package that has a valid recipe."
