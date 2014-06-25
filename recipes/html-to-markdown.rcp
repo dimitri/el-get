@@ -1,0 +1,4 @@
+(:name html-to-markdown
+       :description "HTML to Markdown converter written in Emacs-lisp."
+       :type github
+       :pkgname "Bruce-Connor/html-to-markdown")
