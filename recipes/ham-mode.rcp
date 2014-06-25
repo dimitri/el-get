@@ -1,0 +1,5 @@
+(:name ham-mode
+       :description "HTML As Markdown, transparently edit an HTML file using markdown."
+       :type github
+       :pkgname "Bruce-Connor/ham-mode"
+       :depends (html-to-markdown markdown-mode))
