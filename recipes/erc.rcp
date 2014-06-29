@@ -3,4 +3,7 @@
        :type git
        :url "git://git.savannah.gnu.org/erc.git"
        :build ("make")
-       :info ".")
+       :info "."
+       :post-init (progn
+                    (setq erc-nicklist-icons-directory
+                          (expand-file-name "images" default-directory))))
