@@ -1,3 +1,6 @@
 (:name erc
-       :description "A powerful, modular, and extensible Emacs InternetRelayChat client."
-       :type elpa)
+       :description "An Emacs Internet Relay Chat client."
+       :type git
+       :url "git://git.savannah.gnu.org/erc.git"
+       :build ("make")
+       :info ".")
