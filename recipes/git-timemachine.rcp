@@ -1,4 +1,5 @@
 (:name git-timemachine
        :description "Step through historic versions of git controlled file using everyone's favourite editor"
        :type github
+       :minimum-emacs-version "24.4" ;; Depends on `subr-x'.
        :pkgname "pidu/git-timemachine")
