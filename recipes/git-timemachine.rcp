@@ -1,0 +1,4 @@
+(:name git-timemachine
+       :description "Step through historic versions of git controlled file using everyone's favourite editor"
+       :type github
+       :pkgname "pidu/git-timemachine")
