@@ -5,5 +5,5 @@
        :load-path "src/code.google.com/p/go.tools/cmd/oracle"
        :post-init (progn
                     (setq go-oracle-command (concat default-directory "bin/oracle"))
-                    (autoload 'go-oracle-mode "oracle")
+                    (autoload 'go-oracle-mode "oracle" nil t)
                     (add-hook 'go-mode-hook 'go-oracle-mode)))
