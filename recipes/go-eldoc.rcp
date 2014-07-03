@@ -3,5 +3,4 @@
        :type github
        :pkgname "syohex/emacs-go-eldoc"
        :depends go-mode
-       :features go-eldoc
        :post-init (add-hook 'go-mode-hook 'go-eldoc-setup))
