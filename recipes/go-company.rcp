@@ -6,4 +6,4 @@
        :load-path ("src/github.com/nsf/gocode/emacs-company")
        :post-init (progn
                     (add-hook 'go-mode-hook (require 'company-go))
-                    (add-to-list 'exec-path (concat default-directory "bin")))
+                    (add-to-list 'exec-path (concat default-directory "bin"))))
