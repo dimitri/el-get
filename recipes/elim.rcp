@@ -1,5 +1,5 @@
 (:name elim
-       :website "http://savannah.nongnu.org/projects/dtrt-indent://savannah.nongnu.org/projects/elim"
+       :website "http://savannah.nongnu.org/projects/elim"
        :description "An elisp instant messenger daemon"
        :type git
        :url "git://git.sv.gnu.org/elim.git"
@@ -7,7 +7,7 @@
        :build/berkeley-unix ("gmake")
        :load-path ("./elisp")
        :prepare (progn
-                  (autoload 'garak "garak")
+                  (autoload 'garak "garak" nil t)
                   (setq elim-executable
                         (expand-file-name
                          (concat (el-get-package-directory "elim") "elim-client")))))
