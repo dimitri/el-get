@@ -3,4 +3,4 @@
        :type github
        :pkgname "Fanael/rainbow-identifiers"
        :minimum-emacs-version 24
-       :post-init (add-hook 'prog-mode-hook 'rainbow-identifiers-mode))
+       :prepare (add-hook 'prog-mode-hook 'rainbow-identifiers-mode))
