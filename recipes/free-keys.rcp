@@ -1,0 +1,4 @@
+(:name free-keys
+       :description "Show free keybindings for modkeys or prefixes"
+       :type github
+       :pkgname "Fuco1/free-keys")
