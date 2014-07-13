@@ -1,0 +1,5 @@
+(:name esxml
+       :description "Library for working with xml via esxml and sxml."
+       :type github
+       :pkgname "tali713/esxml"
+       :depends (kv))
