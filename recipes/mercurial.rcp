@@ -1,0 +1,6 @@
+(:name mercurial
+       :description "Mercurial mode from mercurial"
+       :website "http://mercurial.selenic.com/"
+       :type http
+       :url "http://hg.intevation.org/mercurial/raw-file/tip/contrib/mercurial.el"
+       :features mercurial)
