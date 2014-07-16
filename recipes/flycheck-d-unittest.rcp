@@ -3,5 +3,5 @@
        :type github
        :pkgname "flycheck/flycheck-d-unittest"
        :depends (flycheck dash)
-       :post-init (eval-after-load 'flycheck
-                    '(add-hook 'flycheck-mode-hook #'setup-flycheck-d-unittest)))
+       :prepare (eval-after-load 'flycheck
+                  '(add-hook 'flycheck-mode-hook #'setup-flycheck-d-unittest)))

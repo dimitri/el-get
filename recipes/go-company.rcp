@@ -4,6 +4,7 @@
        :pkgname "github.com/nsf/gocode"
        :depends (company-mode)
        :load-path ("src/github.com/nsf/gocode/emacs-company")
+       :prepare (progn
+                  (add-hook 'go-mode-hook (require 'company-go)))
        :post-init (progn
-                    (add-hook 'go-mode-hook (require 'company-go))
                     (add-to-list 'exec-path (concat default-directory "bin"))))
