@@ -1,0 +1,4 @@
+(:name google-translate
+       :description "Emacs interface to Google Translate"
+       :type github
+       :pkgname "atykhonov/google-translate")

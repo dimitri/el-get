@@ -1,0 +1,4 @@
+(:name docsetutil
+       :description "Emacs Interface to docsetutil on OSX"
+       :type github
+       :pkgname "leoliu/docsetutil-el")

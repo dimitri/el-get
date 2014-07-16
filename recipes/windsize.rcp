@@ -1,0 +1,4 @@
+(:name windsize
+       :description "Simple, intuitive window resizing"
+       :type github
+       :pkgname "grammati/windsize")

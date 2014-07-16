@@ -1,0 +1,4 @@
+(:name clean-aindent
+       :description "Emacs extension for clean auto-indent and backspace unindent"
+       :type github
+       :pkgname "pmarinov/clean-aindent")

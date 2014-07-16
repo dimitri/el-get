@@ -1,0 +1,4 @@
+(:name swift-mode
+       :description "Major-mode for Apple's Swift programming language"
+       :type github
+       :pkgname "chrisbarrett/swift-mode")

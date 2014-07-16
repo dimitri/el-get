@@ -1,0 +1,6 @@
+(:name sclang-extensions
+       :description "Creature comforts for the SuperCollider mode for Emacs"
+       :type github
+       :pkgname "chrisbarrett/sclang-extensions"
+       :depends (dash s auto-complete sclang)
+       :prepare (add-hook 'sclang-mode-hook 'sclang-extensions-mode))

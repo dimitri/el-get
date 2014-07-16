@@ -1,0 +1,4 @@
+(:name hrb-mode
+       :description "hrb-mode is an Emacs minor-mode for highlighting Ruby blocks just like (show-paren-mode t)."
+       :type github
+       :pkgname "ckruse/hrb-mode")

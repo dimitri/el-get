@@ -1,0 +1,6 @@
+(:name myrth-theme
+       :website "https://bitbucket.org/Kamiel/myrth"
+       :description "Eye-candy light clear minimalistic color theme."
+       :type git
+       :url "https://bitbucket.org/Kamiel/myrth.git"
+       :prepare (add-to-list (quote custom-theme-load-path) default-directory))

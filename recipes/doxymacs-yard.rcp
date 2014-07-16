@@ -1,0 +1,5 @@
+(:name doxymacs-yard
+       :description "Based on Jonas's doxymacs-yard.el, just added font lock for yard tags."
+       :type github
+       :pkgname "doitian/doxymacs-yard"
+       :depends doxymacs)

@@ -1,0 +1,5 @@
+(:name kdcomplete
+       :description "A very fast asynchronous code completion engine for emacs. Uses auto-complete with support for yasnippet, and integrates well with clang for C/C++/Objective C completion"
+       :type github
+       :pkgname "BinaryPeak/kdcomplete"
+       :depends auto-complete)

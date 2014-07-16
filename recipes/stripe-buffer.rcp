@@ -1,0 +1,4 @@
+(:name stripe-buffer
+       :description "Use different background colors for even and odd lines."
+       :type github
+       :pkgname "sabof/stripe-buffer")
