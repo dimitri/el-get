@@ -847,7 +847,14 @@ explicitly declared in the user-init-file (.emacs)."
     ;; Filepath is dir/file
     (let ((filepath (format "%s/%s" dir filename)))
       (with-temp-file filepath
-        (insert (el-get-print-to-string source))))))
+        (emacs-lisp-mode)
+        (insert "(")
+        (loop for (prop val) on source by #'cddr
+              do (insert (format "%S %S\n" prop val)))
+        (delete-char -1) ; delete last \n
+        (insert ")\n")
+        (goto-char (point-min))
+        (indent-pp-sexp 'pretty)))))
 
 ;;;###autoload
 (defun el-get-make-recipes (&optional dir)
