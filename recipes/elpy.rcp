@@ -5,5 +5,4 @@
        :pkgname "jorgenschaefer/elpy"
        :post-init (el-get-envpath-prepend "PYTHONPATH" default-directory)
        :depends (company-mode yasnippet highlight-indentation
-                              find-file-in-project idomenu iedit
-                              nose jedi pyvenv))
+                              find-file-in-project idomenu pyvenv))
