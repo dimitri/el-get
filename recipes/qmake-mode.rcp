@@ -1,6 +1,9 @@
 (:name qmake-mode
-       :description "Qmake mode for emacs"
+       :description "Qmake mode for Emacs"
        :type hg
        :url "https://qmake-mode.googlecode.com/hg/"
-       :load "qmake.el"
-       :features qmake-mode)
+       :prepare (progn
+                  (autoload 'qmake-mode "qmake"
+                    "Major mode for qmake files." t)
+                  (add-to-list 'auto-mode-alist '("\\.pro\\'" . qmake-mode))
+                  (add-to-list 'auto-mode-alist '("\\.pri\\'" . qmake-mode))))
