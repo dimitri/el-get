@@ -1,0 +1,5 @@
+(:name es-windows
+       :website "https://github.com/sabof/es-windows"
+       :description "Window-management utilities"
+       :type github
+       :pkgname "sabof/es-windows")
