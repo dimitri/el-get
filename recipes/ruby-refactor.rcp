@@ -1,0 +1,5 @@
+(:name ruby-refactor
+       :website "https://github.com/ajvargo/ruby-refactor"
+       :type github
+       :pkgname "ajvargo/ruby-refactor"
+       :description "A minor mode for Emacs that provides some Ruby refactoring methods.")
