@@ -1,0 +1,5 @@
+(:name typed-clojure-mode
+       :description "Typed Clojure minor mode for Emacs"
+       :type github
+       :pkgname "typedclojure/typed-clojure-mode"
+       :depends (clojure-mode cider))
