@@ -1,0 +1,5 @@
+(:name yank-pop-summary
+       :website "http://www.namazu.org/~tsuchiya/elisp/index.html"
+       :description "yank pop forward"
+       :type http
+       :url "http://www.namazu.org/~tsuchiya/elisp/yank-pop-summary.el")

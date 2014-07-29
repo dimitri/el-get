@@ -1,0 +1,4 @@
+(:name pry
+       :description "support for running Pry within in Emacs"
+       :type github
+       :pkgname "jacott/emacs-pry")

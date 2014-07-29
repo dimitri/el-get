@@ -1,0 +1,5 @@
+(:name svg-mode-line-themes
+       :description "Awesome mode-line for emacs!"
+       :type github
+       :pkgname "sabof/svg-mode-line-themes"
+       :depends xmlgen)

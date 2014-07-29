@@ -1,0 +1,5 @@
+(:name mac-classic-theme
+       :description "A emacs colour theme which resembles the TextMate Mac Classic colour theme."
+       :type github
+       :pkgname "ahobson/mac-classic-theme"
+       :prepare (add-to-list (quote custom-theme-load-path) default-directory))

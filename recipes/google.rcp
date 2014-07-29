@@ -1,0 +1,4 @@
+(:name google
+       :description "Emacs client for Google's search API"
+       :type github
+       :pkgname "steckerhalter/google-el")

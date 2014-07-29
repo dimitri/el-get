@@ -1,0 +1,20 @@
+(:name emacs-rails-reloaded
+       :description "It is the minor mode for editing Ruby On Rails code with Emacs. This minor mode makes your work much easier and user friendly."
+       :type github
+       :pkgname "tychobrailleur/emacs-rails-reloaded"
+       :prepare (progn
+                  (autoload 'rails/initialize-for-current-buffer "rails-reloaded" nil t)
+                  (autoload 'rails/root "rails-lib" nil t)
+                  (autoload 'rails/find-file-hook "rails-autoload")
+                  (add-hook 'find-file-hooks 'rails/find-file-hook)
+                  (autoload 'rails/setup-auto-modes-alist "rails-autoload")
+                  (autoload 'rails/setup-auto-coding-alist "rails-autoload"))
+       :post-init (progn
+                    (rails/setup-auto-modes-alist)
+                    (rails/setup-auto-coding-alist)
+                    (eval-after-load 'yasnippet
+                      `(let ((dir (concat
+                                   (file-name-directory ,default-directory)
+                                   "snippets")))
+                         (add-to-list 'yas-snippet-dirs dir t)
+                         (yas-load-directory dir)))))

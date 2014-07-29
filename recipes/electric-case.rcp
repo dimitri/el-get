@@ -1,0 +1,4 @@
+(:name electric-case
+       :description "insert camelCase and snake_case words, without “Shift”ing"
+       :type github
+       :pkgname "zk-phi/electric-case")

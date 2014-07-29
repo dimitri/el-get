@@ -1,0 +1,5 @@
+(:name vh-scroll
+       :website "https://github.com/emacsattic/vh-scroll"
+       :description "vert. and horiz. scrolling that preserves point visible."
+       :type http
+       :url "http://www.splode.com/~friedman/software/emacs-lisp/src/vh-scroll.el")

@@ -1,0 +1,5 @@
+(:name develock
+       :website "http://www.emacswiki.org/emacs/DevelockMode"
+       :description "Nice little minor-mode that will make your buffer all nice and flashy when you break some formatting rules"
+       :type http
+       :url "http://www.jpl.org/ftp/pub/elisp/develock.el.gz")

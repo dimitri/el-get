@@ -1,0 +1,5 @@
+(:name ruby-complexity
+       :description "Runs the Ruby flog tool against Ruby code as you write it. Displays the flog score at the beginning of each method in Emacs."
+       :type github
+       :pkgname "jsmestad/ruby-complexity"
+       :depends flymake)

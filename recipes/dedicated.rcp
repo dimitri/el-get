@@ -1,0 +1,3 @@
+(:name dedicated
+       :description "A very simple minor mode for dedicated buffers"
+       :type emacsmirror)

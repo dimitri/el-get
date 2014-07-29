@@ -1,0 +1,5 @@
+(:name helm-shell
+       :description "Pcomplete and shell completion for helm."
+       :type github
+       :pkgname "jixiuf/helm-shell"
+       :depends helm)
