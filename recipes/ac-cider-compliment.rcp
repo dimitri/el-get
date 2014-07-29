@@ -1,0 +1,5 @@
+(:name ac-cider-compliment
+       :type github
+       :description "Emacs auto-complete client for Compliment"
+       :pkgname "alexander-yakushev/ac-cider-compliment"
+       :depends (cider auto-complete))
