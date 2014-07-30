@@ -2,4 +2,5 @@
        :description "Manage external services from within Emacs"
        :website "https://github.com/rejeep/prodigy.el"
        :type github
-       :pkgname "rejeep/prodigy.el")
+       :pkgname "rejeep/prodigy.el"
+       :depends (f))
