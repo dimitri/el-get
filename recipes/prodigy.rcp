@@ -3,4 +3,4 @@
        :website "https://github.com/rejeep/prodigy.el"
        :type github
        :pkgname "rejeep/prodigy.el"
-       :depends (f))
+       :depends (f s dash))
