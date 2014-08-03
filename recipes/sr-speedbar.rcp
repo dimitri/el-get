@@ -1,6 +1,4 @@
 (:name sr-speedbar
        :type emacswiki
        :description "Same frame speedbar"
-       :prepare (progn
-                  (require 'sr-speedbar)
-                  (global-set-key (kbd "s-s") 'sr-speedbar-toggle)))
+       :prepare (global-set-key (kbd "s-s") 'sr-speedbar-toggle))
