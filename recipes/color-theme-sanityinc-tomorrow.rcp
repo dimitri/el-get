@@ -1,0 +1,16 @@
+(:name color-theme-sanityinc-tomorrow
+       :description "Two pleasant medium-contrast Emacs color themes in light and dark flavours"
+       :type github
+       :pkgname "purcell/color-theme-sanityinc-tomorrow"
+       :depends color-theme
+       :prepare (progn
+                  (autoload 'color-theme-sanityinc-tomorrow-day "color-theme-sanityinc-tomorrow"
+                    "color-theme: sanityinc-tomorrow-day" t)
+                  (autoload 'color-theme-sanityinc-tomorrow-night "color-theme-sanityinc-tomorrow"
+                    "color-theme: sanityinc-tomorrow-night" t)
+                  (autoload 'color-theme-sanityinc-tomorrow-blue "color-theme-sanityinc-tomorrow"
+                    "color-theme: sanityinc-tomorrow-blue" t)
+                  (autoload 'color-theme-sanityinc-tomorrow-bright "color-theme-sanityinc-tomorrow"
+                    "color-theme: sanityinc-tomorrow-bright" t)
+                  (autoload 'color-theme-sanityinc-tomorrow-eighties "color-theme-sanityinc-tomorrow"
+                    "color-theme: sanityinc-tomorrow-eighties" t)))
