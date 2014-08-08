@@ -2,7 +2,7 @@
        :type github
        :pkgname "rocky/emacs-dbgr"
        :description "The Grand \"Cathedral\" Debugger rewrite: Towards a modular framework for interacting with external debuggers."
-       :depends (test-simple load-relative loc-changes)
+       :depends (loc-changes list-utils load-relative test-simple)
        :build
        (let ((load-path-env (mapconcat 'identity load-path ":")))
          (mapcar
