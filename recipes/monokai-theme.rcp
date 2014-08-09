@@ -1,0 +1,5 @@
+(:name monokai-theme
+       :website "https://github.com/oneKelvinSmith/monokai-emacs"
+       :description "A fruity color theme for Emacs."
+       :type elpa
+       :prepare (add-to-list 'custom-theme-load-path default-directory))
