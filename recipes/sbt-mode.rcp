@@ -1,0 +1,4 @@
+(:name sbt-mode
+       :description "An emacs mode for interacting with scala sbt and projects"
+       :type github
+       :pkgname "hvesalai/sbt-mode")
