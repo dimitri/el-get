@@ -1,0 +1,4 @@
+(:name fold-this
+       :description "Fold the active region in Emacs"
+       :type github
+       :pkgname "magnars/fold-this.el")
