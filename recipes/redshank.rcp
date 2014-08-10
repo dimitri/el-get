@@ -4,6 +4,7 @@
        :type git
        :url "http://www.foldr.org/~michaelw/projects/redshank.git"
        :load-path (".")
+       :depends (paredit)
        :post-init (progn
                     (require 'redshank-loader)
                     (eval-after-load "redshank-loader"
