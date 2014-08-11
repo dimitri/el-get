@@ -5,8 +5,5 @@
        :url "http://www.foldr.org/~michaelw/projects/redshank.git"
        :load-path (".")
        :depends (paredit)
-       :post-init (progn
-                    (require 'redshank-loader)
-                    (eval-after-load "redshank-loader"
-                      `(redshank-setup '(lisp-mode-hook
-                                         slime-repl-mode-hook) t))))
+       :autoloads "redshank-loader"
+       :prepare (redshank-setup '(lisp-mode-hook slime-repl-mode-hook) t))
