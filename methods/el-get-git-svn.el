@@ -30,6 +30,8 @@
                        (plist-get source :checksum)))
          (ok    (format "Package %s installed." package))
          (ko    (format "Could not install package %s." package)))
+    ;; TODO: not sure if it's possible for svn:// URLs to use TLS?
+    (el-get-insecure-check package url)
 
     (el-get-start-process-list
      package
@@ -61,6 +63,7 @@
         (r-name (format "*git svn rebase %s*" package))
         (r-ok   (format "Rebased package %s." package))
         (r-ko   (format "Could not rebase package %s." package)))
+    (el-get-insecure-check package url)
 
     (el-get-start-process-list
      package

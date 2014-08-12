@@ -613,4 +613,9 @@ platforms where this recipe should apply"
                       )
               ,el-get-build-recipe-body))))))
 
+(defcustom el-get-allow-insecure nil
+  "Allow packages to be installed over insecure connections."
+  :group 'el-get
+  :type 'boolean)
+
 (provide 'el-get-custom)

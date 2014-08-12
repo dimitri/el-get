@@ -36,6 +36,7 @@
          (name    (format "*svn checkout %s*" package))
          (ok      (format "Checked out package %s." package))
          (ko      (format "Could not checkout package %s." package)))
+    (el-get-insecure-check package url)
 
     (el-get-start-process-list
      package
@@ -55,6 +56,7 @@
          (name (format "*svn update %s*" package))
          (ok   (format "Updated package %s." package))
          (ko   (format "Could not update package %s." package)))
+    (el-get-insecure-check package url)
 
     (el-get-start-process-list
      package

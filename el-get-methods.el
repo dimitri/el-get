@@ -21,6 +21,15 @@
               "methods"
               (file-name-directory (or load-file-name buffer-file-name))))
 
+(defun el-get-insecure-check (package url)
+  (when (and (not el-get-allow-insecure)
+             (not (string-match "^https://" url))
+             (not (string-match "^[-_\.A-Za-z0-9]+@" url))
+             (not (string-match "^ssh" url)))
+    (error (concat "Attempting to clone insecure package "
+                   (el-get-as-string package)
+                   " without `el-get-allow-insecure'."))))
+
 (require 'el-get-apt-get)
 (require 'el-get-builtin)
 (require 'el-get-brew)
