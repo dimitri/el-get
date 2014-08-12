@@ -9,4 +9,5 @@
        :build (if (version<= "24.3" emacs-version)
                   `(("make" ,(format "EMACS=%s" el-get-emacs) "all"))
                 `(("make" ,(format "EMACS=%s" el-get-emacs) "docs")))
-       :build/berkeley-unix (("touch" "`find . -name Makefile`") ("gmake")))
+       :build/berkeley-unix (("touch" "`find . -name Makefile`") ("gmake"))
+       :prepare (require 'magit-autoloads))
