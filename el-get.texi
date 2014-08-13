@@ -522,6 +522,13 @@ As above for ELPA, this directory stores a local list of emacswiki
 recipes. Defaults to
 @file{~/.emacs.d/el-get/el-get/recipes/emacswiki/}.
 
+@item el-get-allow-insecure
+
+This determines whether or not El-Get will attempt to install packages
+over insecure connections; setting it to nil (recommended) will cause
+it to abort upon any install or update operation which uses an
+unencrypted URL.
+
 @end table
 
 @node User Init

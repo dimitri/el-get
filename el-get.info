@@ -517,6 +517,12 @@ certain settings, particularly for portability.
      As above for ELPA, this directory stores a local list of emacswiki
      recipes. Defaults to `~/.emacs.d/el-get/el-get/recipes/emacswiki/'.
 
+`el-get-allow-insecure'
+     This determines whether or not El-Get will attempt to install
+     packages over insecure connections; setting it to nil
+     (recommended) will cause it to abort upon any install or update
+     operation which uses an unencrypted URL.
+
 
 
 File: el-get.info,  Node: User Init,  Next: Recipes,  Prev: Setup,  Up: Top
@@ -1060,19 +1066,19 @@ Node: Basic Setup12666
 Node: The el-get function13977
 Node: Distributed Setup15253
 Node: Setup Customization17295
-Node: User Init18441
-Node: Before and After properties19128
-Node: Initialization files20636
-Node: Recipes21289
-Node: Organizing recipes21764
-Node: Getting more recipes23395
-Node: Overriding package files24093
-Node: Authoring Recipes24476
-Node: Recipe format25091
-Node: Dependencies34880
-Node: Byte Compilation35226
-Node: Autoloads35792
-Node: Build36918
-Node: Recipe checker37890
+Node: User Init18707
+Node: Before and After properties19394
+Node: Initialization files20902
+Node: Recipes21555
+Node: Organizing recipes22030
+Node: Getting more recipes23661
+Node: Overriding package files24359
+Node: Authoring Recipes24742
+Node: Recipe format25357
+Node: Dependencies35146
+Node: Byte Compilation35492
+Node: Autoloads36058
+Node: Build37184
+Node: Recipe checker38156
 
 End Tag Table
