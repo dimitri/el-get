@@ -26,7 +26,7 @@
              (not (string-match "^https://" url))
              (not (string-match "^[-_\.A-Za-z0-9]+@" url))
              (not (string-match "^ssh" url)))
-    (error (concat "Attempting to clone insecure package "
+    (error (concat "Attempting to install insecure package "
                    (el-get-as-string package)
                    " without `el-get-allow-insecure'."))))
 

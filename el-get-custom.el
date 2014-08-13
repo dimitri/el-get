@@ -613,7 +613,8 @@ platforms where this recipe should apply"
                       )
               ,el-get-build-recipe-body))))))
 
-(defcustom el-get-allow-insecure nil
+;; TODO: this should be nil; change at the next major version bump
+(defcustom el-get-allow-insecure t
   "Allow packages to be installed over insecure connections."
   :group 'el-get
   :type 'boolean)
