@@ -68,6 +68,7 @@ into the package :localname option or its `file-name-nondirectory' part."
          (dest   (or dest (el-get-http-dest-filename package url))))
     (unless (file-directory-p pdir)
       (make-directory pdir))
+    (el-get-insecure-check package url)
 
     (if (not el-get-default-process-sync)
         (url-retrieve url 'el-get-http-retrieve-callback

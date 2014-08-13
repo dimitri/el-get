@@ -139,6 +139,7 @@ the recipe, then return nil."
          ;; Prepend elpa-repo to `package-archives' for new package.el
          (package-archives (append (when elpa-repo (list elpa-repo))
                                    (when (boundp 'package-archives) package-archives))))
+    (el-get-insecure-check package url)
 
     (unless (and elpa-dir (file-directory-p elpa-dir))
       ;; package-install does these only for interactive calls
@@ -190,6 +191,7 @@ first time.")
   "Ask elpa to update given PACKAGE."
   (unless package--initialized
     (package-initialize t))
+  (el-get-insecure-check package url)
   (when el-get-elpa-do-refresh
    (package-refresh-contents)
    (when (eq el-get-elpa-do-refresh 'once)

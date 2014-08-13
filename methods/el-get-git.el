@@ -72,6 +72,8 @@ found."
                              (list url pname)))
          (ok     (format "Package %s installed." package))
          (ko     (format "Could not install package %s." package)))
+    (el-get-insecure-check package url)
+
     (el-get-start-process-list
      package
      (list
@@ -117,6 +119,8 @@ found."
          (pull-args (list "--no-pager" (if checkout "fetch" "pull")))
          (ok   (format "Pulled package %s." package))
          (ko   (format "Could not update package %s." package)))
+    (el-get-insecure-check package url)
+
     (el-get-start-process-list
      package
      `((:command-name ,name

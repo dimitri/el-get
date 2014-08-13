@@ -31,6 +31,7 @@
          (name (format "*go get %s*" package))
          (ok   (format "Package %s installed." package))
          (ko   (format "Could not install package %s." package)))
+    ;; TODO: no idea how to check this for insecure connections
     (unless (file-directory-p pdir)
       (make-directory pdir))
     (setenv "GOPATH" pdir)
