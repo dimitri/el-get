@@ -1,0 +1,4 @@
+(:name ac-helm
+       :description "Helm interface for auto-complete"
+       :type github
+       :pkgname "yasuyk/ac-helm")
