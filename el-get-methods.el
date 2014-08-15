@@ -26,9 +26,12 @@
              (not (string-match "^https://" url))
              (not (string-match "^[-_\.A-Za-z0-9]+@" url))
              (not (string-match "^ssh" url)))
-    (error (concat "Attempting to install insecure package "
-                   (el-get-as-string package)
-                   " without `el-get-allow-insecure'."))))
+    ;; If we have :checksum, we can rely on `el-get-post-install' for
+    ;; security.
+    (unless (plist-get (el-get-package-def package) :checksum)
+      (error (concat "Attempting to install insecure package "
+                     (el-get-as-string package)
+                     " without `el-get-allow-insecure'.")))))
 
 (require 'el-get-apt-get)
 (require 'el-get-builtin)
