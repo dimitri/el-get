@@ -1,0 +1,5 @@
+(:name yasnippet-snippets
+       :description "A collection of yasnippet snippets for many languages"
+       :type github
+       :pkgname "AndreaCrotti/yasnippet-snippets"
+       :depends (yasnippet))
