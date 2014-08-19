@@ -2,4 +2,5 @@
        :website "https://github.com/jaypei/emacs-neotree"
        :description "An Emacs tree plugin like NerdTree for Vim."
        :type github
+       :branch "master"
        :pkgname "jaypei/emacs-neotree")
