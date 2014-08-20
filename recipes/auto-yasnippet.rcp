@@ -1,0 +1,5 @@
+(:name auto-yasnippet
+       :description "Quickly create disposable yasnippets"
+       :type github
+       :pkgname "abo-abo/auto-yasnippet"
+       :depends (yasnippet))

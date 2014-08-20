@@ -1,0 +1,4 @@
+(:name imenu-anywhere
+       :description "Ido/helm imenu tag selection across all buffers with the same mode"
+       :type github
+       :pkgname "vitoshka/imenu-anywhere")
