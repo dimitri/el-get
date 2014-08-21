@@ -1,5 +1,5 @@
 (:name google-contacts
-       :description "Access Google Contacts from Emacs"
-       :type git
+       :description "Access Google Contacts from Emacs."
+       :type github
        :depends oauth2
-       :url "git://git.naquadah.org/google-contacts.el.git")
+       :pkgname "jd/google-contacts.el")
