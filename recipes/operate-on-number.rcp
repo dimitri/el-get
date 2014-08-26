@@ -1,0 +1,4 @@
+(:name operate-on-number
+       :description "Operate on number at point with arithmetic functions"
+       :type github
+       :pkgname "knu/operate-on-number.el")
