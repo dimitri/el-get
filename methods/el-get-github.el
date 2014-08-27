@@ -80,10 +80,9 @@ USERNAME and REPONAME are strings."
 
 (defun el-get-github-clone (package url post-install-fun)
   "Clone the given package from Github following the URL."
-  (el-get-insecure-check package url)
-  (el-get-git-clone package
-                    (or url (el-get-github-url package))
-                    post-install-fun))
+  (let ((url (or url (el-get-github-url package))))
+    (el-get-insecure-check package url)
+    (el-get-git-clone package url post-install-fun)))
 
 (defun el-get-github-guess-website (package)
   (let* ((user-and-repo (el-get-github-parse-user-and-repo package))
