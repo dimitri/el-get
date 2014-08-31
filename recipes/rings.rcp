@@ -1,0 +1,4 @@
+(:name rings
+       :description "Buffer rings. Like tabs, but better."
+       :type github
+       :pkgname "konr/rings")
