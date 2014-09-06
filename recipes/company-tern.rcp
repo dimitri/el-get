@@ -1,0 +1,7 @@
+(:name company-tern
+       :description "Tern backend for company-mode."
+       :type github
+       :pkgname "proofit404/company-tern"
+       :depends (dash company-mode s tern)
+       :post-init (eval-after-load 'company
+                    '(add-to-list 'company-backends 'company-tern)))
