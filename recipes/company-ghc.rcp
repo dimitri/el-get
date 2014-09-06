@@ -1,0 +1,7 @@
+(:name company-ghc
+       :description "Company-mode ghc-mod backend."
+       :type github
+       :pkgname "iquiw/company-ghc"
+       :depends (company-mode ghc-mod)
+       :post-init (eval-after-load 'company
+                    '(add-to-list 'company-backends 'company-ghc)))
