@@ -1,0 +1,7 @@
+(:name company-auctex
+       :description "Company-mode auto-completion for AUCTeX."
+       :type github
+       :pkgname "alexeyr/company-auctex"
+       :depends (auctex company-mode)
+       :post-init (eval-after-load 'auctex
+                    '(company-auctex-init)))
