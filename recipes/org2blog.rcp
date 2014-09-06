@@ -2,5 +2,5 @@
        :description "Blog from Org mode to wordpress"
        :type github
        :pkgname "punchagan/org2blog"
-       :depends (xml-rpc-el metaweblog)
+       :depends (xml-rpc-el metaweblog org-mode)
        :features org2blog)
