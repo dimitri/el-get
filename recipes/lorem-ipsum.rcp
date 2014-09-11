@@ -1,4 +1,4 @@
 (:name lorem-ipsum
        :description "Lorem Ipsum Generator"
        :type github
-       :pkgname "jschaf/emacs-lorem-ipsum"))
+       :pkgname "jschaf/emacs-lorem-ipsum")
