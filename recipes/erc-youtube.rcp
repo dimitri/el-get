@@ -1,0 +1,5 @@
+(:name erc-youtube
+       :description "Show received youtube urls in the ERC buffer."
+       :type github
+       :depends (erc)
+       :pkgname "kidd/erc-youtube.el")
