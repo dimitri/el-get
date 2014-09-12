@@ -1,0 +1,5 @@
+(:name cloud-to-butt-erc
+       :description "Replace 'the cloud' with 'my butt' in ERC."
+       :type github
+       :depends (erc)
+       :pkgname "leathekd/cloud-to-butt-erc")
