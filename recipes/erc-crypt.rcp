@@ -1,0 +1,7 @@
+(:name erc-crypt
+       :description "Symmetric Encryption for ERC."
+       :type github
+       :pkgname "atomontage/erc-crypt"
+       :depends (erc)
+       :prepare (progn
+                  (autoload 'erc-crypt-enable "erc-crypt" nil t)))
