@@ -1,0 +1,6 @@
+(:name erc-tex
+       :description "LaTeX mathematical expressions rendering for ERC."
+       :type emacswiki
+       :depends (erc)
+       :prepare (progn
+                  (autoload 'erc-tex "erc-tex")))
