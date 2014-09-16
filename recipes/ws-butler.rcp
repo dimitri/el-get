@@ -1,0 +1,5 @@
+(:name ws-butler
+       :description "Unobtrusively trim extraneous white-space *ONLY* in lines edited.
+"
+       :type github
+       :pkgname "lewang/ws-butler")
