@@ -116,7 +116,7 @@ the recipe, then return nil."
                           (file-name-as-directory (expand-file-name package el-get-dir)))
         (message "%s"
                  (shell-command
-                  (format "cd %s && ln -s \"%s\" \"%s\"" el-get-dir elpa-dir package)))))))
+                  (format "cd %s ; ln -s \"%s\" \"%s\"" el-get-dir elpa-dir package)))))))
 
 (eval-when-compile
   ;; `condition-case-unless-debug' was introduced in 24.1, but was
