@@ -1,7 +1,13 @@
 (:name workgroups2
        :type github
-       :website "https://github.com/pashinin/workgroups2/wiki"
        :pkgname "pashinin/workgroups2"
+       :prepare (progn
+                  (autoload 'workgroups-mode "workgroups2")
+                  (defun workgroups-mode-on ()
+                    "Turn on workgroups mode."
+                    (interactive)
+                    (workgroups-mode 1))
+                  (add-hook 'after-init-hook 'sml/setup))
        :load-path "src"
        :description "Workgroups is a session manager for Emacs."
        :depends (anaphora dash f cl-lib))

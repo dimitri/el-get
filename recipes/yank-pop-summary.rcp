@@ -2,4 +2,10 @@
        :website "http://www.namazu.org/~tsuchiya/elisp/index.html"
        :description "yank pop forward"
        :type http
+       :prepare (progn
+                  (autoload 'yank-pop-forward "yank-pop-summary" nil t)
+                  (autoload 'yank-pop-backward "yank-pop-summary" nil t))
+       :post-init (progn
+                    (global-set-key (kbd "M-y") 'yank-pop-forward)
+                    (global-set-key (kbd "C-M-y") 'yank-pop-backward))
        :url "http://www.namazu.org/~tsuchiya/elisp/yank-pop-summary.el")

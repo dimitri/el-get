@@ -1,3 +1,4 @@
 (:name highline
        :description "minor mode to highlight current line in buffer"
-       :type emacsmirror)
+       :type emacsmirror
+       :post-init (add-hook 'prog-mode-hook 'highline-mode))

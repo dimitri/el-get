@@ -1,5 +1,6 @@
 (:name smart-mode-line
        :description "A color coded smart mode-line."
        :type github
+       :post-init (add-hook 'after-init-hook 'sml/setup)
        :depends (dash rich-minority)
        :pkgname "Bruce-Connor/smart-mode-line")
