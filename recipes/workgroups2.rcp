@@ -7,7 +7,7 @@
                     "Turn on workgroups mode."
                     (interactive)
                     (workgroups-mode 1))
-                  (add-hook 'after-init-hook 'sml/setup))
+                  (add-hook 'after-init-hook 'workgroups-mode-on))
        :load-path "src"
        :description "Workgroups is a session manager for Emacs."
        :depends (anaphora dash f cl-lib))
