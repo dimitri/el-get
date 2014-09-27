@@ -1,7 +1,7 @@
 (:name ack-and-a-half
        :description "Yet another front-end for ack"
        :type github
-       :pkgname "jhelwig/ack-and-a-half"
+       :pkgname "emacsmirror/ack-and-a-half"
        :prepare
        (progn
          (defalias 'ack 'ack-and-a-half)
