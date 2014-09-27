@@ -1,0 +1,5 @@
+(:name google-translate
+       :description "Use google translate api to perform translations"
+       :type github
+       :pkgname "manzyuk/google-translate"
+       :load "google-translate.el")

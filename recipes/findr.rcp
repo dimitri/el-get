@@ -1,0 +1,3 @@
+(:name findr
+       :type elpa
+       :description "Breadth-first file-finding facility for (X)Emacs")
