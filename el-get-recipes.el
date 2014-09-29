@@ -282,11 +282,11 @@ Use this to modify environment variable such as $PATH or $PYTHONPATH."
 
 (defun el-get-envpath-prepend-1 (paths head)
   "Return \"HEAD:PATHS\" omitting duplicates in it."
-  (let ((pplist (split-string (or paths "") ":" 'omit-nulls)))
+  (let ((pplist (split-string (or paths "") path-separator 'omit-nulls)))
     (mapconcat 'identity
                (remove-duplicates (cons head pplist)
                                   :test #'string= :from-end t)
-               ":")))
+               path-separator)))
 
 (defvar el-get-check--last-file-or-buffer nil
   "The last file-or-buffer checked.")
