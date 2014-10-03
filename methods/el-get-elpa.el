@@ -114,9 +114,8 @@ the recipe, then return nil."
           ;; since symlink is not exactly reliable on those systems
           (copy-directory (el-get-elpa-package-directory package)
                           (file-name-as-directory (expand-file-name package el-get-dir)))
-        (message "%s"
-                 (shell-command
-                  (format "cd %s && ln -s \"%s\" \"%s\"" el-get-dir elpa-dir package)))))))
+        (let ((default-directory el-get-dir))
+          (make-symbolic-link elpa-dir package))))))
 
 (eval-when-compile
   ;; `condition-case-unless-debug' was introduced in 24.1, but was
