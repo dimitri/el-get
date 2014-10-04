@@ -1,0 +1,5 @@
+(:name flycheck-tip
+       :type github
+       :pkgname "yuutayamada/flycheck-tip"
+       :description "show you error by popup-tip"
+       :depends (flycheck popup))
