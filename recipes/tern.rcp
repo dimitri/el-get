@@ -2,4 +2,5 @@
        :description "A JavaScript code analyzer for deep, cross-editor language support."
        :type github
        :pkgname "marijnh/tern"
+       :build '(("npm" "--production" "install"))
        :load-path ("emacs"))
