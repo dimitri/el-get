@@ -26,8 +26,8 @@
   :group 'el-get
   :type 'boolean)
 
-(defcustom el-get-git-known-smart-domains'("www.github.com" "www.bitbucket.org" "repo.or.cz")
-  "List of domain which are known to support shallow clone, el-get will not make
+(defcustom el-get-git-known-smart-domains '("www.github.com" "www.bitbucket.org" "repo.or.cz")
+  "List of domains which are known to support shallow clone, el-get will not make
 explicit checks for these"
   :group 'el-get
   :type 'list)
@@ -45,31 +45,31 @@ found."
                "or the binary `git' to be found in your PATH")))
     git-executable))
 
-(defun el-get-git-url-from-known-smart-domains (url)
-  "Check if URL belongs to know smart domains, it basically
-looks up domain in `el-get-git-known-smart-domains'
+(defun el-get-git-url-from-known-smart-domains-p (url)
+  "Check if URL belongs to known smart domains, it basically looks up the url's
+domain in `el-get-git-known-smart-domains'
 
-This is needed since some domains like bitbucket support shallow clone even
+This is needed because some domains like bitbucket support shallow clone even
 though they do not indicate this in their response headers see
-`el-get-git-is-host-smart-http'"
+`el-get-git-is-host-smart-http-p'"
   (let* ((host (url-host (url-generic-parse-url url)))
          ;; Prepend www to domain, if it consists only of two components
          (prefix (when (= (length (split-string host "\\.")) 2)
                    "www.")))
     (member (concat prefix host) el-get-git-known-smart-domains)))
 
-(defun el-get-git-is-host-smart-http (giturl)
-  "Detect if the host is capable of shallow clones using, http GITURL is url to
-the git repository, this function is indented to be used only with http urls. It
-uses the approach described here [http://stackoverflow.com/questions/9270488/]
+(defun el-get-git-is-host-smart-http-p (giturl)
+  "Detect if the host supports shallow clones using http(s). GITURL is url to
+the git repository, this function is intended to be used only with http(s)
+urls. The function uses the approach described here [http://stackoverflow.com/questions/9270488/]
 
 Basically it makes a HEAD request and checks the Content-Type for 'smart' MIME
-type. This approach does not work for some domains like `bitbucket', it returns
-'text/html' as Content-Type"
+type. This approach does not work for some domains like `bitbucket', which do
+not return 'smart' headers despite supporting shallow clones"
   (let ((url-request-method "HEAD")
         (req-url (format "%s%s/info/refs\?service\=git-upload-pack"
                          giturl
-                         ;; The url may not end with ".git" in which case we may
+                         ;; The url may not end with ".git" in which case we
                          ;; need to add append ".git" to the url
                          (if (string-match "\\.git\\'" giturl)
                              ""
@@ -80,15 +80,15 @@ type. This approach does not work for some domains like `bitbucket', it returns
       (goto-char (point-min))
       (numberp (ignore-errors (search-forward-regexp smart-content-type))))))
 
-(defun el-get-git-shallow-clone-supported? (url)
+(defun el-get-git-shallow-clone-supported-p (url)
   "Check if shallow clone is supported for given URL"
   ;; All other protocols git, ssh and file support shallow clones
   (or (not (string-prefix-p "http" url))
       ;; Check if url belongs to one of known smart domains
-      (el-get-git-url-from-known-smart-domains url)
+      (el-get-git-url-from-known-smart-domains-p url)
       ;; If all else fails make an explicit call to check if shallow clone is
       ;; supported
-      (el-get-git-is-host-smart-http url)))
+      (el-get-git-is-host-smart-http-p url)))
 
 (defun el-get-git-clone (package url post-install-fun)
   "Clone the given package following the URL."
@@ -104,7 +104,7 @@ type. This approach does not work for some domains like `bitbucket', it returns
                                     (not submodule-prop)))
          (checkout (or (plist-get source :checkout)
                        (plist-get source :checksum)))
-         (shallow (when (el-get-git-shallow-clone-supported? url)
+         (shallow (when (el-get-git-shallow-clone-supported-p url)
                     (el-get-plist-get-with-default source :shallow
                       el-get-git-shallow-clone)))
          (clone-args (append '("--no-pager" "clone")
