@@ -1,0 +1,4 @@
+(:name zlc
+       :description "Zsh like completion system for Emacs."
+       :type github
+       :pkgname "mooz/emacs-zlc")
