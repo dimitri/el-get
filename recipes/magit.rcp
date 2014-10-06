@@ -5,9 +5,10 @@
        :pkgname "magit/magit"
        :depends (cl-lib git-modes)
        :info "."
-       ;; let el-get care about autoloads so that it works with all OSes
-       :build (if (version<= "24.3" emacs-version)
-                  `(("make" ,(format "EMACS=%s" el-get-emacs) "all"))
-                `(("make" ,(format "EMACS=%s" el-get-emacs) "docs")))
-       :build/berkeley-unix (("touch" "`find . -name Makefile`") ("gmake"))
-       :prepare (require 'magit-autoloads))
+       ;; use the Makefile to produce the info manual, el-get can
+       ;; handle compilation and autoloads on its own.
+       :compile t
+       :build `(("make" "docs"))
+       :build/berkeley-unix (("gmake docs"))
+       ;; assume windows lacks make and makeinfo
+       :build/windows-nt (progn nil))
