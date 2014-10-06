@@ -1,8 +1,4 @@
 (:name helm
        :description "Emacs incremental and narrowing framework"
        :type github
-       :pkgname "emacs-helm/helm"
-       ;; Helm has a lot of optional dependencies that would be required in
-       ;; order to compile it.
-       :build ("make")
-       :compile nil)
+       :pkgname "emacs-helm/helm")
