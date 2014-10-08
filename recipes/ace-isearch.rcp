@@ -3,4 +3,3 @@
        :pkgname "tam17aki/ace-isearch"
        :description "ace-isearch.el provides a minor mode which combines isearch and ace-jump-mode."
        :depends (ace-jump-mode helm-swoop))
-
