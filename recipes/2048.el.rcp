@@ -1,0 +1,4 @@
+(:name 2048.el
+       :type hg
+       :url "https://bitbucket.org/zck/2048.el"
+       :description "This is an implementation of 2048 in Emacs.")
