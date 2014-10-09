@@ -7,7 +7,7 @@
        :info "."
        ;; use the Makefile to produce the info manual, el-get can
        ;; handle compilation and autoloads on its own.
-       :compile t
+       :compile "magit.*\.el\\'"
        :build `(("make" "docs"))
        :build/berkeley-unix (("gmake docs"))
        ;; assume windows lacks make and makeinfo

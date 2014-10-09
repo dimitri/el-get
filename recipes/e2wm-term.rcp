@@ -1,0 +1,5 @@
+(:name e2wm-term
+       :description "Perspective of e2wm.el for work in terminal"
+       :type github
+       :pkgname "aki2o/e2wm-term"
+       :depends (e2wm log4e yaxception))
