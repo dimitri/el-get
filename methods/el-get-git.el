@@ -14,7 +14,6 @@
 
 (require 'el-get-core)
 (require 'el-get-recipes)
-(require 'url-parse)
 
 (defcustom el-get-git-clone-hook nil
   "Hook run after git clone."
@@ -52,7 +51,7 @@ domain in `el-get-git-known-smart-domains'
 This is needed because some domains like bitbucket support shallow clone even
 though they do not indicate this in their response headers see
 `el-get-git-is-host-smart-http-p'"
-  (let* ((host (url-host (url-generic-parse-url url)))
+  (let* ((host (el-get-url-host url))
          ;; Prepend www to domain, if it consists only of two components
          (prefix (when (= (length (split-string host "\\.")) 2)
                    "www.")))

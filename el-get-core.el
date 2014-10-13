@@ -254,6 +254,18 @@ directory or a symlink in el-get-dir."
     (or (file-directory-p pdir)
         (file-symlink-p   pdir))))
 
+(defun el-get-url-host (url)
+  "Extract host from given URL.
+
+Earlier we used the built-in library `url-parse' to extract host. This broke
+installation of CEDET since it requires that the built-in versions of certain
+packages (one of them is `eieio') are not loaded before loading it. However
+`url-parse' depends on `auth-source' which in turn depends on `eieio' leading to
+loading of `eieio' before initializing CEDET causing CEDET's initialization to
+fail."
+  (string-match "://\\([^/:]+\\)" url)
+  (match-string-no-properties 1 url))
+
 
 ;;
 ;; el-get-reload API functions
