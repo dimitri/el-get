@@ -16,6 +16,6 @@
                               "src/epdfinfo"))
        :build `(("./autogen.sh")
                 ("./configure")
-                "make")
+                ("make"))
        :load-path ("lisp")
        :compile ("lisp/"))
