@@ -184,6 +184,17 @@ entry."
     (when post-remove-fun
       (funcall post-remove-fun package))))
 
+(defun el-get-shell-quote-program (program-name)
+  "Like `shell-quote-argument' but needs special treatment on Windows."
+  (if (fboundp 'w32-short-file-name)
+      ;; If program is really a bat file, putting double quotes around
+      ;; it will lead to problems if subsequent arguments are also
+      ;; quoted. Use the short 8.3 name instead of quoting. See
+      ;; http://debbugs.gnu.org/cgi/bugreport.cgi?bug=18745 for
+      ;; details.
+      (w32-short-file-name program-name)
+    (shell-quote-argument program-name)))
+
 
 ;;
 ;; Some tools
@@ -402,7 +413,7 @@ makes it easier to conditionally splice a command into the list.
                  (filter  (plist-get c :process-filter))
                  (shell   (plist-get c :shell))
                  (program (if shell
-                              (shell-quote-argument (plist-get c :program))
+                              (el-get-shell-quote-program (plist-get c :program))
                             (plist-get c :program)))
                  (args    (if shell
                               (mapcar #'shell-quote-argument (plist-get c :args))
