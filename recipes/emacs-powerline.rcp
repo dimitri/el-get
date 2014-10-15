@@ -1,0 +1,8 @@
+(:name emacs-powerline
+       :website "https://github.com/jonathanchu/emacs-powerline"
+       :depends (cl-lib)
+       :description "Powerline for Emacs"
+       :type github
+       :pkgname "jonathanchu/emacs-powerline"
+       :load-path "."
+       :features powerline)
