@@ -1,0 +1,5 @@
+(:name evil-args
+       :type github
+       :description "Motions and text objects for delimited arguments in Evil."
+       :pkgname "wcsmith/evil-args"
+       :depends evil)
