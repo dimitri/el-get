@@ -1,0 +1,4 @@
+(:name win-switch
+       :description "utility for quickly navigating Emacs windows"
+       :type github
+       :pkgname "genovese/win-switch")

@@ -1,0 +1,5 @@
+(:name cal-china-x
+       :description "Chinese calendar extras"
+       :type github
+       :pkgname "xwl/cal-china-x"
+       :features cal-china-x)
