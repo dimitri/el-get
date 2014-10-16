@@ -43,7 +43,20 @@ ALIST-ELEM should be an element from `package-alist' or
           ;; call `package-delete' on.
           (mapc #'package-delete descs)
         ;; Otherwise, just delete the package directory.
-        (delete-directory (el-get-elpa-package-directory pkg) 'recursive)))))
+        (delete-directory (el-get-elpa-package-directory pkg) 'recursive))))
+  (defun el-get-elpa-install-1-package (pkg)
+    "A wrapper for `package-download-transaction'.
+
+Installs the 1st available version, skipping package.el's
+dependency computations."
+    (let* ((pkg-avail (assq pkg package-archive-contents))
+           (descs (cdr pkg-avail)))
+      (if (listp descs)
+          ;; 24.4+ case, we have a list of descriptors that we can
+          ;; call `package-download-transaction' on.
+          (package-download-transaction (list (car descs)))
+        ;; Otherwise, just use the symbol
+        (package-download-transaction (list pkg))))))
 
 (defcustom el-get-elpa-install-hook nil
   "Hook run after ELPA package install."
@@ -156,7 +169,7 @@ the recipe, then return nil."
       ;; TODO: should we refresh and retry once if package-install fails?
       ;; package-install generates autoloads, byte compiles
       (let (emacs-lisp-mode-hook fundamental-mode-hook prog-mode-hook)
-        (package-download-transaction (list (el-get-as-symbol package)))))
+        (el-get-elpa-install-1-package (el-get-as-symbol package))))
     ;; we symlink even when the package already is installed because it's
     ;; not an error to have installed ELPA packages before using el-get, and
     ;; that will register them
@@ -197,7 +210,7 @@ first time.")
      (setq el-get-elpa-do-refresh nil)))
   (when (el-get-elpa-update-available-p package)
     (el-get-elpa-remove package url nil)
-    (package-install (el-get-as-symbol package))
+    (el-get-elpa-install-1-package (el-get-as-symbol package))
     ;; in windows, we don't have real symlinks, so its better to remove
     ;; the directory and copy everything again
     (when (memq system-type '(ms-dos windows-nt))
