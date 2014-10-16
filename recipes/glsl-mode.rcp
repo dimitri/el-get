@@ -1,0 +1,5 @@
+(:name glsl-mode
+       :type github
+       :description "major mode for Open GLSL shader files"
+       :pkgname "jimhourihan/glsl-mode"
+       :features glsl-mode)
