@@ -63,9 +63,12 @@
                         ((eq method 'fink)    el-get-fink-base)
                         ((eq method 'pacman)  el-get-pacman-base)))
          (debdir  (concat (file-name-as-directory basedir) pname)))
-    (unless (file-directory-p pdir)
-      (shell-command
-       (concat "cd " el-get-dir " && ln -s " debdir  " " pname)))))
+    (if (file-directory-p debdir)
+        (unless (file-directory-p pdir)
+          (shell-command
+           (concat "cd " el-get-dir " && ln -s " debdir  " " pname)))
+      (message "%s package `%s' created no elisp files!" method package)
+      (make-directory pdir t))))
 
 (defun el-get-dpkg-remove-symlink (package)
   "rm -f ~/.emacs.d/el-get/package"
