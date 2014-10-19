@@ -67,8 +67,12 @@
         (unless (file-directory-p pdir)
           (shell-command
            (concat "cd " el-get-dir " && ln -s " debdir  " " pname)))
-      (message "%s package `%s' created no elisp files!" method package)
-      (make-directory pdir t))))
+      (unless (file-directory-p pdir)
+       (lwarn '(el-get) :warning
+              "%s package `%s' created no elisp files!" method package)
+       ;; create an empty directory so we have somewhere to run
+       ;; el-get tasks like byte-compile in.
+       (make-directory pdir t)))))
 
 (defun el-get-dpkg-remove-symlink (package)
   "rm -f ~/.emacs.d/el-get/package"
