@@ -1,0 +1,6 @@
+(:name aggressive-indent-mode
+       :description "Emacs minor mode that keeps your code always indented. More reliable than electric-indent-mode"
+       :website "https://github.com/Bruce-Connor/aggressive-indent-mode"
+       :type github
+       :depends (names cl-lib)
+       :pkgname "Bruce-Connor/aggressive-indent-mode")
