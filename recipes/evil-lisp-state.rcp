@@ -1,0 +1,5 @@
+(:name evil-lisp-state
+       :description "An evil state to navigate Lisp code and modify it with smartparens"
+       :website "https://github.com/syl20bnr/evil-lisp-state"
+       :type github
+       :pkgname "syl20bnr/evil-lisp-state")
