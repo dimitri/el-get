@@ -449,17 +449,11 @@ called by `el-get' (usually at startup) for each installed package."
           (funcall maybe-lazy-eval `(el-get-load-package-user-init-file ',package))
           (funcall el-get-maybe-lazy-runsupp
                    after "after" package))
-        (when (and (not (eq method 'elpa)) ; if this isn't an elpa package
-                   ;; and we have any elpa packages installed
-                   (some (lambda (pkg-status)
-                           (let* ((pkg-info (cdr pkg-status))
-                                  (recipe (plist-get pkg-info 'recipe)))
-                             (and (equal (plist-get pkg-info 'status) "installed")
-                                  (eq (plist-get recipe :type) 'elpa))))
-                         (el-get-read-status-file)))
+        ;; if any elpa packages are installed they already `require'd
+        ;; `package'.
+        (when (featurep 'package)
           ;; tell elpa that this package has been activated, so it
           ;; doesn't try to activate it's own package instead.
-          (require 'package)
           (push (el-get-as-symbol package) package-activated-list)))
     (debug err
            (el-get-installation-failed package err)))
