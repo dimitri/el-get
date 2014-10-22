@@ -1,7 +1,6 @@
 (:name elscreen
        :description "Screen Manager for Emacsen"
-       :type http-tar
+       :website "https://github.com/emacs-jp/elscreen"
        :depends apel
-       :options ("xzf")
-       :url "ftp://210.155.141.202/pub/morishima.net/naoto/ElScreen/elscreen-1.4.6.tar.gz"
-       )
+       :type github
+       :pkgname "emacs-jp/elscreen")
