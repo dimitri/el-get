@@ -1,0 +1,6 @@
+(:name emms-netease
+       :description "EMMS source for Netease Musicbox platform"
+       :website "https://github.com/LiuPai/emms-netease"
+       :depends (emms json)
+       :type github
+       :pkgname "LiuPai/emms-netease")
