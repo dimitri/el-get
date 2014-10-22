@@ -1,0 +1,5 @@
+(:name gotham-theme
+       :description "A very dark Emacs color theme."
+       :website "https://github.com/wasamasa/gotham-theme"
+       :type github
+       :pkgname "wasamasa/gotham-theme")
