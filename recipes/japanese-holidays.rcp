@@ -1,0 +1,3 @@
+(:name japanese-holidays
+       :type github
+       :pkgname "emacs-jp/japanese-holidays")
