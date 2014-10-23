@@ -249,8 +249,8 @@ first time.")
           (string-match-p "marmalade-repo\\.org" repo-url))
       (concat "http://marmalade-repo.org/packages/" package))
      ((or (string= "melpa" repo-name)
-          (string-match-p "melpa.milkbox.net" repo-url))
-      (concat "http://melpa.milkbox.net/#" package)))))
+          (string-match-p "melpa.org" repo-url))
+      (concat "http://melpa.org/#" package)))))
 
 (el-get-register-method :elpa
   :install #'el-get-elpa-install
