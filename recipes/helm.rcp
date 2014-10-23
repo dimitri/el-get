@@ -1,4 +1,8 @@
 (:name helm
        :description "Emacs incremental and narrowing framework"
        :type github
-       :pkgname "emacs-helm/helm")
+       :pkgname "emacs-helm/helm"
+       :build ("make")
+       ;; Windows probably doesn't have make available so we fake it.
+       :build/windows-nt (with-temp-file "helm-autoload.el"
+                           nil))
