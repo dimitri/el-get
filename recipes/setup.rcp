@@ -1,0 +1,5 @@
+(:name setup
+       :description "helper macros to write faster, portable and robust init script."
+       :website "https://github.com/zk-phi/setup"
+       :type github
+       :pkgname "zk-phi/setup")
