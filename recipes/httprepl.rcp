@@ -1,0 +1,7 @@
+(:name httprepl
+       :description "An HTTP REPL."
+       :website "https://github.com/gregsexton/httprepl.el"
+       :type github
+       :minimum-emacs-version "24"
+       :depends (s dash)
+       :pkgname "gregsexton/httprepl.el")
