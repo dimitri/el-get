@@ -1,0 +1,6 @@
+(:name download-region
+       :description "Simple in-buffer download manager."
+       :website "https://github.com/zk-phi/download-region"
+       :type github
+       :depends cl-lib
+       :pkgname "zk-phi/download-region")
