@@ -1,0 +1,4 @@
+(:name backup-each-save
+       :type emacswiki
+       :description "backup each savepoint of a file"
+       :features "backup-each-save")
