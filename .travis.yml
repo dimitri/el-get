@@ -5,7 +5,7 @@ env:
 install:
   - source test/travis-ci.sh
   - prereqs
-  - "$EMACS" --version
+  - '"$EMACS" --version'
 script:
   - byte-compile
   - check-recipes
