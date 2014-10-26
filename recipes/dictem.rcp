@@ -2,4 +2,5 @@
        :website "http://dictem.sourceforge.net/"
        :description "dict lookup"
        :type github
-       :pkgname "cheusov/dictem")
+       :pkgname "cheusov/dictem"
+       :features "dictem")
