@@ -6,13 +6,10 @@
 #   - check-whitespace()
 # TODO: run-tests()
 
-# show execution in log
-set -v
-
 # Contrary to http://docs.travis-ci.com/user/ci-environment,
 # $TRAVIS_COMMIT_RANGE is not defined for pull requests.
 # See https://github.com/travis-ci/travis-ci/issues/1719
-: ${TRAVIS_COMMIT_RANGE:=$TRAVIS_BRANCH..FETCH_HEAD}
+echo commit range: ${TRAVIS_COMMIT_RANGE:=$TRAVIS_BRANCH..FETCH_HEAD}
 
 if [ "$EMACS" = 'emacs-snapshot' ]; then
     # If we have only changes to recipe files, there is no need to run
@@ -48,3 +45,5 @@ byte-compile() {
         -f batch-byte-compile *.el methods/*.el
 }
 
+# show definitions for log
+declare -f prereqs byte-compile check-recipes check-whitespace
