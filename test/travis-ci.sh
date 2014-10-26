@@ -9,7 +9,7 @@
 # Contrary to http://docs.travis-ci.com/user/ci-environment,
 # $TRAVIS_COMMIT_RANGE is not defined for pull requests.
 # See https://github.com/travis-ci/travis-ci/issues/1719
-echo commit range: ${TRAVIS_COMMIT_RANGE:=$TRAVIS_BRANCH..FETCH_HEAD}
+giv rev-parse ${TRAVIS_COMMIT_RANGE:=$TRAVIS_BRANCH..FETCH_HEAD}
 
 if [ "$EMACS" = 'emacs-snapshot' ]; then
     # If we have only changes to recipe files, there is no need to run
@@ -41,8 +41,10 @@ else
 fi
 
 byte-compile() {
+    travis_fold start byte-compiling
     "$EMACS" -Q -L pkg/ -L . -L methods/ -batch --eval '(setq byte-compile-error-on-warn t)' \
         -f batch-byte-compile *.el methods/*.el
+    travis_fold end byte-compiling
 }
 
 # show definitions for log
