@@ -25,6 +25,7 @@
 
 (declare-function el-get-install "el-get" (package))
 (declare-function el-get-package-is-installed "el-get" (package))
+(declare-function el-get-print-package "el-get-list-packages" (package-name status &optional desc))
 
 (defun el-get-package-name (package-symbol)
   "Returns a package name as a string."
@@ -50,6 +51,9 @@
   (if (keywordp package-name)
       package-name
     (intern (format ":%s" package-name))))
+
+(defvar el-get-status-cache nil
+  "Cache used by `el-get-read-status-file'.")
 
 (defvar el-get-package-menu-buffer) ; from el-get-list-packages.el
 (defun el-get-save-package-status (package status &optional recipe)
@@ -113,9 +117,6 @@
                                 ;; If the recipe is not available any more,
                                 ;; just provide a placeholder no-op recipe.
                                 (error `(:name ,psym :type builtin))))))))
-
-(defvar el-get-status-cache nil
-  "Cache used by `el-get-read-status-file'.")
 
 (defun el-get-clear-status-cache ()
   "Clear in-memory cache for status file."

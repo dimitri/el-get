@@ -16,10 +16,11 @@
 ;;
 ;; NOTE: this will probably benefit from some autoloading magic, later.
 ;;
-(add-to-list 'load-path
-             (expand-file-name
-              "methods"
-              (file-name-directory (or load-file-name buffer-file-name))))
+(eval-and-compile
+ (add-to-list 'load-path
+              (expand-file-name
+               "methods"
+               (file-name-directory (or load-file-name byte-compile-current-file buffer-file-name)))))
 
 (defun el-get-insecure-check (package url)
   (when (and (not el-get-allow-insecure)
