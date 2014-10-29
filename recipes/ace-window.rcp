@@ -1,0 +1,5 @@
+(:name ace-window
+       :description "Quickly switch windows using `ace-jump-mode'"
+       :type github
+       :pkgname "abo-abo/ace-window"
+       :depends (ace-jump-mode))

@@ -1,0 +1,5 @@
+(:name quilt.el
+       :description " a minor mode for working with files in quilt"
+       :website "https://github.com/ibukanov/quilt.el"
+       :type github
+       :pkgname "ibukanov/quilt.el")

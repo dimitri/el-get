@@ -1,0 +1,5 @@
+(:name helm-cscope
+       :type github
+       :pkgname "sergey-pashaev/helm-cscope"
+       :description "Use xcscope with helm."
+       :depends (xcscope helm))

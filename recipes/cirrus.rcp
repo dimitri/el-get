@@ -1,0 +1,6 @@
+(:name cirrus
+       :description "Manage amazon load balancer memership through Emacs."
+       :website "https://github.com/pidu/cirrus"
+       :depends json
+       :type github
+       :pkgname "pidu/cirrus")

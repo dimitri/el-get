@@ -43,7 +43,20 @@ ALIST-ELEM should be an element from `package-alist' or
           ;; call `package-delete' on.
           (mapc #'package-delete descs)
         ;; Otherwise, just delete the package directory.
-        (delete-directory (el-get-elpa-package-directory pkg) 'recursive)))))
+        (delete-directory (el-get-elpa-package-directory pkg) 'recursive))))
+  (defun el-get-elpa-install-package (pkg have-deps-p)
+    "A wrapper for package.el installion.
+
+Installs the 1st available version. If HAVE-DEPS-P skip
+package.el's dependency computations."
+    (let* ((pkg-avail (assq pkg package-archive-contents))
+           (descs (cdr pkg-avail))
+           ;; In 24.4+ we have a list of descs, earlier versions just
+           ;; have a single package name
+           (to-install (if (listp descs) (car descs) pkg)))
+      (if have-deps-p
+          (package-download-transaction (list to-install))
+        (package-install to-install)))))
 
 (defcustom el-get-elpa-install-hook nil
   "Hook run after ELPA package install."
@@ -114,9 +127,8 @@ the recipe, then return nil."
           ;; since symlink is not exactly reliable on those systems
           (copy-directory (el-get-elpa-package-directory package)
                           (file-name-as-directory (expand-file-name package el-get-dir)))
-        (message "%s"
-                 (shell-command
-                  (format "cd %s && ln -s \"%s\" \"%s\"" el-get-dir elpa-dir package)))))))
+        (let ((default-directory el-get-dir))
+          (make-symbolic-link elpa-dir package))))))
 
 (eval-when-compile
   ;; `condition-case-unless-debug' was introduced in 24.1, but was
@@ -126,7 +138,8 @@ the recipe, then return nil."
 
 (defun el-get-elpa-install (package url post-install-fun)
   "Ask elpa to install given PACKAGE."
-  (let* ((elpa-dir (el-get-elpa-package-directory package))
+  (let* ((have-deps-p (plist-member (el-get-package-def package) :depends))
+         (elpa-dir (el-get-elpa-package-directory package))
          (elpa-repo (el-get-elpa-package-repo package))
          ;; Indicates new archive requiring to download its archive-contents
          (elpa-new-repo (when (and elpa-repo)
@@ -157,7 +170,7 @@ the recipe, then return nil."
       ;; TODO: should we refresh and retry once if package-install fails?
       ;; package-install generates autoloads, byte compiles
       (let (emacs-lisp-mode-hook fundamental-mode-hook prog-mode-hook)
-        (package-install (el-get-as-symbol package))))
+        (el-get-elpa-install-package (el-get-as-symbol package) have-deps-p)))
     ;; we symlink even when the package already is installed because it's
     ;; not an error to have installed ELPA packages before using el-get, and
     ;; that will register them
@@ -198,7 +211,9 @@ first time.")
      (setq el-get-elpa-do-refresh nil)))
   (when (el-get-elpa-update-available-p package)
     (el-get-elpa-remove package url nil)
-    (package-install (el-get-as-symbol package))
+    (el-get-elpa-install-package
+     (el-get-as-symbol package)
+     (plist-member (el-get-package-def package) :depends))
     ;; in windows, we don't have real symlinks, so its better to remove
     ;; the directory and copy everything again
     (when (memq system-type '(ms-dos windows-nt))
@@ -234,8 +249,8 @@ first time.")
           (string-match-p "marmalade-repo\\.org" repo-url))
       (concat "http://marmalade-repo.org/packages/" package))
      ((or (string= "melpa" repo-name)
-          (string-match-p "melpa.milkbox.net" repo-url))
-      (concat "http://melpa.milkbox.net/#" package)))))
+          (string-match-p "melpa.org" repo-url))
+      (concat "http://melpa.org/#" package)))))
 
 (el-get-register-method :elpa
   :install #'el-get-elpa-install

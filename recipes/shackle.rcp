@@ -1,0 +1,5 @@
+(:name shackle
+       :description "Enforce rules for popups."
+       :website "https://github.com/wasamasa/shackle"
+       :type github
+       :pkgname "wasamasa/shackle")

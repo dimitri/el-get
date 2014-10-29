@@ -1,0 +1,5 @@
+(:name insert-shebang
+       :description "An extension to insert shebang line for GNU Emacs"
+       :website "https://github.com/psachin/insert-shebang"
+       :type github
+       :pkgname "psachin/insert-shebang.git")

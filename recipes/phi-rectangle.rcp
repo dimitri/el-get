@@ -1,0 +1,5 @@
+(:name phi-rectangle
+       :description "another rectangle-mark command (rewrite of rect-mark)."
+       :website "https://github.com/zk-phi/phi-rectangle"
+       :type github
+       :pkgname "zk-phi/phi-rectangle")

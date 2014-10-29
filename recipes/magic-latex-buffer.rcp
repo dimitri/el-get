@@ -1,0 +1,6 @@
+(:name magic-latex-buffer
+       :description "magical syntax highlighting for LaTeX-mode buffers."
+       :website "https://github.com/zk-phi/magic-latex-buffer"
+       :type github
+       :minimum-emacs-version "24.3"
+       :pkgname "zk-phi/magic-latex-buffer")

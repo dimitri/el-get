@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/dimitri/el-get.svg?branch=master)](https://travis-ci.org/dimitri/el-get)
+
 ![Color El-Get logo](https://raw.github.com/dimitri/el-get/master/logo/el-get.png)
 El-Get allows you to install and manage `elisp` code for Emacs. It supports
 lots of different types of sources and is able to *install* them, *update*

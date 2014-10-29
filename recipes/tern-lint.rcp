@@ -1,0 +1,6 @@
+(:name tern-lint
+       :description "Displays errors from Tern Lint"
+       :website "https://github.com/katspaugh/tern-lint.el"
+       :depends tern
+       :type github
+       :pkgname "katspaugh/tern-lint.el")

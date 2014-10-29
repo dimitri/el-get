@@ -1,0 +1,5 @@
+(:name init-loader
+       :website "https://github.com/emacs-jp/init-loader"
+       :description "It enables you to categorize your configurations and separate them into multiple files."
+       :type github
+       :pkgname "emacs-jp/init-loader")

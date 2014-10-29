@@ -1,0 +1,5 @@
+(:name emacs-moz-controller
+       :description "Control Firefox from Emacs"
+       :type github
+       :pkgname "RenWenshan/emacs-moz-controller"
+       :depends moz-repl)

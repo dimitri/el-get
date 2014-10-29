@@ -1,0 +1,7 @@
+(:name org-gcal
+       :description "Org sync with Google Calendar."
+       :website "https://github.com/myuhe/org-gcal"
+       :type github
+       :minimum-emacs-version "24"
+       :depends (request-deferred alert cl-lib)
+       :pkgname "myuhe/org-gcal.el")

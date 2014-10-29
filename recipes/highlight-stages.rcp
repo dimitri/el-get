@@ -1,0 +1,6 @@
+(:name highlight-stages
+       :description "highlight staged (quasi-quoted) expressions."
+       :website "https://github.com/zk-phi/highlight-stages"
+       :type github
+       :depends cl-lib
+       :pkgname "zk-phi/highlight-stages")

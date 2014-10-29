@@ -1,0 +1,6 @@
+(:name purescript-mode
+       :description "A Purescript editing mode"
+       :type github
+       :pkgname "dysinger/purescript-mode"
+       :info "."
+       :build `(("make" ,(format "EMACS=%s" el-get-emacs) "all")))

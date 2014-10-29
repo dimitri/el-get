@@ -1,0 +1,5 @@
+(:name sublimity
+       :description "smooth-scrolling, minimap and distraction-free mode."
+       :website "https://github.com/zk-phi/sublimity"
+       :type github
+       :pkgname "zk-phi/sublimity")

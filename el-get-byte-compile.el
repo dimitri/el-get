@@ -135,9 +135,13 @@ whose value is a directory to be cleared of stale elc files."
   (assert noninteractive nil
           "`el-get-byte-compile-from-stdin' is to be used only with -batch")
   (let* ((input-data (read-minibuffer ""))
-         (load-path (append (plist-get input-data :load-path) load-path))
          (files (plist-get input-data :compile-files))
+         (input-load-path (plist-get input-data :load-path))
          (dir-to-clean (plist-get input-data :clean-directory)))
+    ;; Use setq so that `load-path' stays updated until
+    ;; shutdown. Certain packages (eg w3m) might install shutdown
+    ;; hooks during compilation.
+    (setq load-path (append input-load-path load-path))
     (unless (or dir-to-clean files)
       (warn "Did not get a list of files to byte-compile or a directory to clean. The input may have been corrupted."))
     (when dir-to-clean

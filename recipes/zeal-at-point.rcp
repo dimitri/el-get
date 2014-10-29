@@ -1,0 +1,4 @@
+(:name zeal-at-point
+       :type github
+       :description "Search the word at point with Zeal (Emacs)"
+       :pkgname "jinzhu/zeal-at-point")

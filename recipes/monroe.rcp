@@ -1,0 +1,5 @@
+(:name monroe
+       :description "Yet another client for nREPL."
+       :website "https://github.com/sanel/monroe"
+       :type github
+       :pkgname "sanel/monroe")
