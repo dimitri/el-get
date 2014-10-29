@@ -2,4 +2,4 @@
        :description "psci major mode - purescript repl major mode"
        :type github
        :pkgname "ardumont/emacs-psci"
-       :depends (purescript-mode dash projectile s f deferred))
+       :depends (purescript-mode dash s f deferred))
