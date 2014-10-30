@@ -25,6 +25,7 @@
 
 (declare-function el-get-install "el-get" (package))
 (declare-function el-get-package-is-installed "el-get" (package))
+(declare-function el-get-print-package "el-get-list-packages" (package-name status &optional desc))
 
 (defun el-get-package-name (package-symbol)
   "Returns a package name as a string."
@@ -50,6 +51,9 @@
   (if (keywordp package-name)
       package-name
     (intern (format ":%s" package-name))))
+
+(defvar el-get-status-cache nil
+  "Cache used by `el-get-read-status-file'.")
 
 (defvar el-get-package-menu-buffer) ; from el-get-list-packages.el
 (defun el-get-save-package-status (package status &optional recipe)
@@ -114,9 +118,6 @@
                                 ;; just provide a placeholder no-op recipe.
                                 (error `(:name ,psym :type builtin))))))))
 
-(defvar el-get-status-cache nil
-  "Cache used by `el-get-read-status-file'.")
-
 (defun el-get-clear-status-cache ()
   "Clear in-memory cache for status file."
   (setq el-get-status-cache nil))
@@ -130,14 +131,21 @@
 (defun el-get-read-status-file-force ()
   "Forcefully load status file."
   (let* ((ps
-          (when (file-exists-p el-get-status-file)
-            (car (with-temp-buffer
-                   (insert-file-contents-literally el-get-status-file)
-                   (read-from-string (buffer-string))))))
+          (if (file-exists-p el-get-status-file)
+              (car (with-temp-buffer
+                     (insert-file-contents-literally el-get-status-file)
+                     (read-from-string (buffer-string))))
+            ;; If it doesn't exist, make sure the directory is there
+            ;; so we can create it.
+            (make-directory el-get-dir t)))
          (p-s
-          (if (consp (car ps))         ; check for an alist, new format
-              ps
-            (el-get-convert-from-old-status-format ps))))
+          (cond
+           ((null ps) ;; nothing installed, we should install el-get
+            (list (list 'el-get 'status "required")))
+           ;; ps is an alist, no conversion needed
+           ((consp (car ps)) ps)
+           ;; looks like we might have an old format status list
+           (t (el-get-convert-from-old-status-format ps)))))
     ;; double check some status "conditions"
     ;;
     ;; a package with status "installed" and a missing directory is

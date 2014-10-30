@@ -464,6 +464,7 @@ called by `el-get' (usually at startup) for each installed package."
   package)
 
 
+;;;###autoload
 (defun el-get-install (package)
   "Cause the named PACKAGE to be installed after all of its
 dependencies (if any).
@@ -672,6 +673,7 @@ This variable exists because the function that it holds is a
 dynamically-generated lambda, but it needs to be able to refer to
 itself.")
 
+;;;###autoload
 (defun el-get-update (package)
   "Update PACKAGE."
   (interactive
@@ -777,6 +779,7 @@ result of an actual problem."
     (run-hook-with-args hooks package)
     (run-hook-with-args 'el-get-post-remove-hooks package)))
 
+;;;###autoload
 (defun el-get-remove (package &optional package-status-alist)
   "Remove any PACKAGE that is know to be installed or required."
   (interactive
@@ -808,6 +811,7 @@ result of an actual problem."
           (funcall remove package url 'el-get-post-remove)
           (message "el-get remove %s" package))))))
 
+;;;###autoload
 (defun el-get-reinstall (package)
   "Remove PACKAGE and then install it again."
   (interactive (list (el-get-read-package-name "Reinstall")))
@@ -895,6 +899,7 @@ entry which is not a symbol and is not already a known recipe."
           (kill-new checksum)
           checksum)))))
 
+;;;###autoload
 (defun el-get-self-checksum ()
   "Compute the checksum of the running version of el-get itself.
 
@@ -942,6 +947,7 @@ considered \"required\"."
     (loop for p in init-deps    do (el-get-do-init p)    collect p into done)
     done))
 
+;;;###autoload
 (defun el-get (&optional sync &rest packages)
   "Ensure that packages have been downloaded once and init them as needed.
 
