@@ -1,0 +1,5 @@
+(:name tempbuf-mode
+       :description "Kill unused buffers in the background"
+       :website "https://gitorious.org/tempbuf-mode"
+       :url "git://gitorious.org/tempbuf-mode/tempbuf-mode"
+       :type git)
