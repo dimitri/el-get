@@ -3,11 +3,7 @@
        :type github
        ;; On Debian, "libpoppler-glib-dev" "libpoppler-dev"
        ;; "libpoppler-private-dev" are needed to build c code in this package.
-
-       ;; original source is at https://github.com/politza/pdf-tools. It has a
-       ;; bug which makes build to fail when using latest libpoppler
-       ;; library. So we use fork TEMPORARILY which fixes build bug.
-       :pkgname "tsu-nera/pdf-tools"
+       :pkgname "politza/pdf-tools"
 
        ;; pdf-tools' code written to find "epdfinfo" executable in the lisp
        ;; directory. we preset following variable to avoid that.
