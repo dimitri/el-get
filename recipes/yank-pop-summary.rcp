@@ -1,6 +1,6 @@
 (:name yank-pop-summary
        :website "http://www.namazu.org/~tsuchiya/elisp/index.html"
-       :description "yank pop forward"
+       :description "yank pop forward and backward preview."
        :type http
        :prepare (progn
                   (autoload 'yank-pop-forward "yank-pop-summary" nil t)

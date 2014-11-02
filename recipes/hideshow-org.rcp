@@ -7,5 +7,4 @@
                   (defun hs-org-minor-mode-on ()
                     "Turn on hideshow-org mode."
                     (interactive)
-                    (hs-org/minor-mode 1))
-                  (add-hook 'prog-mode-hook 'hs-org-minor-mode-on)))
+                    (hs-org/minor-mode 1))))
