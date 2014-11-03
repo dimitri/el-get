@@ -1,0 +1,5 @@
+(:name alchemist
+       :description "Elixir Tooling Integration Into Emacs"
+       :type github
+       :pkgname "tonini/alchemist.el"
+       :depends (pkg-info))
