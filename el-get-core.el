@@ -192,7 +192,7 @@ entry."
       ;; quoted. Use the short 8.3 name instead of quoting. See
       ;; http://debbugs.gnu.org/cgi/bugreport.cgi?bug=18745 for
       ;; details.
-      (w32-short-file-name program-name)
+      (w32-short-file-name (executable-find program-name))
     (shell-quote-argument program-name)))
 
 
