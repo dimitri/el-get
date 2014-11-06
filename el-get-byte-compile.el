@@ -40,6 +40,10 @@ newer, then compilation is skipped."
         emacs-lisp-mode-hook byte-compile-warnings)
     (when (or (not (file-exists-p elc))
               (not (file-newer-than-file-p elc el)))
+      (when (file-exists-p elc)
+        ;; Delete the old elc to make sure that if the compilation fails to
+        ;; generate a new one, there will be no discrepancy between them.
+        (delete-file elc))
       (condition-case err
           (byte-compile-file el)
         ((debug error) ;; catch-all, allow for debugging
