@@ -40,10 +40,10 @@
 (defvar el-get-bundle-updates nil)
 
 (defconst el-get-bundle-gist-url-type-plist
-  (list 'http "http://gist.github.com/%s.git"
-        'https "https://gist.github.com/%s.git"
-        'git "git://gist.github.com/%s.git"
-        'ssh "git@gist.github.com:%s.git")
+  '(http "http://gist.github.com/%s.git"
+    https "https://gist.github.com/%s.git"
+    git "git://gist.github.com/%s.git"
+    ssh "git@gist.github.com:%s.git")
   "Plist mapping Gist types to their URL format strings.")
 
 ;; patches
