@@ -186,7 +186,7 @@
       (setq sync nil))
 
     ;; byte-compile :after script
-    (let ((form  (or (el-get-bundle-make-init def) (plist-get def :after))))
+    (let ((form (or (el-get-bundle-make-init def) (plist-get def :after))))
       (when form
         (setq def (plist-put def :after `(progn ,@form)))))
 
