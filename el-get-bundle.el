@@ -60,9 +60,8 @@
          (replace-regexp-in-string "\\.elc$" ".el" (expand-file-name file)))))
 
 (defun el-get-bundle-package-def (src)
-  (condition-case nil
-      (el-get-package-def (if (listp src) (el-get-source-name src) src))
-    (error nil)))
+  (ignore-errors
+    (el-get-package-def (if (listp src) (el-get-source-name src) src))))
 (defalias 'el-get-bundle-defined-p (symbol-function 'el-get-bundle-package-def))
 
 (defun el-get-bundle-guess-type (src)
@@ -134,10 +133,9 @@
   (when (and el-get-bundle-byte-compile
              (plist-get src :after)
              load-file-name
-             (condition-case nil
-                 (or (file-exists-p el-get-bundle-init-directory)
-                     (make-directory el-get-bundle-init-directory t) t)
-               (error nil)))
+             (ignore-errors
+               (or (file-exists-p el-get-bundle-init-directory)
+                   (make-directory el-get-bundle-init-directory t) t)))
     (let* ((path (file-name-sans-extension (expand-file-name load-file-name)))
            (path (split-string path "/"))
            (call-site (mapconcat #'identity path "_"))
