@@ -1,9 +1,9 @@
 (:name go-autocomplete
-       :description "An autocompletion daemon for the Go programming language."
-       :type github
-       :pkgname "nsf/gocode"
+       :type go
+       :pkgname "github.com/nsf/gocode"
+       :features (go-autocomplete)
        :depends (go-mode auto-complete)
-       :load-path ("emacs")
+       :load-path ("src/github.com/nsf/gocode/emacs")
        :post-init (progn
                     (add-to-list 'exec-path (expand-file-name "bin" default-directory))
                     (eval-after-load 'go-mode '(require 'go-autocomplete))))
