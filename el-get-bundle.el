@@ -46,15 +46,6 @@
     ssh "git@gist.github.com:%s.git")
   "Plist mapping Gist types to their URL format strings.")
 
-;; patches
-
-;; patch for init-loader
-(defun el-get-bundle-silent-load (file)
-  (let ((inits el-get-bundle-inits))
-    (load file t)
-    (setq el-get-bundle-inits inits)))
-(add-hook 'init-loader-before-compile-hook #'el-get-bundle-silent-load)
-
 ;; internals
 
 (defsubst el-get-bundle-gist-url (id &optional src)
