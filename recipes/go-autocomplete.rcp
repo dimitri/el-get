@@ -1,4 +1,5 @@
 (:name go-autocomplete
+       :description "An autocompletion daemon for the Go programming language."
        :type go
        :pkgname "github.com/nsf/gocode"
        :features (go-autocomplete)
