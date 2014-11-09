@@ -234,7 +234,7 @@ file updated by an update command and
 FORM may be started with a property list. In that case, the
 property list is pushed to `el-get-sources'.
 
-The rest of FORM is evaluated after FEATURE is loaded."
+The rest of FORM is evaluated after FEATURE is installed."
   (declare (indent defun) (debug t))
   (let* ((feature (or (and (listp feature) (nth 1 feature)) feature))
          (src (el-get-bundle-parse-name feature)) require)
