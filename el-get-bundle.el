@@ -61,7 +61,8 @@
 
 (defun el-get-bundle-package-def (src)
   (ignore-errors
-    (el-get-package-def (if (listp src) (el-get-source-name src) src))))
+    (let (el-get-sources)
+      (el-get-package-def (if (listp src) (el-get-source-name src) src)))))
 (defalias 'el-get-bundle-defined-p (symbol-function 'el-get-bundle-package-def))
 
 (defun el-get-bundle-guess-type (src)
@@ -104,14 +105,6 @@
         (plist-put (plist-put (plist-put s :name name) :type type)
                    :pkgname pkgname)))
      (t (plist-put s :name sym)))))
-
-(defun el-get-bundle-merge-source (src)
-  (let* ((name (el-get-source-name src))
-         (source (if (plist-get src :type) nil (el-get-package-def name))))
-    (while (keywordp (nth 0 src))
-      (setq source (plist-put source (nth 0 src) (nth 1 src))
-            src (cdr-safe (cdr src))))
-    source))
 
 (defun el-get-bundle-init-id (&rest args)
   (let* ((key (mapconcat #'(lambda (x) (format "%s" x)) args ";"))
@@ -173,7 +166,8 @@
         (dolist (f old) (add-to-list 'fs f))
         (setq src (plist-put src :features fs))))
     ;; merge src with the oriiginal definition
-    (setq def (el-get-bundle-merge-source src))
+    (setq def (let ((el-get-sources (list src)))
+                (el-get-package-def (el-get-source-name src))))
 
     ;; entering password via process-filter only works in async mode
     (when (or (and (eq (plist-get def :type) 'cvs)
