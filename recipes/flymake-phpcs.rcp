@@ -1,0 +1,5 @@
+(:name flymake-phpcs
+       :type github
+       :pkgname "senda-akiha/flymake-phpcs"
+       :description "PHP CodeSniffer for Emacs with flymake"
+       :website "https://github.com/senda-akiha/flymake-phpcs")
