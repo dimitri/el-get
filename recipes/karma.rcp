@@ -1,0 +1,4 @@
+(:name karma
+       :description "Karma Test Runner Emacs Integration"
+       :type github
+       :pkgname "tonini/karma.el")
