@@ -770,6 +770,10 @@ result of an actual problem."
   (let ((el-get-default-process-sync t)
         (el-get-dir
          (expand-file-name ".." (file-name-directory el-get-script))))
+    ;; Delete elc files so bugs they contain won't persist.
+    (mapc #'delete-file
+          (nconc (directory-files (expand-file-name "el-get" el-get-dir) t "\\.elc\\'" t)
+                 (directory-files (expand-file-name "el-get/methods" el-get-dir) t "\\.elc\\'" t)))
     (el-get-update "el-get")))
 
 
