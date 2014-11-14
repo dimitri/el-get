@@ -198,8 +198,7 @@
   (autoload 'el-get-bundle bundle nil nil 'macro)
   (autoload 'el-get-bundle! bundle nil nil 'macro)
   (autoload 'el-get-bundle-update bundle nil t)
-  (autoload 'el-get-bundle-update-all bundle nil t)
-  (autoload 'el-get-bundle-register-callsite bundle))
+  (autoload 'el-get-bundle-update-all bundle nil t))
 
 (defvar el-get-next-packages nil
   "List of packages to install next, used when dealing with dependencies.")

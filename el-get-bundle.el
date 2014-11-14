@@ -35,8 +35,8 @@
   :group 'el-get-bundle)
 
 (defvar el-get-bundle-sources nil)
-(defvar el-get-bundle-inits nil)
-(defvar el-get-bundle-loader-alist nil)
+(defvar el-get-bundle-init-count-alist nil)
+(defvar el-get-bundle-init-alist nil)
 (defvar el-get-bundle-updates nil)
 
 (defconst el-get-bundle-gist-url-type-plist
@@ -108,10 +108,10 @@
 
 (defun el-get-bundle-init-id (&rest args)
   (let* ((key (mapconcat #'(lambda (x) (format "%s" x)) args ";"))
-         (pair (assoc key el-get-bundle-inits)))
+         (pair (assoc key el-get-bundle-init-count-alist)))
     (if pair
         (setcdr pair (1+ (cdr pair)))
-      (push (cons key 1) el-get-bundle-inits)
+      (push (cons key 1) el-get-bundle-init-count-alist)
       1)))
 
 (defun el-get-bundle-load-init (el)
@@ -127,11 +127,11 @@
                    (make-directory el-get-bundle-init-directory t) t)))
     (let* ((path (file-name-sans-extension (expand-file-name load-file-name)))
            (path (split-string path "/"))
-           (call-site (mapconcat #'identity path "_"))
+           (callsite (mapconcat #'identity path "_"))
            (package (plist-get src :name))
-           (id (el-get-bundle-init-id package call-site))
+           (id (el-get-bundle-init-id package callsite))
            (init-file (concat el-get-bundle-init-directory
-                              (format "%s_%s-%d" package call-site id)))
+                              (format "%s_%s-%d" package callsite id)))
            (el (concat init-file ".el"))
            (form (plist-get src :after))
            (loader load-file-name))
@@ -139,6 +139,12 @@
         (when (and (string-match-p "\\.elc$" loader)
                    (file-exists-p loader-el))
           (setq loader loader-el)))
+      ;; remember the package-initializer relation
+      (let* ((pair (assoc package el-get-bundle-init-alist))
+             (inits (cdr pair)))
+        (if pair
+            (setcdr pair (add-to-list 'inits init-file))
+          (push (cons package (list init-file)) el-get-bundle-init-alist)))
       ;; generate .el file
       (when (or (not (file-exists-p el))
                 (file-newer-than-file-p loader el))
@@ -180,9 +186,6 @@
       (when form
         (setq def (plist-put def :after `(progn ,@form)))))
 
-    ;; record dependencies of init files
-    (el-get-bundle-register-callsite package)
-
     (let ((toplevel (null el-get-bundle-sources)))
       ;; save sources to global variable
       (when toplevel (setq el-get-bundle-sources el-get-sources))
@@ -201,15 +204,22 @@
 
 (defun el-get-bundle-post-update (package)
   "Post update process for PACKAGE.
-Touch files that contain \"(el-get-bundle PACKAGE ...)\" so that the
-file becomes newer than its byte-compiled version."
-  (dolist (file (cdr (assoc-string package el-get-bundle-loader-alist)))
-    (when (and file (file-exists-p file))
-      (call-process "touch" nil nil nil file)))
+
+Invalidate byte-compiled package initialization forms of
+PACKAGE (for future recompilation).  If the PACKAGE is the last
+file updated by an update command and
+`el-get-bundle-reload-user-init-file' is non-nil, then
+`user-init-file' is loaded again."
+  (let ((inits (assoc package el-get-bundle-init-alist)))
+    (dolist (name (cdr (assoc package el-get-bundle-init-alist)))
+      (let ((file (concat name ".elc")))
+        (when (file-exists-p file)
+          (delete-file file)))))
   (when el-get-bundle-updates
     (setq el-get-bundle-updates (delq package el-get-bundle-updates))
     (when (and (null el-get-bundle-updates) el-get-bundle-reload-user-init-file)
-      (setq el-get-bundle-inits nil el-get-bundle-loader-alist nil)
+      (setq el-get-bundle-init-count-alist nil
+            el-get-bundle-init-alist nil)
       (when (stringp user-init-file)
         (load user-init-file)
         (run-hooks 'after-init-hook)))))
@@ -292,18 +302,6 @@ If `el-get-bundle-reload-user-init-file' is non-nil, then
 `user-init-file' is reloaded after all the updates."
   (interactive)
   (el-get-bundle-update))
-
-;;;###autoload
-(defun el-get-bundle-register-callsite (package &optional callsite)
-  "Declare that PACKAGE update causes CALLSITE to require being loaded again."
-  (let* ((pair (or (assoc package el-get-bundle-loader-alist)
-                   (cons package nil)))
-         (loaders (cdr pair))
-         (loader (el-get-bundle-load-file-el callsite)))
-    (when (and loader (file-exists-p loader))
-      (add-to-list 'loaders loader))
-    (setcdr pair loaders)
-    (add-to-list 'el-get-bundle-loader-alist pair)))
 
 (provide 'el-get-bundle)
 ;;; el-get-bundle.el ends here
