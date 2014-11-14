@@ -1,4 +1,4 @@
-(:name ac-nrepl
+(:name ac-cider
        :description "ac-cider is a completion source for Emacs auto-complete package"
        :type github
        :pkgname "clojure-emacs/ac-cider"
