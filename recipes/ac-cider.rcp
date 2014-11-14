@@ -1,0 +1,8 @@
+(:name ac-cider
+       :description "ac-cider is a completion source for Emacs auto-complete package"
+       :type github
+       :pkgname "clojure-emacs/ac-cider"
+       :depends (auto-complete cider)
+       :prepare (progn
+                  (add-hook 'cider-mode-hook 'ac-cider-setup)
+                  (add-hook 'cider-repl-mode-hook 'ac-cider-setup)))
