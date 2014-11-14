@@ -3,4 +3,6 @@
        :type github
        :pkgname "clojure-emacs/ac-cider"
        :depends (auto-complete cider)
-       :features ac-cider)
+       :prepare (progn
+                  (add-hook 'cider-mode-hook 'ac-cider-setup)
+                  (add-hook 'cider-repl-mode-hook 'ac-cider-setup)))
