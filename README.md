@@ -19,7 +19,7 @@ apply your configuration to.
 
 All of these systems require some degree of manual maintenance, especially
 if you have packages from various types of locations:
-[github](http://github.com), [emacswiki](http://emacswiki.org),
+[github](https://github.com), [emacswiki](http://emacswiki.org),
 [GNU ELPA](http://elpa.gnu.org/) or [Marmalade](http://marmalade-repo.org/),
 privately hosted pages, [git](http://git-scm.com/),
 [bzr](http://bazaar.canonical.com/en/), [CVS](http://www.nongnu.org/cvs/),
