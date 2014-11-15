@@ -115,12 +115,8 @@
       1)))
 
 (defun el-get-bundle-load-init (el)
-  (let ((lib (file-name-sans-extension el))
-        (elc (concat el "c")))
-    (when (or (not (file-exists-p elc))
-              (file-newer-than-file-p el elc))
-      (byte-compile-file el))
-    (load (expand-file-name lib))))
+  (el-get-byte-compile-file el byte-compile-warnings)
+  (load (expand-file-name (file-name-sans-extension el))))
 
 (defun el-get-bundle-make-init (src)
   (when (and el-get-bundle-byte-compile
