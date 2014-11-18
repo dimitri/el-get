@@ -1,0 +1,5 @@
+(:name debbugs
+       :description
+       "This package lets you access the GNU Bug Tracker from within Emacs."
+       :website "http://elpa.gnu.org/packages/debbugs.html"
+       :type elpa)
