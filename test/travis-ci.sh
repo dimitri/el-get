@@ -28,7 +28,7 @@ else
     prereqs() {
         mkdir pkg && \
             curl --silent --show-error -L -o pkg/package.el \
-            https://github.com/mirrors/emacs/raw/1a0a666f941c99882093d7bd08ced15033bc3f0c/lisp/emacs-lisp/package.el;
+            https://github.com/mirrors/emacs/raw/4525ce3eb56a1f4b7c50eac9217854bbd170f660/lisp/emacs-lisp/package.el;
     }
     check-recipes() {
         "$EMACS" -Q -L . -batch -l el-get-recipes -f el-get-check-recipe-batch \
