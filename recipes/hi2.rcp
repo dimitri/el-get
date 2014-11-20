@@ -2,7 +2,5 @@
        :description "Indentation module for Haskell mode"
        :type github
        :pkgname "errge/hi2"
-       :prepare (progn
-                  (autoload 'turn-on-hi2 "hi2" nil t)
-                  (add-hook 'haskell-mode-hook 'turn-on-hi2))
+       :prepare (autoload 'turn-on-hi2 "hi2" nil t)
        :depends (haskell-mode))
