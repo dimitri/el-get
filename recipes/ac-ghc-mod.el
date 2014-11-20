@@ -3,7 +3,7 @@
        :type emacswiki
        :prepare (progn
                   (defun haskell-ac-ghc-mod-hook ()
-                    (when ac-sources
+                    (when (bound-and-true-p ac-sources)
                       (make-local-variable 'ac-sources)
                       (nconc ac-sources '(ac-source-ghc-module
                                           ac-source-ghc-symbol
