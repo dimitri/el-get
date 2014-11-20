@@ -77,7 +77,9 @@ into the package :localname option or its `file-name-nondirectory' part."
   "Compute SHA1 of PACKAGE."
   (with-temp-buffer
     (insert-file-contents-literally (el-get-http-dest-filename package url))
-    (sha1 (current-buffer))))
+    ;; Note: don't pass buffer object, `sha1' tries (and sometimes
+    ;; fails) to encode it.
+    (sha1 (buffer-string))))
 
 (defun el-get-http-guess-website (package)
   (plist-get (el-get-package-def package) :url))
