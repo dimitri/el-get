@@ -6,4 +6,4 @@
                     `(progn
                        (add-to-list 'yas-snippet-dirs ,default-directory t)
                        (yas-load-directory ,default-directory)))
-       :depends yasnippets)
+       :depends yasnippet)

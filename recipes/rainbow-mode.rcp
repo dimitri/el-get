@@ -1,4 +1,4 @@
 (:name rainbow-mode
        :description "Colorize color names in buffers"
-       :minimum-emacs-version 24
-       :type elpa)
+       :type emacswiki
+       :prepare (autoload 'rainbow-turn-on "rainbow-mode"))
