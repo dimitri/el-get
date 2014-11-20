@@ -1,3 +1,6 @@
 (:name highline
        :description "minor mode to highlight current line in buffer"
-       :type emacsmirror)
+       :type emacsmirror
+       :prepare (defun highline-mode-on ()
+                  (interactive)
+                  (highline-mode 1)))
