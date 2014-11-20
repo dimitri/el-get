@@ -3,7 +3,7 @@
        :description "ELPA implementation (\"package.el\") from Emacs 24"
        :builtin "24"
        :type http
-       :url "http://repo.or.cz/w/emacs.git/blob_plain/1a0a666f941c99882093d7bd08ced15033bc3f0c:/lisp/emacs-lisp/package.el"
+       :url "http://repo.or.cz/w/emacs.git/blob_plain/4525ce3eb56a1f4b7c50eac9217854bbd170f660:/lisp/emacs-lisp/package.el"
        :shallow nil
        :features package
        :post-init
