@@ -234,13 +234,6 @@ definition provided by `el-get' recipes locally.
     `package.el' (the implementation of ELPA) is part of Emacs 24
     but needs an external recipe for previous major versions.
 
-:pkgname
-
-    The name of the package for the underlying package management
-    system (`apt-get', `fink' or `pacman', also supported by
-    `github' and `emacsmirror'), which can be different from the
-    Emacs package name.
-
 :type
 
     The type of the package, currently el-get offers support for
@@ -262,6 +255,11 @@ definition provided by `el-get' recipes locally.
     `http' types.
 
 :pkgname
+
+    The name of the package for the underlying package management
+    system (`apt-get', `fink' or `pacman', also supported by
+    `github' and `emacsmirror'), which can be different from the
+    Emacs package name.
 
     For the `github' type, this specifies the repo name to clone
     from Github. For example, for el-get, the package name would
