@@ -2,4 +2,6 @@
        :website "https://github.com/winterTTr/ace-jump-mode/wiki"
        :description "A quick cursor location minor mode for emacs."
        :type github
-       :pkgname "winterTTr/ace-jump-mode")
+       :pkgname "winterTTr/ace-jump-mode"
+       :prepare (eval-after-load "ace-jump-mode"
+                    '(ace-jump-mode-enable-mark-sync)))
