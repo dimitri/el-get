@@ -1,0 +1,4 @@
+(:name rails-new
+       :description "Handy emacs command for generating rails application."
+       :type github
+       :pkgname "cheunghy/rails-new")
