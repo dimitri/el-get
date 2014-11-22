@@ -3,6 +3,6 @@
        :type github
        :pkgname "rooney/zencoding"
        :prepare (defun zencoding-mode-on ()
-                  "Tunr on zencoding mode."
+                  "Tunr on `zencoding-mode' mode."
                   (interactive)
                   (zencoding-mode 1)))

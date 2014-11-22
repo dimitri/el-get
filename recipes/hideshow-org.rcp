@@ -5,6 +5,6 @@
        :prepare (progn
                   (autoload 'hs-org/minor-mode "hideshow-org" nil t)
                   (defun hs-org-minor-mode-on ()
-                    "Turn on hideshow-org mode."
+                    "Turn on `hs-org/minor-mode' mode."
                     (interactive)
                     (hs-org/minor-mode 1))))
