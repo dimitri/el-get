@@ -589,8 +589,9 @@ PACKAGE may be either a string or the corresponding symbol."
   (el-get-verbose-message "el-get-reload: %s" package)
   (el-get-with-status-sources package-status-alist
     (let* ((all-features features)
-           (package-features (el-get-package-features package))
-           (package-files (el-get-package-files package))
+           (pdir (el-get-package-directory package))
+           (package-features (el-get-package-features pdir))
+           (package-files (el-get-package-files pdir))
            (other-features
             (remove-if (lambda (x) (memq x package-features)) all-features)))
       (unwind-protect
