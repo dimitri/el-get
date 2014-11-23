@@ -369,12 +369,13 @@ Add PACKAGE's directory (or `:load-path' if specified) to the
 `load-path', add any its `:info' directory to
 `Info-directory-list', and `require' its `:features'.  Will be
 called by `el-get' (usually at startup) for each installed package."
-  (let ((psym (el-get-as-symbol package)))
-    (when (and (memq psym (bound-and-true-p package-activated-list))
-               (not (memq psym el-get-activated-list))
-               (package-installed-p psym))
-      (lwarn 'el-get :warning
-             "The package `%s' has already been loaded by
+    (let ((psym (el-get-as-symbol package)))
+      (when (and (not (eq psym 'el-get)) ; el-get recipe handles reloading
+                 (memq psym (bound-and-true-p package-activated-list))
+                 (not (memq psym el-get-activated-list))
+                 (package-installed-p psym))
+        (lwarn 'el-get :warning
+               "The package `%s' has already been loaded by
 package.el, attempting to load el-get version instead. To avoid
 this warning either uninstall one of the el-get or package.el
 version of %s, or call `el-get' before `package-initialize' to
