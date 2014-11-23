@@ -189,7 +189,7 @@
 (require 'el-get-dependencies)          ; topological-sort of package dep graph
 (require 'el-get-notify)                ; notification support (dbus, growl...)
 (require 'el-get-list-packages)         ; menu and `el-get-describe' facilities
-(require 'el-get-autoloads)             ; manages updating el-get's loaddefs.el
+(require 'el-get-autoloading)           ; manages updating el-get's loaddefs.el
 
 
 (defvar el-get-next-packages nil

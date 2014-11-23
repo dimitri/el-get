@@ -129,4 +129,4 @@ is nil, marks all installed packages as needing new autoloads."
            (el-get-list-package-names-with-status "installed"))))
     (mapc 'el-get-update-autoloads packages)))
 
-(provide 'el-get-autoloads)
+(provide 'el-get-autoloading)
