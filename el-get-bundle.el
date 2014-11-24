@@ -29,15 +29,9 @@
   :type 'directory
   :group 'el-get-bundle)
 
-(defcustom el-get-bundle-reload-user-init-file t
-  "Reload `user-init-file' when a package is updated."
-  :type 'boolean
-  :group 'el-get-bundle)
-
 (defvar el-get-bundle-sources nil)
 (defvar el-get-bundle-init-count-alist nil)
 (defvar el-get-bundle-init-alist nil)
-(defvar el-get-bundle-updates nil)
 
 (defconst el-get-bundle-gist-url-type-plist
   '(http "http://gist.github.com/%s.git"
@@ -206,19 +200,12 @@
   "Post update process for PACKAGE.
 
 Invalidate byte-compiled package initialization forms of
-PACKAGE (for future recompilation).  If the PACKAGE is the last
-file updated by an update command and
-`el-get-bundle-reload-user-init-file' is non-nil, then
-`user-init-file' is loaded again."
+PACKAGE (for future recompilation)."
   (let ((inits (assoc package el-get-bundle-init-alist)))
     (dolist (name (cdr (assoc package el-get-bundle-init-alist)))
       (let ((file (concat name ".elc")))
         (when (file-exists-p file)
-          (delete-file file)))))
-  (when el-get-bundle-updates
-    (setq el-get-bundle-updates (delq package el-get-bundle-updates))
-    (when (and (null el-get-bundle-updates) el-get-bundle-reload-user-init-file)
-      (el-get-bundle-reload))))
+          (delete-file file))))))
 (add-hook 'el-get-post-update-hooks #'el-get-bundle-post-update)
 
 ;; commands
@@ -288,28 +275,6 @@ in `el-get-bundle' macro."
   (when (stringp user-init-file)
     (load user-init-file)
     (run-hooks 'after-init-hook)))
-
-;;;###autoload
-(defun el-get-bundle-update (&rest packages)
-  "Update PACKAGES.
-If PACKAGES is nil, then update all installed packages.  If
-`el-get-bundle-reload-user-init-file' is non-nil, then `user-init-file'
-is reloaded after all the updates."
-  (interactive "SPackage: ")
-  (setq el-get-bundle-updates packages)
-  (if packages
-      (mapc #'el-get-update packages)
-    (setq el-get-bundle-updates
-          (el-get-list-package-names-with-status "installed"))
-    (el-get-update-all t)))
-
-;;;###autoload
-(defun el-get-bundle-update-all ()
-  "Update all installed packages.
-If `el-get-bundle-reload-user-init-file' is non-nil, then
-`user-init-file' is reloaded after all the updates."
-  (interactive)
-  (el-get-bundle-update))
 
 (provide 'el-get-bundle)
 ;;; el-get-bundle.el ends here
