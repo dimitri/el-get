@@ -218,11 +218,7 @@ file updated by an update command and
   (when el-get-bundle-updates
     (setq el-get-bundle-updates (delq package el-get-bundle-updates))
     (when (and (null el-get-bundle-updates) el-get-bundle-reload-user-init-file)
-      (setq el-get-bundle-init-count-alist nil
-            el-get-bundle-init-alist nil)
-      (when (stringp user-init-file)
-        (load user-init-file)
-        (run-hooks 'after-init-hook)))))
+      (el-get-bundle-reload))))
 (add-hook 'el-get-post-update-hooks #'el-get-bundle-post-update)
 
 ;; commands
@@ -280,6 +276,18 @@ required."
     (let* ((feature (or (and (listp feature) (nth 1 feature)) feature))
            (name (plist-get (el-get-bundle-parse-name feature) :name)))
       `(el-get-bundle ,name ,@(list* 'in feature args)))))
+
+;;;###autoload
+(defun el-get-bundle-reload ()
+  "Reload user init file.
+Reloading by this command maintains information of configurations
+in `el-get-bundle' macro."
+  (interactive)
+  (setq el-get-bundle-init-count-alist nil
+        el-get-bundle-init-alist nil)
+  (when (stringp user-init-file)
+    (load user-init-file)
+    (run-hooks 'after-init-hook)))
 
 ;;;###autoload
 (defun el-get-bundle-update (&rest packages)
