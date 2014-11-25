@@ -100,12 +100,11 @@
                    :pkgname pkgname)))
      (t (plist-put s :name sym)))))
 
-(defun el-get-bundle-init-id (&rest args)
-  (let* ((key (mapconcat #'(lambda (x) (format "%s" x)) args ";"))
-         (pair (assoc key el-get-bundle-init-count-alist)))
+(defun el-get-bundle-init-id (callsite)
+  (let ((pair (assoc callsite el-get-bundle-init-count-alist)))
     (if pair
         (setcdr pair (1+ (cdr pair)))
-      (push (cons key 1) el-get-bundle-init-count-alist)
+      (push (cons callsite 1) el-get-bundle-init-count-alist)
       1)))
 
 (defun el-get-bundle-load-init (el)
@@ -120,12 +119,11 @@
                (or (file-exists-p el-get-bundle-init-directory)
                    (make-directory el-get-bundle-init-directory t) t)))
     (let* ((path (file-name-sans-extension (expand-file-name load-file-name)))
-           (path (split-string path "/"))
-           (callsite (mapconcat #'identity path "_"))
+           (callsite (mapconcat #'identity (split-string path "/") "_"))
            (package (plist-get src :name))
-           (id (el-get-bundle-init-id package callsite))
+           (id (el-get-bundle-init-id path))
            (init-file (concat el-get-bundle-init-directory
-                              (format "%s_%s-%d" package callsite id)))
+                              (format "%s-%d_%s" callsite id package)))
            (el (concat init-file ".el"))
            (form (plist-get src :after))
            (loader load-file-name))
@@ -207,6 +205,15 @@ PACKAGE (for future recompilation)."
         (when (file-exists-p file)
           (delete-file file))))))
 (add-hook 'el-get-post-update-hooks #'el-get-bundle-post-update)
+
+(defun el-get-bundle-clear-init-count (callsite)
+  ;; clear the number of configurations so that the number starts with
+  ;; 1 next time CALLSITE is loaded
+  (let ((key (file-name-sans-extension (expand-file-name callsite))))
+    (setq el-get-bundle-init-count-alist
+          (delq (assoc key el-get-bundle-init-count-alist)
+                el-get-bundle-init-count-alist))))
+(add-hook 'after-load-functions #'el-get-bundle-clear-init-count)
 
 ;; commands
 
