@@ -196,8 +196,7 @@
        (bundle (expand-file-name "el-get-bundle" el-get-dir)))
   (autoload 'el-get-bundle-el-get bundle)
   (autoload 'el-get-bundle bundle nil nil 'macro)
-  (autoload 'el-get-bundle! bundle nil nil 'macro)
-  (autoload 'el-get-bundle-reload bundle nil t))
+  (autoload 'el-get-bundle! bundle nil nil 'macro))
 
 (defvar el-get-next-packages nil
   "List of packages to install next, used when dealing with dependencies.")

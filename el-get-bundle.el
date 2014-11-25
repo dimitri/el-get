@@ -271,17 +271,5 @@ required."
            (name (plist-get (el-get-bundle-parse-name feature) :name)))
       `(el-get-bundle ,name ,@(list* 'in feature args)))))
 
-;;;###autoload
-(defun el-get-bundle-reload ()
-  "Reload user init file.
-Reloading by this command maintains information of configurations
-in `el-get-bundle' macro."
-  (interactive)
-  (setq el-get-bundle-init-count-alist nil
-        el-get-bundle-init-alist nil)
-  (when (stringp user-init-file)
-    (load user-init-file)
-    (run-hooks 'after-init-hook)))
-
 (provide 'el-get-bundle)
 ;;; el-get-bundle.el ends here
