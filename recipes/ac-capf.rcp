@@ -1,0 +1,5 @@
+(:name ac-capf
+       :description "auto-complete source of completion-at-point."
+       :type github
+       :pkgname "syohex/emacs-ac-capf"
+       :depends (auto-complete))
