@@ -189,7 +189,7 @@
 (require 'el-get-dependencies)          ; topological-sort of package dep graph
 (require 'el-get-notify)                ; notification support (dbus, growl...)
 (require 'el-get-list-packages)         ; menu and `el-get-describe' facilities
-(require 'el-get-autoloads)             ; manages updating el-get's loaddefs.el
+(require 'el-get-autoloading)           ; manages updating el-get's loaddefs.el
 
 
 (defvar el-get-next-packages nil
@@ -348,6 +348,9 @@ which defaults to the first element in `el-get-recipe-path'."
     `(el-get-run-package-support ',form ',fname ',package)))
 
 
+(defvar el-get-activated-list nil
+  "List of packages initialized by el-get.")
+
 (defun el-get-init (package &optional package-status-alist)
   "Make the named PACKAGE available for use, first initializing any
    dependency of the PACKAGE."
@@ -366,6 +369,17 @@ Add PACKAGE's directory (or `:load-path' if specified) to the
 `load-path', add any its `:info' directory to
 `Info-directory-list', and `require' its `:features'.  Will be
 called by `el-get' (usually at startup) for each installed package."
+    (let ((psym (el-get-as-symbol package)))
+      (when (and (not (eq psym 'el-get)) ; el-get recipe handles reloading
+                 (memq psym (bound-and-true-p package-activated-list))
+                 (not (memq psym el-get-activated-list))
+                 (package-installed-p psym))
+        (lwarn 'el-get :warning
+               "The package `%s' has already been loaded by
+package.el, attempting to load el-get version instead. To avoid
+this warning either uninstall one of the el-get or package.el
+version of %s, or call `el-get' before `package-initialize' to
+prevent package.el from loading it."  package package)))
   (when el-get-auto-update-cached-recipes
     (el-get-merge-properties-into-status package package-status-alist :noerror t))
   (condition-case err
@@ -454,7 +468,8 @@ called by `el-get' (usually at startup) for each installed package."
         (when (featurep 'package)
           ;; tell elpa that this package has been activated, so it
           ;; doesn't try to activate it's own package instead.
-          (push (el-get-as-symbol package) package-activated-list)))
+          (push (el-get-as-symbol package) package-activated-list))
+        (push (el-get-as-symbol package) el-get-activated-list))
     (debug err
            (el-get-installation-failed package err)))
   ;; and call the global init hooks
@@ -575,8 +590,9 @@ PACKAGE may be either a string or the corresponding symbol."
   (el-get-verbose-message "el-get-reload: %s" package)
   (el-get-with-status-sources package-status-alist
     (let* ((all-features features)
-           (package-features (el-get-package-features package))
-           (package-files (el-get-package-files package))
+           (pdir (el-get-package-directory package))
+           (package-features (el-get-package-features pdir))
+           (package-files (el-get-package-files pdir))
            (other-features
             (remove-if (lambda (x) (memq x package-features)) all-features)))
       (unwind-protect

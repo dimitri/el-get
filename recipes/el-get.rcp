@@ -6,4 +6,14 @@
        :pkgname "dimitri/el-get"
        :info    "."
        :compile ("el-get.*\\.el$" "methods/")
-       :load    "el-get.el")
+       :load    "el-get.el"
+       :post-init (when (and (featurep 'package) (package-installed-p 'el-get))
+                    (message "Deleting melpa bootstrap el-get")
+                    (let ((feats (delete-dups
+                                  (el-get-package-features
+                                   (el-get-elpa-package-directory 'el-get)))))
+                      (el-get-elpa-delete-package 'el-get)
+                      ;; unload so we don't have any leftovers
+                      (dolist (feat feats)
+                        (unload-feature feat t)))
+                    (require 'el-get)))

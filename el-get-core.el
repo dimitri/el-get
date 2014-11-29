@@ -281,20 +281,18 @@ fail."
 ;;
 ;; el-get-reload API functions
 ;;
-(defun el-get-package-files (package)
-  "Return a list of files loaded from PACKAGE's directory."
-  (loop with pdir = (file-truename (el-get-package-directory package))
-        with regexp = (format "^%s" (regexp-quote (file-name-as-directory (expand-file-name pdir))))
+(defun el-get-package-files (pdir)
+  "Return a list of files loaded from directory PDIR."
+  (loop with regexp = (format "^%s" (regexp-quote (file-name-as-directory (file-truename pdir))))
         for (f . nil) in load-history
         when (and (stringp f) (string-match-p regexp (file-truename f)))
         collect (if (string-match-p "\\.elc?$" f)
                     (file-name-sans-extension f)
                   f)))
 
-(defun el-get-package-features (package)
-  "Return a list of features provided by files in PACKAGE."
-  (loop with pdir = (file-truename (el-get-package-directory package))
-        with regexp = (format "^%s" (regexp-quote (file-name-as-directory (expand-file-name pdir))))
+(defun el-get-package-features (pdir)
+  "Return a list of features provided by files in PDIR."
+  (loop with regexp = (format "^%s" (regexp-quote (file-name-as-directory (expand-file-name pdir))))
         for (f . l) in load-history
         when (and (stringp f) (string-match-p regexp (file-truename f)))
         nconc (loop for i in l
