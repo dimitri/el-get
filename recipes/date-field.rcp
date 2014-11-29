@@ -1,0 +1,6 @@
+(:name date-field
+       :website "https://github.com/aki2o/emacs-date-field"
+       :description "Date widget"
+       :type github
+       :pkgname "aki2o/emacs-date-field"
+       :depends (dash log4e yaxception))
