@@ -157,30 +157,28 @@
           else
           collect (cons p prop))))
 
-(defun el-get-package-status-alist (&optional package-status-alist)
+(defun el-get-package-status-alist ()
   "return an alist of (PACKAGE . STATUS)"
-  (loop for (p . prop) in (or package-status-alist
-                              (el-get-read-status-file))
+  (loop for (p . prop) in (el-get-read-status-file)
         collect (cons p (plist-get prop 'status))))
 
-(defun el-get-package-status-recipes (&optional package-status-alist)
+(defun el-get-package-status-recipes ()
   "return the list of recipes stored in the status file"
-  (loop for (p . prop) in (or package-status-alist
-                              (el-get-read-status-file))
+  (loop for (p . prop) in (el-get-read-status-file)
         when (string= (plist-get prop 'status) "installed")
         collect (plist-get prop 'recipe)))
 
-(defun el-get-read-package-status (package &optional package-status-alist)
+(defun el-get-read-package-status (package)
   "return current status for PACKAGE"
-  (let ((p-alist (or package-status-alist (el-get-read-status-file))))
-    (plist-get (cdr (assq (el-get-as-symbol package) p-alist)) 'status)))
+  (plist-get (cdr (assq (el-get-as-symbol package) (el-get-read-status-file)))
+             'status))
 
 (define-obsolete-function-alias 'el-get-package-status 'el-get-read-package-status)
 
-(defun el-get-read-package-status-recipe (package &optional package-status-alist)
+(defun el-get-read-package-status-recipe (package)
   "return current status recipe for PACKAGE"
-  (let ((p-alist (or package-status-alist (el-get-read-status-file))))
-    (plist-get (cdr (assq (el-get-as-symbol package) p-alist)) 'recipe)))
+  (plist-get (cdr (assq (el-get-as-symbol package) (el-get-read-status-file)))
+             'recipe))
 
 (defun el-get-filter-package-alist-with-status (package-status-alist &rest statuses)
   "Return package names that are currently in given status"
@@ -225,14 +223,14 @@
             unless (equal s "removed")
             collect (list x s)))))
 
-(defmacro el-get-with-status-sources (package-status-alist &rest body)
+(defmacro el-get-with-status-sources (&rest body)
   "Evaluate BODY with `el-get-sources' bound to recipes from PACKAGE-STATUS-ALIST.
 
 If PACKAGE-STATUS-ALIST is nil, read recipes from status file."
-  `(let ((el-get-sources (el-get-package-status-recipes package-status-alist)))
+  (declare (debug t) (indent 0))
+  `(let ((el-get-sources (el-get-package-status-recipes)))
      (progn ,@body)))
-(put 'el-get-with-status-sources 'lisp-indent-function
-     (get 'prog1 'lisp-indent-function))
+
 
 (defvar el-get-status-recipe-update-whitelist
   '(:load-path
@@ -293,12 +291,12 @@ properties, respectively."
           (error "package-or-source cannot be nil"))
     (el-get-package-def package-or-source)))
 
-(defun el-get-read-cached-recipe (package source &optional package-status-alist)
+(defun el-get-read-cached-recipe (package source)
   "Read the cached recipe for given PACKAGE: the one we have in the status file.
 
    If given PACKAGE isn't registered in the status file, and if
    it's a builtin package, then install it."
-  (or (el-get-read-package-status-recipe package package-status-alist)
+  (or (el-get-read-package-status-recipe package)
       (if (eq 'builtin (el-get-package-method source))
           (let ((el-get-default-process-sync t))
             (el-get-install package))
@@ -307,7 +305,6 @@ properties, respectively."
                package))))
 
 (defun* el-get-merge-properties-into-status (package-or-source
-                                             &optional package-status-alist
                                              &key noerror)
   "Merge updatable properties for package into package status alist (or status file).
 
@@ -318,25 +315,19 @@ installed.
 
 If the new source differs only in whitelisted properties (see
 `el-get-status-recipe-updatable-properties'), then the updated
-values for those properties will be incorporated into the
-package's recipe from PACKAGE-STATUS-ALIST, which is modified in
-place. If PACKAGE-STATUS-ALIST is not given, it will be read from
-the status file and the modifications will be written to the
-status file. When run interactively, the updated recipe is always
-saved to the status file.
+values for those properties will be written to the status
+file.
 
 If any non-whitelisted properties differ from the cached values,
 then an error is raise. With optional keyword argument `:noerror
 t', this error is suppressed (but nothing is updated)."
   (interactive
    (list (el-get-read-package-with-status "Update cached recipe" "installed")
-         nil
          :noerror current-prefix-arg))
-  (let* ((save-to-file (null package-status-alist))
-         (source       (el-get-package-or-source package-or-source))
+  (let* ((source       (el-get-package-or-source package-or-source))
          (package      (el-get-as-symbol (el-get-source-name source)))
          (cached-recipe
-          (el-get-read-cached-recipe package source package-status-alist)))
+          (el-get-read-cached-recipe package source)))
     (unless (el-get-package-is-installed package)
       (error "Package %s is not installed. Cannot update recipe." package))
     (destructuring-bind (update-p added-disallowed removed-disallowed)
@@ -363,9 +354,6 @@ Maybe you should use `el-get-update' or `el-get-reinstall' on %s instead?"
                  (el-get-source-name cached-recipe))
         (return-from el-get-merge-properties-into-status))
       (when update-p
-        (if save-to-file
-            (el-get-save-package-status package "installed" source)
-          (plist-put (cdr (assq package package-status-alist))
-                     'recipe source))))))
+        (el-get-save-package-status package "installed" source)))))
 
 (provide 'el-get-status)
