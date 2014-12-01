@@ -373,7 +373,8 @@ called by `el-get' (usually at startup) for each installed package."
       (when (and (not (eq psym 'el-get)) ; el-get recipe handles reloading
                  (memq psym (bound-and-true-p package-activated-list))
                  (not (memq psym el-get-activated-list))
-                 (package-installed-p psym))
+                 (package-installed-p psym)
+                 (not (eq 'elpa (el-get-package-method package))))
         (lwarn 'el-get :warning
                "The package `%s' has already been loaded by
 package.el, attempting to load el-get version instead. To avoid
