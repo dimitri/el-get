@@ -140,11 +140,13 @@ already-defined method DERIVED-FROM-NAME."
 ;; interface to write such structures as raw elisp.
 ;;
 ;;;  "Fuzzy" data structure conversion utilities
-(defun el-get-as-string (symbol-or-string)
-  "If STRING-OR-SYMBOL is already a string, return it.  Otherwise
-convert it to a string and return that."
-  (if (stringp symbol-or-string) symbol-or-string
-    (symbol-name symbol-or-string)))
+(defun el-get-as-string (obj)
+  "Return OBJ as a string."
+  (cond
+   ((stringp obj) obj)
+   ((symbolp obj) (symbol-name obj))
+   ((numberp obj) (number-to-string obj))
+   (t (error "Can't convert %S to string." obj))))
 
 (defun el-get-as-symbol (string-or-symbol)
   "If STRING-OR-SYMBOL is already a symbol, return it.  Otherwise

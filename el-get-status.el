@@ -230,7 +230,7 @@
      (progn ,@body)))
 
 
-(defvar el-get-status-recipe-update-whitelist
+(defconst el-get-status-init-whitelist
   '(:load-path
     :info
     :load
@@ -243,13 +243,24 @@
     :lazy
     :website
     :description)
-  "Properties that can be updated without `el-get-update'/`el-get-reinstall'.
+  "Properties that can be updated with only `el-get-init'.
 
 If any of these properties change on the recipe for an installed
 package, the changes may be merged into the cached version of
 that recipe in the el-get status file.")
 
-(defun el-get-classify-new-properties (source newprops)
+(defconst el-get-status-update-whitelist
+  `(:depends
+    :build
+    :build/system-type
+    :compile
+    :checksum
+    :checkout
+    :options
+    ,@el-get-status-init-whitelist)
+  "Properties than can be updated by `el-get-update'.")
+
+(defun el-get-classify-new-properties (operation source newprops)
   "Classify NEWPROPS into two groups: need update/disallowed.
 
 Return a list (UPDATE DISALLOWED).  Both UPDATE and NEWPROPS are
@@ -258,25 +269,34 @@ Elements in UPDATE are whitelisted whereas elements in DISALLOWED
 are not."
   (loop with update
         with disallowed
-        with whitelist = el-get-status-recipe-update-whitelist
+        with whitelist = (if (eq operation 'update)
+                             el-get-status-update-whitelist
+                           el-get-status-init-whitelist)
         for (k v) on newprops by 'cddr
         ;; Not a change, so ignore it
         if (equal v (plist-get source k)) do (ignore)
         ;; whitelisted
-        else if (memq k whitelist) do (setq update (plist-put update k v))
+        else if
+        (or (memq k whitelist)          ; whitelisted
+            (and (eq k :builtin)
+                 ;; Check if `:builtin' change is safe.
+                 (eq (version<= emacs-version (el-get-as-string v))
+                     (version<= emacs-version (el-get-as-string
+                                               (plist-get source k))))))
+        do (setq update (plist-put update k v))
         ;; Trying to change non-whitelisted property
         else do (setq disallowed (plist-put disallowed k v))
         finally return (list update disallowed)))
 
-(defun el-get-diagnosis-properties (old-source new-source)
+(defun el-get-diagnosis-properties (operation old-source new-source)
   "Diagnosis difference between OLD-SOURCE and NEW-SOURCE.
 
 Return a list (UPDATE-P ADDED-DISALLOWED REMOVED-DISALLOWED).
 UPDATE-P is non-nil when OLD-SOURCE and NEW-SOURCE are different.
 ADDED-DISALLOWED and REMOVED-DISALLOWED are added and removed
 properties, respectively."
-  (let ((added   (el-get-classify-new-properties old-source new-source))
-        (removed (el-get-classify-new-properties new-source old-source)))
+  (let ((added   (el-get-classify-new-properties operation old-source new-source))
+        (removed (el-get-classify-new-properties operation new-source old-source)))
     (list (or (car added) (car removed))
           (cadr added)
           (cadr removed))))
@@ -303,6 +323,7 @@ properties, respectively."
                package))))
 
 (defun el-get-merge-properties-into-status (package-or-source
+                                            operation
                                             &rest keys)
   "Merge updatable properties for package into package status alist (or status file).
 
@@ -323,6 +344,7 @@ t', this error is suppressed (but nothing is updated).
 \(fn PACKAGE-OR-SOURCE &key NOERROR)"
   (interactive
    (list (el-get-read-package-with-status "Update cached recipe" "installed")
+         'init
          :noerror current-prefix-arg))
   (let* ((noerror      (cadr (memq :noerror keys)))
          (source       (el-get-package-or-source package-or-source))
@@ -332,7 +354,7 @@ t', this error is suppressed (but nothing is updated).
     (unless (el-get-package-is-installed package)
       (error "Package %s is not installed. Cannot update recipe." package))
     (destructuring-bind (update-p added-disallowed removed-disallowed)
-        (el-get-diagnosis-properties cached-recipe source)
+        (el-get-diagnosis-properties operation cached-recipe source)
       (if (or added-disallowed removed-disallowed)
         ;; Emit a verbose message if `noerror' is t (but still quit
         ;; the function).
@@ -348,10 +370,11 @@ and remove non-whitelisted properties:
 into/from source:
 
 %s
-Maybe you should use `el-get-update' or `el-get-reinstall' on %s instead?"
+Maybe you should use %s`el-get-reinstall' on %s instead?"
                  (if   added-disallowed (pp-to-string   added-disallowed) "()")
                  (if removed-disallowed (pp-to-string removed-disallowed) "()")
                  (pp-to-string cached-recipe)
+                 (if (eq operation 'update) "" "`el-get-update' or")
                  (el-get-source-name cached-recipe))
       (when update-p
           (el-get-save-package-status package "installed" source))))))
