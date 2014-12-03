@@ -11,11 +11,12 @@
                     (message "Deleting melpa bootstrap el-get")
                     (unless package--initialized
                       (package-initialize t))
-                    (let ((feats (delete-dups
-                                  (el-get-package-features
-                                   (el-get-elpa-package-directory 'el-get)))))
-                      (el-get-elpa-delete-package 'el-get)
-                      ;; unload so we don't have any leftovers
-                      (dolist (feat feats)
-                        (unload-feature feat t)))
+                    (when (package-installed-p 'el-get)
+                      (let ((feats (delete-dups
+                                    (el-get-package-features
+                                     (el-get-elpa-package-directory 'el-get)))))
+                        (el-get-elpa-delete-package 'el-get)
+                        ;; unload so we don't have any leftovers
+                        (dolist (feat feats)
+                          (unload-feature feat t))))
                     (require 'el-get)))
