@@ -7,8 +7,10 @@
        :info    "."
        :compile ("el-get.*\\.el$" "methods/")
        :load    "el-get.el"
-       :post-init (when (and (featurep 'package) (package-installed-p 'el-get))
+       :post-init (when (memq 'el-get (bound-and-true-p package-activated-list))
                     (message "Deleting melpa bootstrap el-get")
+                    (unless package--initialized
+                      (package-initialize t))
                     (let ((feats (delete-dups
                                   (el-get-package-features
                                    (el-get-elpa-package-directory 'el-get)))))
