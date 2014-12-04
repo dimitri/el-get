@@ -1,0 +1,5 @@
+(:name rrc
+       :description "Replace Recent Character"
+       :type http
+       :url "https://raw.githubusercontent.com/nordlow/elisp/master/others/rrc.el"
+       :prepare (autoload 'replace-recent-character "rrc" "" t))
