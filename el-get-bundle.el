@@ -219,12 +219,30 @@ PACKAGE (for future recompilation)."
 
 ;;;###autoload
 (defmacro el-get-bundle (package &rest form)
-  "Install PACKAGE and run init script specified by FORM.
+  "Install PACKAGE and run initialization FORM.
 
-FORM may be started with a property list. In that case, the
-property list is pushed to `el-get-sources'.
+PACKAGE can be either a simple package name or a package name
+with a modifier before the name to specify local recipe source
+information:
 
-The rest of FORM is evaluated after PACKAGE is installed."
+* `<owner>/' : specifies a Github owner name
+* `gist:<id>' : specifies a Gist ID
+* `<type>:' : specifies a type of the package source
+
+If `FEATURE in PACKAGE' form is used instead of PACKAGE, then
+that FEATURE is `require'd after installing PACKAGE.  You can
+also use `el-get-bundle!' macro if FEATURE and PACKAGE are the
+same.  If you wish to `require' more than one feature, then use
+`:features' property in FORM.
+
+The initialization FORM may start with a property list that
+describes a local recipe.  The FORM after the property list is
+treated as initialization code, which is actually an `:after'
+property of the local recipe.
+
+A copy of the initialization code is stored in a directory
+specified by `el-get-bundle-init-directory' and its byte-compiled
+version is used if `el-get-bundle-byte-compile' is non-nil."
   (declare (indent defun) (debug t))
   (let* ((package (or (and (listp package) (nth 1 package)) package))
          (src (el-get-bundle-parse-name package)) require)
@@ -261,7 +279,7 @@ The rest of FORM is evaluated after PACKAGE is installed."
 
 ;;;###autoload
 (defmacro el-get-bundle! (package &rest args)
-  "Install PACKAGE and run init script.
+  "Install PACKAGE and run initialization form.
 It is the same as `el-get-bundle' except that PACKAGE is explicitly
 required."
   (declare (indent defun) (debug t))
