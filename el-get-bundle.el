@@ -218,18 +218,18 @@ PACKAGE (for future recompilation)."
 ;; commands
 
 ;;;###autoload
-(defmacro el-get-bundle (feature &rest form)
-  "Install FEATURE and run init script specified by FORM.
+(defmacro el-get-bundle (package &rest form)
+  "Install PACKAGE and run init script specified by FORM.
 
 FORM may be started with a property list. In that case, the
 property list is pushed to `el-get-sources'.
 
-The rest of FORM is evaluated after FEATURE is installed."
+The rest of FORM is evaluated after PACKAGE is installed."
   (declare (indent defun) (debug t))
-  (let* ((feature (or (and (listp feature) (nth 1 feature)) feature))
-         (src (el-get-bundle-parse-name feature)) require)
+  (let* ((package (or (and (listp package) (nth 1 package)) package))
+         (src (el-get-bundle-parse-name package)) require)
     ;; set parsed name
-    (setq feature (plist-get src :name))
+    (setq package (plist-get src :name))
     ;; (el-get-bundle FEATURE in PACKAGE ...) form
     (when (eq (nth 0 form) 'in)
       (let* ((name (nth 1 form))
@@ -252,7 +252,7 @@ The rest of FORM is evaluated after FEATURE is installed."
                            (plist-get src :features)))
       ;; put the feature into the features list
       (let ((fs (plist-get src :features)))
-        (add-to-list 'fs feature)
+        (add-to-list 'fs package)
         (setq src (plist-put src :features fs))))
     ;; init script
     (setq src (plist-put src :after form))
@@ -260,16 +260,16 @@ The rest of FORM is evaluated after FEATURE is installed."
     `(el-get-bundle-el-get ',src)))
 
 ;;;###autoload
-(defmacro el-get-bundle! (feature &rest args)
-  "Install FEATURE and run init script.
-It is the same as `el-get-bundle' except that FEATURE is explicitly
+(defmacro el-get-bundle! (package &rest args)
+  "Install PACKAGE and run init script.
+It is the same as `el-get-bundle' except that PACKAGE is explicitly
 required."
   (declare (indent defun) (debug t))
   (if (eq (nth 0 args) 'in)
-      `(el-get-bundle ,feature ,@args)
-    (let* ((feature (or (and (listp feature) (nth 1 feature)) feature))
-           (name (plist-get (el-get-bundle-parse-name feature) :name)))
-      `(el-get-bundle ,name ,@(list* 'in feature args)))))
+      `(el-get-bundle ,package ,@args)
+    (let* ((package (or (and (listp package) (nth 1 package)) package))
+           (name (plist-get (el-get-bundle-parse-name package) :name)))
+      `(el-get-bundle ,name ,@(list* 'in package args)))))
 
 (provide 'el-get-bundle)
 ;;; el-get-bundle.el ends here
