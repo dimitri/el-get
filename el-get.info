@@ -1,4 +1,4 @@
-This is el-get.info, produced by makeinfo version 4.13 from el-get.texi.
+This is el-get.info, produced by makeinfo version 4.11 from el-get.texi.
 
 INFO-DIR-SECTION Emacs
 START-INFO-DIR-ENTRY
@@ -353,6 +353,7 @@ el-get-install' and friends, then how to get a more involved setup.
 * Basic Setup::
 * The el-get function::
 * Distributed Setup::
+* The el-get-bundle macro::
 * Setup Customization::
 
 
@@ -426,7 +427,7 @@ or init.  When `PACKAGES' is omited (the default), the list of already
 installed packages is considered.
 
 
-File: el-get.info,  Node: Distributed Setup,  Next: Setup Customization,  Prev: The el-get function,  Up: Setup
+File: el-get.info,  Node: Distributed Setup,  Next: The el-get-bundle macro,  Prev: The el-get function,  Up: Setup
 
 6.3 Distributed Setup
 =====================
@@ -482,10 +483,67 @@ directory, and still enjoy a truly portable emacs configuration.
      (el-get-cleanup my-packages)
      (el-get 'sync my-packages)
 
-
-File: el-get.info,  Node: Setup Customization,  Prev: Distributed Setup,  Up: Setup
+   You can also use `el-get-bundle' macro as a syntactic sugar to
+specify a local source to install.  With this macro, nothing other than
+specified packages is installed.
 
-6.4 Setup Customization
+     (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+     (require 'el-get)
+
+     ;; packages from recipe files
+     (el-get 'sync
+             '(cssh el-get switch-window vkill google-maps nxhtml xcscope yasnippet))
+
+     ;; local sources
+     (el-get-bundle magit
+       (global-set-key (kbd "C-x C-z") 'magit-status))
+     (el-get-bundle elpa:asciidoc
+       (autoload 'doc-mode "doc-mode" nil t)
+       (add-to-list 'auto-mode-alist '("\\.adoc$" . doc-mode))
+       (add-hook 'doc-mode-hook
+                 '(lambda ()
+                   (turn-on-auto-fill)
+                   (require 'asciidoc))))
+     (el-get-bundle elpa:lisppaste)
+     (el-get-bundle apt-get:emacs-goodies-el)
+
+
+File: el-get.info,  Node: The el-get-bundle macro,  Next: Setup Customization,  Prev: Distributed Setup,  Up: Setup
+
+6.4 The el-get-bundle macro
+===========================
+
+Install PACKAGE and run initialization FORM.
+
+   PACKAGE can be either a simple package name or a package name with a
+modifier before the name to specify local recipe source information:
+
+   * `<owner>/' : specifies a Github owner name
+
+   * `gist:<id>' : specifies a Gist ID
+
+   * `<type>:' : specifies a type of the package source
+
+
+   If `FEATURE in PACKAGE' form is used instead of PACKAGE, then that
+FEATURE is `require'd after installing PACKAGE.  You can also use
+`el-get-bundle!' macro if FEATURE and PACKAGE are the same.  If you
+wish to `require' more than one feature, then use `:features' property
+in FORM.
+
+   The initialization FORM may start with a property list that
+describes a local recipe.  The FORM after the property list is treated
+as initialization code, which is actually an `:after' property of the
+local recipe.
+
+   A copy of the initialization code is stored in a directory specified
+by `el-get-bundle-init-directory' and its byte-compiled version is used
+if `el-get-bundle-byte-compile' is non-nil.
+
+
+File: el-get.info,  Node: Setup Customization,  Prev: The el-get-bundle macro,  Up: Setup
+
+6.5 Setup Customization
 =======================
 
 Even though the defaults that are provided by El-Get provide all that
@@ -1062,23 +1120,24 @@ Node: Install the developper version8400
 Node: Skip Emacswiki recipes when installing9145
 Node: Usage9981
 Node: Setup12270
-Node: Basic Setup12666
-Node: The el-get function13977
-Node: Distributed Setup15253
-Node: Setup Customization17295
-Node: User Init18707
-Node: Before and After properties19394
-Node: Initialization files20902
-Node: Recipes21555
-Node: Organizing recipes22030
-Node: Getting more recipes23661
-Node: Overriding package files24359
-Node: Authoring Recipes24742
-Node: Recipe format25357
-Node: Dependencies35146
-Node: Byte Compilation35492
-Node: Autoloads36058
-Node: Build37184
-Node: Recipe checker38156
+Node: Basic Setup12694
+Node: The el-get function14005
+Node: Distributed Setup15281
+Node: The el-get-bundle macro18191
+Node: Setup Customization19395
+Node: User Init20813
+Node: Before and After properties21500
+Node: Initialization files23008
+Node: Recipes23661
+Node: Organizing recipes24136
+Node: Getting more recipes25767
+Node: Overriding package files26465
+Node: Authoring Recipes26848
+Node: Recipe format27463
+Node: Dependencies37252
+Node: Byte Compilation37598
+Node: Autoloads38164
+Node: Build39290
+Node: Recipe checker40262
 
 End Tag Table
