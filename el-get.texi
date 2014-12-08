@@ -356,6 +356,7 @@ setup.
 * Basic Setup::
 * The el-get function::
 * Distributed Setup::
+* The el-get-bundle macro::
 * Setup Customization::
 @end menu
 
@@ -484,7 +485,65 @@ In the code example above, replace the last line with the following:
 @example
 (el-get-cleanup my-packages)
 (el-get 'sync my-packages)
-@end example 
+@end example
+
+You can also use @code{el-get-bundle} macro as a syntactic sugar to
+specify a local source to install.  With this macro, nothing other
+than specified packages is installed.
+
+@example
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+(require 'el-get)
+
+;; packages from recipe files
+(el-get 'sync
+        '(cssh el-get switch-window vkill google-maps nxhtml xcscope yasnippet))
+
+;; local sources
+(el-get-bundle magit
+  (global-set-key (kbd "C-x C-z") 'magit-status))
+(el-get-bundle elpa:asciidoc
+  (autoload 'doc-mode "doc-mode" nil t)
+  (add-to-list 'auto-mode-alist '("\\.adoc$" . doc-mode))
+  (add-hook 'doc-mode-hook
+            '(lambda ()
+              (turn-on-auto-fill)
+              (require 'asciidoc))))
+(el-get-bundle elpa:lisppaste)
+(el-get-bundle apt-get:emacs-goodies-el)
+@end example
+
+@node The el-get-bundle macro
+@section The el-get-bundle macro
+
+Install @var{package} and run initialization @var{form}.
+
+@var{package} can be either a simple package name or a package name with
+a modifier before the name to specify local recipe source information:
+
+@itemize @bullet
+
+@item @code{<owner>/} : specifies a Github owner name
+@item @code{gist:<id>} : specifies a Gist ID
+@item @code{<type>:} : specifies a type of the package source
+
+@end itemize
+
+If @code{@var{feature} in @var{package}} form is used instead of
+@var{package}, then that @var{feature} is @code{require}d after
+installing @var{package}.  You can also use @code{el-get-bundle!} macro
+if @var{feature} and @var{package} are the same.  If you wish to
+@code{require} more than one feature, then use @code{:features} property
+in @var{form}.
+
+The initialization @var{form} may start with a property list that
+describes a local recipe.  The @var{form} after the property list is
+treated as initialization code, which is actually an @code{:after}
+property of the local recipe.
+
+A copy of the initialization code is stored in a directory specified by
+@code{el-get-bundle-init-directory} and its byte-compiled version is
+used if @code{el-get-bundle-byte-compile} is non-nil.
 
 @node Setup Customization
 @section Setup Customization
