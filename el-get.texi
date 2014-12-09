@@ -516,34 +516,179 @@ than specified packages is installed.
 @node The el-get-bundle macro
 @section The el-get-bundle macro
 
-Install @var{package} and run initialization @var{form}.
+The macro @code{el-get-bundle} is a syntactic sugar which allows you to
+tell El-Get to install some package with a local source definition and
+initialization code for the package.  It is called in a form
+@code{(el-get-bundle @var{package} @var{properties} @var{code})}, where
+@var{package} specifies a package name, @var{properties} specifies a
+local recipe definition and @var{code} specifies initialization code.
 
-@var{package} can be either a simple package name or a package name with
-a modifier before the name to specify local recipe source information:
+@subsection Just install some package
 
-@itemize @bullet
+To install a package whose source is already defined in a recipe file,
+use @code{el-get-bundle} macro with the package name.
 
-@item @code{<owner>/} : specifies a Github owner name
-@item @code{gist:<id>} : specifies a Gist ID
-@item @code{<type>:} : specifies a type of the package source
+@example
+(el-get-bundle color-moccur)
+@end example
 
-@end itemize
+This is essentially equivalent to the following code.
 
-If @code{@var{feature} in @var{package}} form is used instead of
-@var{package}, then that @var{feature} is @code{require}d after
-installing @var{package}.  You can also use @code{el-get-bundle!} macro
-if @var{feature} and @var{package} are the same.  If you wish to
-@code{require} more than one feature, then use @code{:features} property
-in @var{form}.
+@example
+(el-get 'sync 'color-moccur)
+@end example
 
-The initialization @var{form} may start with a property list that
-describes a local recipe.  The @var{form} after the property list is
-treated as initialization code, which is actually an @code{:after}
-property of the local recipe.
+@subsection Install some package with requiring it
 
-A copy of the initialization code is stored in a directory specified by
-@code{el-get-bundle-init-directory} and its byte-compiled version is
-used if @code{el-get-bundle-byte-compile} is non-nil.
+If you also want to @code{require} the package, use
+@code{el-get-bundle!} macro.
+
+@example
+(el-get-bundle! color-moccur)
+@end example
+
+When the name of the feature you require is different from the package
+name (the recipe name), use @code{@var{feature} in @var{package}}
+form.
+
+@example
+(el-get-bundle! yaicomplete in github:tarao/elisp)
+@end example
+
+If you wish to @code{require} more than one feature, then put them in a
+@code{:features} property.
+
+@example
+(el-get-bundle github:tarao/elisp
+  :features (yaicomplete mode-line-color))
+@end example
+
+@subsection Install some package and configure it
+
+You can write initalization code after the package name.
+
+@example
+(el-get-bundle anything
+  (global-set-key (kbd "C-x b") #'anything-for-files))
+@end example
+
+Initialization code is automatically compiled when they are evaluated
+for the first time (after you modified the file enclosing the code) if
+@code{el-get-bundle-byte-compile} is non-nil.  The initialization code
+is saved to a file in @code{el-get-bundle-init-directory} together
+with a compiled version.
+
+Note that you should not call functions or refer to variables defined
+in the package if the package is going to be autoloaded.  In such
+case, you should use @code{with-eval-after-load} macro.
+
+@example
+(el-get-bundle anything
+  (global-set-key (kbd "C-x b") #'anything-for-files))
+(with-eval-after-load 'anything
+  ;; referring to `anything-map' requires "anything.el" to be loaded
+  (define-key anything-map (kbd "M-n") #'anything-next-source)
+  (define-key anything-map (kbd "M-p") #'anything-previous-source))
+@end example
+
+If you want the form passed to @code{with-eval-after-load} to be
+compiled together with the initialization code, you can use
+@url{https://github.com/tarao/with-eval-after-load-feature-el,tarao's
+@code{with-eval-after-load-feature}} instead or you will get
+"reference to free variable" warnings during the compilation.
+
+@example
+(el-get-bundle! with-eval-after-load-feature
+                :url "http://github.com/tarao/with-eval-after-load-feature-el.git")
+(el-get-bundle anything
+  (global-set-key (kbd "C-x b") #'anything-for-files)
+  (with-eval-after-load-feature 'anything
+    ;; referring to `anything-map' requires "anything.el" to be loaded
+    (define-key anything-map (kbd "M-n") #'anything-next-source)
+    (define-key anything-map (kbd "M-p") #'anything-previous-source)))
+@end example
+
+@subsection Pass options to package source definitions
+
+If you want to override a package source definition in a recipe file or
+define a new definition, you can pass a property list after the package
+name.
+
+For example, if you want to install @code{zenburn-theme} but want to
+use other version than El-Get's default recipe, you can reuse the
+default recipe with overriding @code{:url} option.
+
+@example
+(el-get-bundle zenburn-theme
+  :url "http://raw.github.com/bbatsov/zenburn-emacs/master/zenburn-theme.el"
+  (load-theme 'zenburn t))
+@end example
+
+If you want to define a new package source, then supply full options.
+
+@example
+(el-get-bundle! zlc
+  :type github :pkgname "mooz/emacs-zlc"
+  :description "Provides zsh like completion for minibuffer in Emacs"
+  :website "http://d.hatena.ne.jp/mooz/20101003/p1")
+@end example
+
+The property @code{:type} is required if the package source is already
+defined but you don't reuse it.  Otherwise, if the package source is not
+defined yet, you can omit @code{:type} property as long as it can be
+guessed from @code{:url}.
+
+@example
+(el-get-bundle! zlc :url "http://github.com/mooz/emacs-zlc.git")
+;; equivalent to
+;; (el-get-bundle! zlc :type git :url "http://github.com/mooz/emacs-zlc.git")
+@end example
+
+For further information on available properties for a recipe source,
+@xref{Recipe format}.
+
+@subsection Syntax sugars for package source definitions
+
+There are some ways to specify package source options by package name
+modifiers.  With these modifiers, you can omit @code{:type} property.
+
+@table @code
+@item @var{owner}/
+Specifies a github owner name.
+
+@item gist:@var{id}
+Specifies a gist ID.
+
+@item @var{type}:
+Specifies a type for the package.
+@end table
+
+@example
+(el-get-bundle tarao/tab-group)
+;; equivalent to
+;; (el-get-bundle tab-group :type github :pkgname "tarao/tab-group")
+
+(el-get-bundle! gist:4362564:init-loader)
+;; equivalent to
+;; (el-get-bundle! init-loader :type git :url "http://gist.github.com/4362564.git")
+
+(el-get-bundle elpa:undo-tree)
+;; equivalent to
+;; (el-get-bundle undo-tree :type elpa)
+@end example
+
+@subsection Customization
+
+@table @code
+@item el-get-bundle-init-dir
+Directory where a copy of initialization code specified in a
+@code{el-get-bundle} macro call and its byte-compiled version are
+saved.  Defaults to @file{~/.emacs.d/el-get/bundle-init/}.
+
+@item el-get-bundle-byte-compile
+Whether to compile initialization code in a @code{el-get-bundle} macro
+call.  Defaults to @code{t}.
+@end table
 
 @node Setup Customization
 @section Setup Customization
