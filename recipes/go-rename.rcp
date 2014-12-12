@@ -1,0 +1,8 @@
+(:name go-rename
+       :description "Integration of the Go 'rename' tool into Emacs"
+       :type go
+       :pkgname "golang.org/x/tools/cmd/gorename"
+       :load-path "src/golang.org/x/tools/refactor/rename"
+       :post-init (progn
+                    (setq go-rename-command (concat default-directory "bin/gorename"))
+                    (load "rename.el")))
