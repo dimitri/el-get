@@ -513,32 +513,156 @@ File: el-get.info,  Node: The el-get-bundle macro,  Next: Setup Customization,  
 6.4 The el-get-bundle macro
 ===========================
 
-Install PACKAGE and run initialization FORM.
+The macro `el-get-bundle' is a syntactic sugar which allows you to tell
+El-Get to install some package with a local source definition and
+initialization code for the package.  It is called in a form
+`(el-get-bundle PACKAGE PROPERTIES CODE)', where PACKAGE specifies a
+package name, PROPERTIES specifies a local recipe definition and CODE
+specifies initialization code.
 
-   PACKAGE can be either a simple package name or a package name with a
-modifier before the name to specify local recipe source information:
+6.4.1 Just install some package
+-------------------------------
 
-   * `<owner>/' : specifies a Github owner name
+To install a package whose source is already defined in a recipe file,
+use `el-get-bundle' macro with the package name.
 
-   * `gist:<id>' : specifies a Gist ID
+     (el-get-bundle color-moccur)
 
-   * `<type>:' : specifies a type of the package source
+   This is essentially equivalent to the following code.
 
+     (el-get 'sync 'color-moccur)
 
-   If `FEATURE in PACKAGE' form is used instead of PACKAGE, then that
-FEATURE is `require'd after installing PACKAGE.  You can also use
-`el-get-bundle!' macro if FEATURE and PACKAGE are the same.  If you
-wish to `require' more than one feature, then use `:features' property
-in FORM.
+6.4.2 Install some package with requiring it
+--------------------------------------------
 
-   The initialization FORM may start with a property list that
-describes a local recipe.  The FORM after the property list is treated
-as initialization code, which is actually an `:after' property of the
-local recipe.
+If you also want to `require' the package, use `el-get-bundle!' macro.
 
-   A copy of the initialization code is stored in a directory specified
-by `el-get-bundle-init-directory' and its byte-compiled version is used
-if `el-get-bundle-byte-compile' is non-nil.
+     (el-get-bundle! color-moccur)
+
+   When the name of the feature you require is different from the
+package name (the recipe name), use `FEATURE in PACKAGE' form.
+
+     (el-get-bundle! yaicomplete in github:tarao/elisp)
+
+   If you wish to `require' more than one feature, then put them in a
+`:features' property.
+
+     (el-get-bundle github:tarao/elisp
+       :features (yaicomplete mode-line-color))
+
+6.4.3 Install some package and configure it
+-------------------------------------------
+
+You can write initalization code after the package name.
+
+     (el-get-bundle anything
+       (global-set-key (kbd "C-x b") #'anything-for-files))
+
+   Initialization code is automatically compiled when they are evaluated
+for the first time (after you modified the file enclosing the code) if
+`el-get-bundle-byte-compile' is non-nil.  The initialization code is
+saved to a file in `el-get-bundle-init-directory' together with a
+compiled version.
+
+   Note that you should not call functions or refer to variables defined
+in the package if the package is going to be autoloaded.  In such case,
+you should use `with-eval-after-load' macro.
+
+     (el-get-bundle anything
+       (global-set-key (kbd "C-x b") #'anything-for-files))
+     (with-eval-after-load 'anything
+       ;; referring to `anything-map' requires "anything.el" to be loaded
+       (define-key anything-map (kbd "M-n") #'anything-next-source)
+       (define-key anything-map (kbd "M-p") #'anything-previous-source))
+
+   If you want the form passed to `with-eval-after-load' to be compiled
+together with the initialization code, you can use tarao's
+`with-eval-after-load-feature'
+(https://github.com/tarao/with-eval-after-load-feature-el) instead or
+you will get "reference to free variable" warnings during the
+compilation.
+
+     (el-get-bundle! with-eval-after-load-feature
+                     :url "http://github.com/tarao/with-eval-after-load-feature-el.git")
+     (el-get-bundle anything
+       (global-set-key (kbd "C-x b") #'anything-for-files)
+       (with-eval-after-load-feature 'anything
+         ;; referring to `anything-map' requires "anything.el" to be loaded
+         (define-key anything-map (kbd "M-n") #'anything-next-source)
+         (define-key anything-map (kbd "M-p") #'anything-previous-source)))
+
+6.4.4 Pass options to package source definitions
+------------------------------------------------
+
+If you want to override a package source definition in a recipe file or
+define a new definition, you can pass a property list after the package
+name.
+
+   For example, if you want to install `zenburn-theme' but want to use
+other version than El-Get's default recipe, you can reuse the default
+recipe with overriding `:url' option.
+
+     (el-get-bundle zenburn-theme
+       :url "http://raw.github.com/bbatsov/zenburn-emacs/master/zenburn-theme.el"
+       (load-theme 'zenburn t))
+
+   If you want to define a new package source, then supply full options.
+
+     (el-get-bundle! zlc
+       :type github :pkgname "mooz/emacs-zlc"
+       :description "Provides zsh like completion for minibuffer in Emacs"
+       :website "http://d.hatena.ne.jp/mooz/20101003/p1")
+
+   The property `:type' is required if the package source is already
+defined but you don't reuse it.  Otherwise, if the package source is not
+defined yet, you can omit `:type' property as long as it can be guessed
+from `:url'.
+
+     (el-get-bundle! zlc :url "http://github.com/mooz/emacs-zlc.git")
+     ;; equivalent to
+     ;; (el-get-bundle! zlc :type git :url "http://github.com/mooz/emacs-zlc.git")
+
+   For further information on available properties for a recipe source,
+*Note Recipe format::.
+
+6.4.5 Syntax sugars for package source definitions
+--------------------------------------------------
+
+There are some ways to specify package source options by package name
+modifiers.  With these modifiers, you can omit `:type' property.
+
+`OWNER/'
+     Specifies a github owner name.
+
+`gist:ID'
+     Specifies a gist ID.
+
+`TYPE:'
+     Specifies a type for the package.
+
+     (el-get-bundle tarao/tab-group)
+     ;; equivalent to
+     ;; (el-get-bundle tab-group :type github :pkgname "tarao/tab-group")
+
+     (el-get-bundle! gist:4362564:init-loader)
+     ;; equivalent to
+     ;; (el-get-bundle! init-loader :type git :url "http://gist.github.com/4362564.git")
+
+     (el-get-bundle elpa:undo-tree)
+     ;; equivalent to
+     ;; (el-get-bundle undo-tree :type elpa)
+
+6.4.6 Customization
+-------------------
+
+`el-get-bundle-init-dir'
+     Directory where a copy of initialization code specified in a
+     `el-get-bundle' macro call and its byte-compiled version are
+     saved.  Defaults to `~/.emacs.d/el-get/bundle-init/'.
+
+`el-get-bundle-byte-compile'
+     Whether to compile initialization code in a `el-get-bundle' macro
+     call.  Defaults to `t'.
 
 
 File: el-get.info,  Node: Setup Customization,  Prev: The el-get-bundle macro,  Up: Setup
@@ -1124,20 +1248,20 @@ Node: Basic Setup12694
 Node: The el-get function14005
 Node: Distributed Setup15281
 Node: The el-get-bundle macro18191
-Node: Setup Customization19395
-Node: User Init20813
-Node: Before and After properties21500
-Node: Initialization files23008
-Node: Recipes23661
-Node: Organizing recipes24136
-Node: Getting more recipes25767
-Node: Overriding package files26465
-Node: Authoring Recipes26848
-Node: Recipe format27463
-Node: Dependencies37252
-Node: Byte Compilation37598
-Node: Autoloads38164
-Node: Build39290
-Node: Recipe checker40262
+Node: Setup Customization24004
+Node: User Init25422
+Node: Before and After properties26109
+Node: Initialization files27617
+Node: Recipes28270
+Node: Organizing recipes28745
+Node: Getting more recipes30376
+Node: Overriding package files31074
+Node: Authoring Recipes31457
+Node: Recipe format32072
+Node: Dependencies41861
+Node: Byte Compilation42207
+Node: Autoloads42773
+Node: Build43899
+Node: Recipe checker44871
 
 End Tag Table
