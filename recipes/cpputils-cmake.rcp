@@ -3,4 +3,4 @@
        :description "cpputils-cmake automatically enable real time syntax check (Flymake) and IntelliSense (auto-complete+auto-complete-clang, company-mode) if you use CMake."
        :type github
        :pkgname "redguardtoo/cpputils-cmake"
-       :features cpputil-cmake)
+       :features cpputils-cmake)
