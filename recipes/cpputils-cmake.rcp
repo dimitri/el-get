@@ -4,5 +4,5 @@
        :type github
        :pkgname "redguardtoo/cpputils-cmake"
        :init (progn
-		  (add-hook 'c-mode-hook #'cppcm-reload-all)
-		  (add-hook 'c++-mode-hook #'cppcm-reload-all)))
+                  (add-hook 'c-mode-hook #'cppcm-reload-all)
+                  (add-hook 'c++-mode-hook #'cppcm-reload-all)))
