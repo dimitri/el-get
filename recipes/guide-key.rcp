@@ -2,4 +2,4 @@
        :description "Guide the following key bindings automatically and dynamically."
        :type github
        :pkgname "kai2nenobu/guide-key"
-       :depends (popwin))
+       :depends (dash popwin s))
