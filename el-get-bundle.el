@@ -155,8 +155,7 @@
         (fs (plist-get src :features)) (sync 'sync))
     ;; merge features
     (when (plist-member def :features)
-      (let* ((old (plist-get def :features))
-             (old (or (and (listp old) old) (list old))))
+      (let ((old (el-get-as-list (plist-get def :features))))
         (dolist (f old) (add-to-list 'fs f))
         (setq src (plist-put src :features fs))))
     ;; merge src with the oriiginal definition
@@ -263,8 +262,7 @@ version is used if `el-get-bundle-byte-compile' is non-nil."
       (setq src (plist-put src :type (el-get-bundle-guess-type src))))
     ;; features
     (when (plist-member src :features)
-      (let* ((fs (plist-get src :features))
-             (fs (or (and (listp fs) fs) (list fs))))
+      (let ((fs (el-get-as-list (plist-get src :features))))
         (setq src (plist-put src :features fs))))
     (when (and require (or (not (plist-member src :features))
                            (plist-get src :features)))
