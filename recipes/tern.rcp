@@ -3,4 +3,6 @@
        :type github
        :pkgname "marijnh/tern"
        :build '(("npm" "--production" "install"))
+       :prepare (add-to-list 'auto-mode-alist
+                             '("\\.tern-\\(project\\|\\config\\)\\'" . json-mode))
        :load-path ("emacs"))
