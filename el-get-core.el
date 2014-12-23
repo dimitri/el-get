@@ -186,14 +186,15 @@ entry."
 
 (defun el-get-shell-quote-program (program-name)
   "Like `shell-quote-argument' but needs special treatment on Windows."
-  (if (fboundp 'w32-short-file-name)
-      ;; If program is really a bat file, putting double quotes around
-      ;; it will lead to problems if subsequent arguments are also
-      ;; quoted. Use the short 8.3 name instead of quoting. See
-      ;; http://debbugs.gnu.org/cgi/bugreport.cgi?bug=18745 for
-      ;; details.
-      (w32-short-file-name (executable-find program-name))
-    (shell-quote-argument program-name)))
+  (or (when (fboundp 'w32-short-file-name)
+        ;; If program is really a bat file, putting double quotes around
+        ;; it will lead to problems if subsequent arguments are also
+        ;; quoted. Use the short 8.3 name instead of quoting. See
+        ;; http://debbugs.gnu.org/cgi/bugreport.cgi?bug=18745 for
+        ;; details.
+        (let (exe (executable-find program-name))
+          (when exe (w32-short-file-name exe))))
+      (shell-quote-argument program-name)))
 
 
 ;;
