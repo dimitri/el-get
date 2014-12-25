@@ -184,9 +184,13 @@ entry."
     (when post-remove-fun
       (funcall post-remove-fun package))))
 
+(defconst el-get-no-shell-quote "\\`[-,./_[:alnum:]]+\\'"
+  "Regular expression matching arguments that don't shell quoting.")
+
 (defun el-get-shell-quote-program (program-name)
   "Like `shell-quote-argument' but needs special treatment on Windows."
-  (or (when (fboundp 'w32-short-file-name)
+  (or (when (string-match-p el-get-no-shell-quote program-name) program-name)
+      (when (fboundp 'w32-short-file-name)
         ;; If program is really a bat file, putting double quotes around
         ;; it will lead to problems if subsequent arguments are also
         ;; quoted. Use the short 8.3 name instead of quoting. See
@@ -195,6 +199,11 @@ entry."
         (let (exe (executable-find program-name))
           (when exe (w32-short-file-name exe))))
       (shell-quote-argument program-name)))
+
+(defun el-get-maybe-shell-quote-argument (arg)
+  "`shell-quote-argument', if necessary."
+  (if (string-match-p el-get-no-shell-quote arg) arg
+    (shell-quote-argument arg)))
 
 
 ;;
@@ -415,7 +424,7 @@ makes it easier to conditionally splice a command into the list.
                               (el-get-shell-quote-program (plist-get c :program))
                             (plist-get c :program)))
                  (args    (if shell
-                              (mapcar #'shell-quote-argument (plist-get c :args))
+                              (mapcar #'el-get-maybe-shell-quote-argument (plist-get c :args))
                             (plist-get c :args)))
                  (sync    (el-get-plist-get-with-default c :sync
                             el-get-default-process-sync))
