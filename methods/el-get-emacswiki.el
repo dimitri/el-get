@@ -70,6 +70,9 @@ filename.el ;;; filename.el --- description"
              (url-retrieve-synchronously el-get-emacswiki-elisp-file-list-url)
            ;; prune HTTP headers
            (goto-char (point-min))
+           (unless (looking-at-p "^HTTP/[0-9]\\.[0-9] 2..")
+             (error "Failed to retrieve emacswiki package list: %s."
+                    (buffer-substring (point) (line-end-position))))
            (re-search-forward "^$" nil 'move)
            (forward-char)
            (delete-region (point-min) (point))
