@@ -1,0 +1,4 @@
+(:name iregister
+       :description "Interactive register commands for Emacs"
+       :type github
+       :pkgname "atykhonov/iregister.el")

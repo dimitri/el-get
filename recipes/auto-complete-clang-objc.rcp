@@ -1,0 +1,5 @@
+(:name auto-complete-clang-objc
+       :description "Emacs auto-complete clang backend for Objective C devlepment for iOS"
+       :type github
+       :pkgname "yasuyk/auto-complete-clang-objc"
+       :depends (auto-complete popup))

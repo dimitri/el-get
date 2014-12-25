@@ -1,0 +1,8 @@
+(:name clang-format
+       :description "Clang-format emacs integration for use with C/Objective-C/C++."
+       :type http
+       :url "https://llvm.org/svn/llvm-project/cfe/trunk/tools/clang-format/clang-format.el"
+       :depends (json)
+       :prepare (progn
+                  (autoload 'clang-format-region "clang-format" nil t)
+                  (autoload 'clang-format-buffer "clang-format" nil t)))

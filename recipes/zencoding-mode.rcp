@@ -2,4 +2,7 @@
        :description "Unfold CSS-selector-like expressions to markup"
        :type github
        :pkgname "rooney/zencoding"
-       :features zencoding-mode)
+       :prepare (defun zencoding-mode-on ()
+                  "Tunr on `zencoding-mode' mode."
+                  (interactive)
+                  (zencoding-mode 1)))

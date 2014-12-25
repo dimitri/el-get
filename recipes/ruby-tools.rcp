@@ -1,0 +1,4 @@
+(:name ruby-tools
+       :description "Collection of handy functions for Emacs ruby-mode"
+       :type github
+       :pkgname "rejeep/ruby-tools.el")

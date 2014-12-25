@@ -3,7 +3,7 @@
        :description "ELPA implementation (\"package.el\") from Emacs 24"
        :builtin "24"
        :type http
-       :url "http://repo.or.cz/w/emacs.git/blob_plain/1a0a666f941c99882093d7bd08ced15033bc3f0c:/lisp/emacs-lisp/package.el"
+       :url "http://repo.or.cz/w/emacs.git/blob_plain/ba08b24186711eaeb3748f3d1f23e2c2d9ed0d09:/lisp/emacs-lisp/package.el"
        :shallow nil
        :features package
        :post-init
@@ -27,6 +27,7 @@
           (lambda (pa)
             (add-to-list 'package-archives pa 'append))
           '(("ELPA" . "http://tromey.com/elpa/")
+            ("melpa" . "http://melpa.org/packages/")
             ("gnu" . "http://elpa.gnu.org/packages/")
             ("marmalade" . "http://marmalade-repo.org/packages/")
             ("SC"   . "http://joseito.republika.pl/sunrise-commander/")))))

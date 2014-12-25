@@ -1,0 +1,4 @@
+(:name button-lock
+       :description "Clickable text defined by regular expression."
+       :type github
+       :pkgname "rolandwalker/button-lock")

@@ -1,0 +1,7 @@
+(:name doc-present
+       :description "Present slides with Emacs."
+       :type github
+       :pkgname "dengste/doc-present"
+       :prepare (progn
+                  (autoload 'doc-present "doc-present" nil t)
+                  (autoload 'doc-present-mode "doc-present" nil t)))

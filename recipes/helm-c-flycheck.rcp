@@ -1,0 +1,6 @@
+(:name helm-c-flycheck
+       :website "https://github.com/yasuyk/helm-flycheck"
+       :description "Show flycheck errors with helm."
+       :type github
+       :depends (helm flycheck)
+       :pkgname "yasuyk/helm-flycheck")

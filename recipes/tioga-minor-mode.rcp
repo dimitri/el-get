@@ -1,0 +1,6 @@
+(:name tioga-minor-mode
+       :description "Minor mode for use with the Tioga plotting package."
+       :website "https://github.com/jschwab/tioga-minor-mode"
+       :type github
+       :pkgname "jschwab/tioga-minor-mode"
+       :features tioga)

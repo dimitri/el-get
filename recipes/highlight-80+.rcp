@@ -1,0 +1,4 @@
+(:name highlight-80+
+       :description "This mode highlights all characters that cross the 80 character line limit."
+       :type http
+       :url "http://nschum.de/src/emacs/highlight-80+/highlight-80+.el")

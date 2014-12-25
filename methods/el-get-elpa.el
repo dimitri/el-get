@@ -17,9 +17,46 @@
 (require 'package nil t)
 
 (declare-function el-get-package-is-installed "el-get" (package))
-;; pretend these old functions exist to keep byte compiler in 24.4 quiet
-(declare-function package-desc-doc "package" (desc))
-(declare-function package-desc-vers "package" (desc))
+
+;;; package.el compat functions
+(eval-and-compile
+  ;; Use the 24.4 accessor names
+  (unless (fboundp 'package-desc-summary)
+    (defalias 'package-desc-summary 'package-desc-doc))
+  (unless (fboundp 'package-desc-version)
+    (defalias 'package-desc-version 'package-desc-vers))
+
+  ;; In 24.4 each package has a *list* of descriptors, pretend it's so
+  ;; in 24.3 and below as well.
+  (defun el-get-elpa-descs (alist-elem)
+    "Return a list of descriptors for PKG from ALIST-ELEM.
+
+ALIST-ELEM should be an element from `package-alist' or
+`package-archive-contents'."
+    (el-get-as-list (cdr alist-elem)))
+
+  (defun el-get-elpa-delete-package (pkg)
+    "A wrapper for `package-delete', deletes all versions."
+    (let ((descs (cdr (assq pkg package-alist))))
+      (if (listp descs)
+          ;; 24.4+ case, we have a list of descriptors that we can
+          ;; call `package-delete' on.
+          (mapc #'package-delete descs)
+        ;; Otherwise, just delete the package directory.
+        (delete-directory (el-get-elpa-package-directory pkg) 'recursive))))
+  (defun el-get-elpa-install-package (pkg have-deps-p)
+    "A wrapper for package.el installion.
+
+Installs the 1st available version. If HAVE-DEPS-P skip
+package.el's dependency computations."
+    (let* ((pkg-avail (assq pkg package-archive-contents))
+           (descs (cdr pkg-avail))
+           ;; In 24.4+ we have a list of descs, earlier versions just
+           ;; have a single package name
+           (to-install (if (listp descs) (car descs) pkg)))
+      (if have-deps-p
+          (package-download-transaction (list to-install))
+        (package-install to-install)))))
 
 (defcustom el-get-elpa-install-hook nil
   "Hook run after ELPA package install."
@@ -37,12 +74,19 @@ PACKAGE isn't currently installed by ELPA."
   (require 'package)
   ;; package directories are named <package>-<version>.
   (let* ((pname (el-get-as-string package))
+         (pregex (concat "\\`" (regexp-quote pname) "-"))
          (version-offset (+ (length pname) 1)))
-    (loop for pkg-dir in (directory-files package-user-dir nil
-                                          (concat "^" (regexp-quote pname) "-"))
-          if (ignore-errors
-               (version-to-list (substring pkg-dir version-offset)))
-          return (expand-file-name pkg-dir package-user-dir))))
+    (catch 'dir
+     (loop for pkg-base-dir in (cons package-user-dir
+                                     (when (boundp 'package-directory-list)
+                                       package-directory-list))
+           when (file-directory-p pkg-base-dir)
+           do
+           (loop for pkg-dir in (directory-files pkg-base-dir nil pregex)
+                 if (ignore-errors
+                      (version-to-list (substring pkg-dir version-offset)))
+                 do (throw 'dir (expand-file-name pkg-dir pkg-base-dir))))
+     nil)))
 
 (defun el-get-elpa-package-repo (package)
   "Get the ELPA repository cons cell for PACKAGE.
@@ -70,8 +114,10 @@ the recipe, then return nil."
 (defun el-get-elpa-symlink-package (package)
   "ln -s ../elpa/<package> ~/.emacs.d/el-get/<package>"
   (let* ((package  (el-get-as-string package))
-         (elpa-dir (file-relative-name
-                    (el-get-elpa-package-directory package) el-get-dir)))
+         (pkg-dir (el-get-elpa-package-directory package))
+         (elpa-dir (if pkg-dir
+                       (file-relative-name pkg-dir el-get-dir)
+                     (error "No package directory for `%s' found" package))))
     (unless (el-get-package-exists-p package)
       ;; better style would be to check for (fboundp 'make-symbolic-link) but
       ;; that would be true on Vista, where by default only administrator is
@@ -81,9 +127,8 @@ the recipe, then return nil."
           ;; since symlink is not exactly reliable on those systems
           (copy-directory (el-get-elpa-package-directory package)
                           (file-name-as-directory (expand-file-name package el-get-dir)))
-        (message "%s"
-                 (shell-command
-                  (format "cd %s && ln -s \"%s\" \"%s\"" el-get-dir elpa-dir package)))))))
+        (let ((default-directory el-get-dir))
+          (make-symbolic-link elpa-dir package))))))
 
 (eval-when-compile
   ;; `condition-case-unless-debug' was introduced in 24.1, but was
@@ -93,7 +138,8 @@ the recipe, then return nil."
 
 (defun el-get-elpa-install (package url post-install-fun)
   "Ask elpa to install given PACKAGE."
-  (let* ((elpa-dir (el-get-elpa-package-directory package))
+  (let* ((have-deps-p (plist-member (el-get-package-def package) :depends))
+         (elpa-dir (el-get-elpa-package-directory package))
          (elpa-repo (el-get-elpa-package-repo package))
          ;; Indicates new archive requiring to download its archive-contents
          (elpa-new-repo (when (and elpa-repo)
@@ -106,6 +152,7 @@ the recipe, then return nil."
          ;; Prepend elpa-repo to `package-archives' for new package.el
          (package-archives (append (when elpa-repo (list elpa-repo))
                                    (when (boundp 'package-archives) package-archives))))
+    (el-get-insecure-check package url)
 
     (unless (and elpa-dir (file-directory-p elpa-dir))
       ;; package-install does these only for interactive calls
@@ -123,7 +170,7 @@ the recipe, then return nil."
       ;; TODO: should we refresh and retry once if package-install fails?
       ;; package-install generates autoloads, byte compiles
       (let (emacs-lisp-mode-hook fundamental-mode-hook prog-mode-hook)
-        (package-install (el-get-as-symbol package))))
+        (el-get-elpa-install-package (el-get-as-symbol package) have-deps-p)))
     ;; we symlink even when the package already is installed because it's
     ;; not an error to have installed ELPA packages before using el-get, and
     ;; that will register them
@@ -134,19 +181,16 @@ the recipe, then return nil."
   "Returns t if PACKAGE has an update available in ELPA."
   (assert (el-get-package-is-installed package) nil
           (format "Cannot update non-installed ELPA package %s" package))
-  (let* ((pkg-version
-          (if (fboundp 'package-desc-version) ;; new in Emacs 24.4
-              #'package-desc-version #'package-desc-vers))
-         (installed-version
-          (funcall pkg-version (car (el-get-as-list (cdr (assq package package-alist))))))
+  (let* ((installed-version
+          (package-desc-version (car (el-get-elpa-descs (assq package package-alist)))))
          (available-packages
-          (el-get-as-list (cdr (assq package package-archive-contents)))))
+          (el-get-elpa-descs (assq package package-archive-contents))))
     ;; Emacs 24.4 keeps lists of available packages. `package-alist'
     ;; is sorted by version, but `package-archive-contents' is not, so
     ;; we should loop through it.
     (some (lambda (pkg)
             (version-list-< installed-version
-                            (funcall pkg-version pkg)))
+                            (package-desc-version pkg)))
           available-packages)))
 
 (defvar el-get-elpa-do-refresh t
@@ -160,13 +204,16 @@ first time.")
   "Ask elpa to update given PACKAGE."
   (unless package--initialized
     (package-initialize t))
+  (el-get-insecure-check package url)
   (when el-get-elpa-do-refresh
    (package-refresh-contents)
    (when (eq el-get-elpa-do-refresh 'once)
      (setq el-get-elpa-do-refresh nil)))
   (when (el-get-elpa-update-available-p package)
     (el-get-elpa-remove package url nil)
-    (package-install (el-get-as-symbol package))
+    (el-get-elpa-install-package
+     (el-get-as-symbol package)
+     (plist-member (el-get-package-def package) :depends))
     ;; in windows, we don't have real symlinks, so its better to remove
     ;; the directory and copy everything again
     (when (memq system-type '(ms-dos windows-nt))
@@ -183,10 +230,7 @@ first time.")
 
 (defun el-get-elpa-post-remove (package)
   "Do remove the ELPA bits for package, now"
-  (let ((p-elpa-dir (el-get-elpa-package-directory package)))
-    (if p-elpa-dir
-        (dired-delete-file p-elpa-dir 'always)
-      (message "el-get: could not find ELPA dir for %s." package))))
+  (el-get-elpa-delete-package package))
 
 (add-hook 'el-get-elpa-remove-hook 'el-get-elpa-post-remove)
 
@@ -205,8 +249,8 @@ first time.")
           (string-match-p "marmalade-repo\\.org" repo-url))
       (concat "http://marmalade-repo.org/packages/" package))
      ((or (string= "melpa" repo-name)
-          (string-match-p "melpa.milkbox.net" repo-url))
-      (concat "http://melpa.milkbox.net/#" package)))))
+          (string-match-p "melpa.org" repo-url))
+      (concat "http://melpa.org/#" package)))))
 
 (el-get-register-method :elpa
   :install #'el-get-elpa-install
@@ -242,10 +286,8 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
 
     (mapc (lambda (pkg)
             (let* ((package     (format "%s" (car pkg)))
-                   (pkg-desc    (car (el-get-as-list (cdr pkg))))
-                   (get-summary (if (fboundp #'package-desc-summary)
-                                    #'package-desc-summary #'package-desc-doc))
-                   (description (funcall get-summary pkg-desc))
+                   (pkg-desc    (car (el-get-elpa-descs pkg)))
+                   (description (package-desc-summary pkg-desc))
                    (pkg-deps    (package-desc-reqs pkg-desc))
                    (depends     (remq 'emacs (mapcar #'car pkg-deps)))
                    (emacs-dep   (assq 'emacs pkg-deps))

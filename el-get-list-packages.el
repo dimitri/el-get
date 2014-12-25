@@ -23,6 +23,7 @@
 (declare-function el-get-remove "el-get" (package))
 (declare-function el-get-update "el-get" (package))
 (declare-function el-get-read-package-name "el-get" (action &optional filtered))
+(declare-function el-get-read-package-status "el-get-status" (package &optional package-status-alist))
 
 (defvar el-get-package-menu-buffer nil
   "Global var holding pointing to the package menu buffer, so

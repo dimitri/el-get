@@ -1,0 +1,5 @@
+(:name ace-jump-buffer
+       :type github
+       :description "fast buffer switching extension to `ace-jump-mode'"
+       :pkgname "waymondo/ace-jump-buffer"
+       :depends (ace-jump-mode dash))

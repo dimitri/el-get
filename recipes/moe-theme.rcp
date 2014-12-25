@@ -1,0 +1,7 @@
+(:name moe-theme
+       :description "A customizable colorful eye-candy theme for Emacser. Moe, moe, kyun!"
+       :website "https://github.com/kuanyui/moe-theme.el"
+       :type github
+       :pkgname "kuanyui/moe-theme.el"
+       :prepare (add-to-list 'custom-theme-load-path
+                             default-directory))

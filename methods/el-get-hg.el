@@ -35,6 +35,7 @@
                              (list url pname)))
          (ok    (format "Package %s installed." package))
          (ko    (format "Could not install package %s." package)))
+    (el-get-insecure-check package url)
 
     (el-get-start-process-list
      package
@@ -59,6 +60,7 @@
                        (plist-get source :checksum)))
          (ok   (format "Pulled package %s." package))
          (ko   (format "Could not update package %s." package)))
+    (el-get-insecure-check package url)
 
     (el-get-start-process-list
      package

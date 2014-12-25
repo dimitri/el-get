@@ -1,5 +1,4 @@
 (:name poporg
-       :description "Editing program comments or strings with Org mode."
-       :website "https://github.com/pinard/poporg"
+       :description "Editing program comments or strings in text mode."
        :type github
-       :pkgname "pinard/poporg")
+       :pkgname "QBobWatson/poporg")

@@ -1,0 +1,5 @@
+(:name company-inf-ruby
+       :description "Completion back-end for inf-ruby"
+       :type github
+       :pkgname "company-mode/company-inf-ruby"
+       :depends (inf-ruby company-mode))

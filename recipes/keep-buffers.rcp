@@ -1,0 +1,6 @@
+(:name keep-buffers
+       :website "https://github.com/lewang/le_emacs_libs/blob/master/keep-buffers.el"
+       :description "Attempt to prevent named buffers from deletion."
+       :type http
+       :url "https://raw.githubusercontent.com/lewang/le_emacs_libs/master/keep-buffers.el"
+       :prepare (autoload 'keep-buffers-mode "keep-buffers" nil t))

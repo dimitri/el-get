@@ -1,0 +1,6 @@
+(:name back-button
+       :description "Visual navigation through mark rings."
+       :type github
+       :pkgname "rolandwalker/back-button"
+       :depends (nav-flash smartrep ucs-utils list-utils persistent-soft
+                           pcache))

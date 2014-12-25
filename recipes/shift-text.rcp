@@ -1,0 +1,5 @@
+(:name shift-text
+       :description "Move the region in 4 directions, in a way similar to Eclipse's"
+       :type github
+       :pkgname "sabof/shift-text"
+       :depends es-lib)

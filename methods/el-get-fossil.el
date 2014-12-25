@@ -57,6 +57,8 @@ are stored in the package directory"
          (open-args (list "open" "--nested" (expand-file-name fossil-name fossil-dir) checkout))
          (ok (format "Package %s installed." package))
          (ko (format "Could not install package %s." package)))
+    (el-get-insecure-check package url)
+
     (el-get-start-process-list
      package
      (list
@@ -101,7 +103,8 @@ are stored in the package directory"
          (update-args (list "update" checkout))
          (ok (format "Updated package %s." package))
          (ko (format "Could not update package %s." package)))
-    (message "%s" update-args)
+    (el-get-insecure-check package url)
+
     (el-get-start-process-list
      package
      `((:command-name ,name

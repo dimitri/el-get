@@ -1,0 +1,5 @@
+(:name e2wm-pkgex4pl
+       :description "Plugin of e2wm.el for package explorer of Perl"
+       :type github
+       :pkgname "aki2o/e2wm-pkgex4pl"
+       :depends (e2wm plsense-direx))

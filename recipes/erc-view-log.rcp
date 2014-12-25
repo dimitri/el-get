@@ -1,0 +1,11 @@
+(:name erc-view-log
+       :description "Major mode for viewing ERC logs."
+       :type github
+       :pkgname "Niluge-KiWi/erc-view-log"
+       :depends (erc)
+       :post-init (progn
+                    (eval-after-load 'erc-log
+                      '(add-to-list 'auto-mode-alist
+                                    `(,(format "%s/.*\\.log"
+                                               (regexp-quote
+                                                (expand-file-name erc-log-channels-directory))) . erc-view-log-mode)))))

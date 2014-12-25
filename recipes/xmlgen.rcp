@@ -1,0 +1,4 @@
+(:name xmlgen
+       :description "Generate xml using sexps with the function `xmlgen'"
+       :type github
+       :pkgname "philjackson/xmlgen")

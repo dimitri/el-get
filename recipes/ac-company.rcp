@@ -1,0 +1,6 @@
+(:name ac-company
+       :website "http://github.com/buzztaiki/auto-complete"
+       :description "company backend for auto-complete"
+       :type http
+       :url "https://raw.github.com/buzztaiki/auto-complete/master/ac-company.el"
+       :depends (auto-complete company-mode))

@@ -1,0 +1,5 @@
+(:name company-c-headers
+       :description "Company mode backend for C/C++ header files."
+       :type github
+       :pkgname "randomphrase/company-c-headers"
+       :depends (company-mode))

@@ -97,6 +97,7 @@ Enable this if you want el-get to honor these settings"
          (ok      (format "Checked out package %s." package))
          (ko      (format "Could not checkout package %s." package)))
 
+    (el-get-insecure-check package url)
     ;; (message "%S" `(:args ("-d" ,url "checkout" "-d" ,package ,module)))
     ;; (message "el-get-cvs-checkout: %S" (string= options "login"))
 
@@ -130,6 +131,7 @@ Enable this if you want el-get to honor these settings"
          (ok   (format "Updated package %s." package))
          (ko   (format "Could not update package %s." package)))
 
+    (el-get-insecure-check package url)
     (el-get-start-process-list
      package
      `((:command-name ,name

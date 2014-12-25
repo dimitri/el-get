@@ -1,0 +1,4 @@
+(:name ido-better-flex
+       :description "A better flex (fuzzy) algorithm for Ido"
+       :type github
+       :pkgname "vic/ido-better-flex")

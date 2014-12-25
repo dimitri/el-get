@@ -1,0 +1,17 @@
+(:name pdf-tools
+       :description "pdf tools"
+       :type github
+       ;; On Debian, "libpoppler-glib-dev" "libpoppler-dev"
+       ;; "libpoppler-private-dev" are needed to build c code in this package.
+       :pkgname "politza/pdf-tools"
+
+       ;; pdf-tools' code written to find "epdfinfo" executable in the lisp
+       ;; directory. we preset following variable to avoid that.
+       :prepare (setq pdf-info-epdfinfo-program
+                      (concat (el-get-package-directory "pdf-tools")
+                              "src/epdfinfo"))
+       :build `(("./autogen.sh")
+                ("./configure")
+                ("make"))
+       :load-path ("lisp")
+       :compile ("lisp/"))

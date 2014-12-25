@@ -1,0 +1,4 @@
+(:name iasm-mode
+       :description "Interactive assembly major mode."
+       :type github
+       :pkgname "RAttab/iasm-mode")

@@ -1,0 +1,5 @@
+(:name anaphora
+       :description "Anaphoric expressions for Emacs Lisp, providing implicit temporary variables"
+       :type github
+       :website "https://github.com/rolandwalker/anaphora"
+       :pkgname "rolandwalker/anaphora")

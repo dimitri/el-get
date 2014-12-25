@@ -1,0 +1,6 @@
+(:name electric-spacing
+       :description "insert spaces automatically between user-defined patterns."
+       :website "https://github.com/zk-phi/electric-spacing"
+       :type github
+       :depends cl-lib
+       :pkgname "zk-phi/electric-spacing")

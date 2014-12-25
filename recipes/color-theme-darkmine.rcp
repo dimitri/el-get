@@ -1,0 +1,7 @@
+(:name color-theme-darkmine
+       :description "Yet another dark emacs theme"
+       :type github
+       :pkgname "pierre-lecocq/color-theme-darkmine"
+       :depends color-theme
+       :prepare (autoload 'color-theme-darkmine "color-theme-darkmine"
+                  "color-theme: darkmine" t))

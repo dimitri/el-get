@@ -1,0 +1,4 @@
+(:name seqential-command
+       :description "Many commands into one command"
+       :type github
+       :pkgname "HKey/sequential-command")

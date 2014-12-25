@@ -1,4 +1,4 @@
-This is el-get.info, produced by makeinfo version 4.8 from el-get.texi.
+This is el-get.info, produced by makeinfo version 4.13 from el-get.texi.
 
 INFO-DIR-SECTION Emacs
 START-INFO-DIR-ENTRY
@@ -93,8 +93,7 @@ project, getting a commit bit and some management duties. He manages
 tests and issues on github as much as he can spares time to El-Get.
 
    Dave Abrahams contributed lots of code and efforts to make things
-right™. He's still using El-Get, but decided to retire from the
-project.
+right™. He's still using El-Get, but decided to retire from the project.
 
    Lots of people (more than we can list here) did contribute to El-Get
 either recipes, bug fixes or ideas to implement, often with code. That
@@ -518,6 +517,12 @@ certain settings, particularly for portability.
      As above for ELPA, this directory stores a local list of emacswiki
      recipes. Defaults to `~/.emacs.d/el-get/el-get/recipes/emacswiki/'.
 
+`el-get-allow-insecure'
+     This determines whether or not El-Get will attempt to install
+     packages over insecure connections; setting it to nil
+     (recommended) will cause it to abort upon any install or update
+     operation which uses an unencrypted URL.
+
 
 
 File: el-get.info,  Node: User Init,  Next: Recipes,  Prev: Setup,  Up: Top
@@ -757,7 +762,7 @@ provided by `el-get' recipes locally.
 
 `:branch'
      Which branch to fetch when using git (and by extension, github and
-     emacsmirror, which are derived form git).  Also supported in the
+     emacsmirror, which are derived from git).  Also supported in the
      installer in el-get-install.
 
 `:url'
@@ -1043,37 +1048,37 @@ version `test/test-recipe-interactive.sh' is also available.
 
 
 Tag Table:
-Node: Top768
-Node: Introduction1233
-Node: Acknowledgments2533
-Node: Glossary4115
-Ref: Glossary - Init5211
-Ref: Glossary - Install5513
-Ref: Glossary - Recipe6606
-Ref: Glossary - Status7030
-Ref: Glossary - Update7288
-Node: Installing7526
-Node: Install the developper version8399
-Node: Skip Emacswiki recipes when installing9144
-Node: Usage9980
-Node: Setup12269
-Node: Basic Setup12665
-Node: The el-get function13976
-Node: Distributed Setup15252
-Node: Setup Customization17294
-Node: User Init18440
-Node: Before and After properties19127
-Node: Initialization files20635
-Node: Recipes21288
-Node: Organizing recipes21763
-Node: Getting more recipes23394
-Node: Overriding package files24092
-Node: Authoring Recipes24475
-Node: Recipe format25090
-Node: Dependencies34879
-Node: Byte Compilation35225
-Node: Autoloads35791
-Node: Build36917
-Node: Recipe checker37889
+Node: Top769
+Node: Introduction1234
+Node: Acknowledgments2534
+Node: Glossary4116
+Ref: Glossary - Init5212
+Ref: Glossary - Install5514
+Ref: Glossary - Recipe6607
+Ref: Glossary - Status7031
+Ref: Glossary - Update7289
+Node: Installing7527
+Node: Install the developper version8400
+Node: Skip Emacswiki recipes when installing9145
+Node: Usage9981
+Node: Setup12270
+Node: Basic Setup12666
+Node: The el-get function13977
+Node: Distributed Setup15253
+Node: Setup Customization17295
+Node: User Init18707
+Node: Before and After properties19394
+Node: Initialization files20902
+Node: Recipes21555
+Node: Organizing recipes22030
+Node: Getting more recipes23661
+Node: Overriding package files24359
+Node: Authoring Recipes24742
+Node: Recipe format25357
+Node: Dependencies35146
+Node: Byte Compilation35492
+Node: Autoloads36058
+Node: Build37184
+Node: Recipe checker38156
 
 End Tag Table

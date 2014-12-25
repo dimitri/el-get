@@ -1,0 +1,4 @@
+(:name globrep
+       :description "Search for and replace strings in multiple files"
+       :type emacsmirror
+       :depends query)

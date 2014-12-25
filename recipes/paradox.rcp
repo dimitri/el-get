@@ -1,0 +1,7 @@
+(:name paradox
+       :description "A modern Packages Menu. Colored, with package ratings, and customizable."
+       :website "https://github.com/Bruce-Connor/paradox"
+       :type github
+       :minimum-emacs-version "24"
+       :depends (dash cl-lib json)
+       :pkgname "Bruce-Connor/paradox")

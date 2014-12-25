@@ -1,0 +1,4 @@
+(:name junos-mode
+       :description "Major mode for editing JunOS configuration file"
+       :type github
+       :pkgname "vincentbernat/junos-mode")

@@ -1,0 +1,4 @@
+(:name json-rpc
+       :description "JSON-RPC library."
+       :type github
+       :pkgname "skeeto/elisp-json-rpc")

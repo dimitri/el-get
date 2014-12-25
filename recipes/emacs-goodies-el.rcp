@@ -64,7 +64,8 @@
                    "emacs-goodies-el/elisp/dpkg-dev-el"
                    "emacs-goodies-el/elisp/emacs-goodies-el"
                    ;; "emacs-goodies-el/elisp/gnus-bonus-el"
-                   "emacs-goodies-el/elisp/vm-bonus-el")
+                   ;; "emacs-goodies-el/elisp/vm-bonus-el"
+                   )
        ;; The :features and :post-init are taken from the
        ;; debain/*.emacsen-startup files in the source package.
        ;; Some of these files just require specific features,
@@ -97,30 +98,31 @@ Running this requires elserv.  Use elserv, and do `elserv-start' before invoking
          (autoload 'pbuilder-user-mode-linux-build "pbuilder-mode" "Run pbuilder-user-mode-linux for the given filename." t)
 
          ;; from "debian/vm-bonus-el.emacsen-startup"
-         (defgroup vm-bonus-el nil
-           "Customize vm-bonus-el Debian packages."
-           :group 'vm)
+         ;; (defgroup vm-bonus-el nil
+         ;;   "Customize vm-bonus-el Debian packages."
+         ;;   :group 'vm)
 
          ;; vm-bogofilter.el
-         (defgroup vm-bogofilter nil
-           "VM Spam Filter Options"
-           :group 'vm
-           :group 'vm-bonus-el
-           :load 'vm-bogofilter)
+         ;; (defgroup vm-bogofilter nil
+         ;;   "VM Spam Filter Options"
+         ;;   :group 'vm
+         ;;   :group 'vm-bonus-el
+         ;;   :load 'vm-bogofilter)
 
-         (autoload 'vm-bogofilter-setup "vm-bogofilter"
-           "Initialize vm-bogofilter."
-           t)
+         ;; (autoload 'vm-bogofilter-setup "vm-bogofilter"
+         ;;   "Initialize vm-bogofilter."
+         ;;   t)
 
-         (defcustom vm-bogofilter-setup nil
-           "Whether to initialize vm-bogofilter on startup.
-vm-bogofilter interfaces VM with the bogofilter spam filter."
-           :type 'boolean
-           :set (lambda (symbol value)
-                  (set-default symbol value)
-                  (when value
-                    (vm-bogofilter-setup)))
-           :load 'vm-bogofilter
-           :group 'vm
-           :group 'vm-bogofilter
-           :group 'vm-bonus-el)))
+         ;; (defcustom vm-bogofilter-setup nil
+;;            "Whether to initialize vm-bogofilter on startup.
+;; vm-bogofilter interfaces VM with the bogofilter spam filter."
+;;            :type 'boolean
+;;            :set (lambda (symbol value)
+;;                   (set-default symbol value)
+;;                   (when value
+;;                     (vm-bogofilter-setup)))
+;;            :load 'vm-bogofilter
+;;            :group 'vm
+;;            :group 'vm-bogofilter
+;;            :group 'vm-bonus-el)
+         ))

@@ -1,0 +1,6 @@
+(:name malinka
+       :description "A C/C++ project configuration package for Emacs"
+       :type github
+       :website "https://github.com/LefterisJP/malinka"
+       :pkgname "LefterisJP/malinka"
+       :depends (dash s f projectile rtags))

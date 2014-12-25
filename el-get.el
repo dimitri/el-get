@@ -189,7 +189,7 @@
 (require 'el-get-dependencies)          ; topological-sort of package dep graph
 (require 'el-get-notify)                ; notification support (dbus, growl...)
 (require 'el-get-list-packages)         ; menu and `el-get-describe' facilities
-(require 'el-get-autoloads)             ; manages updating el-get's loaddefs.el
+(require 'el-get-autoloading)           ; manages updating el-get's loaddefs.el
 
 
 (defvar el-get-next-packages nil
@@ -221,7 +221,8 @@
 
 This is useful to use for providing completion candidates for
 package names."
-  (mapcar 'el-get-source-name (el-get-read-all-recipes)))
+  (delete-dups (append (mapcar #'el-get-source-name el-get-sources)
+                       (el-get-all-recipe-file-names))))
 
 (defun el-get-error-unless-package-p (package)
   "Raise an error if PACKAGE does not name a package that has a valid recipe."
@@ -347,6 +348,9 @@ which defaults to the first element in `el-get-recipe-path'."
     `(el-get-run-package-support ',form ',fname ',package)))
 
 
+(defvar el-get-activated-list nil
+  "List of packages initialized by el-get.")
+
 (defun el-get-init (package &optional package-status-alist)
   "Make the named PACKAGE available for use, first initializing any
    dependency of the PACKAGE."
@@ -365,6 +369,18 @@ Add PACKAGE's directory (or `:load-path' if specified) to the
 `load-path', add any its `:info' directory to
 `Info-directory-list', and `require' its `:features'.  Will be
 called by `el-get' (usually at startup) for each installed package."
+    (let ((psym (el-get-as-symbol package)))
+      (when (and (not (eq psym 'el-get)) ; el-get recipe handles reloading
+                 (memq psym (bound-and-true-p package-activated-list))
+                 (not (memq psym el-get-activated-list))
+                 (package-installed-p psym)
+                 (not (eq 'elpa (el-get-package-method package))))
+        (lwarn 'el-get :warning
+               "The package `%s' has already been loaded by
+package.el, attempting to load el-get version instead. To avoid
+this warning either uninstall one of the el-get or package.el
+version of %s, or call `el-get' before `package-initialize' to
+prevent package.el from loading it."  package package)))
   (when el-get-auto-update-cached-recipes
     (el-get-merge-properties-into-status package package-status-alist :noerror t))
   (condition-case err
@@ -447,7 +463,14 @@ called by `el-get' (usually at startup) for each installed package."
                    postinit "post-init" package)
           (funcall maybe-lazy-eval `(el-get-load-package-user-init-file ',package))
           (funcall el-get-maybe-lazy-runsupp
-                   after "after" package)))
+                   after "after" package))
+        ;; if any elpa packages are installed they already `require'd
+        ;; `package'.
+        (when (featurep 'package)
+          ;; tell elpa that this package has been activated, so it
+          ;; doesn't try to activate it's own package instead.
+          (push (el-get-as-symbol package) package-activated-list))
+        (push (el-get-as-symbol package) el-get-activated-list))
     (debug err
            (el-get-installation-failed package err)))
   ;; and call the global init hooks
@@ -457,6 +480,7 @@ called by `el-get' (usually at startup) for each installed package."
   package)
 
 
+;;;###autoload
 (defun el-get-install (package)
   "Cause the named PACKAGE to be installed after all of its
 dependencies (if any).
@@ -567,8 +591,9 @@ PACKAGE may be either a string or the corresponding symbol."
   (el-get-verbose-message "el-get-reload: %s" package)
   (el-get-with-status-sources package-status-alist
     (let* ((all-features features)
-           (package-features (el-get-package-features package))
-           (package-files (el-get-package-files package))
+           (pdir (el-get-package-directory package))
+           (package-features (el-get-package-features pdir))
+           (package-files (el-get-package-files pdir))
            (other-features
             (remove-if (lambda (x) (memq x package-features)) all-features)))
       (unwind-protect
@@ -665,6 +690,7 @@ This variable exists because the function that it holds is a
 dynamically-generated lambda, but it needs to be able to refer to
 itself.")
 
+;;;###autoload
 (defun el-get-update (package)
   "Update PACKAGE."
   (interactive
@@ -761,6 +787,10 @@ result of an actual problem."
   (let ((el-get-default-process-sync t)
         (el-get-dir
          (expand-file-name ".." (file-name-directory el-get-script))))
+    ;; Delete elc files so bugs they contain won't persist.
+    (mapc #'delete-file
+          (nconc (directory-files (expand-file-name "el-get" el-get-dir) t "\\.elc\\'" t)
+                 (directory-files (expand-file-name "el-get/methods" el-get-dir) t "\\.elc\\'" t)))
     (el-get-update "el-get")))
 
 
@@ -770,6 +800,7 @@ result of an actual problem."
     (run-hook-with-args hooks package)
     (run-hook-with-args 'el-get-post-remove-hooks package)))
 
+;;;###autoload
 (defun el-get-remove (package &optional package-status-alist)
   "Remove any PACKAGE that is know to be installed or required."
   (interactive
@@ -801,6 +832,7 @@ result of an actual problem."
           (funcall remove package url 'el-get-post-remove)
           (message "el-get remove %s" package))))))
 
+;;;###autoload
 (defun el-get-reinstall (package)
   "Remove PACKAGE and then install it again."
   (interactive (list (el-get-read-package-name "Reinstall")))
@@ -846,14 +878,21 @@ explicitly declared in the user-init-file (.emacs)."
     ;; Filepath is dir/file
     (let ((filepath (format "%s/%s" dir filename)))
       (with-temp-file filepath
-        (insert (el-get-print-to-string source))))))
+        (emacs-lisp-mode)
+        (insert "(")
+        (loop for (prop val) on source by #'cddr
+              do (insert (format "%S %S\n" prop val)))
+        (delete-char -1) ; delete last \n
+        (insert ")\n")
+        (goto-char (point-min))
+        (indent-pp-sexp 'pretty)))))
 
 ;;;###autoload
 (defun el-get-make-recipes (&optional dir)
   "Loop over `el-get-sources' and write a recipe file for each
 entry which is not a symbol and is not already a known recipe."
   (interactive "Dsave recipes in directory: ")
-  (let* ((all (mapcar 'el-get-source-name (el-get-read-all-recipe-files)))
+  (let* ((all (el-get-read-all-recipe-names))
          (new (loop for r in el-get-sources
                     when (and (not (symbolp r))
                               (not (member (el-get-source-name r) all)))
@@ -881,6 +920,7 @@ entry which is not a symbol and is not already a known recipe."
           (kill-new checksum)
           checksum)))))
 
+;;;###autoload
 (defun el-get-self-checksum ()
   "Compute the checksum of the running version of el-get itself.
 
@@ -928,6 +968,7 @@ considered \"required\"."
     (loop for p in init-deps    do (el-get-do-init p)    collect p into done)
     done))
 
+;;;###autoload
 (defun el-get (&optional sync &rest packages)
   "Ensure that packages have been downloaded once and init them as needed.
 

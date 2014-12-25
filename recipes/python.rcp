@@ -1,4 +1,4 @@
 (:name python
        :description "Python's flying circus support for Emacs (trunk version, hopefully Emacs 24.x compatible)"
        :type http
-       :url "http://repo.or.cz/w/emacs.git/blob_plain/master:/lisp/progmodes/python.el")
+       :url "http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/progmodes/python.el?h=master")

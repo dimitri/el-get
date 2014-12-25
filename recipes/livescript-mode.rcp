@@ -1,0 +1,5 @@
+(:name livescript-mode
+       :description "An Emacs major mode for LiveScript, a language that compiles to Javascript"
+       :website "https://github.com/bdowning/livescript-mode"
+       :type github
+       :pkgname "bdowning/livescript-mode")

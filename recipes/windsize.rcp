@@ -1,0 +1,9 @@
+(:name windsize
+       :description "Simple, intuitive window resizing"
+       :type github
+       :pkgname "grammati/windsize"
+       :prepare (progn
+                  (autoload 'windsize-up "windsize" nil t)
+                  (autoload 'windsize-down "windsize" nil t)
+                  (autoload 'windsize-left "windsize" nil t)
+                  (autoload 'windsize-right "windsize" nil t)))

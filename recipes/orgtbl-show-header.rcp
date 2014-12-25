@@ -1,0 +1,5 @@
+(:name orgtbl-show-header
+       :description "Show the header of the current column in the minibuffer"
+       :website "https://github.com/DamienCassou/orgtbl-show-header"
+       :type github
+       :pkgname "DamienCassou/orgtbl-show-header")

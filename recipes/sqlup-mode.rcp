@@ -1,0 +1,4 @@
+(:name sqlup-mode
+       :description "An emacs minor mode to upcase SQL keyword and functions."
+       :type github
+       :pkgname "Trevoke/sqlup-mode.el")

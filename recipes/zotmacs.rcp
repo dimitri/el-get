@@ -1,9 +1,6 @@
 (:name zotmacs
-       :website "https://bitbucket.org/egh/zotero-plain/overview"
+       :website "https://bitbucket.org/egh/zotxt-emacs"
        :description "Org mode integration with Zotero"
-       :url "https://bitbucket.org/egh/zotero-plain"
+       :url "https://bitbucket.org/egh/zotxt-emacs"
        :load-path "elisp"
-       :type hg
-       :after (progn
-                (autoload 'org-zotero-mode "org-zotero" "" t))
-       )
+       :type hg)

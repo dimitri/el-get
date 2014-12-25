@@ -3,4 +3,5 @@
        :type git
        :url "http://www.dr-qubit.org/git/predictive.git"
        :build ("make")
+       :load-path ("." "latex" "texinfo")
        :features predictive)

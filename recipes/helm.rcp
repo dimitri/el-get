@@ -2,6 +2,8 @@
        :description "Emacs incremental and narrowing framework"
        :type github
        :pkgname "emacs-helm/helm"
-       ;; Helm has a lot of optional dependencies that would be required in
-       ;; order to compile it.
-       :compile nil)
+       :build ("make")
+       :build/darwin `(("make" ,(format "EMACS_COMMAND=%s" el-get-emacs)))
+       ;; Windows probably doesn't have make available so we fake it.
+       :build/windows-nt (with-temp-file "helm-autoload.el"
+                           nil))

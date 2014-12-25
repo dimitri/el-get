@@ -1,4 +1,4 @@
 (:name groovy-emacs-mode
-       :description "Emacs major mode for the Groovy programming language"
-       :type bzr
-       :url "http://bazaar.launchpad.net/~russel/groovy-emacs-mode/trunk/")
+       :description "A groovy major mode, grails minor mode, and a groovy inferior mode."
+       :type github
+       :pkgname "Groovy-Emacs-Modes/groovy-emacs-modes")

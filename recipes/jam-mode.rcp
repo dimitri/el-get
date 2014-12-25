@@ -1,0 +1,7 @@
+(:name jam-mode
+       :website "https://web.archive.org/web/20100211015821/http://www.tenfoot.org.uk/index.html"
+       :description "Font-lock support for Jam files."
+       :type http
+       :url "http://dev.gentoo.org/~ulm/distfiles/jam-mode-0.3.el.xz"
+       :build (("sh" "-c" "xz -cd jam-mode-0.3.el.xz > jam-mode.el"))
+       :compile "jam-mode.el")

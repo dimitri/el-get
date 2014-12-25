@@ -1,0 +1,7 @@
+(:name flycheck-haskell
+       :description "Flycheck: Cabal projects and sandboxes."
+       :type github
+       :pkgname "flycheck/flycheck-haskell"
+       :depends (flycheck haskell-mode dash f)
+       :prepare (eval-after-load 'flycheck
+                  '(add-hook 'flycheck-mode-hook #'flycheck-haskell-setup)))

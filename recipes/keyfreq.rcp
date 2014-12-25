@@ -1,0 +1,4 @@
+(:name keyfreq
+       :description "Track Emacs commands frequency"
+       :type github
+       :pkgname "dacap/keyfreq")

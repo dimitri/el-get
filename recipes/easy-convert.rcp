@@ -1,0 +1,6 @@
+(:name easy-convert
+       :description "Easy unit conversion in the minibuffer."
+       :type github
+       :pkgname "Frozenlock/easy-convert"
+       :prepare (progn
+                  (autoload 'easy-convert-interactive "easy-convert" nil t)))

@@ -1,0 +1,7 @@
+(:name company-cabal
+       :description "Company-mode completion back-end for haskell-cabal-mode "
+       :type github
+       :pkgname "iquiw/company-cabal"
+       :depends (company-mode cl-lib)
+       :post-init (eval-after-load 'company
+                    '(add-to-list 'company-backends 'company-cabal)))

@@ -26,6 +26,8 @@
          (name  (format "*bzr branch %s*" package))
          (ok    (format "Package %s installed" package))
          (ko    (format "Could not install package %s." package)))
+    (el-get-insecure-check package url)
+
     (el-get-start-process-list
      package
      `((:command-name ,name
@@ -44,6 +46,7 @@
          (name (format "*bzr pull %s*" package))
          (ok   (format "Pulled package %s." package))
          (ko   (format "Could not update package %s." package)))
+    (el-get-insecure-check package url)
 
     (el-get-start-process-list
      package

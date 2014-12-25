@@ -1,6 +1,0 @@
-(:name elixir-mix
-       :description "Integration of Elixir's building and deployment tool: mix into Emacs."
-       :type github
-       :features elixir-mix
-       :pkgname "tonini/elixir-mix.el"
-       :compile "elixir-mix.el")

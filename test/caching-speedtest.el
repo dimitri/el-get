@@ -23,7 +23,7 @@
       el-get-verbose t
       el-get-default-process-sync t
       el-get-notify-type 'message
-      el-get-generate-autoloads nil
+      el-get-use-autoloads nil
       el-get-byte-compile nil
       repetitions 50
       el-get-sources

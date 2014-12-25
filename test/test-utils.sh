@@ -52,6 +52,7 @@ emacs_with_test_home() {
 
   HOME="$TEST_HOME" "$EMACS" "${args[@]}" -L "$EL_GET_LIB_DIR" \
       -l "$EL_GET_LIB_DIR/el-get.el" -l "$EL_GET_LIB_DIR/test/test-setup.el" \
+      --eval '(setq enable-local-variables :safe)' \
       -l "$testfile"
   return $?
 }
@@ -72,7 +73,7 @@ test_recipe () {
         el-get-default-process-sync t
         pdef (el-get-read-recipe-file "$recipe_file")
         pname (plist-get pdef :name)
-        el-get-sources (list pdef))
+        el-get-sources (cons pdef (bound-and-true-p el-get-sources)))
   (el-get (quote sync) pname)
   (message "*** Initial install successful ***")
   (el-get-update pname)

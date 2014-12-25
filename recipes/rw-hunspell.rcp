@@ -1,0 +1,6 @@
+(:name rw-hunspell
+       :description "Special functions for Hunspell in ispell.el."
+       :website "http://marmalade-repo.org/packages/rw-hunspell"
+       :url "http://marmalade-repo.org/packages/rw-hunspell-0.2.el"
+       :type http
+       :prepare (autoload 'rw-hunspell-setup "rw-hunspell-0.2" nil t))

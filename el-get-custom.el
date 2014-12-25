@@ -33,7 +33,7 @@
 
 (defconst el-get-script (or load-file-name buffer-file-name))
 
-(defcustom el-get-dir (concat (file-name-as-directory user-emacs-directory) "el-get")
+(defcustom el-get-dir (expand-file-name "el-get" user-emacs-directory)
   "Path where to install the packages."
   :group 'el-get
   :type 'directory)
@@ -57,6 +57,14 @@
 Each hook is a unary function accepting a package"
   :group 'el-get
   :type 'hook)
+
+(defvar find-function-source-path)
+(defun el-get-add-load-path-to-ffsp (package)
+  "Adds a package's :load-path to `find-function-source-path'.
+Can be added to `el-get-post-init-hooks'."
+  (setq find-function-source-path
+        (append (el-get-load-path package)
+                (bound-and-true-p find-function-source-path))))
 
 (defcustom el-get-post-install-hooks nil
   "Hooks to run after installing a package.
@@ -87,6 +95,28 @@ recipe contains a :build rule (using a Makefile for example)."
   :group 'el-get
   :type 'boolean)
 
+(defcustom el-get-parallel-make-args
+  (let* ((call-prog
+          (lambda (name &rest args)
+            (with-temp-buffer
+              (when (ignore-errors
+                      (= (apply #'call-process name nil t nil args) 0))
+                (buffer-string)))))
+         (nprocs
+          (or (getenv "NUMBER_OF_PROCESSORS") ; Windows
+              (or (funcall call-prog "getconf" "_NPROCESSORS_ONLN") ; Linux
+                  (funcall call-prog "sysctl" "-n" "hw.ncpu") ; *BSD
+                  (funcall call-prog "/usr/sbin/psrinfo" "-p")) ; Solaris
+              "1")))
+    (list (format "-j%d" (1+ (string-to-number nprocs)))))
+  "List of args for recipes that invoke parallel make.
+
+Typically, this would be (\"-jN\"), where N is the number of
+processors + 1. To use in a recipe call make from `:build' like
+this: `((\"make\" ,@el-get-parallel-make-args))"
+  :group 'el-get
+  :type '(repeat string))
+
 (defcustom el-get-verbose nil
   "Non-nil means print messages describing progress of el-get even for fast operations."
   :group 'el-get
@@ -101,8 +131,10 @@ directly."
   :group 'el-get
   :type 'boolean)
 
-(defcustom el-get-generate-autoloads t
-  "Whether or not to generate autoloads for packages. Can be used
+(define-obsolete-variable-alias 'el-get-generate-autoloads 'el-get-use-autoloads
+  "June, 2014")
+(defcustom el-get-use-autoloads t
+  "Whether or not to use the generated autoloads for packages. Can be used
 to disable autoloads globally."
   :group 'el-get
   :type 'boolean)
@@ -202,13 +234,6 @@ definition provided by `el-get' recipes locally.
     `package.el' (the implementation of ELPA) is part of Emacs 24
     but needs an external recipe for previous major versions.
 
-:pkgname
-
-    The name of the package for the underlying package management
-    system (`apt-get', `fink' or `pacman', also supported by
-    `github' and `emacsmirror'), which can be different from the
-    Emacs package name.
-
 :type
 
     The type of the package, currently el-get offers support for
@@ -230,6 +255,11 @@ definition provided by `el-get' recipes locally.
     `http' types.
 
 :pkgname
+
+    The name of the package for the underlying package management
+    system (`apt-get', `fink' or `pacman', also supported by
+    `github' and `emacsmirror'), which can be different from the
+    Emacs package name.
 
     For the `github' type, this specifies the repo name to clone
     from Github. For example, for el-get, the package name would
@@ -580,5 +610,11 @@ where `<system-type>' is the value of `system-type' on
 platforms where this recipe should apply"
                       )
               ,el-get-build-recipe-body))))))
+
+;; TODO: this should be nil; change at the next major version bump
+(defcustom el-get-allow-insecure t
+  "Allow packages to be installed over insecure connections."
+  :group 'el-get
+  :type 'boolean)
 
 (provide 'el-get-custom)

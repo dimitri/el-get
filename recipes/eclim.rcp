@@ -4,6 +4,7 @@
        :type github
        :pkgname "senny/emacs-eclim"
        :features eclim
+       :depends (s)
        :post-init (progn
                     (setq eclim-auto-save t)
                     (global-eclim-mode -1)))

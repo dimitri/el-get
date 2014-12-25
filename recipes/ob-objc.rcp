@@ -1,0 +1,5 @@
+(:name ob-objc
+       :website "https://gist.github.com/tharpa/1492592"
+       :description "org-babel functions for Objective-C languages"
+       :type git
+       :url "https://gist.github.com/1492592.git")

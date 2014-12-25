@@ -2,9 +2,13 @@
        :description "Emacs highlighting using Ethan Schoonover's Solarized color scheme"
        :type github
        :pkgname "sellout/emacs-color-theme-solarized"
+       ;; This recipe works with both color-theme and custom-theme.
+       ;; We depend on `color-theme' always, for simplicity.
        :depends color-theme
        :prepare (progn
+                  ;; prepare for `custom-theme'
                   (add-to-list 'custom-theme-load-path default-directory)
+                  ;; prepare for `color-theme'
                   (autoload 'color-theme-solarized-light "color-theme-solarized"
                     "color-theme: solarized-light" t)
                   (autoload 'color-theme-solarized-dark "color-theme-solarized"

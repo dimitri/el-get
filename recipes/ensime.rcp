@@ -1,9 +1,8 @@
 (:name ensime
        :description "ENhanced Scala Interaction Mode for Emacs"
        :type github
-       :pkgname "aemoncannon/ensime"
-       :build '(("sbt" "update" "stage"))
-       :load-path ("./dist/elisp")
-       :post-init (progn
-                    (autoload 'ensime-scala-mode-hook "ensime")
-                    (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)))
+       :pkgname "ensime/ensime-emacs"
+       :depends (s dash popup auto-complete scala-mode2)
+       :prepare (progn
+                  (autoload 'ensime-scala-mode-hook "ensime")
+                  (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)))

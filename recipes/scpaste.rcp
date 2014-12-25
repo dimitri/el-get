@@ -1,0 +1,5 @@
+(:name scpaste
+       :website "http://www.emacswiki.org/cgi-bin/wiki/SCPaste"
+       :description "Paste to the web via scp."
+       :type git
+       :url "https://github.com/technomancy/scpaste.git")

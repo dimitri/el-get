@@ -1,0 +1,9 @@
+(:name pp-c-l
+       :description "Display Control-l characters in a pretty way"
+       :type emacsmirror
+       :prepare (progn
+                  (autoload 'pretty-control-l-mode "pp-c-l" nil t)
+                  (defun pretty-control-l-mode-on ()
+                    "Turn on `pretty-control-l-mode' mode."
+                    (interactive)
+                    (pretty-control-l-mode 1))))

@@ -1,0 +1,4 @@
+(:name quick-jump
+       :description "like bookmark in Emacs ,jump from one position to another quickly"
+       :type github
+       :pkgname "jixiuf/quick-jump")

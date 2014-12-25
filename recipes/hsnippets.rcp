@@ -1,0 +1,9 @@
+(:name hsnippets
+       :description "Emacs YASnippet snippets for Haskell."
+       :type github
+       :pkgname "polypus74/HSnippets"
+       :post-init (eval-after-load 'yasnippet
+                    `(progn
+                       (add-to-list 'yas-snippet-dirs ,default-directory t)
+                       (yas-load-directory ,default-directory)))
+       :depends yasnippet)

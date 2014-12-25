@@ -1,0 +1,5 @@
+(:name helm-haskell-import
+       :description "Port of Vim's unite-haskellimport."
+       :type github
+       :pkgname "syohex/emacs-helm-haskell-import"
+       :depends helm)

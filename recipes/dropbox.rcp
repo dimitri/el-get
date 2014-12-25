@@ -1,0 +1,7 @@
+(:name dropbox
+       :description "Emacs backend for dropbox."
+       :type github
+       :pkgname "pavpanchekha/dropbox.el"
+       :prepare (autoload 'dropbox-connect "dropbox"
+                  "Connect to Dropbox, hacking the \"/db:\" syntax into `find-file`." t)
+       :depends (oauth json))

@@ -1,0 +1,5 @@
+(:name mk-project
+       :description "A Emacs project library. Quickly switch between projects and perform operations on a per-project basis."
+       :type github
+       :pkgname "rakete/mk-project"
+       :depends xcscope)

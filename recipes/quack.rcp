@@ -1,5 +1,5 @@
 (:name quack
-       :description "Enhanced support for editing and running Scheme code"
+       :description "Enhanced support for editing and running Scheme code."
        :type http
        :url "http://www.neilvandyke.org/quack/quack.el"
-       :features (quack))
+       :post-init (eval-after-load 'scheme '(require 'quack)))

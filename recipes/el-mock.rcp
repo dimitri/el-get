@@ -1,0 +1,4 @@
+(:name el-mock
+       :description "Tiny Mock and Stub framework in Emacs Lisp."
+       :type github
+       :pkgname "rejeep/el-mock.el")

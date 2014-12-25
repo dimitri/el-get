@@ -1,0 +1,4 @@
+(:name prepaint
+       :description "Highlight C-style preprocessor directives in Emacs"
+       :type github
+       :pkgname "Lindydancer/prepaint")
