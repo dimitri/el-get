@@ -76,7 +76,9 @@
             (el-get-verbose t))             ; let's see it all
         (el-get-post-install "el-get"))
       (unless (boundp 'el-get-install-skip-emacswiki-recipes)
-        (el-get-emacswiki-build-local-recipes))
+        (condition-case err
+            (el-get-emacswiki-build-local-recipes)
+          (error (display-warning 'el-get (error-message-string err)))))
       (with-current-buffer buf
         (goto-char (point-max))
         (insert "\nCongrats, el-get is installed and ready to serve!")))))
