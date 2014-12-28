@@ -2,15 +2,8 @@
        :description "Allow Multiple Major Modes in a buffer"
        :type github
        :pkgname "purcell/mmm-mode"
-       :build `(("./autogen.sh")
+       :build `(("make" "maintainer-clean")
+                ("./autogen.sh")
                 ("./configure")
-                ;; Make a copy of the version.texi file which was checkout out
-                ;; from Git.  Although this file is under version control, it is
-                ;; changed during package building by make.
-                ("cp" "version.texi" "version.texi-orig")
-                ("make" ,(format "EMACS=%s" el-get-emacs))
-                ;; Restore the original, Git-checked-out version of the
-                ;; file version.texi.  This will prevent conflicts when the
-                ;; this file is updated upstream.
-                ("mv" "version.texi-orig" "version.texi"))
+                ("make" ,(format "EMACS=%s" el-get-emacs)))
        :info "mmm.info")
