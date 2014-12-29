@@ -1,0 +1,7 @@
+(:name jsx-mode
+       :description "Major mode for jsx"
+       :type elpa
+       :features jsx-mode
+       :pkgname "jsx-mode"
+       :post-init (progn 
+                    (add-to-list 'auto-mode-alist '("\\.jsx\\'" . jsx-mode))))
