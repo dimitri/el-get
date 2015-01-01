@@ -241,6 +241,26 @@ which defaults to installed, required and removed.  Example:
         def :minimum-emacs-version
       0)))
 
+(defun el-get-package-effective-library (package-or-source)
+  "Return the effective :library of PACKAGE-OR-SOURCE.
+
+See `el-get-sources' for details."
+  (let* ((source   (if (or (symbolp package-or-source) (stringp package-or-source))
+                       (el-get-package-def package-or-source)
+                     package-or-source))
+         (package  (if (or (symbolp package-or-source) (stringp package-or-source))
+                       (el-get-as-symbol package-or-source)
+                     (plist-get source :name)))
+         (pkgname  (plist-get source :pkgname))
+         (feats    (el-get-as-list (plist-get source :features))))
+    (or (plist-get source :library)
+        (car feats)
+        (if (memq (el-get-package-method source)
+                  '(github emacsmirror github-tar github-zip))
+            (cdr (el-get-github-parse-user-and-repo package))
+          pkgname)
+        package)))
+
 (defun el-get-version-to-list (version)
   "Convert VERSION to a standard version list.
 
