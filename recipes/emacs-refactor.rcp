@@ -1,0 +1,9 @@
+(:name emacs-refactor
+       :website "https://github.com/chrisbarrett/emacs-refactor"
+       :description "A refactoring system for Emacs.
+Emacs Refactor (EMR) provides language-specific refactoring support for Emacs.
+It has a simple declarative interface for easy extension."
+       :type github
+       :pkgname "chrisbarrett/emacs-refactor"
+       :depends (cl-lib s dash list-utils paredit popup projectile redshank)
+       )
