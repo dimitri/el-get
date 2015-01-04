@@ -1,7 +1,7 @@
 (:name scala-mode
        :description "Major mode for editing Scala code."
        :type git
-       :url "https://github.com/scala/scala-dist.git"
-       :build `(("make -C tool-support/src/emacs" ,(concat "ELISP_COMMAND=" el-get-emacs)))
-       :load-path ("tool-support/src/emacs")
+       :url "https://github.com/scala/scala-tool-support.git"
+       :build `(("make" "-C" "tool-support/emacs" "all" ,(concat "ELISP_COMMAND=" el-get-emacs)))
+       :load-path ("tool-support/emacs")
        :features scala-mode-auto)

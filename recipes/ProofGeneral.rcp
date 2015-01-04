@@ -5,6 +5,8 @@
        :options ("xzf")
        :url "http://proofgeneral.inf.ed.ac.uk/releases/ProofGeneral-4.2.tgz"
        :build ("cd ProofGeneral && make clean" "cd ProofGeneral && sed -i 's/setq byte-compile-error-on-warn t//' Makefile && make compile")
-       :build/darwin `("cd ProofGeneral && make clean" ,(concat "cd ProofGeneral && sed -i 's/setq byte-compile-error-on-warn t//' Makefile && make compile EMACS=" el-get-emacs))
+       :build/darwin `(("make" "-C" "ProofGeneral" "clean")
+                       ("sed" "-i" "s/setq byte-compile-error-on-warn t//" "ProofGeneral/Makefile")
+                       ("make" "-C" "ProofGeneral" "compile" ,(concat "EMACS=" el-get-emacs)))
        :load  ("ProofGeneral/generic/proof-site.el")
        :info "./ProofGeneral/doc/")
