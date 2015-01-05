@@ -339,8 +339,9 @@ definition provided by `el-get' recipes locally.
 
     When lazy, :library sets the file against which to register
     the :after and :post-init forms for `eval-after-load'.  It
-    defaults to the first :feature, :pkgname or :package, in that
-    order.  See also `el-get-eval-after-load'.
+    defaults to the first :feature, :pkgname (removing the
+    \"username\" part for github and emacsmirror) or :package,
+    in that order.  See also `el-get-eval-after-load'.
 
 :options
 
