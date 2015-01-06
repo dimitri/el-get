@@ -572,6 +572,11 @@ You can write initalization code after the package name.
   (global-set-key (kbd "C-x b") #'anything-for-files))
 @end example
 
+You can provide multiple initialization code for a single package by
+writing @code{el-get-bundle} macro call may times.  Each initialization
+code is evaluated when the corresponding @code{el-get-bundle} macro call
+is evaluated.
+
 Initialization code is automatically compiled when they are evaluated
 for the first time (after you modified the file enclosing the code) if
 @code{el-get-bundle-byte-compile} is non-nil.  The initialization code
