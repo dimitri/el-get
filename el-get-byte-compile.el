@@ -30,14 +30,15 @@
 ;;    has never been compiled before.
 ;;
 ;; so we just define our own
-(defun el-get-byte-compile-file (el)
+(defun el-get-byte-compile-file (el &optional warnings)
   "Byte compile the EL file, and skips unnecessary compilation.
 
 Specifically, if the compiled elc file already exists and is
 newer, then compilation is skipped."
   (let ((elc (concat (file-name-sans-extension el) ".elc"))
+        (byte-compile-warnings warnings)
         ;; Byte-compile runs emacs-lisp-mode-hook; disable it
-        emacs-lisp-mode-hook byte-compile-warnings)
+        emacs-lisp-mode-hook)
     (when (or (not (file-exists-p elc))
               (not (file-newer-than-file-p elc el)))
       (when (file-exists-p elc)

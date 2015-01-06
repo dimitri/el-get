@@ -188,11 +188,11 @@ Many `init-` packages are already available in El-Get.
 El-Get requires very little interaction with your init file when managing
 packages.  **Basic Usage** explains how to manage your packages without ever
 having to touch your init file again (meaning, *once El-Get is
-installed*). Please refer to the *Info* documentation provided with El-Get
-if you think you need to edit your init file (when sharing the same setup
-between several machines for example).
+installed*).  **Advanced Usage with Local Recipes** explains how to write
+your init file with explicitly specifying packages to install (when sharing
+the same setup between several machines for example).
 
-## Basic usage
+## Basic Usage
 
 ### Adding and removing packages
 
@@ -265,6 +265,67 @@ between several machines for example).
    Will prompt for the name of a package, with completion, then `find-file`
    its `recipe` file.  If the recipe does not exist, it will create a new
    recipe file with the appropriate name.
+
+## Advanced Usage with Local Recipes
+
+Placing `el-get-bundle` macro calls instead of `(el-get 'sync)` in your init
+file explicitly specify which package should be installed.  The macro
+accepts either a simple package name from defined recipes, a package name
+with a local recipe definition, a package with initialization code, or
+everything together.
+
+```lisp
+;; Basic setup
+
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+
+(unless (require 'el-get nil 'noerror)
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
+    (goto-char (point-max))
+    (eval-print-last-sexp)))
+
+(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
+
+;; Simple package names
+(el-get-bundle yasnippet)
+(el-get-bundle color-moccur)
+
+;; Locally defined recipe
+(el-get-bundle yaicomplete
+  :url "https://github.com/tarao/elisp.git"
+  :features yaicomplete)
+
+;; With initialization code
+(el-get-bundle zenburn-theme
+  :url "https://raw.githubusercontent.com/bbatsov/zenburn-emacs/master/zenburn-theme.el"
+  (load-theme 'zenburn t))
+
+```
+
+If a package with a local recipe definition has a recipe file, the
+definition overrides that in the recipe file.
+
+There are some syntactic sugars to specify a package name and a recipe source
+together.
+
+```lisp
+(el-get-bundle tarao/tab-group-el)
+;; equivalent to
+;; (el-get-bundle tab-group-el :type github :pkgname "tarao/tab-group-el")
+
+(el-get-bundle gist:4468816:pit
+;; equivalent to
+;; (el-get-bundle pit :type git :url "http://gist.github.com/4468816.git")
+
+(el-get-bundle elpa:undo-tree)
+;; equivalent to
+;; (el-get-bundle undo-tree :type elpa)
+```
+
+Please refer to the *Info* documentation provided with El-Get for the
+complete syntax of `el-get-bundle` and recipe definitions.
 
 # Conclusion
 
