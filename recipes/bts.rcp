@@ -3,4 +3,5 @@
        :description "A unified UI for various bug tracking systems."
        :type github
        :pkgname "aki2o/emacs-bts"
-       :depends (widget-mvc log4e yaxception dash s pos-tip))
+       :depends (widget-mvc log4e yaxception dash s pos-tip)
+       :compile "bts.el")
