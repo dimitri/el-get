@@ -603,8 +603,7 @@ compiled together with the initialization code, you can use
 "reference to free variable" warnings during the compilation.
 
 @example
-(el-get-bundle! with-eval-after-load-feature
-                :url "http://github.com/tarao/with-eval-after-load-feature-el.git")
+(el-get-bundle with-eval-after-load-feature)
 (el-get-bundle anything
   (global-set-key (kbd "C-x b") #'anything-for-files)
   (with-eval-after-load-feature 'anything
