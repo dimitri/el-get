@@ -587,8 +587,7 @@ together with the initialization code, you can use tarao's
 you will get "reference to free variable" warnings during the
 compilation.
 
-     (el-get-bundle! with-eval-after-load-feature
-                     :url "http://github.com/tarao/with-eval-after-load-feature-el.git")
+     (el-get-bundle with-eval-after-load-feature)
      (el-get-bundle anything
        (global-set-key (kbd "C-x b") #'anything-for-files)
        (with-eval-after-load-feature 'anything
@@ -1253,20 +1252,20 @@ Node: Basic Setup12694
 Node: The el-get function14005
 Node: Distributed Setup15281
 Node: The el-get-bundle macro18191
-Node: Setup Customization24226
-Node: User Init25644
-Node: Before and After properties26331
-Node: Initialization files27839
-Node: Recipes28492
-Node: Organizing recipes28967
-Node: Getting more recipes30598
-Node: Overriding package files31296
-Node: Authoring Recipes31679
-Node: Recipe format32294
-Node: Dependencies42083
-Node: Byte Compilation42429
-Node: Autoloads42995
-Node: Build44121
-Node: Recipe checker45093
+Node: Setup Customization24137
+Node: User Init25555
+Node: Before and After properties26242
+Node: Initialization files27750
+Node: Recipes28403
+Node: Organizing recipes28878
+Node: Getting more recipes30509
+Node: Overriding package files31207
+Node: Authoring Recipes31590
+Node: Recipe format32205
+Node: Dependencies41994
+Node: Byte Compilation42340
+Node: Autoloads42906
+Node: Build44032
+Node: Recipe checker45004
 
 End Tag Table
