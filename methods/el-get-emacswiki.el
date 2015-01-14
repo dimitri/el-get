@@ -99,18 +99,23 @@ into a local recipe file set"
         (coding-system-for-write 'utf-8))
     (unless (file-directory-p target-dir) (make-directory target-dir 'recursive))
     (loop
-     for (url package description) in (el-get-emacswiki-retrieve-package-list)
+     with wiki-list = (el-get-emacswiki-retrieve-package-list)
+     with progress = (make-progress-reporter "Generating Emacswiki recipes"
+                                             0 (length wiki-list))
+     for (url package description) in wiki-list
      for recipe = (replace-regexp-in-string "el$" "rcp" package)
      for rfile  = (expand-file-name recipe target-dir)
+     for recipe-num from 0
      unless (file-exists-p rfile)
      do (with-temp-file (expand-file-name rfile target-dir)
-          (message "%s: %s" package description)
+          (progress-reporter-update progress recipe-num)
           (insert
            (format
             "(:name %s\n:auto-generated t\n:type emacswiki\n:description \"%s\"\n:website \"%s\")\n"
             (file-name-sans-extension package) description url))
           ;; (encode-coding-region (point-min) (point-max) 'utf-8)
-          (indent-region (point-min) (point-max))))))
+          (indent-region (point-min) (point-max)))
+     finally (progress-reporter-done progress))))
 
 ;;;###autoload
 (defun el-get-emacswiki-refresh (&optional target-dir in-process)
