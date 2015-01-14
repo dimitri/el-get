@@ -1,0 +1,4 @@
+(:name widget-mvc
+       :description "MVC framework for the emacs widgets."
+       :type github
+       :pkgname "kiwanami/emacs-widget-mvc")
