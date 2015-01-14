@@ -28,7 +28,7 @@
           (string :tag "Other URL")))
 
 (defcustom el-get-emacswiki-elisp-file-list-url
-  "http://www.emacswiki.org/cgi-bin/wiki?action=elisp"
+  "http://www.emacswiki.org/emacs?action=elisp"
   "The emacswiki URL where to fetch a list of elisp files with descriptions.
 
 We get back list of filename space first line, and in general
@@ -64,25 +64,30 @@ filename.el ;;; filename.el --- description"
 ;;;
 (defun el-get-emacswiki-retrieve-package-list ()
   "return a list of (URL PACKAGE DESCRIPTION) from emacswiki"
-  (loop for line in
-        (split-string
-         (with-current-buffer
-             (url-retrieve-synchronously el-get-emacswiki-elisp-file-list-url)
-           ;; prune HTTP headers
-           (goto-char (point-min))
-           (unless (looking-at-p "^HTTP/[0-9]\\.[0-9] 2..")
-             (error "Failed to retrieve emacswiki package list: %s."
-                    (buffer-substring (point) (line-end-position))))
-           (re-search-forward "^$" nil 'move)
-           (forward-char)
-           (delete-region (point-min) (point))
-           (buffer-string))
-         "\n")
-        for filename = (substring line 0 (string-match " " line))
-        for description = (if (string-match "--?-? " line)
-                              (substring line (match-end 0)) "")
-        for url = (format "%s%s" el-get-emacswiki-base-url filename)
-        collect (list url filename description)))
+  (with-current-buffer
+      (url-retrieve-synchronously el-get-emacswiki-elisp-file-list-url)
+    ;; skip HTTP headers
+    (goto-char (point-min))
+    (unless (looking-at-p "^HTTP/[0-9]\\.[0-9] 2..")
+      (error "Failed to retrieve emacswiki package list: %s."
+             (buffer-substring (point) (line-end-position))))
+    (re-search-forward "^$" nil 'move)
+    (forward-char)
+    (loop
+     with wiki-regexp =
+     (concat "^\\([^[:space:]]+\\.el\\)" ; filename
+             "\\(?:" ; optional separators
+             " +\\(?:;;;+\\)? *\\(?:\\1\\)? *\\(?:---\\)? *\\(?:[-;]\\{4,\\}\\)?"
+             "\\(.*\\)\\)?$") ; description
+     while (not (eobp))
+     when (re-search-forward wiki-regexp (line-end-position) 'noerror)
+     collect (let* ((filename (match-string 1))
+                    (description (or (match-string 2) ""))
+                    (url (format "%s%s" el-get-emacswiki-base-url filename)))
+               (list url filename
+                     (replace-regexp-in-string "[[:space:]]*-[*]-.*\\'\\|;;;+\\'"
+                                               "" description)))
+     do (forward-line))))
 
 (defun el-get-emacswiki-build-local-recipes (&optional target-dir)
   "retrieve the index of elisp pages at emacswiki and turn them
