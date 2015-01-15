@@ -1,0 +1,5 @@
+(:name nim-mode
+       :description "Nim-mode for emacs"
+       :type http
+       :url "https://raw.githubusercontent.com/reactormonk/nim-mode/master/nim-mode.el"
+       :features nim-mode)
