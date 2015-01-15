@@ -1,0 +1,7 @@
+(:name arcadia
+ :description "Emacs integration with the Arcadia Unity project"
+ :type github
+ :features arcadia
+ :depends (dash)
+ :username "arcadia-unity"
+ :pkgname "arcadia-dot-el")
