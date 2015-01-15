@@ -1,0 +1,6 @@
+(:name math-symbol-lists
+       :description "Lists of Unicode mathematical symbols and latex commands"
+       :website "https://github.com/vspinu/math-symbol-lists"
+       :type github
+       :depends nil
+       :pkgname "vspinu/math-symbol-lists")
