@@ -1,0 +1,6 @@
+(:name company-math
+       :description "Completion back-ends for for math unicode symbols and latex tags"
+       :website "https://github.com/vspinu/company-math"
+       :type github
+       :depends (company-mode math-symbol-lists)
+       :pkgname "vspinu/company-math")
