@@ -1,0 +1,5 @@
+(:name tablist
+       :description "Extended Emacs tabulated-list-mode."
+       :website "https://github.com/politza/tablist"
+       :type github
+       :pkgname "politza/tablist")
