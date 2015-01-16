@@ -1,0 +1,6 @@
+(:name emmet-mode
+       :website "https://github.com/smihica/emmet-mode"
+       :description "Produce HTML from CSS-like selectors."
+       :type "github"
+       :branch "master"
+       :pkgname "smihica/emmet-mode")

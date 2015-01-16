@@ -1,0 +1,5 @@
+(:name julia-mode
+       :type http
+       :url "https://raw.githubusercontent.com/JuliaLang/julia/master/contrib/julia-mode.el"
+       :description "Edit jl files in emacs."
+       :features julia-mode)

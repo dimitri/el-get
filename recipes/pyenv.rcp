@@ -1,0 +1,5 @@
+(:name pyenv
+       :description "Emacs integration for pyenv"
+       :type github
+       :pkgname "shellbj/pyenv.el"
+       :compile "pyenv.el")

@@ -1,0 +1,12 @@
+(:name oneliner
+       :description "Shell-mode hooks for Oneliners."
+       :website "http://oneliner-elisp.sourceforge.net/"
+       :type cvs
+       :url ":pserver:anonymous@oneliner-elisp.cvs.sourceforge.net:/cvsroot/oneliner-elisp"
+       :module "src"
+       :prepare (progn
+                  (autoload 'oneliner "oneliner" nil t)
+                  (autoload 'oneliner-pipe-buffer-other-window "oneliner" nil t)
+                  (autoload 'oneliner-buffer-complete "oneliner" nil t)
+                  (autoload 'oneliner-sync-default-directory "oneliner" nil t)
+                  (autoload 'oneliner-send-cd "oneliner" nil t)))

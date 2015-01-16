@@ -1,0 +1,6 @@
+(:name motion-mode
+       :type github
+       :website "https://github.com/ainame/motion-mode"
+       :branch "master"
+       :description "Major mode for RubyMotion."
+       :pkgname "ainame/motion-mode")

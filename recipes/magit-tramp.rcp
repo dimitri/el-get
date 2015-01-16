@@ -1,0 +1,5 @@
+(:name magit-tramp
+       :description "Git method for Emacs Tramp"
+       :type github
+       :pkgname "magit/magit-tramp"
+       :depends (magit))

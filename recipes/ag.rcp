@@ -1,0 +1,5 @@
+(:name ag
+       :description "A simple ag frontend, loosely based on ack-and-half.el."
+       :type github
+       :pkgname "Wilfred/ag.el"
+       :depends (dash s))

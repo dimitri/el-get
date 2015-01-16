@@ -1,0 +1,5 @@
+(:name tabulated-list
+       :type github
+       :pkgname "sigma/tabulated-list.el"
+       :description "generic major mode for tabulated lists."
+       :website "http://github.com/sigma/tabulated-list.el")

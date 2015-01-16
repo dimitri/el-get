@@ -1,0 +1,5 @@
+(:name grizzl
+       :description
+       "Grizzl is a small utility library to be used in other Elisp code needing fuzzy search behaviour. It is optimized for large data sets, using a special type of lookup table and supporting incremental searches (searches where the result can be narrowed-down by only searching what is already matched)."
+       :type github
+       :pkgname "d11wtq/grizzl")

@@ -1,0 +1,4 @@
+(:name nodejs-repl
+       :description "Run Node.js REPL and communicate the process"
+       :type github
+       :pkgname "abicky/nodejs-repl.el")

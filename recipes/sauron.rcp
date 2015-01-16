@@ -1,7 +1,7 @@
 (:name sauron
-       :description
-       "enhanced tracking of the world inside and outside your emacs"
-       :website "https://github.com/djcb/sauron"
+       :description "A frame tracking events inside and outside your emacs buffers."
        :type github
        :pkgname "djcb/sauron"
-       :prepare (autoload 'sauron-start "sauron" "Start sauron." t))
+       :prepare (progn
+                  (autoload 'sauron-start "sauron" "Start sauron." t)
+                  (autoload 'sauron-toggle-hide-show "sauron" nil t)))

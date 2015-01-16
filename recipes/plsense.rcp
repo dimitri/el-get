@@ -1,0 +1,6 @@
+(:name plsense
+       :website "https://github.com/aki2o/emacs-plsense"
+       :description "interface for PlSense that provides omni completion for Perl."
+       :type github
+       :pkgname "aki2o/emacs-plsense"
+       :depends (auto-complete log4e yaxception))

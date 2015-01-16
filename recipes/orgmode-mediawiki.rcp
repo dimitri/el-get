@@ -1,0 +1,4 @@
+(:name orgmode-mediawiki
+       :description "MediaWiki export for org-mode"
+       :type github
+       :pkgname "craftkiller/orgmode-mediawiki")

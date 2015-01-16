@@ -1,0 +1,4 @@
+(:name term+
+       :description "A terminal emulator in Emacs (term.el enhancement: 256 colors, edit mode, logging, multiplexer and shell integration)"
+       :type github
+       :pkgname "tarao/term-plus-el")

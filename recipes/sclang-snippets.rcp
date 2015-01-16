@@ -1,0 +1,9 @@
+(:name sclang-snippets
+       :description "sclang snippets for emacs yasnippets"
+       :type github
+       :pkgname "ptrv/sclang-snippets"
+       :post-init (eval-after-load 'yasnippet
+                    `(progn
+                       (add-to-list 'yas-snippet-dirs ,default-directory t)
+                       (yas-load-directory ,default-directory)))
+       :depends yasnippet)

@@ -1,0 +1,6 @@
+(:name php-electric
+       :description "Electric submode for the php-mode"
+       :type http
+       :url "http://www.stcamp.net/share/php-electric.el"
+       :depends php-mode-improved
+       :features php-electric)

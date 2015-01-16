@@ -3,5 +3,6 @@
        :description "emacs interface for edict"
        :type hg
        :build '(("make" "-f" "Makefile.GNU"))
+       :build/berkeley-unix '(("gmake" "-f" "Makefile.GNU"))
        :url "https://bitbucket.org/xemacs/edict"
        :features edict)

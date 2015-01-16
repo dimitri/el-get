@@ -1,0 +1,10 @@
+(:name emacs-xcode
+       :description "Emacs-xcode allows you to use xcode specific features inside your favourite text editor Emacs."
+       :type github
+       :pkgname "senny/emacs-xcode"
+       :prepare (progn
+                  (autoload 'xcode/build-compile "xcode" nil t)
+                  (autoload 'xcode/build-list-sdks "xcode" nil t)
+                  (autoload 'xcode/toggle-header-and-source "xcode" nil t)
+                  (autoload 'bh-compile "xcode" nil t)
+                  (autoload 'bh-choose-header-mode "xcode" nil t)))

@@ -10,9 +10,10 @@
 ;; This file is NOT part of GNU Emacs.
 ;;
 ;; Install
-;;     Please see the README.asciidoc file from the same distribution
+;;     Please see the README.md file from the same distribution
 
 (require 'el-get-core)
+(require 'el-get-recipes)
 
 (defcustom el-get-apt-get (executable-find "apt-get")
   "The apt-get executable."
@@ -49,23 +50,34 @@
 ;; get the global value of package, which has been set before calling
 ;; run-hooks.
 ;;
+(defvar el-get-brew-base)
+(defvar el-get-fink-base)
+(defvar el-get-pacman-base)
 (defun el-get-dpkg-symlink (package)
   "ln -s /usr/share/emacs/site-lisp/package ~/.emacs.d/el-get/package"
   (let* ((pdir    (el-get-package-directory package))
-	 (method  (el-get-package-method package))
-	 (pname   (el-get-as-string package))
-	 (basedir (cond ((eq method 'apt-get) el-get-apt-get-base)
+         (method  (el-get-package-method package))
+         (pname   (el-get-as-string package))
+         (basedir (cond ((eq method 'apt-get) el-get-apt-get-base)
                         ((eq method 'brew)    el-get-brew-base)
-			((eq method 'fink)    el-get-fink-base)
-			((eq method 'pacman)  el-get-pacman-base)))
-	 (debdir  (concat (file-name-as-directory basedir) pname)))
-    (unless (file-directory-p pdir)
-      (shell-command
-       (concat "cd " el-get-dir " && ln -s " debdir  " " pname)))))
+                        ((eq method 'fink)    el-get-fink-base)
+                        ((eq method 'pacman)  el-get-pacman-base)))
+         (debdir  (concat (file-name-as-directory basedir) pname)))
+    (if (file-directory-p debdir)
+        (unless (file-directory-p pdir)
+          (shell-command
+           (concat "cd " el-get-dir " && ln -s " debdir  " " pname)))
+      (unless (file-directory-p pdir)
+       (lwarn '(el-get) :warning
+              "%s package `%s' created no elisp files!" method package)
+       ;; create an empty directory so we have somewhere to run
+       ;; el-get tasks like byte-compile in.
+       (make-directory pdir t)))))
 
 (defun el-get-dpkg-remove-symlink (package)
   "rm -f ~/.emacs.d/el-get/package"
-  (let* ((pdir    (el-get-package-directory package)))
+  (let* ((pdir    (el-get-package-directory package))
+         (pname   (el-get-as-string package)))
     (when (file-symlink-p pdir)
       (let ((command (concat "cd " el-get-dir " && rm -f " pname)))
         (message command)
@@ -86,27 +98,27 @@ password prompt."
     (with-current-buffer (process-buffer proc)
       ;; arrange to remember already seen content
       (unless (boundp 'el-get-sudo-password-process-filter-pos)
-	(make-local-variable 'el-get-sudo-password-process-filter-pos)
-	(setq el-get-sudo-password-process-filter-pos (point-min)))
+        (make-local-variable 'el-get-sudo-password-process-filter-pos)
+        (setq el-get-sudo-password-process-filter-pos (point-min)))
 
       ;; first, check about passwords
       (save-excursion
-	(goto-char (point-max))
-	(insert string)
-	;; redirect the subprocess sudo prompt to the user face, and answer it
-	(goto-char el-get-sudo-password-process-filter-pos)
-	(while (re-search-forward "password" nil t)
-	  (let* ((prompt (thing-at-point 'line))
-		 (pass   (read-passwd prompt)))
-	    (process-send-string proc (concat pass "\n")))))
+        (goto-char (point-max))
+        (insert string)
+        ;; redirect the subprocess sudo prompt to the user face, and answer it
+        (goto-char el-get-sudo-password-process-filter-pos)
+        (while (re-search-forward "password" nil t)
+          (let* ((prompt (thing-at-point 'line))
+                 (pass   (read-passwd prompt)))
+            (process-send-string proc (concat pass "\n")))))
 
       ;; second, check about "Do you want to continue [Y/n]?" prompts
       (save-excursion
-	(while (re-search-forward "Do you want to continue" nil t)
-	  (set-window-buffer (selected-window) (process-buffer proc))
-	  (let* ((prompt (thing-at-point 'line))
-		 (cont   (yes-or-no-p (concat prompt " "))))
-	    (process-send-string proc (concat (if cont "y" "n") "\n")))))
+        (while (re-search-forward "Do you want to continue" nil t)
+          (set-window-buffer (selected-window) (process-buffer proc))
+          (let* ((prompt (thing-at-point 'line))
+                 (cont   (yes-or-no-p (concat prompt " "))))
+            (process-send-string proc (concat (if cont "y" "n") "\n")))))
 
       (setq el-get-sudo-password-process-filter-pos (point-max)))))
 
@@ -115,18 +127,18 @@ password prompt."
   (let* ((source  (el-get-package-def package))
          (pkgname (or (plist-get source :pkgname) (el-get-as-string package)))
          (name (format "*apt-get install %s*" package))
-	 (ok   (format "Package %s installed." package))
-	 (ko   (format "Could not install package %s." package)))
+         (ok   (format "Package %s installed." package))
+         (ko   (format "Could not install package %s." package)))
 
     (el-get-start-process-list
      package
      `((:command-name ,name
-		      :buffer-name ,name
-		      :process-filter ,(function el-get-sudo-password-process-filter)
-		      :program ,(executable-find "sudo")
-		      :args ("-S" ,el-get-apt-get "install" ,pkgname)
-		      :message ,ok
-		      :error ,ko))
+                      :buffer-name ,name
+                      :process-filter ,(function el-get-sudo-password-process-filter)
+                      :program ,(executable-find "sudo")
+                      :args ("-S" ,el-get-apt-get "install" ,pkgname)
+                      :message ,ok
+                      :error ,ko))
      post-install-fun)))
 
 (defun el-get-apt-get-remove (package url post-remove-fun)
@@ -134,18 +146,18 @@ password prompt."
   (let* ((source  (el-get-package-def package))
          (pkgname (or (plist-get source :pkgname) (el-get-as-string package)))
          (name (format "*apt-get remove %s*" package))
-	 (ok   (format "Package %s removed." package))
-	 (ko   (format "Could not remove package %s." package)))
+         (ok   (format "Package %s removed." package))
+         (ko   (format "Could not remove package %s." package)))
 
     (el-get-start-process-list
      package
      `((:command-name ,name
-		      :buffer-name ,name
-		      :process-filter ,(function el-get-sudo-password-process-filter)
-		      :program ,(executable-find "sudo")
-		      :args ("-S" ,el-get-apt-get "remove" "-y" ,pkgname)
-		      :message ,ok
-		      :error ,ko))
+                      :buffer-name ,name
+                      :process-filter ,(function el-get-sudo-password-process-filter)
+                      :program ,(executable-find "sudo")
+                      :args ("-S" ,el-get-apt-get "remove" "-y" ,pkgname)
+                      :message ,ok
+                      :error ,ko))
      post-remove-fun)))
 
 (add-hook 'el-get-apt-get-remove-hook 'el-get-dpkg-remove-symlink)
@@ -154,7 +166,7 @@ password prompt."
   :install #'el-get-apt-get-install
   :update #'el-get-apt-get-install
   :remove #'el-get-apt-get-remove
-  :install-hook #'el-get-apt-get-install-hook
-  :remove-hook #'el-get-apt-get-remove-hook)
+  :install-hook 'el-get-apt-get-install-hook
+  :remove-hook 'el-get-apt-get-remove-hook)
 
 (provide 'el-get-apt-get)

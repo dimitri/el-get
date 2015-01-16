@@ -1,0 +1,5 @@
+(:name undohist
+       :type github
+       :pkgname "m2ym/undohist-el"
+       :description "Record and recover undo history"
+       :website "http://d.hatena.ne.jp/m2ym/20090707/1246933894")

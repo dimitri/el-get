@@ -1,0 +1,5 @@
+(:name projectile-rails
+       :type github
+       :pkgname "asok/projectile-rails"
+       :description "Minor mode for Rails projects based on projectile-mode"
+       :depends (projectile inflections inf-ruby f))

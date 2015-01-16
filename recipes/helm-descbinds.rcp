@@ -1,0 +1,7 @@
+(:name helm-descbinds
+       :type github
+       :pkgname "emacs-helm/helm-descbinds"
+       :description "Yet Another `describe-bindings' with `helm'."
+       :depends (helm)
+       :prepare (progn
+                  (autoload 'helm-descbinds-install "helm-descbinds")))

@@ -10,9 +10,10 @@
 ;; This file is NOT part of GNU Emacs.
 ;;
 ;; Install
-;;     Please see the README.asciidoc file from the same distribution
+;;     Please see the README.md file from the same distribution
 
 (require 'el-get-core)
+(require 'el-get-recipes)
 (require 'el-get-git)
 (require 'el-get-github)
 
@@ -20,7 +21,8 @@
   "Return a github-type source equivalent to emacsmirror PACKAGE."
   (assert (equal (el-get-package-type package) 'emacsmirror) nil
           "Need an emacsmirror package")
-  (append '(:type github :username "emacsmirror")
+  (append `(:type github
+                  :pkgname ,(format "emacsmirror/%s" package))
           (el-get-package-def package)))
 
 ;;

@@ -1,0 +1,5 @@
+(:name diff-hl
+       :type github
+       :pkgname "dgutov/diff-hl"
+       :description "Highlights uncommited changes in fringe"
+       :prepare (add-to-list 'custom-theme-load-path default-directory))

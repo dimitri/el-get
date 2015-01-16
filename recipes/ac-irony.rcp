@@ -1,0 +1,4 @@
+(:name ac-irony
+       :description "Auto-complete completion source for irony-mode."
+       :type github
+       :pkgname "Sarcasm/ac-irony")

@@ -1,0 +1,4 @@
+(:name nav-flash
+       :description "Briefly highlight the current line."
+       :type github
+       :pkgname "rolandwalker/nav-flash")

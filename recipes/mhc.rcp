@@ -1,0 +1,15 @@
+(:name mhc
+       :description "Message Harmonized Calendaring system."
+       :website "http://www.quickhack.net/mhc/"
+       :type github
+       :pkgname "yoshinari-nomura/mhc"
+       :info "doc/info/"
+       :build `(("make" "-C" "emacs" ,(concat "EMACS=" (shell-quote-argument
+                                                        el-get-emacs)))
+                ("ruby" "configure.rb" "--disable-palm" "--with-icondir"
+                 ,(expand-file-name "icons" (el-get-package-directory 'mhc)))
+                ("ruby" "make.rb"))
+       :load-path "emacs"
+       :prepare (let ((mhc-path (el-get-package-directory 'mhc)))
+                  (add-to-list 'exec-path (expand-file-name "bin" mhc-path))
+                  (setq mhc-icon-path (expand-file-name "icons" mhc-path))))

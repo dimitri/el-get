@@ -1,0 +1,5 @@
+(:name ac-geiser
+       :description "Emacs auto-complete backend for geiser"
+       :type github
+       :pkgname "xiaohanyu/ac-geiser"
+       :depends (auto-complete geiser))

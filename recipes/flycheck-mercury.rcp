@@ -1,0 +1,7 @@
+(:name flycheck-mercury
+       :description "Mercury support in Flycheck."
+       :type github
+       :pkgname "flycheck/flycheck-mercury"
+       :depends (flycheck s dash)
+       :prepare (eval-after-load 'flycheck
+                  '(require 'flycheck-mercury)))

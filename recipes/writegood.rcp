@@ -1,0 +1,4 @@
+(:name writegood
+       :type github
+       :description "Polish up poor writing on the fly."
+       :pkgname "bnbeckwith/writegood-mode")

@@ -1,0 +1,5 @@
+(:name hatena-diary-mode
+       :website "http://sourceforge.jp/projects/hatena-diary-el/"
+       :description "major mode for Hatena::Diary"
+       :type git
+       :url "git://git.sourceforge.jp/gitroot/hatena-diary-el/hatena-diary.git")

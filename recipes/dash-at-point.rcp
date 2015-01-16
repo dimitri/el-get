@@ -1,0 +1,4 @@
+(:name dash-at-point
+       :description "Search the word at point with Dash. Dash is an API Documentation Browser and Code Snippet Manager. dash-at-point make it easy to search the word at point with Dash."
+       :type github
+       :pkgname "stanaka/dash-at-point")

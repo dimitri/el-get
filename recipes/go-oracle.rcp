@@ -1,0 +1,10 @@
+(:name go-oracle
+       :description "Integration of the Go 'oracle' analysis tool into Emacs"
+       :type go
+       :pkgname "golang.org/x/tools/cmd/oracle"
+       :load-path "src/golang.org/x/tools/cmd/oracle"
+       :prepare (progn
+                  (autoload 'go-oracle-mode "oracle" nil t)
+                  (add-hook 'go-mode-hook 'go-oracle-mode))
+       :post-init (progn
+                    (setq go-oracle-command (concat default-directory "bin/oracle"))))

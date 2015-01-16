@@ -1,9 +1,5 @@
 (:name cmake-mode
-       :website "http://www.itk.org/Wiki/CMake_Editors_Support"
+       :website "http://www.itk.org/Wiki/CMake/Editors/Emacs"
        :description "Provides syntax highlighting and indentation for CMakeLists.txt and *.cmake source files."
        :type http
-       :url "http://www.cmake.org/CMakeDocs/cmake-mode.el"
-       :features "cmake-mode"
-       :post-init (progn
-                    (add-to-list 'auto-mode-alist '("CMakeLists\\.txt\\'" . cmake-mode))
-                    (add-to-list 'auto-mode-alist '("\\.cmake\\'" . cmake-mode))))
+       :url "http://cmake.org/gitweb?p=cmake.git;a=blob_plain;hb=master;f=Auxiliary/cmake-mode.el")

@@ -1,4 +1,4 @@
 (:name todotxt
        :description "Todo.txt client for Emacs"
-       :type git
-       :url "https://github.com/rpdillon/todotxt.el.git")
+       :type github
+       :pkgname "rpdillon/todotxt.el")

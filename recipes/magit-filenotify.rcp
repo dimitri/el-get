@@ -1,0 +1,7 @@
+(:name magit-filenotify
+       :description "Refresh status buffer when git tree changes.  Warning: Requires an unreleased
+test version of Emacs with file-notify support!"
+                                        ;       :minimum-emacs-version "24.4" TODO when Emacs 24.4 is released.
+       :type github
+       :pkgname "magit/magit-filenotify"
+       :depends (magit))

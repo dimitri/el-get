@@ -1,0 +1,5 @@
+(:name outlined-elisp-mode
+       :description "outline-minor-mode settings for emacs lisp."
+       :website "https://github.com/zk-phi/outlined-elisp-mode"
+       :type github
+       :pkgname "zk-phi/outlined-elisp-mode")

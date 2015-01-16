@@ -1,0 +1,5 @@
+(:name leuven-theme
+       :description "Elegant color theme for light backgrounds, with built-in style for many components such as Org-mode, Gnus, Dired+ and EDiff."
+       :type github
+       :pkgname "fniessen/emacs-leuven-theme"
+       :prepare (add-to-list (quote custom-theme-load-path) default-directory))

@@ -1,0 +1,5 @@
+(:name sln-mode
+       :description "A major-mode for msvc's *.sln files."
+       :type github
+       :pkgname "sensorflo/sln-mode"
+       :depends (font-lock-ext))

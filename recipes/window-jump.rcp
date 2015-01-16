@@ -1,0 +1,8 @@
+(:name window-jump
+       :description "Move left/right/up/down through your windows."
+       :website "https://github.com/chumpage/chumpy-windows"
+       :type builtin
+       ;; This is a "pseudo" package.  Actual elisp file is installed
+       ;; by the package chumpy-windows.
+       ;; See ./chumpy-windows.rcp and issue #1034.
+       :depends (chumpy-windows))

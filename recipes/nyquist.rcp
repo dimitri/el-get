@@ -1,0 +1,7 @@
+(:name nyquist
+			 :description "Some interfaces for interacting interacting with the nyquist interpreter"
+			 :website "https://github.com/pft/elisp-assorted"
+			 :type builtin
+			 ;; This is a "pseudo" package. Actual elisp file is installed
+			 ;; by the package elisp-assorted
+			 :depends (elisp-assorted))

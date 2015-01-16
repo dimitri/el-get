@@ -1,0 +1,4 @@
+(:name org-s5
+       :type github
+       :pkgname "eschulte/org-S5"
+       :description "Org-mode html export of S5 slideshow presentations")

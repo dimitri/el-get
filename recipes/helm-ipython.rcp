@@ -1,0 +1,6 @@
+(:name helm-ipython
+       :type github
+       :pkgname "emacs-helm/helm-ipython"
+       :description "Python completion using ipython and helm."
+       :features helm-ipython
+       :depends (helm python))

@@ -1,0 +1,5 @@
+(:name fakir
+       :description "Functions and macros to fake bit of Emacs core libraries, like files and processes."
+       :type github
+       :pkgname "nicferrier/emacs-fakir"
+       :depends (noflet dash))

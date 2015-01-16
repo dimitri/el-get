@@ -1,0 +1,5 @@
+(:name psci
+       :description "psci major mode - purescript repl major mode"
+       :type github
+       :pkgname "ardumont/emacs-psci"
+       :depends (purescript-mode dash s f deferred))

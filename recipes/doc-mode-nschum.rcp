@@ -1,0 +1,6 @@
+(:name doc-mode-nschum
+       :description "Convenient editing of in-code documentation."
+       :website "http://nschum.de/src/emacs/doc-mode/"
+       :type github
+       :pkgname "nschum/doc-mode"
+       :depends (cedet))

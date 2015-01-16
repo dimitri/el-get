@@ -1,0 +1,4 @@
+(:name ezbl
+       :description "Ezbl - Emacs interface for Uzbl (uzbl.org) This package creates an Emacs interface for Uzbl, allowing you to control Uzbl from within Emacs."
+       :type github
+       :pkgname "haxney/ezbl")

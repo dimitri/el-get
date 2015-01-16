@@ -1,0 +1,4 @@
+(:name door-gnus
+       :type github
+       :description "Hack to enter, bury, unbury gnus."
+       :pkgname "yyr/door-gnus")

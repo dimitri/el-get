@@ -1,0 +1,7 @@
+(:name bitlbee
+       :description "Help get Bitlbee (http://www.bitlbee.org) up and running."
+       :type http
+       :url "https://github.com/pjones/elisp/raw/master/lisp/bitlbee.el"
+       :prepare (progn
+                  (autoload 'bitlbee-running-p "bitlbee")
+                  (autoload 'bitlbee-start "bitlbee" nil t)))

@@ -1,0 +1,6 @@
+(:name pyvenv
+       :website "https://github.com/jorgenschaefer/pyvenv"
+       :description "Python virtual environment interface for Emacs"
+       :type github
+       :pkgname "jorgenschaefer/pyvenv"
+       :post-init (el-get-envpath-prepend "PYTHONPATH" default-directory))

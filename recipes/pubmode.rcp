@@ -1,0 +1,7 @@
+(:name pubmode
+       :type http-tar
+       :website "http://pubmode.sf.net"
+       :options ("xzf")
+       :description "A PubMed interface for Emacs"
+       :url "http://sourceforge.net/projects/pubmode/files/pubmode/PubMode-0.1.0/PubMode-0.1.0.tar.gz/download"
+       :load-path ("lisp"))

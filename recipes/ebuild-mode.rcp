@@ -1,0 +1,6 @@
+(:name ebuild-mode
+       :description "Gentoo ebuild and eclass mode."
+       :website "http://wiki.gentoo.org/wiki/Project:Emacs"
+       :type http-tar
+       :options ("xJf")
+       :url "http://dev.gentoo.org/~ulm/emacs/ebuild-mode-1.26.tar.xz")

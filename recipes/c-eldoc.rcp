@@ -1,0 +1,5 @@
+(:name c-eldoc
+       :description "eldoc-mode plugin for C source code"
+       :type github
+       :pkgname "nflath/c-eldoc"
+       :post-init (add-hook 'c-mode-hook 'c-turn-on-eldoc-mode))

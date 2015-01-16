@@ -1,0 +1,5 @@
+(:name loop
+       :website "https://github.com/Wilfred/loop.el"
+       :description "friendly imperative loop structures for Emacs lisp."
+       :type github
+       :pkgname "Wilfred/loop.el")

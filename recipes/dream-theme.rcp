@@ -1,0 +1,7 @@
+(:name dream-theme
+       :description "emacs color theme; inspired by sinburn/zenburn, but a bit darker; optimized for long coding sessions"
+       :website "https://github.com/djcb/dream-theme"
+       :type github
+       :pkgname "djcb/dream-theme"
+       :prepare (add-to-list 'custom-theme-load-path
+                             default-directory))

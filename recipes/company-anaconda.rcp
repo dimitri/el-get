@@ -1,0 +1,7 @@
+(:name company-anaconda
+       :description "Anaconda backend for company-mode."
+       :type github
+       :pkgname "proofit404/company-anaconda"
+       :depends (anaconda-mode company-mode)
+       :post-init (eval-after-load 'company
+                    '(add-to-list 'company-backends 'company-anaconda)))

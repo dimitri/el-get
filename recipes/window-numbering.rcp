@@ -1,0 +1,5 @@
+(:name window-numbering
+       :website "http://nschum.de/src/emacs/window-numbering-mode/"
+       :description "Assigns numbers to Emacs windows to allow easy window navigation."
+       :type github
+       :pkgname "nschum/window-numbering.el")

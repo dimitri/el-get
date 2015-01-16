@@ -1,0 +1,5 @@
+(:name calc-inline
+       :description "Evaluate calc-expression within ordinary text."
+       :type emacswiki
+       :prepare (progn
+                  (autoload 'calc-inline-mode "calc-inline" nil t)))

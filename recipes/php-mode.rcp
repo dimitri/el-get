@@ -1,5 +1,5 @@
 (:name php-mode
-       :description "Major mode for editing PHP code"
-       :type svn
-       :url "http://php-mode.svn.sourceforge.net/svnroot/php-mode/trunk/php-mode-src"
-       :features php-mode)
+       :description "A PHP mode for GNU Emacs "
+       :type github
+       :pkgname  "ejmr/php-mode"
+       :website "https://github.com/ejmr/php-mode")

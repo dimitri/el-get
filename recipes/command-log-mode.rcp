@@ -1,0 +1,5 @@
+(:name command-log-mode
+       :type github
+       :description "Show event history and command history of some or all buffers."
+       :pkgname "lewang/command-log-mode"
+       :features command-log-mode)

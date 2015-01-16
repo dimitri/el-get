@@ -1,0 +1,5 @@
+(:name flymake-cursor
+       :type github
+       :pkgname "illusori/emacs-flymake-cursor"
+       :description "displays flymake error msg in minibuffer after delay (illusori/github)"
+       :website "http://github.com/illusori/emacs-flymake-cursor")

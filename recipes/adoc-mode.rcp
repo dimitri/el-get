@@ -1,7 +1,6 @@
 (:name adoc-mode
-       :website "http://code.google.com/p/adoc-mode/"
+       :website "https://github.com/sensorflo/adoc-mode/wiki"
        :description "A major-mode for editing AsciiDoc files in Emacs."
-       :type http
-       :url "http://sensorflo-emacs.googlecode.com/svn/trunk/adoc-mode/adoc-mode.el"
-       :features "adoc-mode"
-       :compile nil)
+       :type github
+       :pkgname "sensorflo/adoc-mode"
+       :depends markup-faces)

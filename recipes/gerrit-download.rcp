@@ -1,0 +1,5 @@
+(:name gerrit-download
+       :description "Show Gerrit reviews in a diff buffer."
+       :type github
+       :pkgname "chmouel/gerrit-download.el"
+       :depends (magit))

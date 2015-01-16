@@ -1,0 +1,4 @@
+(:name load-directory
+       :description "load all the .el or .elc files in a directory"
+       :type http
+       :url "http://www.cb1.com/~john/computing/emacs/lisp/basics/load-directory.el")

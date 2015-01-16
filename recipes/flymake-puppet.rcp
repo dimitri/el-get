@@ -1,0 +1,7 @@
+(:name flymake-puppet
+       :type github
+       :pkgname "benprew/flymake-puppet"
+       :description "Emacs flymake integration for puppet-lint"
+       :Website "https://github.com/benprew/flymake-puppet"
+       :depends (flymake-easy)
+       :post-init (add-hook 'puppet-mode-hook 'flymake-puppet-load))

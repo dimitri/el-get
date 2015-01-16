@@ -1,0 +1,6 @@
+(:name helm-gist
+       :type github
+       :pkgname "emacs-helm/helm-gist"
+       :description "Helm-sources and some utilities for gist."
+       :features helm-gist
+       :depends (helm gist))

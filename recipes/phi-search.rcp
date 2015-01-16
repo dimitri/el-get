@@ -1,0 +1,4 @@
+(:name phi-search
+       :description "An inferior isearch, compatible with multiple-cursors."
+       :type github
+       :pkgname "zk-phi/phi-search")

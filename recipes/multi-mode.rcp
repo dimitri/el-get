@@ -1,0 +1,5 @@
+(:name multi-mode
+       :website "http://www.loveshack.ukfsn.org/emacs/"
+       :description "support for multiple major modes"
+       :type http
+       :url "http://www.loveshack.ukfsn.org/emacs/multi-mode.el")

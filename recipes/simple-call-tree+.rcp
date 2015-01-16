@@ -1,0 +1,4 @@
+(:name simple-call-tree+
+       :description "emacs lisp code for displaying a simple call tree."
+       :type github
+       :pkgname "vapniks/simple-call-tree-ext")

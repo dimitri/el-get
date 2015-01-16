@@ -1,0 +1,7 @@
+(:name pretty-mode-plus
+       :description "Redisplay parts of the buffer as pretty symbols."
+       :type github
+       :pkgname "akatov/pretty-mode"
+       :prepare (progn
+                  (autoload 'turn-on-pretty-mode "pretty-mode")
+                  (autoload 'global-pretty-mode "pretty-mode")))

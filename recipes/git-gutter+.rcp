@@ -1,0 +1,4 @@
+(:name git-gutter+
+       :description "View, stage and revert Git changes straight from the buffer."
+       :type github
+       :pkgname "nonsequitur/git-gutter-plus")

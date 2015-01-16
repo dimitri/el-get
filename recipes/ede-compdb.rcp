@@ -1,0 +1,6 @@
+(:name ede-compdb
+       :website "https://github.com/randomphrase/ede-compdb"
+       :description "Emacs Development Environment (EDE) wrapper for Compilation Database projects."
+       :type github
+       :pkgname "randomphrase/ede-compdb"
+       :depends (cedet json))

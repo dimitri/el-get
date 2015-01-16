@@ -1,0 +1,5 @@
+(:name elnode-org
+       :description "Elnode org-mode support."
+       :depends (elnode)
+       :type github
+       :pkgname "nicferrier/elnode-org")

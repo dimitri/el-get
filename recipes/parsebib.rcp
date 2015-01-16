@@ -1,0 +1,5 @@
+(:name parsebib
+       :type github
+       :website "https://github.com/joostkremers/parsebib"
+       :description "Elisp library for reading .bib files"
+       :pkgname "joostkremers/parsebib")

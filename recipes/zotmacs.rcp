@@ -1,0 +1,6 @@
+(:name zotmacs
+       :website "https://bitbucket.org/egh/zotxt-emacs"
+       :description "Org mode integration with Zotero"
+       :url "https://bitbucket.org/egh/zotxt-emacs"
+       :load-path "elisp"
+       :type hg)

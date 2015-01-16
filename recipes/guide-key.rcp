@@ -1,0 +1,5 @@
+(:name guide-key
+       :description "Guide the following key bindings automatically and dynamically."
+       :type github
+       :pkgname "kai2nenobu/guide-key"
+       :depends (dash popwin s))

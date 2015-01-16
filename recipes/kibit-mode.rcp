@@ -1,0 +1,5 @@
+(:name kibit-mode
+       :description "kibit-mode is a combination of a thin wrapper around the excellent kibit tool, and a minor for Clojure buffers that will help you find ways to make your Clojure code more idiomatic."
+       :type github
+       :pkgname "aredington/kibit-mode"
+       :post-init (add-hook 'clojure-mode-hook 'kibit-mode))

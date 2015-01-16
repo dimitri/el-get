@@ -1,0 +1,5 @@
+(:name gtags
+       :type http
+       :url "http://cvs.savannah.gnu.org/viewvc/*checkout*/global/global/gtags.el"
+       :description "gtags facility for Emacs"
+       :website "http://www.gnu.org/software/global/")

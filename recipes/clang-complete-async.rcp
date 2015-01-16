@@ -1,0 +1,11 @@
+(:name clang-complete-async
+       :website "https://github.com/Golevka/emacs-clang-complete-async"
+       :description "An emacs extension to complete C and C++ code using libclang."
+       :type github
+       :pkgname "Golevka/emacs-clang-complete-async"
+       :build '(("make"))
+       :depends auto-complete
+       :features auto-complete-clang-async
+       :prepare (setq ac-clang-complete-executable
+                      (expand-file-name
+                       (concat (el-get-package-directory "clang-complete-async") "clang-complete"))))

@@ -1,0 +1,5 @@
+(:name gmail-message-mode
+       :description "A major-mode for editing gmail messages using markdown syntax."
+       :type github
+       :pkgname "Bruce-Connor/gmail-mode"
+       :depends (ham-mode))

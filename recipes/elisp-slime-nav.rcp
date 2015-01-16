@@ -1,0 +1,5 @@
+(:name elisp-slime-nav
+       :type github
+       :pkgname "purcell/elisp-slime-nav"
+       :description "Slime-style navigation for Emacs Lisp"
+       :prepare (add-hook 'emacs-lisp-mode-hook 'turn-on-elisp-slime-nav-mode))

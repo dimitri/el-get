@@ -1,4 +1,6 @@
 (:name o-blog
        :type github
        :description "Stand alone org-mode blog exporter."
-       :pkgname "renard/o-blog")
+       :load-path ("lisp")
+       :pkgname "renard/o-blog"
+       :depends htmlize)

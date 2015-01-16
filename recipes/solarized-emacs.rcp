@@ -1,0 +1,9 @@
+(:name solarized-emacs
+       :description "Solarized for Emacs is an Emacs port of the Solarized theme for vim, developed by Ethan Schoonover."
+       :website "https://github.com/bbatsov/solarized-emacs"
+       :minimum-emacs-version "24"
+       :type github
+       :pkgname "bbatsov/solarized-emacs"
+       :depends dash
+       :prepare (add-to-list 'custom-theme-load-path
+                             default-directory))

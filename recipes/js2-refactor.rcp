@@ -1,0 +1,6 @@
+(:name js2-refactor
+       :description "This is a collection of small refactoring functions to further the idea of a JavaScript IDE in Emacs that started with js2-mode."
+       :type github
+       :pkgname "magnars/js2-refactor.el"
+       :post-init (add-hook 'js2-mode-hook (lambda () (require 'js2-refactor)))
+       :depends (js2-mode dash s multiple-cursors))

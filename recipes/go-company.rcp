@@ -1,0 +1,9 @@
+(:name go-company
+       :description "An autocompletion daemon for the Go programming language"
+       :type go
+       :pkgname "github.com/nsf/gocode"
+       :depends (company-mode go-mode)
+       :load-path ("src/github.com/nsf/gocode/emacs-company")
+       :prepare (eval-after-load 'go-mode
+                  '(require 'company-go))
+       :post-init (add-to-list 'exec-path (concat default-directory "bin")))

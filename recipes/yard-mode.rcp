@@ -1,0 +1,4 @@
+(:name yard-mode
+       :description "Yet another Ruby Documentation mode"
+       :type github
+       :pkgname "pd/yard-mode.el")

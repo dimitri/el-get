@@ -1,0 +1,5 @@
+(:name with-eval-after-load-feature
+       :website "https://github.com/tarao/with-eval-after-load-feature-el"
+       :description "Eval after loading feature with fine compilation"
+       :type github
+       :pkgname "tarao/with-eval-after-load-feature-el")

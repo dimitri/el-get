@@ -1,0 +1,5 @@
+(:name showcss-mode
+       :description "Show CSS is a minor mode for emacs."
+       :type github
+       :pkgname "smmcg/showcss-mode"
+       :depends (s dom))

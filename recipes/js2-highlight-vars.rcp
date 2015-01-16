@@ -1,0 +1,5 @@
+(:name js2-highlight-vars
+       :description "Variable occurrencies (of the variable under cursor) highlighting for js2 mode"
+       :type http
+       :url "http://mihai.bazon.net/projects/editing-javascript-with-emacs-js2-mode/js2-highlight-vars-mode/js2-highlight-vars.el"
+       :depends js2-mode)

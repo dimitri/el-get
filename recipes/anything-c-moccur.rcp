@@ -1,0 +1,6 @@
+(:name anything-c-moccur
+       :type svn
+       :url "http://svn.coderepos.org/share/lang/elisp/anything-c-moccur/trunk/"
+       :depends (anything color-moccur)
+       :description "anything interface for color-moccur"
+       :website "http://d.hatena.ne.jp/IMAKADO/20080724/1216882563")

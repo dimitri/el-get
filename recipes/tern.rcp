@@ -1,0 +1,8 @@
+(:name tern
+       :description "A JavaScript code analyzer for deep, cross-editor language support."
+       :type github
+       :pkgname "marijnh/tern"
+       :build '(("npm" "--production" "install"))
+       :prepare (add-to-list 'auto-mode-alist
+                             '("\\.tern-\\(project\\|\\config\\)\\'" . json-mode))
+       :load-path ("emacs"))

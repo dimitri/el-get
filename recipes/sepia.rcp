@@ -1,0 +1,7 @@
+(:name sepia
+       :website "http://search.cpan.org/dist/Sepia/"
+       :description "Simple Emacs-Perl InterAction: ugly, yet effective."
+       :type git
+       :url "http://repo.or.cz/sepia.git"
+       ;; Miscompiles due to optional dependencies (snippet emacs-w3m).
+       :compile nil)

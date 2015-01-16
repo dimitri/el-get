@@ -1,0 +1,8 @@
+(:name ttcn-mode
+       :website "https://github.com/dholm/ttcn-el"
+       :description "A TTCN major mode"
+       :type github
+       :pkgname "dholm/ttcn-el"
+       :post-init (progn
+                    (add-to-list 'auto-mode-alist '("\\.mp$" . ttcn-mode))
+                    (add-to-list 'auto-mode-alist '("\\.ttcn" . ttcn-3-mode))))

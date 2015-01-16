@@ -1,0 +1,3 @@
+(:name lacarte
+       :description "Execute menu items as commands, with completion."
+       :type emacsmirror)

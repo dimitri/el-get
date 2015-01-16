@@ -1,0 +1,6 @@
+(:name sublime-themes
+       :description "color themes"
+       :type github
+       :prepare (add-to-list 'custom-theme-load-path
+                             (concat default-directory "themes"))
+       :pkgname "owainlewis/emacs-color-themes")

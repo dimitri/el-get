@@ -1,0 +1,4 @@
+(:name darken-text
+       :type github
+       :description "Darken font-faced text in emacs."
+       :pkgname "renard/darken-text")

@@ -1,0 +1,12 @@
+(:name vc-clearcase
+       :description "Support for the ClearCase version control system under GNU Emacs."
+       :type hg
+       :url "https://code.google.com/p/vc-clearcase/"
+       :build `((,el-get-emacs "-batch" "-q" "-no-site-file"
+                               "-l" ,(expand-file-name "admin/build.el"
+                                                       (el-get-package-directory
+                                                        'vc-clearcase))
+                               "--eval" ,(concat "(clearcase-build-package \""
+                                                 (el-get-package-directory
+                                                  'vc-clearcase) "\")")))
+       :load ("vc-clearcase-auto.el"))

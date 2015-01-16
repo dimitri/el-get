@@ -1,0 +1,5 @@
+(:name web
+       :description "A useful HTTP client in EmacsLisp"
+       :depends fakir
+       :type github
+       :pkgname "nicferrier/emacs-web")

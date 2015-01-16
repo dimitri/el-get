@@ -3,6 +3,5 @@
        :website "http://ebib.sourceforge.net/index.html"
        :description "Application to manage BibTeX database"
        :pkgname "joostkremers/ebib"
-       :shallow nil
-       :load-path ("src")
-       :autoloads t)
+       :depends (parsebib)
+       :shallow nil)

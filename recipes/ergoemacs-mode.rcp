@@ -1,0 +1,5 @@
+(:name ergoemacs-mode
+       :website "http://ergoemacs.org"
+       :description "ErgoEmacs keybindings improves GNU Emacs for people who did not grew up with Emacs"
+       :type github
+       :pkgname "ergoemacs/ergoemacs-mode")

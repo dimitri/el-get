@@ -1,0 +1,5 @@
+(:name org-impress-js
+       :description "impress.js export for Org-mode"
+       :type github
+       :pkgname "kinjo/org-impress-js.el"
+       :features org-impress-js)

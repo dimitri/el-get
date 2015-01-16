@@ -1,0 +1,5 @@
+(:name magit-gh-pulls
+       :description "Magit plugin for dealing with GitHub pull requests"
+       :type github
+       :pkgname "sigma/magit-gh-pulls"
+       :depends (magit gh))

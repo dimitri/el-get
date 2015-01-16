@@ -5,13 +5,17 @@
 (require 'cl)
 (let* ((debug-on-error t)
        (el-get-verbose t)
-       ;; Just need to install something
-       (pkg 'ergoemacs-keybindings)
-       (checksum "0ee16b3a7096a93c923cb3eea3c72838f015db7f")
+       ;; Just need to install something hg-method
+       (pkg 'ahg)
+       ;; https://bitbucket.org/agriggio/ahg/changeset/c732a739a7a1/raw/
+       (checksum "c732a739a7a1505d5922e94e4368b656dccddf11")
        (el-get-sources
         (list
          `(:name ,pkg
                  :checksum ,checksum))))
+  (assert (eq (el-get-package-type pkg) 'hg) nil
+          "Package %s is supposed to be an hg type package but is actually %s. You should edit this test to use another package."
+          pkg (el-get-package-type pkg))
   (el-get 'sync pkg)
   (assert (el-get-package-is-installed pkg))
   (let (installed-checksum)

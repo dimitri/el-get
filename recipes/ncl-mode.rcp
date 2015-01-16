@@ -4,4 +4,4 @@
        :description "ncl-mode and other goodies for editing Ncar Command
        line Language(NCL) files."
        :pkgname "yyr/ncl-mode"
-       :autoloads t)
+       :features ncl-mode-load)

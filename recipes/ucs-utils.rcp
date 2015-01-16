@@ -1,0 +1,5 @@
+(:name ucs-utils
+       :depends (pcache persistent-soft list-utils)
+       :type github
+       :description "Utilities for Unicode characters in Emacs"
+       :pkgname "rolandwalker/ucs-utils")

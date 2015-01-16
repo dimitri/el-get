@@ -1,4 +1,8 @@
 (:name cisco-router-mode
        :description "Major mode for editing Cisco router configuration files"
        :type emacswiki
-       :features cisco-router-mode)
+       :prepare
+       (progn
+         (autoload 'cisco-router-mode "cisco-router-mode"
+           "Major mode for editing Cisco router configuration files"
+           t)))

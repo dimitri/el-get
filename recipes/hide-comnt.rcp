@@ -1,0 +1,3 @@
+(:name hide-comnt
+       :description "Hide/show comments in code."
+       :type emacsmirror)

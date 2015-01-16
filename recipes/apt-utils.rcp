@@ -1,0 +1,3 @@
+(:name apt-utils
+       :description "Emacs interface to APT (Debian package management)"
+       :type emacswiki)

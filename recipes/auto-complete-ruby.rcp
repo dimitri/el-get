@@ -2,4 +2,4 @@
        :description "Auto-complete sources for Ruby"
        :type http
        :url "http://www.cx4a.org/pub/auto-complete-ruby.el"
-       :depends (auto-complete rcodetools))
+       :depends (auto-complete))

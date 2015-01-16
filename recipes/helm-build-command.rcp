@@ -1,0 +1,4 @@
+(:name helm-build-command
+       :description "Helm/anything interface for build commands"
+       :type github
+       :pkgname "tkf/helm-build-command")

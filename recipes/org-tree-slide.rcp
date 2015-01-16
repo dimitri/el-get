@@ -1,0 +1,5 @@
+(:name org-tree-slide
+       :description "A presentation tool for org-mode"
+       :type github
+       :pkgname "takaxp/org-tree-slide"
+       :required nil)

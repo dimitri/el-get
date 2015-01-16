@@ -1,0 +1,4 @@
+(:name pixiv-novel-mode
+       :description "Major mode for pixiv novel"
+       :type github
+       :pkgname "zonuexe/pixiv-novel-mode.el")

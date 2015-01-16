@@ -1,0 +1,4 @@
+(:name helm-ghq
+       :description "Interfaces of ghq with helm."
+       :type github
+       :pkgname "masutaka/emacs-helm-ghq")

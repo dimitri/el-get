@@ -1,7 +1,7 @@
 (:name circe
-       :website "http://www.nongnu.org/circe/"
-       :description "Circe is yet another client for IRC in Emacs. It provides most features one would expect from an IRC client, with sane defaults to start from."
-       :type cvs
-       :url ":pserver:anonymous@cvs.savannah.nongnu.org:/sources/circe"
-       :module "circe"
-       :load-path ("."))
+       :website "https://github.com/jorgenschaefer/circe/wiki"
+       :description "Circe is a Client for IRC in Emacs with sane defaults"
+       :type github
+       :pkgname "jorgenschaefer/circe"
+       :depends cl-lib
+       :load-path ("lisp"))

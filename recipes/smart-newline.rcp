@@ -1,0 +1,4 @@
+(:name smart-newline
+       :description "The smart-newline.el provide a stress-less newline command for programmer."
+       :type github
+       :pkgname "ainame/smart-newline.el")

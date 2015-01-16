@@ -1,0 +1,5 @@
+(:name zotelo
+       :website "https://github.com/vitoshka/zotelo"
+       :description "integrate zotero collections to emacs RefTex/BibTex"
+       :type github
+       :pkgname "vitoshka/zotelo")

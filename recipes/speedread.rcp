@@ -1,0 +1,4 @@
+(:name speedread
+       :type github
+       :description "Aid to speedreading emacs buffers"
+       :pkgname "vapniks/speedread")

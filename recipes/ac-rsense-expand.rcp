@@ -1,0 +1,5 @@
+(:name ac-rsense-expand
+       :description "Ruby expansion and suggestion settings for Emacs using Auto-complete, Rsense and Yasnippet"
+       :type github
+       :pkgname "uskanda/ac-rsense-yas-expand"
+       :depends (rsense yasnippet))

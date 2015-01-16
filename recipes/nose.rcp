@@ -1,0 +1,6 @@
+(:name nose
+       :website "https://bitbucket.org/durin42/nosemacs"
+       :description "Emacs extension to provide easy nosetest integration."
+       :type emacsmirror
+       :pkgname nose
+       )

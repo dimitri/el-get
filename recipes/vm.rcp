@@ -1,0 +1,8 @@
+(:name vm
+       :description "View Mail for Emacs"
+       :website "http://www.nongnu.org/viewmail/"
+       :type bzr
+       :url "http://bazaar.launchpad.net/~vm/vm/trunk/"
+       :load-path ("lisp")
+       :info "info"
+       :build ("autoconf" "./configure" "make"))

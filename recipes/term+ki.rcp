@@ -1,0 +1,5 @@
+(:name term+ki
+       :description "term+ intercept key mapping"
+       :type github
+       :pkgname "tarao/term-plus-ki-el"
+       :depends (term+ key-intercept))

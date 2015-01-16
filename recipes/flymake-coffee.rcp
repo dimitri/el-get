@@ -1,0 +1,7 @@
+(:name flymake-coffee
+       :type github
+       :pkgname "purcell/flymake-coffee"
+       :description "Flymake support for coffee script"
+       :website "http://github.com/purcell/flymake-coffee"
+       :depends (flymake-easy)
+       :post-init (add-hook 'coffee-mode-hook 'flymake-coffee-load))

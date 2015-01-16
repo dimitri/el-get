@@ -2,7 +2,4 @@
 ;;
 ;; yasnippet recipe fails to install
 
-(setq debug-on-error t
-      el-get-verbose t)
-
-(el-get 'sync 'yasnippet)
+;; This test was redundant: see el-get-issue-176.el instead

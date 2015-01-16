@@ -1,0 +1,6 @@
+(:name weather-metno
+       :description "Weather data from met.no in Emacs."
+       :minimum-emacs-version "24"
+       :depends cl-lib
+       :type github
+       :pkgname "ruediger/weather-metno-el")

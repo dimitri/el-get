@@ -1,0 +1,5 @@
+(:name xcode-document-viewer
+       :description "xcode document viewer"
+       :type github
+       :pkgname "ypitomets/emacs-xcode-document-viewer"
+       :depends (emacs-w3m helm))

@@ -1,0 +1,4 @@
+(:name centered-window-mode
+       :description "Keep your text centered when there's only one window"
+       :type github
+       :pkgname "ikame/centered-window-mode")

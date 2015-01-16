@@ -1,0 +1,5 @@
+(:name overseer
+       :description "Ert-runner Integration Into Emacs"
+       :type github
+       :pkgname "tonini/overseer.el"
+       :depends (pkg-info dash))

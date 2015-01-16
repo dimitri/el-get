@@ -1,0 +1,6 @@
+(:name flycheck-pos-tip
+       :type github
+       :pkgname "flycheck/flycheck-pos-tip"
+       :description "Flycheck errors display in tooltip"
+       :depends (pos-tip flycheck)
+       :post-init (setq-default flycheck-display-errors-function 'flycheck-pos-tip-error-messages))

@@ -1,0 +1,7 @@
+(:name robe-mode
+       :type github
+       :description "Code navigation, documentation lookup and completion for Ruby"
+       :pkgname "dgutov/robe"
+       :website "https://github.com/dgutov/robe"
+       :depends (inf-ruby)
+       :post-init (add-hook 'ruby-mode-hook 'robe-mode))

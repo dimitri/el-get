@@ -1,5 +1,6 @@
 (:name popup
-       :website "https://github.com/m2ym/popup-el"
+       :website "https://github.com/auto-complete/popup-el"
        :description "Visual Popup Interface Library for Emacs"
        :type github
-       :pkgname "m2ym/popup-el")
+       :submodule nil
+       :pkgname "auto-complete/popup-el")

@@ -1,0 +1,6 @@
+(:name set-perl5lib
+       :type http
+       :url "http://coderepos.org/share/browser/lang/elisp/set-perl5lib/set-perl5lib.el?format=txt"
+       :description "set path into PERL5LIB if its file path includes 'lib' directory"
+       :website "http://d.hatena.ne.jp/sun-basix/20080117/1200528765"
+       :localname "set-perl5lib.el")

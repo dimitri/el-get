@@ -1,0 +1,5 @@
+(:name ctags
+       :type hg
+       :url "https://bitbucket.org/semente/ctags.el"
+       :description "Exuberant Ctags utilities for Emacs"
+       :website "https://bitbucket.org/semente/ctags.el")

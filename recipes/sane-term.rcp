@@ -1,0 +1,5 @@
+(:name sane-term
+       :description "Ansi Term with sane options and the ability to cycle/create terms"
+       :website "https://github.com/adamrt/sane-term"
+       :type github
+       :pkgname "adamrt/sane-term")

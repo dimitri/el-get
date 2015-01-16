@@ -1,0 +1,7 @@
+(:name flycheck-color-mode-line
+       :type github
+       :description "Colors the mode-line according to the Flycheck state of the current buffer."
+       :pkgname "flycheck/flycheck-color-mode-line"
+       :depends (flycheck)
+       :post-init (eval-after-load 'flycheck
+                    '(add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode)))

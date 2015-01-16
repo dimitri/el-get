@@ -1,4 +1,6 @@
 (:name browse-kill-ring
        :description "Interactively insert items from kill-ring"
-       :type emacswiki
-       :features browse-kill-ring)
+       :type github
+       :pkgname "browse-kill-ring/browse-kill-ring"
+       :prepare (progn
+                  (autoload 'browse-kill-ring-default-keybindings "browse-kill-ring")))

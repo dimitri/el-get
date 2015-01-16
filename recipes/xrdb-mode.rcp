@@ -1,0 +1,4 @@
+(:name xrdb-mode
+       :description "mode for editing X resource database files"
+       :type http
+       :url "http://bazaar.launchpad.net/~barry/xrdb-mode/devel/download/head:/xrdbmode.el-20091207192445-4uazbhdhw07jbejo-1/xrdb-mode.el")

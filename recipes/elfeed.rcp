@@ -1,0 +1,4 @@
+(:name elfeed
+       :description "An Emacs web feeds client"
+       :type github
+       :pkgname "skeeto/elfeed")

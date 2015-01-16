@@ -1,0 +1,7 @@
+(:name skewer-less
+       :description "Allows to edit LESS files and have them processed through skewer-mode"
+       :type github
+       :pkgname "purcell/skewer-less"
+       :depends (skewer-mode)
+
+       )

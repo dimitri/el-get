@@ -1,0 +1,5 @@
+(:name outorg
+       :description "Convert source-code buffers temporarily to Org-mode for comment editing."
+       :website "https://github.com/tj64/outorg"
+       :type github
+       :pkgname "tj64/outorg")

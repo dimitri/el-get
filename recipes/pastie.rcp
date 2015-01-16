@@ -1,0 +1,3 @@
+(:name pastie
+       :description "Emacs integration for pastie.org"
+       :type emacsmirror)

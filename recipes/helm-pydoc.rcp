@@ -1,0 +1,5 @@
+(:name helm-pydoc
+       :description "PyDoc with Helm interface."
+       :type github
+       :depends (helm)
+       :pkgname "syohex/emacs-helm-pydoc")

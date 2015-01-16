@@ -1,0 +1,5 @@
+(:name region-bindings-mode
+       :description "A minor mode that enables custom bindings when mark is active"
+       :type github
+       :pkgname "fgallina/region-bindings-mode"
+       :features region-bindings-mode)

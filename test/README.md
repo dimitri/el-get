@@ -72,6 +72,10 @@ more recipes, you can use the `test-recipe.sh` script.
 
 ### ERT-based automation
 
-See `test.el` in this directory, and see the el-get-devel mailing list for a
-promising patch to port the effort to `ert`.  This has yet to happen,
-though.
+See `test.el` in this directory.  You can run ERT-based tests by:
+
+    test/run-ert.sh
+
+To run the tests with GUI window for debugging, you can use:
+
+    test/run-ert-interactive.sh

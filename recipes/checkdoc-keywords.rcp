@@ -1,0 +1,8 @@
+(:name checkdoc-keywords
+       :website "http://user42.tuxfamily.org/checkdoc-keywords/index.html"
+       :description "check for known values in Keywords header"
+       :type ftp
+       :url "ftp://download.tuxfamily.org/user42/checkdoc-keywords.el"
+       :features checkdoc-keywords
+       :post-init
+       (add-hook 'checkdoc-comment-style-hooks 'checkdoc-keywords-comment))

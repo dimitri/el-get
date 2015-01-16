@@ -1,0 +1,7 @@
+(:name dockerfile-mode
+       :description "An emacs mode for handling Dockerfiles."
+       :type github
+       :pkgname "spotify/dockerfile-mode"
+       :post-init (progn
+                    (add-to-list 'auto-mode-alist
+                                 '("Dockerfile\\'" . dockerfile-mode))))

@@ -1,0 +1,5 @@
+(:name namelist-mode
+       :type github
+       :website "http://github.com/yyr/namelist-mode"
+       :description "Major Mode for editing f90 namelist files."
+       :pkgname "yyr/namelist-mode")

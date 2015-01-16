@@ -1,0 +1,4 @@
+(:name flex-autopair
+       :type github
+       :pkgname "uk-ar/flex-autopair"
+       :description "Automatically insert pair braces and quotes, insertion conditions & actions are highly customizable.")

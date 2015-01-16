@@ -1,0 +1,6 @@
+(:name factlog
+       :description "Enhanced version of \"recently opened files\"."
+       :type github
+       :pkgname "tkf/factlog"
+       :load-path ("lisp")
+       :depends deferred)

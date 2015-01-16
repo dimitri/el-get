@@ -1,0 +1,5 @@
+(:name php-eldoc
+       :website "https://github.com/zenozeng/php-eldoc"
+       :description "eldoc plugin for PHP"
+       :type github
+       :pkgname "zenozeng/php-eldoc")

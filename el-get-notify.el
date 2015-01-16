@@ -10,7 +10,7 @@
 ;; This file is NOT part of GNU Emacs.
 ;;
 ;; Install
-;;     Please see the README.asciidoc file from the same distribution
+;;     Please see the README.md file from the same distribution
 
 (require 'el-get-core)
 (require 'help-mode)     ; byte-compiling needs to know about xref-type buttons
@@ -26,12 +26,12 @@
 ;; notify user with emacs notifications API (new in 24)
 ;;
 (when (and (eq system-type 'darwin)
-	   (file-executable-p el-get-growl-notify-path))
+           (file-executable-p el-get-growl-notify-path))
   (defun el-get-growl (title message)
     "Send a message to growl, that implements notifications for darwin"
     (let* ((name  "*growl*")
-	   (proc
-	    (start-process name name el-get-growl-notify-path title "-a" "Emacs")))
+           (proc
+            (start-process name name el-get-growl-notify-path title "-a" "Emacs")))
       (process-send-string proc (concat message "\n"))
       (process-send-eof proc))))
 
@@ -69,6 +69,10 @@ fallback."
          ((equal el-get-notify-type 'message) (error "Use `message' instead"))
          ;; Graphical notification
          ((fboundp 'notifications-notify) (notifications-notify :title title
+                                                                :app-name "el-get"
+                                                                :app-icon (concat
+                                                                           (el-get-package-directory "el-get")
+                                                                           "/logo/el-get.png")
                                                                 :body message))
          ((fboundp 'notify)               (notify title message))
          ((fboundp 'el-get-growl)         (el-get-growl title message))
@@ -83,25 +87,25 @@ fallback."
 (defun el-get-post-install-notification (package)
   "Notify the PACKAGE has been installed."
   (el-get-notify (format "%s installed" package)
-		 "This package has been installed successfully by el-get."))
+                 "This package has been installed successfully by el-get."))
 (add-hook 'el-get-post-install-hooks 'el-get-post-install-notification)
 
 (defun el-get-post-update-notification (package)
   "Notify the PACKAGE has been updated."
   (el-get-notify (format "%s updated" package)
-		 "This package has been updated successfully by el-get."))
+                 "This package has been updated successfully by el-get."))
 (add-hook 'el-get-post-update-hooks 'el-get-post-update-notification)
 
 (defun el-get-post-remove-notification (package)
   "Notify the PACKAGE has been removed."
   (el-get-notify (format "%s removed" package)
-		 "This package has been removed successfully by el-get."))
+                 "This package has been removed successfully by el-get."))
 (add-hook 'el-get-post-remove-hooks 'el-get-post-remove-notification)
 
 (defun el-get-post-error-notification (package info)
   "Notify the PACKAGE has failed to install."
   (el-get-notify (format "%s failed to install" package)
-		 (format "%s" info)))
+                 (format "%s" info)))
 (add-hook 'el-get-post-error-hooks 'el-get-post-error-notification)
 
 ;;

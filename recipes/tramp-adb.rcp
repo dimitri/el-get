@@ -1,7 +1,0 @@
-(:name tramp-adb
-       :description "use adb in tramp"
-       :website "https://github.com/juergenhoetzel/tramp-adb"
-
-       :type github
-       :pkgname "juergenhoetzel/tramp-adb"
-       :features tramp-adb)

@@ -10,7 +10,7 @@
 ;; This file is NOT part of GNU Emacs.
 ;;
 ;; Install
-;;     Please see the README.asciidoc file from the same distribution
+;;     Please see the README.md file from the same distribution
 
 (require 'el-get-core)
 
@@ -29,7 +29,7 @@
   :install #'el-get-builtin-install
   :update #'el-get-builtin-install
   :remove #'el-get-rmdir
-  :install-hook #'el-get-builtin-install-hook)
+  :install-hook 'el-get-builtin-install-hook)
 
 (el-get-register-method-alias :no-op :builtin)
 

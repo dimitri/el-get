@@ -1,0 +1,5 @@
+(:name bf-mode
+       :description "Browse file persistently on dired"
+       :website "https://github.com/emacs-jp/bf-mode"
+       :type github
+       :pkgname "emacs-jp/bf-mode")

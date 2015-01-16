@@ -1,0 +1,4 @@
+(:name thing-cmds
+       :description "Commands that use things, as defined by `thingatpt.el'."
+       :type emacswiki
+       :depends (hide-comnt))

@@ -1,0 +1,7 @@
+(:name darkmine-theme
+       :description "Yet another emacs dark color theme"
+       :type github
+       :pkgname "pierre-lecocq/darkmine-theme"
+       :minimum-emacs-version 24
+       :prepare (add-to-list 'custom-theme-load-path
+                             default-directory))

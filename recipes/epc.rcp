@@ -1,0 +1,5 @@
+(:name epc
+       :description "An RPC stack for Emacs Lisp"
+       :type github
+       :pkgname "kiwanami/emacs-epc"
+       :depends (deferred ctable)) ; concurrent is in deferred package

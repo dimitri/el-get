@@ -1,3 +1,4 @@
 (:name rainbow-mode
        :description "Colorize color names in buffers"
-       :type elpa)
+       :type elpa
+       :prepare (autoload 'rainbow-turn-on "rainbow-mode"))

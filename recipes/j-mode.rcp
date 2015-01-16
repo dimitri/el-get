@@ -1,0 +1,5 @@
+(:name j-mode
+       :website "https://github.com/zellio/j-mode"
+       :description "Emacs major mode for editing J code."
+       :type github
+       :pkgname "zellio/j-mode")

@@ -1,0 +1,4 @@
+(:name persistent-soft
+       :type github
+       :description "Persistent storage, returning nil on failure"
+       :pkgname "rolandwalker/persistent-soft")

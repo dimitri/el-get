@@ -1,8 +1,4 @@
 (:name lorem-ipsum
        :description "Lorem Ipsum Generator"
-       :type emacswiki
-       :features lorem-ipsum
-       :prepare (progn
-                  (autoload 'Lorem-ipsum-insert-paragraphs "lorem-ipsum")
-                  (autoload 'Lorem-ipsum-insert-sentences "lorem-ipsum")
-                  (autoload 'Lorem-ipsum-insert-list "lorem-ipsum")))
+       :type github
+       :pkgname "jschaf/emacs-lorem-ipsum")

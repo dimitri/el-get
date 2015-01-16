@@ -1,0 +1,6 @@
+(:name "weibo.emacs"
+       :website "https://github.com/austin-----/weibo.emacs/blob/master/README"
+       :description "This is a Weibo client for EMACS."
+       :type github
+       :pkgname "austin-----/weibo.emacs"
+       :features "weibo")

@@ -1,0 +1,7 @@
+(:name mu-cite
+       :website "http://www.jpl.org/elips/mu/"
+       :description "Yet another citation tool for GNU Emacs."
+       :type http-tar
+       :options ("xzf")
+       :url "http://www.jpl.org/elips/mu/snapshots/mu-cite-201406091013.tar.gz"
+       :depends (apel flim))

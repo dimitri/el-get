@@ -6,10 +6,9 @@
       el-get-default-process-sync t)
 
 (defun assert-package-fully-removed (pkg)
-  (assert (string= "removed"
-                   (el-get-read-package-status pkg))
+  (assert (null (el-get-read-package-status pkg))
           nil
-          "Package %s should have status \"removed\", but actually has status \"%s\"."
+          "Package %s should have status `nil', but actually has status \"%s\"."
           pkg (el-get-read-package-status pkg))
   (assert (not (or (file-exists-p (el-get-package-directory pkg))
                    (file-symlink-p (el-get-package-directory pkg))))

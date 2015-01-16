@@ -1,0 +1,7 @@
+(:name w3m-type-ahead
+       :description "Type ahead support for Emacs-w3m."
+       :website "http://mph-emacs-pkgs.alioth.debian.org/WthreemTypeAheadEl.html"
+       :type http
+       :url "https://alioth.debian.org/scm/viewvc.php/*checkout*/mph-emacs-pkgs/elisp/w3m-type-ahead.el?root=mph-emacs-pkgs"
+       :depends (emacs-w3m)
+       :build (("mv" "w3m-type-ahead.el_root_mph-emacs-pkgs" "w3m-type-ahead.el")))

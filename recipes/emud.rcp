@@ -1,0 +1,4 @@
+(:name emud
+       :description "Emacs MUD Client."
+       :type github
+       :pkgname "juster/emud")

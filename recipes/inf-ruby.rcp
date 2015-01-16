@@ -1,4 +1,4 @@
 (:name inf-ruby
-       :description "Inferior Ruby Mode"
-       :features inf-ruby
-       :type elpa)
+       :description "Inferior Ruby Mode - ruby process in a buffer."
+       :type github
+       :pkgname "nonsequitur/inf-ruby")

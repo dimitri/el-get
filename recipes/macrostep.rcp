@@ -1,0 +1,5 @@
+(:name macrostep
+       :website "https://github.com/joddie/macrostep"
+       :description "Interactive macro stepper for Emacs Lisp"
+       :type github
+       :pkgname "joddie/macrostep")

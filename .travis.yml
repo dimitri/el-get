@@ -1,0 +1,12 @@
+language: generic
+env:
+  - EMACS=emacs
+  - EMACS=emacs-snapshot
+install:
+  - source test/travis-ci.sh
+  - prereqs
+  - '"$EMACS" --version'
+script:
+  - byte-compile
+  - check-recipes
+  - check-whitespace

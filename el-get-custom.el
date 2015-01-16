@@ -10,7 +10,7 @@
 ;; This file is NOT part of GNU Emacs.
 ;;
 ;; Install
-;;     Please see the README.asciidoc file from the same distribution
+;;     Please see the README.md file from the same distribution
 
 ;;; Commentary:
 ;;
@@ -23,6 +23,148 @@
 
 (require 'el-get-core)
 
+(declare-function widget-editable-list-match "wid-edit" (widget value))
+
+;;; First, some essential variables, used in other parts of the code.
+(defgroup el-get nil "el-get customization group"
+  :group 'convenience)
+
+(defconst el-get-version "5.1" "el-get version number")
+
+(defconst el-get-script (or load-file-name buffer-file-name))
+
+(defcustom el-get-dir (expand-file-name "el-get" user-emacs-directory)
+  "Path where to install the packages."
+  :group 'el-get
+  :type 'directory)
+
+(defcustom el-get-status-file
+  (concat (file-name-as-directory el-get-dir) ".status.el")
+  "Define where to store and read the package statuses")
+
+(defvar el-get-autoload-file
+  (concat (file-name-as-directory el-get-dir) ".loaddefs.el")
+  "Where generated autoloads are saved")
+
+(defvar el-get-emacs (concat invocation-directory invocation-name)
+  "Where to find the currently running emacs, a facility for :build commands")
+
+;;
+;; Define some code-level customs.
+;;
+(defcustom el-get-post-init-hooks nil
+  "Hooks to run after a package init.
+Each hook is a unary function accepting a package"
+  :group 'el-get
+  :type 'hook)
+
+(defvar find-function-source-path)
+(defun el-get-add-load-path-to-ffsp (package)
+  "Adds a package's :load-path to `find-function-source-path'.
+Can be added to `el-get-post-init-hooks'."
+  (setq find-function-source-path
+        (append (el-get-load-path package)
+                (bound-and-true-p find-function-source-path))))
+
+(defcustom el-get-post-install-hooks nil
+  "Hooks to run after installing a package.
+Each hook is a unary function accepting a package"
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-post-update-hooks nil
+  "Hooks to run after updating a package.
+Each hook is a unary function accepting a package"
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-post-error-hooks nil
+  "Hooks to run after package installation fails.
+Each hook is a binay function accepting a package and error data"
+  :group 'el-get
+  :type 'hook)
+
+(defcustom el-get-byte-compile t
+  "Whether or not to byte-compile packages. Can be used to
+disable byte-compilation globally, unless this process is not
+controlled by `el-get' itself.
+
+The cases when `el-get' loses control are with \"advanced\"
+packaging systems (apt-get, fink, pacman, elpa) or when the
+recipe contains a :build rule (using a Makefile for example)."
+  :group 'el-get
+  :type 'boolean)
+
+(defcustom el-get-parallel-make-args
+  (let* ((call-prog
+          (lambda (name &rest args)
+            (with-temp-buffer
+              (when (ignore-errors
+                      (= (apply #'call-process name nil t nil args) 0))
+                (buffer-string)))))
+         (nprocs
+          (or (getenv "NUMBER_OF_PROCESSORS") ; Windows
+              (or (funcall call-prog "getconf" "_NPROCESSORS_ONLN") ; Linux
+                  (funcall call-prog "sysctl" "-n" "hw.ncpu") ; *BSD
+                  (funcall call-prog "/usr/sbin/psrinfo" "-p")) ; Solaris
+              "1")))
+    (list (format "-j%d" (1+ (string-to-number nprocs)))))
+  "List of args for recipes that invoke parallel make.
+
+Typically, this would be (\"-jN\"), where N is the number of
+processors + 1. To use in a recipe call make from `:build' like
+this: `((\"make\" ,@el-get-parallel-make-args))"
+  :group 'el-get
+  :type '(repeat string))
+
+(defcustom el-get-verbose nil
+  "Non-nil means print messages describing progress of el-get even for fast operations."
+  :group 'el-get
+  :type 'boolean)
+
+(defcustom el-get-byte-compile-at-init nil
+  "Whether or not to byte-compile packages at init.
+
+Turn this to t if you happen to update your packages from under
+`el-get', e.g. doing `cd el-get-dir/package && git pull`
+directly."
+  :group 'el-get
+  :type 'boolean)
+
+(define-obsolete-variable-alias 'el-get-generate-autoloads 'el-get-use-autoloads
+  "June, 2014")
+(defcustom el-get-use-autoloads t
+  "Whether or not to use the generated autoloads for packages. Can be used
+to disable autoloads globally."
+  :group 'el-get
+  :type 'boolean)
+
+(defcustom el-get-is-lazy nil
+  "Whether or not to defer evaluation of :post-init and :after
+functions until libraries are required.  Will also have el-get
+skip the :load and :features properties when set.  See :lazy to
+force their evaluation on some packages only."
+  :group 'el-get
+  :type 'boolean)
+
+(defcustom el-get-auto-update-cached-recipes t
+  "When non-nil, auto-update certain properties in cached recipes.
+
+When El-get installs a package, it stores a copy of the package's
+recipe that becomes independent from the recipe in
+`el-get-sources'. The cached copy is updated only when the
+package itself is updated or reinstalled. However, if this
+preference is t (the default), select properties of the cached
+recipe copy will be updated from `el-get-sources' whenever the
+package is initialized (see
+`el-get-status-recipe-updatable-properties').
+
+If this is set to nil, then the cached copy will *only* be
+updated when the package itself is."
+  :group 'el-get
+  :type 'boolean)
+
+
 ;;; "Fuzzy" data structure customization widgets
 (defun el-get-repeat-value-to-internal (widget element-or-list)
   (el-get-as-list element-or-list))
@@ -41,14 +183,14 @@
 (define-widget 'el-get-symbol 'symbol
   "A string or a symbol, rendered as a symbol"
   :match 'el-get-symbol-match
-)
+  )
 ;;; END "Fuzzy" data structure support
 
 (defconst el-get-build-recipe-body
   '(choice :tag "Format"
 
            (repeat :tag "List of shell commands"
-                    (string :doc "Note: arguments will not be shell-quoted.
+                   (string :doc "Note: arguments will not be shell-quoted.
 Choose `Evaluated expression' format for a more portable recipe" :format "%v%h"))
            (sexp :tag "Evaluated expression" :format "%t: %v%h"
                  :value `(("./configure" ,(concat "--with-emacs=" el-get-emacs)) ("make") ("make" ("install")))
@@ -87,17 +229,10 @@ definition provided by `el-get' recipes locally.
 
 :builtin
 
-    Emacs major version (see `emacs-major-version' variable) from
-    which Emacs includes the recipe as a builtin.  For example,
-    `package.el' (the implementation of ELPA) is part fo Emacs24
+    A string containing the Emacs version (see `emacs-version' variable)
+    from which Emacs includes the recipe as a builtin.  For example,
+    `package.el' (the implementation of ELPA) is part of Emacs 24
     but needs an external recipe for previous major versions.
-
-:pkgname
-
-    The name of the package for the underlying package management
-    system (`apt-get', `fink' or `pacman', also supported by
-    `github' and `emacsmirror'), which can be different from the
-    Emacs package name.
 
 :type
 
@@ -109,25 +244,28 @@ definition provided by `el-get' recipes locally.
 
 :branch
 
-    Which branch to fetch when using `git' (and by extension,
-    `github' and `emacsmirror', which are derived form `git').
-    Also supported in the installer in `el-get-install'.
+    Which branch to pull when using `git' (and by extension,
+    `github' and `emacsmirror', which are derived form `git') and
+    `hg' backends.  Also supported when installing el-get using
+    `el-get-install'.
 
 :url
 
     Where to fetch the package, only meaningful for `git' and
     `http' types.
 
-:username, :pkgname
+:pkgname
 
-    For the `github' type, these specify the user name and repo
-    name to clone from Github. For example, for el-get, the user
-    name would be \"dimitri\", and the repo name would be
-    \"el-get\". As described above, the `:pkgname' property is
-    only required if the repo name on Github differs from the
-    Emacs package name. Note that the `emacsmirror' type is just
-    like the `github' type with `:username' set to
-    \"emacsmirror\".
+    The name of the package for the underlying package management
+    system (`apt-get', `fink' or `pacman', also supported by
+    `github' and `emacsmirror'), which can be different from the
+    Emacs package name.
+
+    For the `github' type, this specifies the repo name to clone
+    from Github. For example, for el-get, the package name would
+    be \"dimitri/el-get\". Note that the `emacsmirror' type is
+    just like the `github' type with the prefix \"emacsmirror/\"
+    automatically supplied.
 
 :build
 
@@ -199,10 +337,11 @@ definition provided by `el-get' recipes locally.
 
 :library
 
-    When using :after but not using :features, :library allows to
-    set the library against which to register the :after function
-    against `eval-after-load'.  It defaults to either :pkgname
-    or :package, in this order.  See also `el-get-eval-after-load'.
+    When lazy, :library sets the file against which to register
+    the :after and :post-init forms for `eval-after-load'.  It
+    defaults to the first :feature, :pkgname (removing the
+    \"username\" part for github and emacsmirror) or :package,
+    in that order.  See also `el-get-eval-after-load'.
 
 :options
 
@@ -245,12 +384,11 @@ definition provided by `el-get' recipes locally.
 
 :post-init
 
-    This should be a lisp form to evaluate after loading the
-    package.  Intended for use from recipes.  This function is
-    registered for `eval-after-load' against the recipe library
-    by `el-get-init' once the :load and :features have been
-    setup.  Like `:prepare', it will be run with
-    `default-directory' set to the package directory.
+    Intended for use from recipes.  This should be a lisp form to
+    evaluate once the :load and :features have been setup.  When
+    lazy, it will be registered for `eval-after-load' against the
+    recipe :library instead.  Like `:prepare', it will be run
+    with `default-directory' set to the package directory.
 
 :after
 
@@ -301,22 +439,34 @@ definition provided by `el-get' recipes locally.
     with the following meaning:
 
       * `http', `ftp' and `emacswiki' with the SHA1 of the downloaded file
-      * `git' in which it is an alias for `:checkout' (see below)
+      * `git' and `hg' in which it is an alias for `:checkout' (see below)
+
+    In the `git' and `hg' recipe types, note that while
+    `:checkout' will accept other things like branches, tags, and
+    so forth,`:checksum' must only be given a commit hash. This
+    will effectively lock the repository at a particular
+    revision. Note also that `:checksum' must be set to the full
+    hash, not just the first 6 or 8 characters (this restriction
+    may be removed in the future).
 
 :checkout
 
-    A git refspec (branch, tag, commit hash) that should be
-    checked out after cloning the git repository. If provided,
-    this overrides any value for the `:branch' property. Unlike
-    the `:branch' property, this can be any valid argument to
-    `git checkout', including a tag name or a commit hash. The
-    intended use of this property is to \"lock\" a repository at
-    a particular revision, regardless of what happens to the repo
-    upstream.
+    For `git' or `hg' recipes, a branch name, tag, or other valid
+    argument to `git checkout'/`hg update'. If provided, this
+    overrides any value for the `:branch' property. Unlike the
+    `:branch' property, this can be any valid argument to
+    `checkout', including a tag name or a commit hash.
 
-    Currently this property only has meaning for `git' type
-    recipes. Other VCS-based methods may implement support in the
-    future.
+    When given a commit hash or tag, this will lock the repo at
+    that specific revision. When given a branch name, this will
+    always update the repo to the latest version of that branch,
+    regardless of any changes made locally (in contrast to simply
+    using the `:branch' property, which will cause el-get-to try
+    to merge your local changes).
+
+    Currently this property only has meaning for `git' and `hg'
+    type recipes. Other VCS-based methods may implement support
+    in the future.
 
 :shallow
 
@@ -406,6 +556,25 @@ this is the name to fetch in that system"
                 :tag "Relative paths to force-load" string)))
        (group :inline t :format "Options (`http-tar' and `cvs' only): %v"
               (const :format "" :options) (string :format "%v"))
+       (group
+        :inline t :format "%t: %v%h"
+        :tag "Checksum"
+        :doc "Used to verify downloaded package
+ (SHA1 in hex for `http', `ftp' and `emacswiki')"
+        (const :format "" :checksum) (string :format "%v"))
+       (group
+        :inline t :format "%t: %v"
+        :tag "Checkout this `git' revision"
+        (const :format "" :checkout) (string :format "%v"))
+       (group
+        :inline t :format "%t: %v%h"
+        :tag "Shallow clone"
+        :doc "git-clone with `--depth 1'"
+        (const :format "" :shallow) (boolean :format "%[Toggle%] %v\n"))
+       (group
+        :inline t :format "%t: %v" :value (:submodule t)
+        :tag "Update submodules (`git' only)"
+        (const :format "" :submodule) (boolean :format "%[Toggle%] %v\n"))
        (group :inline t :format "CVS Module: %v"
               (const :format "" :module)
               (string :format "%v"))
@@ -430,7 +599,6 @@ this is the name to fetch in that system"
        (group :inline t
               :format "`After' Function (`Post-Init' recommended instead): %v"
               (const :format "" :after) (function :format "%v"))
-       ;; TODO: `:checksum', `:checkout', `:shallow'
        )
       (repeat
        :inline t :tag "System-Specific Build Recipes"
@@ -443,5 +611,11 @@ where `<system-type>' is the value of `system-type' on
 platforms where this recipe should apply"
                       )
               ,el-get-build-recipe-body))))))
+
+;; TODO: this should be nil; change at the next major version bump
+(defcustom el-get-allow-insecure t
+  "Allow packages to be installed over insecure connections."
+  :group 'el-get
+  :type 'boolean)
 
 (provide 'el-get-custom)

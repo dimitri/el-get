@@ -1,10 +1,19 @@
 (:name auctex
        :website "http://www.gnu.org/software/auctex/"
        :description "AUCTeX is an extensible package for writing and formatting TeX files in GNU Emacs and XEmacs. It supports many different TeX macro packages, including AMS-TeX, LaTeX, Texinfo, ConTeXt, and docTeX (dtx files)."
-       :type cvs
+       :type git
        :module "auctex"
-       :url ":pserver:anonymous@cvs.sv.gnu.org:/sources/auctex"
-       :build `("./autogen.sh" ,(concat "./configure --without-texmf-dir --with-lispdir=`pwd` --with-emacs=" el-get-emacs) "make")
-       :load-path ("." "preview")
-       :load  ("tex-site.el" "preview/preview-latex.el")
+       :url "git://git.savannah.gnu.org/auctex.git"
+       :build `(("./autogen.sh")
+                ("./configure"
+                 "--without-texmf-dir"
+                 "--with-packagelispdir=$(pwd)"
+                 "--with-packagedatadir=$(pwd)"
+                 ,(cond
+                   ((eq system-type 'darwin)  "--with-lispdir=`pwd`")
+                   (t ""))
+                 ,(concat "--with-emacs=" el-get-emacs))
+                "make")
+       :load-path (".")
+       :load  ("tex-site.el" "preview-latex.el")
        :info "doc")

@@ -1,0 +1,6 @@
+(:name genrnc
+       :website "https://github.com/aki2o/emacs-genrnc"
+       :description "generate RELAX NG Compact Schema from RELAX NG Schema, XML Schema and DTD."
+       :type github
+       :pkgname "aki2o/emacs-genrnc"
+       :depends (deferred log4e yaxception))

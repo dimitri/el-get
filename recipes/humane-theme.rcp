@@ -1,0 +1,6 @@
+(:name humane-theme
+       :website "https://bitbucket.org/jfm/color-theme-humane"
+       :description "Light-background color theme inspired by, but not directly based on damieng's humane theme for Visual Studio, TextMate, and XCode. It tries to prove that you can have good ergonomics without a dark background."
+       :type hg
+       :url "https://bitbucket.org/jfm/color-theme-humane"
+       :prepare (add-to-list (quote custom-theme-load-path) default-directory))

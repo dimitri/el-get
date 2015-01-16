@@ -1,0 +1,4 @@
+(:name basic-edit-toolkit
+       :description "Basic edit toolkit."
+       :type emacswiki
+       :features basic-edit-toolkit)

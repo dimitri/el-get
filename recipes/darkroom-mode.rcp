@@ -1,0 +1,4 @@
+(:name darkroom-mode
+       :description "Minor mode to emulate WriteRoom/DarkRoom \"distraction-free\" editing."
+       :type hg
+       :url "https://bitbucket.org/phromo/darkroom-mode")

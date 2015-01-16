@@ -1,0 +1,5 @@
+(:name ac-html
+       :description "Auto complete source for html tags and attributes."
+       :type github
+       :pkgname "cheunghy/ac-html"
+       :depends auto-complete)

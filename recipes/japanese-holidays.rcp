@@ -1,0 +1,5 @@
+(:name japanese-holidays
+       :description "calendar functions for the Japanese calendar"
+       :website "https://github.com/emacs-jp/japanese-holidays"
+       :type github
+       :pkgname "emacs-jp/japanese-holidays")

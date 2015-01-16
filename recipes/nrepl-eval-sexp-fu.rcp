@@ -1,0 +1,5 @@
+(:name nrepl-eval-sexp-fu
+       :description "eval-sexp-fu.el modified for use with nrepl"
+       :type github
+       :pkgname "samaaron/nrepl-eval-sexp-fu"
+       :depends (highlight smartparens))

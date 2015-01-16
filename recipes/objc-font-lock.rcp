@@ -1,0 +1,4 @@
+(:name objc-font-lock
+       :description "Highlight Objective-C method calls"
+       :type github
+       :pkgname "Lindydancer/objc-font-lock")

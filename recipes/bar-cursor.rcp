@@ -1,0 +1,4 @@
+(:name bar-cursor
+       :description "Simple package to convert the block cursor into a bar cursor."
+       :type http
+       :url "http://www.northbound-train.com/emacs/bar-cursor.el")

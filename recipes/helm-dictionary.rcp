@@ -1,0 +1,5 @@
+(:name helm-dictionary
+       :description "Helm source for looking up dictionaries"
+       :type github
+       :pkgname "emacs-helm/helm-dictionary"
+       :depends (helm))

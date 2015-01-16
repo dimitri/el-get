@@ -1,0 +1,10 @@
+(:name rtags
+       :description "Client/server application that indexes C/C++ code and keeps a persistent in-memory database of references, declarations, definitions, symbolnames"
+       :type github
+       :website "https://github.com/Andersbakken/rtags"
+       :pkgname "Andersbakken/rtags"
+       :build `(("cmake" ".")
+                ("make" ,@el-get-parallel-make-args))
+       :compile "src"
+       :load-path "src"
+       :post-init (setq rtags-path default-directory))

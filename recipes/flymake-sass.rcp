@@ -1,0 +1,7 @@
+(:name flymake-sass
+       :type github
+       :pkgname "purcell/flymake-sass"
+       :description "Flymake handler for sass files"
+       :website "http://github.com/purcell/flymake-sass"
+       :depends (flymake-easy)
+       :post-init (add-hook 'sass-mode-hook 'flymake-sass-load))

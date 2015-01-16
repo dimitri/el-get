@@ -1,0 +1,6 @@
+(:name js3-mode
+       :website "https://github.com/thomblake/js3-mode#readme"
+       :description "A chimeric fork of js2-mode and js-mode"
+       :type github
+       :pkgname "thomblake/js3-mode"
+       :prepare (autoload 'js3-mode "js3" nil t))

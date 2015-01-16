@@ -1,0 +1,5 @@
+(:name org-screenshot
+       :description "Screenshots integrated with org mode attachments."
+       :website "https://github.com/dfeich/org-screenshot"
+       :type github
+       :pkgname  "dfeich/org-screenshot")

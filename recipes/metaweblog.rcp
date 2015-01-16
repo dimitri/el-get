@@ -1,0 +1,4 @@
+(:name metaweblog
+       :description "Metaweblog"
+       :type github
+       :pkgname "punchagan/metaweblog")

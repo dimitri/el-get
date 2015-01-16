@@ -1,0 +1,4 @@
+(:name markup-faces
+       :description "Collection of faces for markup language modes."
+       :type github
+       :pkgname "sensorflo/markup-faces")

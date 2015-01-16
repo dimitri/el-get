@@ -10,7 +10,7 @@
 ;; This file is NOT part of GNU Emacs.
 ;;
 ;; Install
-;;     Please see the README.asciidoc file from the same distribution
+;;     Please see the README.md file from the same distribution
 
 (require 'el-get-apt-get)
 
@@ -26,19 +26,19 @@
   (let* ((source  (el-get-package-def package))
          (pkgname (or (plist-get source :pkgname) (el-get-as-string package)))
          (name    (format "*pacman install %s*" package))
-	 (ok      (format "Package %s installed." package))
-	 (ko      (format "Could not install package %s." package)))
+         (ok      (format "Package %s installed." package))
+         (ko      (format "Could not install package %s." package)))
 
     (el-get-start-process-list
      package
      `((:command-name ,name
-		      :buffer-name ,name
-		      :process-filter ,(function el-get-sudo-password-process-filter)
-		      :program ,(executable-find "sudo")
-		      :args ("-S" ,(executable-find "pacman") "--sync" "--noconfirm" "--needed" ,pkgname)
-		      :message ,ok
-		      :error ,ko
-		      :sync t))
+                      :buffer-name ,name
+                      :process-filter ,(function el-get-sudo-password-process-filter)
+                      :program ,(executable-find "sudo")
+                      :args ("-S" ,(executable-find "pacman") "--sync" "--noconfirm" "--needed" ,pkgname)
+                      :message ,ok
+                      :error ,ko
+                      :sync t))
      post-install-fun)))
 
 (defun el-get-pacman-remove (package url post-remove-fun)
@@ -46,19 +46,19 @@
   (let* ((source  (el-get-package-def package))
          (pkgname (or (plist-get source :pkgname) (el-get-as-string package)))
          (name    (format "*pacman remove %s*" package))
-	 (ok      (format "Package %s removed." package))
-	 (ko      (format "Could not remove package %s." package)))
+         (ok      (format "Package %s removed." package))
+         (ko      (format "Could not remove package %s." package)))
 
     (el-get-start-process-list
      package
      `((:command-name ,name
-		      :buffer-name ,name
-		      :process-filter ,(function el-get-sudo-password-process-filter)
-		      :program ,(executable-find "sudo")
-		      :args ("-S" ,(executable-find "pacman") "--remove" "--noconfirm" ,pkgname)
-		      :message ,ok
-		      :error ,ko
-		      :sync t))
+                      :buffer-name ,name
+                      :process-filter ,(function el-get-sudo-password-process-filter)
+                      :program ,(executable-find "sudo")
+                      :args ("-S" ,(executable-find "pacman") "--remove" "--noconfirm" ,pkgname)
+                      :message ,ok
+                      :error ,ko
+                      :sync t))
      post-remove-fun)))
 
 (add-hook 'el-get-pacman-remove-hook 'el-get-dpkg-remove-symlink)
@@ -67,7 +67,7 @@
   :install #'el-get-pacman-install
   :update #'el-get-pacman-install
   :remove #'el-get-pacman-remove
-  :install-hook #'el-get-pacman-install-hook
-  :remove-hook #'el-get-pacman-remove-hook)
+  :install-hook 'el-get-pacman-install-hook
+  :remove-hook 'el-get-pacman-remove-hook)
 
 (provide 'el-get-pacman)

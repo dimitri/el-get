@@ -1,0 +1,6 @@
+(:name test-simple
+       :description "Unit Tests for Emacs that are simple"
+       :type github
+       :pkgname "rocky/emacs-test-simple"
+       :build ("./autogen.sh" "./configure" "make")
+       )

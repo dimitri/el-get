@@ -1,0 +1,4 @@
+(:name control-mode
+       :description "Control mode is a minor mode for Emacs that provides a \"control\" mode, similar in purpose to vim's \"normal\" mode. Unlike the various vim emulation modes, the key bindings in Control mode are derived from the key bindings already setup, usually by making the control key unnecessary, e.g. `Ctrl-f' becomes `f'. This provides the power of a mode dedicated to controlling the editor without needing to learn or maintain new key bindings."
+       :type github
+       :pkgname "stephendavidmarsh/control-mode")

@@ -1,0 +1,6 @@
+(:name editorconfig
+       :website "http://editorconfig.org"
+       :description "Define and maintain consistent coding styles"
+       :type github
+       :branch "master"
+       :pkgname "editorconfig/editorconfig-emacs")

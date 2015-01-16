@@ -3,3 +3,4 @@
 .lock
 recipes/emacswiki/*
 recipes/elpa/*
+dir

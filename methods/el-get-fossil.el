@@ -10,9 +10,10 @@
 ;; This file is NOT part of GNU Emacs.
 ;;
 ;; Install
-;;     Please see the README.asciidoc file from the same distribution
+;;     Please see the README.md file from the same distribution
 
 (require 'el-get-core)
+(require 'el-get-custom)
 
 (defcustom el-get-fossil-clone-hook nil
   "Hook run after fossil clone"
@@ -56,6 +57,8 @@ are stored in the package directory"
          (open-args (list "open" "--nested" (expand-file-name fossil-name fossil-dir) checkout))
          (ok (format "Package %s installed." package))
          (ko (format "Could not install package %s." package)))
+    (el-get-insecure-check package url)
+
     (el-get-start-process-list
      package
      (list
@@ -100,7 +103,8 @@ are stored in the package directory"
          (update-args (list "update" checkout))
          (ok (format "Updated package %s." package))
          (ko (format "Could not update package %s." package)))
-    (message "%s" update-args)
+    (el-get-insecure-check package url)
+
     (el-get-start-process-list
      package
      `((:command-name ,name
@@ -141,7 +145,7 @@ checkout of the repository using this command."
           (cadr (assoc "checkout" fossil-info))
           " "))))
 
-(defun el-get-fossil-rmdir (package &rest ignored)
+(defun el-get-fossil-rmdir (package url post-remove-fun)
   "Ensure .fossil is deleted as well as the package directory.
 
 Since .fossils can be stored elsewhere, ensure that it is found
@@ -156,13 +160,13 @@ using `el-get-rmdir' as usual."
                                 (file-name-nondirectory fossil-location))
         (delete-file fossil-location))))
   ;; Remove the package as usual
-  (el-get-rmdir package))
+  (el-get-rmdir package url post-remove-fun))
 
 (el-get-register-method :fossil
   :install #'el-get-fossil-clone
   :update #'el-get-fossil-update
   :remove #'el-get-fossil-rmdir
-  :install-hook #'el-get-fossil-clone-hook
+  :install-hook 'el-get-fossil-clone-hook
   :compute-checksum #'el-get-fossil-compute-checksum)
 
 (provide 'el-get-fossil)

@@ -1,0 +1,5 @@
+(:name git-gutter-fringe+
+       :description "git-gutter-fringe+ is a display mode for git-gutter+.el. It uses the buffer fringe instead of the buffer margin."
+       :type github
+       :pkgname "nonsequitur/git-gutter-fringe-plus"
+       :depends (git-gutter+ fringe-helper))

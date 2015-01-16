@@ -1,0 +1,5 @@
+(:name "helm-dash"
+       :description "Browse Dash docsets inside emacs"
+       :depends helm
+       :type github
+       :pkgname "areina/helm-dash")

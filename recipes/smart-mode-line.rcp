@@ -1,0 +1,5 @@
+(:name smart-mode-line
+       :description "A color coded smart mode-line."
+       :type github
+       :depends (dash rich-minority)
+       :pkgname "Bruce-Connor/smart-mode-line")

@@ -1,0 +1,6 @@
+(:name f
+       :website "https://github.com/rejeep/f.el"
+       :description "Modern API for working with files and directories in Emacs"
+       :depends (s dash)
+       :type github
+       :pkgname "rejeep/f.el")

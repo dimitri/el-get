@@ -1,0 +1,8 @@
+(:name elpy
+       :website "https://github.com/jorgenschaefer/elpy"
+       :description "Emacs Python Development Environment"
+       :type github
+       :pkgname "jorgenschaefer/elpy"
+       :post-init (el-get-envpath-prepend "PYTHONPATH" default-directory)
+       :depends (company-mode yasnippet highlight-indentation
+                              find-file-in-project idomenu pyvenv))

@@ -1,0 +1,5 @@
+(:name term+evil
+       :description "term+ evil integration"
+       :type github
+       :pkgname "tarao/term-plus-evil-el"
+       :depends (term+ evil))

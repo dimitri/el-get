@@ -1,0 +1,4 @@
+(:name yafolding
+       :description "Yet another folding extension for Emacs"
+       :type github
+       :pkgname "zenozeng/yafolding.el")

@@ -1,0 +1,6 @@
+(:name navi-mode
+       :description "Major-mode for easy buffer-navigation."
+       :website "https://github.com/tj64/navi"
+       :type github
+       :pkgname "tj64/navi"
+       :depends (outshine outorg))

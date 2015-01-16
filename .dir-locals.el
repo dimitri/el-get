@@ -6,7 +6,8 @@
   (require-final-newline . t)
   (indent-tabs-mode))
  (emacs-lisp-mode
-  (whitespace-style face trailing lines-tail)
+  (byte-compile-warnings . (not cl-functions))
+  (whitespace-style face tabs trailing lines-tail)
   (whitespace-line-column . 80)
   (eval ignore-errors
         "Write-contents-functions is a buffer-local alternative to before-save-hook"

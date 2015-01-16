@@ -1,0 +1,5 @@
+(:name mirah-mode
+       :website "https://github.com/zpinter/emacs.d/blob/master/mirah/lisp/mirah-mode.el"
+       :description "Emacs major mode for editing Mirah files."
+       :type http
+       :url "https://raw.github.com/zpinter/emacs.d/master/mirah/lisp/mirah-mode.el")

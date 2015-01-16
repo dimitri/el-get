@@ -3,7 +3,10 @@
        :description "Proof General is a generic front-end for proof assistants (also known as interactive theorem provers)"
        :type http-tar
        :options ("xzf")
-       :url "http://proofgeneral.inf.ed.ac.uk/releases/ProofGeneral-4.2pre111207.tgz"
-       :build ("cd ProofGeneral && make clean" "cd ProofGeneral && make compile")
+       :url "http://proofgeneral.inf.ed.ac.uk/releases/ProofGeneral-4.2.tgz"
+       :build ("cd ProofGeneral && make clean" "cd ProofGeneral && sed -i 's/setq byte-compile-error-on-warn t//' Makefile && make compile")
+       :build/darwin `(("make" "-C" "ProofGeneral" "clean")
+                       ("sed" "-i" "s/setq byte-compile-error-on-warn t//" "ProofGeneral/Makefile")
+                       ("make" "-C" "ProofGeneral" "compile" ,(concat "EMACS=" el-get-emacs)))
        :load  ("ProofGeneral/generic/proof-site.el")
        :info "./ProofGeneral/doc/")

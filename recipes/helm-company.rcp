@@ -1,0 +1,5 @@
+(:name helm-company
+       :description "Helm interface for company-mode."
+       :type github
+       :pkgname "yasuyk/helm-company"
+       :depends (company-mode helm))

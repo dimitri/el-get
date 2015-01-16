@@ -1,0 +1,5 @@
+(:name wajig
+       :type http
+       :description "an interface for wajig"
+       :website "http://xwl.appspot.com/"
+       :url "http://xwl.appspot.com/ref/wajig.el")

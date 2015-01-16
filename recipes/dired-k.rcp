@@ -1,0 +1,6 @@
+(:name dired-k
+       :description "Highlight dired buffer by file size, modified time, git status."
+       :type github
+       :pkgname "syohex/emacs-dired-k"
+       :post-init (progn
+                    (add-hook 'dired-initial-position-hook 'dired-k)))

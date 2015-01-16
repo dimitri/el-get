@@ -1,0 +1,5 @@
+(:name string-utils
+       :description "String-manipulation utilities."
+       :type github
+       :pkgname "rolandwalker/string-utils"
+       :depends (list-utils))

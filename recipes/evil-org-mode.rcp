@@ -1,0 +1,6 @@
+(:name evil-org-mode
+       :website "http://github.com/edwtjo/evil-org-mode"
+       :description "Supplemental evil-mode keybindings to emacs org-mode."
+       :type github
+       :pkgname "edwtjo/evil-org-mode"
+       :depends (evil evil-leader))

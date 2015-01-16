@@ -1,0 +1,8 @@
+(:name spaces
+       :description "Create and switch between named window configurations."
+       :website "https://github.com/chumpage/chumpy-windows"
+       :type builtin
+       ;; This is a "pseudo" package.  Actual elisp file is installed
+       ;; by the package chumpy-windows.
+       ;; See ./chumpy-windows.rcp and issue #1034.
+       :depends (chumpy-windows))

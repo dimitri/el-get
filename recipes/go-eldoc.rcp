@@ -1,0 +1,6 @@
+(:name go-eldoc
+       :description "eldoc plugin for Go"
+       :type github
+       :pkgname "syohex/emacs-go-eldoc"
+       :depends go-mode
+       :post-init (add-hook 'go-mode-hook 'go-eldoc-setup))

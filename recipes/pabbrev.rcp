@@ -1,0 +1,4 @@
+(:name pabbrev
+       :description "Simple predictive abbreviation"
+       :type http
+       :url "http://homepages.cs.ncl.ac.uk/phillip.lord/download/emacs/pabbrev.el")

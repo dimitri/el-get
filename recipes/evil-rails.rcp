@@ -1,0 +1,7 @@
+(:name evil-rails
+       :website "http://github.com/antono/evil-rails"
+       :description "Rails specific commands for evil"
+       :type github
+       :pkgname "antono/evil-rails"
+       :features evil-rails
+       :depends evil rinari)

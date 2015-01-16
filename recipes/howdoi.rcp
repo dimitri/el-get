@@ -1,0 +1,4 @@
+(:name howdoi
+       :description "Emacs interface to the `howdoi` command line tool (https://github.com/gleitz/howdoi)"
+       :type github
+       :pkgname "atykhonov/emacs-howdoi")

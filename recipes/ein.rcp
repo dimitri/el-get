@@ -2,7 +2,7 @@
        :description "IPython notebook client in Emacs"
        :type github
        :pkgname "tkf/emacs-ipython-notebook"
-       :depends (websocket nxhtml)
+       :depends (websocket request auto-complete)
        :load-path ("lisp")
        :submodule nil
        :features ein)

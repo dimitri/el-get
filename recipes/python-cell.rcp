@@ -1,0 +1,5 @@
+(:name python-cell
+       :description "MATLAB-like cells in python"
+       :type github
+       :pkgname "thisch/python-cell.el"
+       :depends (python))

@@ -1,0 +1,4 @@
+(:name guru-mode
+       :type github
+       :description "Become an Emacs guru."
+       :pkgname "bbatsov/guru-mode")

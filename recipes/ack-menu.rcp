@@ -1,0 +1,5 @@
+(:name ack-menu
+       :description "A menu-based front-end for ack"
+       :type github
+       :pkgname "chumpage/ack-menu"
+       :depends (mag-menu))

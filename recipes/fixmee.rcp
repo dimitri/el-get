@@ -1,0 +1,5 @@
+(:name fixmee
+       :description "Quickly navigate to FIXME notices in code."
+       :type github
+       :pkgname "rolandwalker/fixmee"
+       :depends (button-lock tabulated-list))

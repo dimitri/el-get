@@ -4,8 +4,8 @@
 
 (setq versions-to-test (list 0 10 23 24 25 40 500 "24.1.50.1" "21.4" "500.2.3" '(23 3 50 1))
       recipes-to-test (mapcar (lambda (version)
-                               `(:name a :type builtin :minimum-emacs-version ,version))
-                             versions-to-test)
+                                `(:name a :type builtin :minimum-emacs-version ,version))
+                              versions-to-test)
       el-get-default-process-sync t)
 
 ;; Simulate same version, higher version, and lower version

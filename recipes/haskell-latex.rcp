@@ -1,0 +1,5 @@
+(:name haskell-latex
+       :description "multi-mode for working with haskell and latex"
+       :depends multi-mode
+       :type http
+       :url "http://www.loveshack.ukfsn.org/emacs/haskell-latex.el")

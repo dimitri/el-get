@@ -1,0 +1,5 @@
+(:name css-eldoc
+       :website "https://github.com/zenozeng/css-eldoc"
+       :description "eldoc plugin for CSS"
+       :type github
+       :pkgname "zenozeng/css-eldoc")

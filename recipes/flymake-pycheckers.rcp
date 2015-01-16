@@ -1,0 +1,8 @@
+(:name flymake-pycheckers
+       :type github
+       :pkgname "dholm/flymake-pycheckers"
+       :description "Runs pycheckers in Python buffer using flymake"
+       :website "http://github.com/dholm/flymake-pycheckers"
+       :prepare (setq pycheckers-command
+                      (expand-file-name
+                       (concat (el-get-package-directory "flymake-pycheckers") "pycheckers"))))

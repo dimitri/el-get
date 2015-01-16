@@ -1,5 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 cd "$(dirname "$0")"
 
-exec ./run-test.sh el-get-*.el 2>/dev/null | { ack --passthru FAILED 2>/dev/null || cat; }
+exec ./run-test.sh el-get-*.el 2>/dev/null

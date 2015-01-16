@@ -1,0 +1,4 @@
+(:name rcodetools
+       :description "rcodetools is a collection of Ruby code manipulation tools."
+       :type github
+       :pkgname "tnoda/rcodetools")

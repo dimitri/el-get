@@ -1,0 +1,4 @@
+(:name xterm-color
+       :type github
+       :pkgname "atomontage/xterm-color"
+       :description "ANSI & xterm-256 color text property translator for Emacs")

@@ -1,0 +1,6 @@
+(:name project-root
+       :website "http://solovyov.net/project-root/"
+       :description "Project-root is a simple project management tool for Emacs, which provides certain flexibility when defining projects."
+       :type hg
+       :url "https://bitbucket.org/piranha/project-root"
+       :features project-root)

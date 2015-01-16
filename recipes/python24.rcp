@@ -1,0 +1,5 @@
+(:name python24
+       :description "Python's flying circus support for Emacs (24.x)"
+       :builtin "24.4"
+       :type http
+       :url "http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/progmodes/python.el?h=emacs-24")

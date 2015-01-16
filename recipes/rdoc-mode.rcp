@@ -1,0 +1,5 @@
+(:name rdoc-mode
+       :website "https://github.com/jwiegley/ruby-mode"
+       :description "Major mode for RDoc editing"
+       :type http
+       :url "https://raw.githubusercontent.com/jwiegley/ruby-mode/master/rdoc-mode.el")

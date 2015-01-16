@@ -1,5 +1,5 @@
 (:name muse-blog
-       :description "Keep and publish a blog"
-       :type git
-       :url "git://git.naquadah.org/muse-blog.git"
-       :features muse-blog)
+       :description "Keep and publish a blog."
+       :type github
+       :pkgname "jd/muse-blog.el"
+       :depends (muse))

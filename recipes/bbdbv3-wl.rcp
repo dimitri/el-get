@@ -1,0 +1,8 @@
+(:name bbdbv3-wl
+       :description "BBDBv3 integration with Wanderlust."
+       :website "http://home.gna.org/bbdbv3-wl/"
+       :type svn
+       :url "http://svn.gna.org/svn/bbdbv3-wl/trunk/"
+       :load-path ("lisp")
+       :depends (bbdb wanderlust)
+       :prepare (add-hook 'wl-init-hook '(lambda () (require 'bbdbV3-wl))))

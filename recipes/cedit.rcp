@@ -1,0 +1,4 @@
+(:name cedit
+       :description "paredit-like commands for c-like languages"
+       :type github
+       :pkgname "zk-phi/cedit")

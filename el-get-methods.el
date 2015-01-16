@@ -10,16 +10,29 @@
 ;; This file is NOT part of GNU Emacs.
 ;;
 ;; Install
-;;     Please see the README.asciidoc file from the same distribution
+;;     Please see the README.md file from the same distribution
 (require 'el-get-core)
 
 ;;
 ;; NOTE: this will probably benefit from some autoloading magic, later.
 ;;
-(add-to-list 'load-path
-	     (expand-file-name
-	      "methods"
-	      (file-name-directory (or load-file-name buffer-file-name))))
+(eval-and-compile
+ (add-to-list 'load-path
+              (expand-file-name
+               "methods"
+               (file-name-directory (or load-file-name byte-compile-current-file buffer-file-name)))))
+
+(defun el-get-insecure-check (package url)
+  (when (and (not el-get-allow-insecure)
+             (not (string-match "^https://" url))
+             (not (string-match "^[-_\.A-Za-z0-9]+@" url))
+             (not (string-match "^ssh" url)))
+    ;; If we have :checksum, we can rely on `el-get-post-install' for
+    ;; security.
+    (unless (plist-get (el-get-package-def package) :checksum)
+      (error (concat "Attempting to install insecure package "
+                     (el-get-as-string package)
+                     " without `el-get-allow-insecure'.")))))
 
 (require 'el-get-apt-get)
 (require 'el-get-builtin)
@@ -34,6 +47,7 @@
 (require 'el-get-git)
 (require 'el-get-github)
 (require 'el-get-git-svn)
+(require 'el-get-go)
 (require 'el-get-hg)
 (require 'el-get-http)
 (require 'el-get-http-tar)

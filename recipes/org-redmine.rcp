@@ -1,0 +1,8 @@
+(:name org-redmine
+       :type github
+       :description "Redmine tools using Emacs OrgMode."
+       :pkgname "gongo/org-redmine"
+       :depends (json anything)
+       :prepare (progn
+                  (autoload 'org-redmine-anything-show-issue-all "org-redmine" nil t)
+                  (autoload 'org-redmine-get-issue "org-redmine" nil t)))

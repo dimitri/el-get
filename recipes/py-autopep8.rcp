@@ -1,0 +1,4 @@
+(:name py-autopep8
+       :description "Use autopep8 to beautify a Python buffer."
+       :type github
+       :pkgname "paetzke/py-autopep8.el")

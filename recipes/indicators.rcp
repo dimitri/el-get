@@ -1,0 +1,4 @@
+(:name indicators
+       :type github
+       :description "display the relative location of line in the fringe."
+       :pkgname "Fuco1/indicators.el")

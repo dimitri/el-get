@@ -1,0 +1,5 @@
+(:name el-x
+       :description "Emacs lisp extensions"
+       :type github
+       :pkgname "sigma/el-x"
+       :load-path ("lisp"))

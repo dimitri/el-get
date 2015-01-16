@@ -1,0 +1,5 @@
+(:name change-mode
+       :type github
+       :pkgname "shishi/change-mode"
+       :description "minor mode displaying buffer changes with special face"
+       :website "https://groups.google.com/group/gnu.emacs.sources/msg/a322fe45d233d964")

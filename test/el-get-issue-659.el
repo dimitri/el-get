@@ -7,12 +7,12 @@
 
 (el-get-register-method-alias :test :builtin)
 
-(let ((debug-on-error t)
-      (el-get-default-process-sync t)
-      (el-get-verbose t)
-      (el-get-auto-update-cached-recipes t)
-      (el-get-sources
-       `((:name a
+(let* ((debug-on-error t)
+       (el-get-default-process-sync t)
+       (el-get-verbose t)
+       (el-get-auto-update-cached-recipes t)
+       (initial-source
+        `(:name a
                 :type test
                 :compile "."
                 :features a
@@ -25,31 +25,29 @@
                                     "\n")))))
                 :prepare (message "Preparing A")
                 :post-init (message "Post-init A")
-                :lazy nil)))
-      (update-source
-       '(:name a
-               :before (message "Before A")
-               :after (message "After A")
-               :features nil
-               :load "a.el"
-               :library "a"
-               ;; This should not cause an error because it matches the
-               ;; cached value.
-               :prepare (message "Preparing A")
-               :lazy t))
-      (update-source-2
-       '(:name a
-               :type test
-               :lazy nil
-               :before (message "Before A2")
-               :after (progn (setq second-update-succeeded t)
-                             (message "After A2"))))
-      (invalid-update-source
-       '(:name a
-               :type test
-               :features a
-               ;; Not allowed to update this
-               :post-init (message "New post-init A"))))
+                :lazy nil))
+       (el-get-sources
+        (list initial-source))
+       (update-source
+        (append '(:features nil
+                            :lazy t
+                            :before (message "Before A")
+                            :after (message "After A")
+                            :load "a.el"
+                            :library "a"
+                            ;; This should not cause an error because it matches the
+                            ;; cached value.
+                            :prepare (message "Preparing A"))
+                initial-source))
+       (update-source-2
+        (append '(:lazy nil
+                        :before (message "Before A2")
+                        :after (progn (setq second-update-succeeded t)
+                                      (message "After A2")))
+                initial-source))
+       (invalid-update-source
+        (append '(:non-updatable-property value)
+                initial-source)))
   ;; Install A
   (el-get 'sync 'a)
   (require 'a)
@@ -69,12 +67,9 @@
   (el-get-merge-properties-into-status invalid-update-source nil :noerror t)
   (assert (null (plist-get (el-get-read-package-status-recipe 'a) :features)) nil
           "Cached recipe should not be updated")
-  ;; This should update things
-  (el-get-merge-properties-into-status invalid-update-source nil :skip-non-updatable t)
-  (assert (plist-get (el-get-read-package-status-recipe 'a) :features) nil
-          "New values should be force-merged into cached recipe")
-  ;; Now make sure `el-get-init' updates things.from `el-get-sources'
+  ;; Verify that new properties were actually added.
   (let ((el-get-sources (list update-source-2)))
     (el-get-init 'a))
   (assert (bound-and-true-p second-update-succeeded) nil
-          "el-get-init should auto-update the recipe"))
+          "el-get-init should auto-update the recipe")
+  )

@@ -1,5 +1,5 @@
 (:name fuzzy
-       :website "https://github.com/m2ym/fuzzy-el"
+       :website "https://github.com/auto-complete/fuzzy-el"
        :description "Fuzzy matching utilities for GNU Emacs"
        :type github
-       :pkgname "m2ym/fuzzy-el")
+       :pkgname "auto-complete/fuzzy-el")

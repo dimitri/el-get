@@ -1,0 +1,5 @@
+(:name db-pg
+       :description "Postgresql adapter for emacs-db. Uses Hstores to model a kv store."
+       :depends db
+       :type github
+       :pkgname "nicferrier/emacs-db-pg")

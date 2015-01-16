@@ -1,0 +1,4 @@
+(:name poporg
+       :description "Editing program comments or strings in text mode."
+       :type github
+       :pkgname "QBobWatson/poporg")

@@ -1,0 +1,5 @@
+(:name jasmin
+       :type http
+       :website "http://www.neilvandyke.org/jasmin-emacs/"
+       :description "Major mode for editing Jasmin Java bytecode assembler files."
+       :url "http://www.neilvandyke.org/jasmin-emacs/jasmin.el")

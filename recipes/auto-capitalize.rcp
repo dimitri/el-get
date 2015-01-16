@@ -1,0 +1,11 @@
+(:name auto-capitalize
+       :description "Automatically capitalize (or upcase) words."
+       :website "http://www.emacswiki.org/emacs/auto-capitalize.el"
+       :type emacswiki
+       :prepare (progn
+                  (autoload 'auto-capitalize-mode "auto-capitalize"
+                    "Toggle `auto-capitalize' minor mode in this buffer." t)
+                  (autoload 'turn-on-auto-capitalize-mode "auto-capitalize"
+                    "Turn on `auto-capitalize' minor mode in this buffer." t)
+                  (autoload 'enable-auto-capitalize-mode "auto-capitalize"
+                    "Enable `auto-capitalize' minor mode in this buffer." t)))

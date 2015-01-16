@@ -1,0 +1,5 @@
+(:name helm-project
+       :type github
+       :pkgname "shishi/helm-project"
+       :description "finding any resource of a project with helm"
+       :depends (helm))

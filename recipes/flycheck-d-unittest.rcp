@@ -1,0 +1,7 @@
+(:name flycheck-d-unittest
+       :description "Add D unittest support to flycheck."
+       :type github
+       :pkgname "flycheck/flycheck-d-unittest"
+       :depends (flycheck dash)
+       :prepare (eval-after-load 'flycheck
+                  '(add-hook 'flycheck-mode-hook #'setup-flycheck-d-unittest)))

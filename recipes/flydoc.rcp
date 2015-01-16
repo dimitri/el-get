@@ -1,0 +1,3 @@
+(:name flydoc
+       :description "on-the-fly documentation"
+       :type emacsmirror)

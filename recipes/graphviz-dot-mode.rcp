@@ -1,6 +1,4 @@
 (:name graphviz-dot-mode
-       :type http
-       :website "http://www.graphviz.org/"
        :description "graphviz dot language mode"
-       :url "http://www.graphviz.org/Misc/graphviz-dot-mode.el"
-       :autoloads t)
+       :type github
+       :pkgname "ppareit/graphviz-dot-mode")

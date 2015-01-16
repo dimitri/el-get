@@ -1,0 +1,5 @@
+(:name ac-predictive
+       :description "Auto-complete source for predictive-mode"
+       :type github
+       :pkgname "tkosaka/ac-predictive"
+       :depends (auto-complete predictive))

@@ -1,0 +1,5 @@
+(:name soothe-theme
+       :type github
+       :pkgname "jasonm23/emacs-soothe-theme"
+       :description "Soothe theme for emacs"
+       :prepare (add-to-list 'custom-theme-load-path default-directory))

@@ -1,0 +1,4 @@
+(:name spray
+       :type github
+       :description "[Emacs] an elisp implementation of OpenSpritz."
+       :pkgname "ian-kelling/spray")

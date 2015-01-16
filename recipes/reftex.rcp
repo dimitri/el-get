@@ -1,9 +1,12 @@
 (:name reftex
        :description "Version and autoloads of RefTeX"
+       :builtin "24.3"
        :type cvs
        :module "reftex"
        :url ":pserver:anonymous@cvs.sv.gnu.org:/sources/auctex"
-       :build ("make" "make info")
+       :build `(("make"
+                 ,(concat "EMACS=" el-get-emacs))
+                ("make" "info"))
        :features reftex
        :load-path ("lisp")
        :info "doc")

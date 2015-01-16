@@ -1,0 +1,5 @@
+(:name dired-xattr
+       :type github
+       :description "Handle MacOSX Finder color label in dired."
+       :pkgname "renard/dired-xattr"
+       :depends htmlize)

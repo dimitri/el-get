@@ -5,9 +5,14 @@
        :info "doc"
        :load-path ("./lisp")
        :features emms-setup
-       :build `(,(format "mkdir -p %s/emms " user-emacs-directory)
-		,(concat "make EMACS=" el-get-emacs
-			 " SITEFLAG=\"--no-site-file -L " el-get-dir "/emacs-w3m/ \""
-			 " autoloads lisp docs"))
+       :build `(("mkdir" "-p" ,(expand-file-name (format "%s/emms" user-emacs-directory)))
+                ("make" ,(format "EMACS=%s" el-get-emacs)
+                 ,(format "SITEFLAG=--no-site-file -L %s"
+                          (shell-quote-argument (el-get-package-directory "emacs-w3m")))
+                 "autoloads" "lisp" "docs"))
+       :build/berkeley-unix `(("mkdir" "-p" ,(expand-file-name (format "%s/emms" user-emacs-directory)))
+                              ("gmake" ,(format "EMACS=%s" el-get-emacs)
+                               ,(format "SITEFLAG=--no-site-file -L %s"
+                                        (shell-quote-argument (el-get-package-directory "emacs-w3m")))
+                               "autoloads" "lisp" "docs"))
        :depends emacs-w3m)
-
