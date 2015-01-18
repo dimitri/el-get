@@ -1,0 +1,5 @@
+(:name ob-julia
+       :website "https://github.com/gjkerns/ob-julia"
+       :description "Org-mode babel functions for Julia language."
+       :type github
+       :pkgname "gjkerns/ob-julia")
