@@ -1,8 +1,8 @@
 (:name cedet
        :website "http://cedet.sourceforge.net/"
        :description "CEDET is a Collection of Emacs Development Environment Tools written with the end goal of creating an advanced development environment in Emacs."
-       :type bzr
-       :url "bzr://cedet.bzr.sourceforge.net/bzrroot/cedet/code/trunk"
+       :type git
+       :url "http://git.code.sf.net/p/cedet/git"
        :build
        ;; `((,el-get-emacs "-batch" "-Q" "-l" "cedet-build.el" "-f" "cedet-build"))
        `(("sh" "-c" "touch `find . -name Makefile`")
