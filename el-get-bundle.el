@@ -118,7 +118,8 @@
              (ignore-errors
                (or (file-exists-p el-get-bundle-init-directory)
                    (make-directory el-get-bundle-init-directory t) t)))
-    (let* ((path (file-name-sans-extension (expand-file-name load-file-name)))
+    (let* ((path (expand-file-name (convert-standard-filename load-file-name)))
+           (path (file-name-sans-extension path))
            (callsite (replace-regexp-in-string "[^a-zA-Z0-9._-]" "_" path))
            (package (plist-get src :name))
            (id (el-get-bundle-init-id path))
