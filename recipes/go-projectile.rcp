@@ -3,4 +3,4 @@
        :type github
        :pkgname "dougm/go-projectile"
        :depends (projectile go-mode go-eldoc)
-       :post-init (eval-after-load 'projectile '(require 'go-projectile)))
+       :post-init (eval-after-load 'go-mode '(require 'go-projectile)))
