@@ -1,5 +1,4 @@
 (:name deft
-       :description "Deft is an Emacs mode for quickly browsing, filtering, and editing directories of plain text notes, inspired by Notational Velocity."
-       :type http
-       :url "http://jblevins.org/projects/deft/deft.el"
-       :features deft)
+       :description "Quickly browse, filter, and edit plain text notes."
+       :type git
+       :url "git://jblevins.org/git/deft.git")
