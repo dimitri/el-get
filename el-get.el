@@ -879,13 +879,7 @@ explicitly declared in the user-init-file (.emacs)."
     (let ((filepath (format "%s/%s" dir filename)))
       (with-temp-file filepath
         (emacs-lisp-mode)
-        (insert "(")
-        (loop for (prop val) on source by #'cddr
-              do (insert (format "%S %S\n" prop val)))
-        (delete-char -1) ; delete last \n
-        (insert ")\n")
-        (goto-char (point-min))
-        (indent-pp-sexp 'pretty)))))
+        (el-get-recipe-pprint source)))))
 
 ;;;###autoload
 (defun el-get-make-recipes (&optional dir)

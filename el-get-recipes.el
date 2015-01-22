@@ -96,6 +96,30 @@ Used to avoid errors when exploring the path for recipes"
 ;;
 ;; recipes
 ;;
+
+(defun el-get-recipe-pprint (source)
+  "Pretty print a recipe definition to current buffer."
+  (if (eq major-mode 'emacs-lisp-mode)
+      (let ((point (point)))
+        (insert "(")
+        ;; Standard Emacs pretty print functions don't put newlines after
+        ;; prop val pairs of plists, so we have to do it ourselves.
+        (loop for (prop val) on source by #'cddr
+              do (insert (format "%S %S\n" prop val)))
+        (delete-char -1)                ; delete last \n
+        (insert ")\n")
+        (goto-char point)
+        (indent-pp-sexp 'pretty))
+    (let ((temp-buffer (generate-new-buffer " *temp*")))
+      (unwind-protect
+          (progn
+            (save-current-buffer
+              (set-buffer temp-buffer)
+              (emacs-lisp-mode)
+              (el-get-recipe-pprint source))
+            (insert-buffer-substring temp-buffer))
+        (kill-buffer temp-buffer)))))
+
 (defun el-get-read-recipe-file (filename)
   "Read given FILENAME and return its content (a valid form is expected)."
   (condition-case err

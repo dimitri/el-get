@@ -166,7 +166,7 @@ matching REGEX with TYPE and ARGS as parameter."
         (el-get-describe-princ-button (format " in `%s':\n" file)
                                       "`\\([^`']+\\)"
                                       'el-get-help-package-def package)))
-    (princ (el-get-print-to-string def))))
+    (el-get-recipe-pprint def)))
 
 (defun el-get-describe (package &optional interactive-p)
   "Generate a description for PACKAGE."
@@ -180,9 +180,8 @@ matching REGEX with TYPE and ARGS as parameter."
                      interactive-p)
     (save-excursion
       (with-help-window (help-buffer)
-        (el-get-describe-1 package)
         (with-current-buffer standard-output
-          (buffer-string))))))
+          (el-get-describe-1 package))))))
 
 (defcustom el-get-package-menu-view-recipe-function
   'find-file-other-window
