@@ -1,0 +1,6 @@
+(:name ace-jump-zap
+       :website "https://github.com/waymondo/ace-jump-zap"
+       :description "Emacs character zapping, ace-jump-mode style"
+       :type github
+       :pkgname "waymondo/ace-jump-zap"
+       :depends (ace-jump-mode))
