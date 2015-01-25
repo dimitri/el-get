@@ -3,5 +3,6 @@
        :website "http://www.ncl.ucar.edu/"
        :description "ncl-mode and other goodies for editing Ncar Command
        line Language(NCL) files."
-       :pkgname "yyr/ncl-mode"
-       :features ncl-mode-load)
+       :load-path (".")
+       :compile (".*\\.el$")
+       :pkgname "yyr/ncl-mode")
