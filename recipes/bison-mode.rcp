@@ -1,0 +1,5 @@
+(:name bison-mode
+       :website "https://github.com/Wilfred/bison-mode"
+       :description "Emacs major mode for Bison, Yacc and Lex grammars"
+       :type github
+       :pkgname "Wilfred/bison-mode")
