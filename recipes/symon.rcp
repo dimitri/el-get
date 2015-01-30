@@ -1,0 +1,6 @@
+(:name symon
+       :description "tiny graphical system monitor"
+       :website "https://github.com/zk-phi/symon"
+       :type github
+       :depends cl-lib
+       :pkgname "zk-phi/symon")
