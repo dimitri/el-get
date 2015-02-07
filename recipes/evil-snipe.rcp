@@ -1,0 +1,5 @@
+(:name evil-snipe
+       :type github
+       :description "Bringing vim-sneak & vim-seek to evil-mode on Emacs"
+       :pkgname "hlissner/evil-snipe"
+       :depends (evil cl-lib))
