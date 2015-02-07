@@ -1,0 +1,4 @@
+(:name zop-to-char
+       :description "A visual zap-to-char command for Emacs."
+       :type github
+       :pkgname "thierryvolpiatto/zop-to-char")
