@@ -1,7 +1,7 @@
 (:name ein
        :description "IPython notebook client in Emacs"
        :type github
-       :pkgname "tkf/emacs-ipython-notebook"
+       :pkgname "millejoh/emacs-ipython-notebook"
        :depends (websocket request auto-complete)
        :load-path ("lisp")
        :submodule nil
