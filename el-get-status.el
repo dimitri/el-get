@@ -302,8 +302,8 @@ properties, respectively."
         (error "Package %s is nowhere to be found in el-get status file."
                package))))
 
-(defun* el-get-merge-properties-into-status (package-or-source
-                                             &key noerror)
+(defun el-get-merge-properties-into-status (package-or-source
+                                            &rest keys)
   "Merge updatable properties for package into package status alist (or status file).
 
 The first argument is either a package source or a package name,
@@ -318,11 +318,14 @@ file.
 
 If any non-whitelisted properties differ from the cached values,
 then an error is raise. With optional keyword argument `:noerror
-t', this error is suppressed (but nothing is updated)."
+t', this error is suppressed (but nothing is updated).
+
+\(fn PACKAGE-OR-SOURCE &key NOERROR)"
   (interactive
    (list (el-get-read-package-with-status "Update cached recipe" "installed")
          :noerror current-prefix-arg))
-  (let* ((source       (el-get-package-or-source package-or-source))
+  (let* ((noerror      (cadr (memq :noerror keys)))
+         (source       (el-get-package-or-source package-or-source))
          (package      (el-get-as-symbol (el-get-source-name source)))
          (cached-recipe
           (el-get-read-cached-recipe package source)))
