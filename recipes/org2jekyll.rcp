@@ -2,4 +2,4 @@
        :description "Minor mode to publish org-mode post to jekyll without specific yaml"
        :type github
        :pkgname "ardumont/org2jekyll"
-       :depends (dash dash-functional s deferred))
+       :depends (dash s deferred))
