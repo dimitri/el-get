@@ -1,0 +1,5 @@
+(:name company-edbi
+       :description "Edbi backend for company-mode."
+       :depends edbi
+       :type github
+       :pkgname "proofit404/company-edbi")
