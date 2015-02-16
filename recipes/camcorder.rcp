@@ -1,0 +1,6 @@
+(:name camcorder
+       :website "https://github.com/Bruce-Connor/camcorder.el"
+       :description "Tool for capturing screencasts directly from Emacs."
+       :type github
+       :pkgname "Bruce-Connor/camcorder.el"
+       :depends (cl-lib names))

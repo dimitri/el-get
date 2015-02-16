@@ -1,0 +1,5 @@
+(:name capture
+       :website "https://github.com/pashinin/capture.el"
+       :description "Emacs extension to record video from desktop."
+       :type github
+       :pkgname "pashinin/capture.el")
