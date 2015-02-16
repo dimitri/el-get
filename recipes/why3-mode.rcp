@@ -1,0 +1,5 @@
+(:name why3-mode
+       :description "GNU Emacs mode for Why3"
+       :type git
+       :url "https://gist.github.com/46a92bcc41abfecf4d79.git"
+       :features why3)

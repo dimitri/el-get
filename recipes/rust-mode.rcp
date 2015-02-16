@@ -1,4 +1,4 @@
 (:name rust-mode
-       :type http
-       :url "https://raw.github.com/mozilla/rust/master/src/etc/emacs/rust-mode.el"
+       :type github
+       :pkgname "rust-lang/rust-mode"
        :description "Emacs mode for Rust")

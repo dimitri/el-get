@@ -1,0 +1,5 @@
+(:name helm-go-package
+       :description "Helm sources for Go programming language's package."
+       :type github
+       :pkgname "yasuyk/helm-go-package"
+       :depends (helm go-mode))

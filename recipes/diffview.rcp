@@ -1,0 +1,8 @@
+(:name diffview
+       :description "View diffs in side-by-side format."
+       :type github
+       :pkgname "mgalgs/diffview-mode"
+       :prepare (progn
+                  (autoload 'diffview-current "diffview" nil t)
+                  (autoload 'diffview-region "diffview" nil t)
+                  (autoload 'diffview-message "diffview" nil t)))

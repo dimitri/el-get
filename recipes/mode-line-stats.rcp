@@ -1,0 +1,8 @@
+(:name mode-line-stats
+       :description "A bunch of easy to set up stats for the Emacs mode-line."
+       :website "https://github.com/Idorobots/mode-line-stats"
+       :type github
+       :pkgname "Idorobots/mode-line-stats"
+       :prepare
+       (progn
+         (autoload 'mode-line-stats-mode "mode-line-stats")))

@@ -1,0 +1,6 @@
+(:name jazz-theme
+       :description "A warm dark color theme for Emacs 24"
+       :type github
+       :pkgname "donderom/jazz-theme"
+       :minimum-emacs-version 24
+       :prepare (add-to-list 'custom-theme-load-path default-directory))

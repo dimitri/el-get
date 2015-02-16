@@ -1,0 +1,4 @@
+(:name toml-mode
+       :description "Emacs Mojor mode for editing TOML files"
+       :type github
+       :pkgname "dryman/toml-mode.el")
