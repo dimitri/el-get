@@ -362,13 +362,14 @@ which defaults to the first element in `el-get-recipe-path'."
     (el-get-verbose-message "el-get-init: " init-deps)
     (loop for p in init-deps do (el-get-do-init p) collect p)))
 
-(defun el-get-do-init (package)
+(defun el-get-do-init (package &optional package-status-alist)
   "Make the named PACKAGE available for use.
 
 Add PACKAGE's directory (or `:load-path' if specified) to the
 `load-path', add any its `:info' directory to
 `Info-directory-list', and `require' its `:features'.  Will be
 called by `el-get' (usually at startup) for each installed package."
+  (declare (advertised-calling-convention (package) "Feb 2015"))
     (let ((psym (el-get-as-symbol package)))
       (when (and (not (eq psym 'el-get)) ; el-get recipe handles reloading
                  (memq psym (bound-and-true-p package-activated-list))
@@ -382,7 +383,7 @@ this warning either uninstall one of the el-get or package.el
 version of %s, or call `el-get' before `package-initialize' to
 prevent package.el from loading it."  package package)))
   (when el-get-auto-update-cached-recipes
-    (el-get-merge-properties-into-status package :noerror t))
+    (el-get-merge-properties-into-status package () :noerror t))
   (condition-case err
       (let* ((el-get-sources (el-get-package-status-recipes))
              (source   (el-get-read-package-status-recipe package))
@@ -581,14 +582,15 @@ PACKAGE may be either a string or the corresponding symbol."
       (funcall install package url 'el-get-post-install)
       (message "el-get install %s" package))))
 
-(defun el-get-reload (package)
+(defun el-get-reload (package &optional package-status-alist)
   "Reload PACKAGE."
+  (declare (advertised-calling-convention (package) "Feb 2015"))
   (interactive
    (progn
      (el-get-clear-status-cache)
      (list (el-get-read-package-with-status "Reload" "installed"))))
   (el-get-verbose-message "el-get-reload: %s" package)
-  (el-get-with-status-sources
+  (el-get-with-status-sources ()
     (let* ((all-features features)
            (pdir (el-get-package-directory package))
            (package-features (el-get-package-features pdir))
@@ -816,7 +818,7 @@ result of an actual problem."
     (let ((fallback-source
            (or (ignore-errors (el-get-package-def package))
                (list :name package :type 'builtin))))
-      (el-get-with-status-sources
+      (el-get-with-status-sources ()
         (let* ((source   (or (ignore-errors (el-get-package-def package))
                              fallback-source))
                ;; Put the fallback source into `el-get-sources' so that
@@ -900,7 +902,7 @@ entry which is not a symbol and is not already a known recipe."
   "Compute the checksum of the given package, and put it in the kill-ring"
   (interactive
    (list (el-get-read-package-with-status "Checksum" "installed")))
-  (el-get-with-status-sources
+  (el-get-with-status-sources ()
     (let* ((type             (el-get-package-type package))
            (checksum         (plist-get (el-get-package-def package) :checksum))
            (compute-checksum (el-get-method type :compute-checksum)))

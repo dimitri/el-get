@@ -223,9 +223,9 @@
             unless (equal s "removed")
             collect (list x s)))))
 
-(defmacro el-get-with-status-sources (&rest body)
+(defmacro el-get-with-status-sources (_ &rest body)
   "Evaluate BODY with `el-get-sources' according to the status file."
-  (declare (debug t) (indent 0))
+  (declare (debug t) (indent 1))
   `(let ((el-get-sources (el-get-package-status-recipes)))
      (progn ,@body)))
 
