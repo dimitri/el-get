@@ -1,0 +1,5 @@
+(:name aurel
+       :website "https://github.com/alezost/aurel"
+       :description "Search, vote and download AUR packages from Emacs."
+       :type github
+       :pkgname "alezost/aurel")
