@@ -333,7 +333,7 @@ t', this error is suppressed (but nothing is updated).
       (error "Package %s is not installed. Cannot update recipe." package))
     (destructuring-bind (update-p added-disallowed removed-disallowed)
         (el-get-diagnosis-properties cached-recipe source)
-      (when (or added-disallowed removed-disallowed)
+      (if (or added-disallowed removed-disallowed)
         ;; Emit a verbose message if `noerror' is t (but still quit
         ;; the function).
         (funcall (if noerror 'el-get-verbose-message 'error)
@@ -353,8 +353,7 @@ Maybe you should use `el-get-update' or `el-get-reinstall' on %s instead?"
                  (if removed-disallowed (pp-to-string removed-disallowed) "()")
                  (pp-to-string cached-recipe)
                  (el-get-source-name cached-recipe))
-        (return-from el-get-merge-properties-into-status))
       (when update-p
-        (el-get-save-package-status package "installed" source)))))
+          (el-get-save-package-status package "installed" source))))))
 
 (provide 'el-get-status)
