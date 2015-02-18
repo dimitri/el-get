@@ -1,0 +1,5 @@
+(:name dispass
+       :type git
+       :description "Emacs wrapper for DisPass."
+       :website "http://projects.ryuslash.org/dispass.el/"
+       :url "git://ryuslash.org/dispass.el.git")
