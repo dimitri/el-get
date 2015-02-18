@@ -1,0 +1,6 @@
+(:name tinkerer
+       :description "Elisp wrapper for Tinkerer blogging Engine."
+       :website "https://github.com/yyr/tinkerer.el"
+       :type github
+       :depends (s)
+       :pkgname "yyr/tinkerer.el")
