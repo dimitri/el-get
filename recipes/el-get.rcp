@@ -6,7 +6,7 @@
        :pkgname "dimitri/el-get"
        :info    "."
        :compile ("el-get.*\\.el$" "methods/")
-       :load    "el-get.el"
+       :features el-get
        :post-init (when (memq 'el-get (bound-and-true-p package-activated-list))
                     (message "Deleting melpa bootstrap el-get")
                     (unless package--initialized
