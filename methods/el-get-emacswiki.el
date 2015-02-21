@@ -112,9 +112,7 @@ into a local recipe file set"
           (insert
            (format
             "(:name %s\n:auto-generated t\n:type emacswiki\n:description \"%s\"\n:website \"%s\")\n"
-            (file-name-sans-extension package) description url))
-          ;; (encode-coding-region (point-min) (point-max) 'utf-8)
-          (indent-region (point-min) (point-max)))
+            (file-name-sans-extension package) description url)))
      finally (progress-reporter-done progress))))
 
 ;;;###autoload
