@@ -457,6 +457,14 @@ FILENAME defaults to `buffer-file-name'."
                    "Property %S is for user.  Use %S instead."
                    key alt)
                  (incf numerror)))
+      ;; Check for misformatted plists
+      (loop for key in recipe by #'cddr
+            unless (keywordp key)
+            do (progn
+                 (el-get-check-warning :warning
+                   "Property %S is not a keyword!"
+                   key)
+                 (incf numerror)))
       (destructuring-bind (&key type url autoloads feats builtin
                                 &allow-other-keys)
           recipe
