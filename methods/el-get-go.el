@@ -22,30 +22,43 @@
   :group 'el-get
   :type 'hook)
 
+(defun el-get-go-path (gopath pkgname)
+  "find go path with pkgname"
+(let* ((v (split-string gopath ":" t))
+       (size (length v))
+       (i 0))
+  (while
+      (and
+       (< i size)
+       (not
+        (file-directory-p
+         (expand-file-name
+          pkgname (expand-file-name "src" (elt v i))))))
+       (setq i (+ 1 i)))
+     (elt v i)))
+
 (defun el-get-go-install (package url post-install-fun)
   "go install PACKAGE"
   (let* ((gopath (getenv "GOPATH"))
          (source (el-get-package-def package))
          (pkgname (el-get-as-string (plist-get source :pkgname)))
-         (pdir (el-get-package-directory package))
+         (pdir (expand-file-name
+                (el-get-as-string package)
+                (expand-file-name el-get-dir)))
          (name (format "*go get %s*" package))
          (ok   (format "Package %s installed." package))
          (ko   (format "Could not install package %s." package)))
-    ;; TODO: no idea how to check this for insecure connections
-    (unless (file-directory-p pdir)
-      (make-directory pdir))
-    (setenv "GOPATH" pdir)
     (el-get-start-process-list
      package
      `((:command-name ,name
                       :buffer-name ,name
                       :default-directory ,el-get-dir
                       :program ,el-get-go
-                      :args ("get" "-v" "-u" ,pkgname)
+                      :args ("get" ,pkgname)
                       :message ,ok
                       :error ,ko))
      post-install-fun)
-    (setenv "GOPATH" gopath)))
+    (make-symbolic-link (el-get-go-path gopath pkgname) pdir)))
 
 (el-get-register-method :go
   :install #'el-get-go-install
