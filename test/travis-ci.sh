@@ -19,7 +19,7 @@ if [ "$EMACS" = 'emacs-snapshot' ]; then
     prereqs() {
         sudo add-apt-repository -y ppa:cassou/emacs || exit $?;
         sudo apt-get update -qq || exit $?;
-        sudo apt-get install -qq emacs-snapshot-nox || exit $?;
+        sudo apt-get install -qq --force-yes emacs-snapshot-nox || exit $?;
     }
     # Only need to run these for 1 version, so make them nops here
     check-recipes() { :; }
