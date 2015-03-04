@@ -206,10 +206,10 @@ not return 'smart' headers despite supporting shallow clones"
     ;; "git status" and check that it returns success.
     (assert (file-directory-p ".git") nil
             "Package %s is not a git package" package)
-    (let* ((git-executable (el-get-executable-find "git"))
-           (args (list git-executable "log" "--pretty=format:%H" "-n1"))
-           (cmd (mapconcat 'shell-quote-argument args " ")))
-      (shell-command-to-string cmd))))
+    (with-temp-buffer
+      (call-process (el-get-executable-find "git") nil '(t t) nil
+                    "log" "--pretty=format:%H" "-n1")
+      (buffer-string))))
 
 (el-get-register-method :git
   :install #'el-get-git-clone
