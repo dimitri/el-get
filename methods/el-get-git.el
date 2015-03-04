@@ -198,8 +198,7 @@ not return 'smart' headers despite supporting shallow clones"
 
 (defun el-get-git-compute-checksum (package)
   "Return the hash of the checked-out revision of PACKAGE."
-  (with-temp-buffer
-    (cd (el-get-package-directory package))
+  (let ((default-directory (el-get-package-directory package)))
     ;; We cannot simply check the recipe for `:type git' because it
     ;; could also be github, emacsmirror, or any other unknown git-ish
     ;; type. Instead, we check for the existence of a ".git" directory
