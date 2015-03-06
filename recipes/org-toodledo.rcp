@@ -1,0 +1,6 @@
+(:name org-toodledo
+       :website "https://github.com/myuhe/org-toodledo"
+       :description "Toodledo integration for Emacs Org mode"
+       :type github
+       :pkgname "myuhe/org-toodledo"
+       :depends (request))
