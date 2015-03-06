@@ -1,0 +1,5 @@
+(:name image+
+       :website "https://github.com/mhayashi1120/Emacs-imagex"
+       :description "Image manipulate extensions for Emacs"
+       :type github
+       :pkgname "mhayashi1120/Emacs-imagex")

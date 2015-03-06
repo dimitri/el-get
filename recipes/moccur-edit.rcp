@@ -1,0 +1,6 @@
+(:name moccur-edit
+       :website "https://github.com/myuhe/moccur-edit.el"
+       :description "apply replaces to multiple files"
+       :type github
+       :pkgname "myuhe/moccur-edit.el"
+       :depends (color-moccur))
