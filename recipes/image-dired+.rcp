@@ -1,0 +1,5 @@
+(:name image-dired+
+       :website "https://github.com/mhayashi1120/Emacs-image-diredx"
+       :description "Image-dired extensions"
+       :type github
+       :pkgname "mhayashi1120/Emacs-image-diredx")
