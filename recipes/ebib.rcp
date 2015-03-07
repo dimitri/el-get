@@ -3,5 +3,5 @@
        :website "http://ebib.sourceforge.net/index.html"
        :description "Application to manage BibTeX database"
        :pkgname "joostkremers/ebib"
-       :depends (parsebib)
+       :depends (dash parsebib)
        :shallow nil)
