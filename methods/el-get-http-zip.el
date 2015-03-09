@@ -56,6 +56,7 @@
   :update #'el-get-http-zip-install
   :remove #'el-get-rmdir
   :install-hook 'el-get-http-zip-install-hook
-  :update-hook 'el-get-http-zip-install-hook)
+  :update-hook 'el-get-http-zip-install-hook
+  :compute-checksum #'el-get-http-compute-checksum)
 
 (provide 'el-get-http-zip)
