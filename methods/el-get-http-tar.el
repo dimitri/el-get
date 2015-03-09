@@ -66,7 +66,7 @@
                                       :buffer-name ,name
                                       :default-directory ,pdir
                                       :program ,(el-get-executable-find "tar")
-                                      :args (,@options ,tarfile)
+                                      :args (,"xvf" ,@options ,tarfile)
                                       :message ,ok
                                       :error ,ko))
                      ,(symbol-function post-install-fun))))))
