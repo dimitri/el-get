@@ -35,7 +35,9 @@
                           do (if (file-directory-p fullpath)
                                  (delete-directory fullpath 'recursive)
                                (delete-file fullpath))))
-                  ;; zip xzf `basename url`
+                  ;; verify checksum before operating on untrusted data
+                  (el-get-verify-checksum package)
+                  ;; unzip `basename url`
                   (let ((el-get-sources '(,@el-get-sources)))
                     (el-get-start-process-list
                      package
