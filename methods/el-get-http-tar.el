@@ -58,7 +58,7 @@
                                (delete-file fullpath))))
                   ;; verify checksum before operating on untrusted data
                   (el-get-verify-checksum package)
-                  ;; tar xvf `basename url`
+                  ;; tar xzf `basename url`
                   (let ((el-get-sources '(,@el-get-sources)))
                     (el-get-start-process-list
                      package
@@ -66,7 +66,7 @@
                                       :buffer-name ,name
                                       :default-directory ,pdir
                                       :program ,(el-get-executable-find "tar")
-                                      :args (,"xvf" ,@options ,tarfile)
+                                      :args (,@options ,tarfile)
                                       :message ,ok
                                       :error ,ko))
                      ,(symbol-function post-install-fun))))))
