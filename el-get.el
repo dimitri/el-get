@@ -513,16 +513,11 @@ PACKAGE may be either a string or the corresponding symbol."
   (el-get-do-init package)
   (run-hook-with-args 'el-get-post-install-hooks package))
 
-(defun el-get-post-install (package)
-  "Post install PACKAGE. This will get run by a sentinel."
-  (let* ((sync             el-get-default-process-sync)
-         (type             (el-get-package-type package))
-         (hooks            (el-get-method type :install-hook))
-         (commands         (el-get-build-commands package))
+(defun el-get-verify-checksum (package)
+  (let* ((type             (el-get-package-type package))
          (checksum         (plist-get (el-get-package-def package) :checksum))
          (compute-checksum (el-get-method type :compute-checksum)))
 
-    ;; check the checksum of the package here, as early as possible
     (when (and checksum (not compute-checksum))
       (error
        "Checksum verification of package %s is not supported with method %s."
@@ -536,7 +531,17 @@ PACKAGE may be either a string or the corresponding symbol."
               (error "Checksum verification failed. Required: \"%s\", actual: \"%s\"."
                      checksum computed))
           (el-get-verbose-message "el-get: pakage %s checksum is %s."
-                                  package computed))))
+                                  package computed))))))
+
+(defun el-get-post-install (package)
+  "Post install PACKAGE. This will get run by a sentinel."
+  (let* ((sync             el-get-default-process-sync)
+         (type             (el-get-package-type package))
+         (hooks            (el-get-method type :install-hook))
+         (commands         (el-get-build-commands package)))
+
+    ;; check the checksum of the package here, as early as possible
+    (el-get-verify-checksum package)
 
     ;; post-install is the right place to run install-hook
     (run-hook-with-args hooks package)
