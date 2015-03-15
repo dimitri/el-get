@@ -59,7 +59,14 @@
           ;; use dynamic scoping to set up our loaddefs file for
           ;; update-directory-autoloads
           (generated-autoload-file el-get-autoload-file)
-          (visited (get-file-buffer el-get-autoload-file)))
+          (visited (find-buffer-visiting el-get-autoload-file)))
+
+      (unless (or (not visited)
+                  (equal generated-autoload-file (buffer-file-name visited)))
+        ;; if we visited via non-standard path (e.g. symlink)
+        ;; `update-directory-autoloads' gets confused.
+        (kill-buffer visited)
+        (setq visited nil))
 
       ;; make sure we can actually byte-compile it
       (el-get-ensure-byte-compilable-autoload-file generated-autoload-file)
@@ -69,7 +76,7 @@
               (remove-if-not #'file-directory-p
                              (el-get-load-path package)))
 
-        (let ((visiting (get-file-buffer el-get-autoload-file)))
+        (let ((visiting (find-buffer-visiting el-get-autoload-file)))
           ;; `update-directory-autoloads' leaves file open
           (when (and (not visited) visiting)
             (kill-buffer visiting))))
