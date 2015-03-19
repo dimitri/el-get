@@ -4,4 +4,4 @@
        :type github
        :pkgname "antono/evil-rails"
        :features evil-rails
-       :depends evil rinari)
+       :depends (evil rinari))

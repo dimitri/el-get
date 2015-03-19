@@ -1,0 +1,5 @@
+(:name thingopt
+       :website "https://github.com/m2ym/thingopt-el"
+       :description "Thing at Point optional utilities"
+       :type github
+       :pkgname "m2ym/thingopt-el")

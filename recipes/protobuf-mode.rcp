@@ -1,6 +1,5 @@
 (:name protobuf-mode
-       :website "http://code.google.com/p/protobuf/"
+       :website "https://developers.google.com/protocol-buffers/"
        :description "Major mode for editing protocol buffers."
        :type http
-       :url "http://protobuf.googlecode.com/svn-history/trunk/editors/protobuf-mode.el"
-       :features protobuf-mode)
+       :url "https://raw.githubusercontent.com/google/protobuf/master/editors/protobuf-mode.el")

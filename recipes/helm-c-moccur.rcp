@@ -1,5 +1,6 @@
 (:name helm-c-moccur
        :type github
-       :pkgname "emacsmirror/helm-c-moccur"
+       :pkgname "myuhe/helm-c-moccur.el"
+       :website "https://github.com/myuhe/helm-c-moccur.el"
        :description "helm source for color-moccur.el"
        :depends (helm color-moccur))

@@ -3,5 +3,5 @@
        :type github
        :pkgname "vapniks/syslog-mode"
        :depends (hide-lines)
-       :post-init (progn
-                    (add-to-list 'auto-mode-alist '("/var/log.*\\'" . syslog-mode))))
+       :prepare (progn
+                  (add-to-list 'auto-mode-alist '("/var/log.*\\'" . syslog-mode))))
