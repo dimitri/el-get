@@ -1,0 +1,5 @@
+(:name edbi-sqlite
+       :description "Open SQLite files with edbi."
+       :depends (edbi)
+       :type github
+       :pkgname "proofit404/edbi-sqlite")
