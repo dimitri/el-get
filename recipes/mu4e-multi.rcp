@@ -1,0 +1,6 @@
+(:name mu4e-multi
+       :website "http://github.com/fgallina/mu4e-multi"
+       :description "Multiple accounts support for mu4e."
+       :type github
+       :pkgname "fgallina/mu4e-multi"
+       :depends (cl-lib mu4e))
