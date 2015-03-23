@@ -1,0 +1,5 @@
+(:name stacktest
+       :website "https://github.com/sdague/stacktest"
+       :description "OpenStack Inline testing mode"
+       :type github
+       :pkgname "sdague/stacktest")
