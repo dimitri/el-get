@@ -6,7 +6,4 @@
        :features coffee-mode
        :prepare (progn
                   (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
-                  (add-to-list 'auto-mode-alist '("Cakefile" . coffee-mode)))
-       :post-init (progn
-                    ;; it defaults to js2-mode, which is not present in Emacs by default
-                    (setq coffee-js-mode 'javascript-mode)))
+                  (add-to-list 'auto-mode-alist '("Cakefile" . coffee-mode))))
