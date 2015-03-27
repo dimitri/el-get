@@ -6,11 +6,6 @@
 #   - check-whitespace()
 # TODO: run-tests()
 
-# Contrary to http://docs.travis-ci.com/user/ci-environment,
-# $TRAVIS_COMMIT_RANGE is not defined for pull requests.
-# See https://github.com/travis-ci/travis-ci/issues/1719
-git rev-parse ${TRAVIS_COMMIT_RANGE:=$TRAVIS_BRANCH..FETCH_HEAD}
-
 if [ "$EMACS" = 'emacs-snapshot' ]; then
     # If we have only changes to recipe files, there is no need to run
     # with more than 1 emacs version.
