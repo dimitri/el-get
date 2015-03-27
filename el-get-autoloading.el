@@ -59,7 +59,17 @@
           ;; use dynamic scoping to set up our loaddefs file for
           ;; update-directory-autoloads
           (generated-autoload-file el-get-autoload-file)
-          (visited (get-file-buffer el-get-autoload-file)))
+          (visited (find-buffer-visiting el-get-autoload-file))
+          ;; .loaddefs.el's buffer name MUST be `el-get-autoload-file'
+          ;; or else `autoloads.el' thinks it's a secondary autoload
+          ;; file and puts MD5 checksums instead of timestamps.
+          (find-file-visit-truename nil))
+
+      (unless (or (not visited)
+                  (equal generated-autoload-file (buffer-file-name visited)))
+        ;; Kill .loaddefs.el buffer if it has a different name.
+        (kill-buffer visited)
+        (setq visited nil))
 
       ;; make sure we can actually byte-compile it
       (el-get-ensure-byte-compilable-autoload-file generated-autoload-file)
@@ -69,7 +79,7 @@
               (remove-if-not #'file-directory-p
                              (el-get-load-path package)))
 
-        (let ((visiting (get-file-buffer el-get-autoload-file)))
+        (let ((visiting (find-buffer-visiting el-get-autoload-file)))
           ;; `update-directory-autoloads' leaves file open
           (when (and (not visited) visiting)
             (kill-buffer visiting))))
