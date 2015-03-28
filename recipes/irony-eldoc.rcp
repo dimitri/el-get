@@ -1,0 +1,4 @@
+(:name irony-eldoc
+       :description "irony-mode support for eldoc-mode"
+       :type github
+       :pkgname "ikirill/irony-eldoc")
