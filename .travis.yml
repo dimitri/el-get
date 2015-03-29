@@ -3,6 +3,7 @@ env:
   - EMACS=emacs
   - EMACS=emacs-snapshot
 install:
+  - env
   - source test/travis-ci.sh
   - prereqs
   - '"$EMACS" --version'
