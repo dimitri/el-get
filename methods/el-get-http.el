@@ -70,8 +70,13 @@ into the package :localname option or its `file-name-nondirectory' part."
                       `(,package ,url ,post-install-fun ,dest ,el-get-sources))
 
       (with-current-buffer (url-retrieve-synchronously url)
+        (goto-char (point-min))
         (el-get-http-retrieve-callback
-         nil package url post-install-fun dest el-get-sources)))))
+         (let ((http-response (if (looking-at "^HTTP/[0-9]\\.[0-9] \\([0-9]\\{3\\}\\)")
+                                  (string-to-number (match-string 1)))))
+           (unless (and http-response (<= 200 http-response 299))
+             `(:error (error http ,http-response))))
+         package url post-install-fun dest el-get-sources)))))
 
 (defun el-get-http-compute-checksum (package &optional url)
   "Compute SHA1 of PACKAGE."
