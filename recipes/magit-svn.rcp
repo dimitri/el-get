@@ -1,0 +1,7 @@
+(:name magit-svn
+       :website "https://github.com/magit/magit-svn"
+       :description "An extension to use git-svn in magit"
+       :type github
+       :branch "master" ; default to stable master, like magit.rcp
+       :pkgname "magit/magit-svn"
+       :depends (magit))

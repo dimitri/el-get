@@ -3,11 +3,12 @@
        :description "It's Magit! An Emacs mode for Git."
        :type github
        :pkgname "magit/magit"
+       :branch "master"
        :depends (cl-lib git-modes)
        :info "."
        ;; use the Makefile to produce the info manual, el-get can
        ;; handle compilation and autoloads on its own.
-       :compile "magit.*\.el\\'"
+       :compile "magit.*\\.el\\'"
        :build `(("make" "docs"))
        :build/berkeley-unix (("gmake" "docs"))
        ;; assume windows lacks make and makeinfo
