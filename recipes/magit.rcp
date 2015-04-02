@@ -7,7 +7,7 @@
        :depends (cl-lib dash)
        ;; use the Makefile to produce the info manual, el-get can
        ;; handle compilation and autoloads on its own.
-       :compile "magit.*\.el\\'"
+       ;; :compile "magit.*\\.el\\'"
        :build (("make" "lisp"))
        :build/darwin `(("make" ,(format "EMACSBIN=%s" el-get-emacs) "lisp"))
        :build/berkeley-unix (("gmake" "lisp"))
