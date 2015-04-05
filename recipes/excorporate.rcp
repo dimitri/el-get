@@ -1,0 +1,7 @@
+(:name excorporate
+       :description "Exchange calendar integration."
+       :website "http://www.fitzsim.org/blog/?cat=3"
+       :type http-tar
+       :options ("xf")
+       :url "http://www.fitzsim.org/emacs/excorporate-0.6.0.tar"
+       :depends (calfw))
