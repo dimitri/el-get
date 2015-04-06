@@ -1,0 +1,8 @@
+(:name semantic-stickyfunc-enhance
+       :description "An enhancement to stock `semantic-stickyfunc-mode'."
+       :type github
+       :pkgname "tuhdo/semantic-stickyfunc-enhance"
+       :minimum-emacs-version "24.3"
+       :depends (cedet)
+       :post-init (eval-after-load 'semantic/util-modes
+                    '(require 'stickyfunc-enhance)))
