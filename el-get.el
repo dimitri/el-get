@@ -964,8 +964,14 @@ considered \"required\"."
     (el-get-verbose-message "el-get-init-and-install: install %S" install-deps)
     (el-get-verbose-message "el-get-init-and-install: init %S" init-deps)
 
-    (loop for p in install-deps do (el-get-do-install p) collect p into done)
-    (loop for p in init-deps    do (el-get-do-init p)    collect p into done)
+    (loop for p in install-deps
+          when (el-get-with-errors-as-warnings (format "while installing %s: " p)
+                 (el-get-do-install p))
+          collect p into done)
+    (loop for p in init-deps
+          when (el-get-with-errors-as-warnings (format "while initializing %s: " p)
+                 (el-get-do-init p))
+          collect p into done)
     done))
 
 ;;;###autoload
