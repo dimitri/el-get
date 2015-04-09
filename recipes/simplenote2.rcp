@@ -4,4 +4,5 @@
        :depends (request)
        :type github
        :pkgname "alpha22jp/simplenote2.el"
-       :post-init (simplenote2-setup))
+       :post-init (simplenote2-setup)
+       :lazy t)
