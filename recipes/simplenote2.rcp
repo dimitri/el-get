@@ -1,0 +1,8 @@
+(:name simplenote2
+       :website "https://github.com/alpha22jp/simplenote2.el#readme"
+       :description "A new version of emacs helper to interact with Simplenote"
+       :depends (request)
+       :type github
+       :pkgname "alpha22jp/simplenote2.el"
+       :post-init (simplenote2-setup)
+       :lazy t)
