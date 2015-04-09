@@ -1,0 +1,3 @@
+(:name region-list-edit
+       :description "add/delete a region into/from a region list"
+       :type emacswiki)
