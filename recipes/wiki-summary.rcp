@@ -1,0 +1,5 @@
+(:name wiki-summary
+       :description "Get summaries of wikipedia articles in Emacs."
+       :website "https://github.com/jozefg/wiki-summary.el"
+       :type github
+       :pkgname "jozefg/wiki-summary.el")
