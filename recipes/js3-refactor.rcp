@@ -1,0 +1,6 @@
+(:name js3-refactor
+       :description "The beginnings of a JavaScript refactoring library in emacs."
+       :type github
+       :pkgname "katyo/js3-refactor"
+       :post-init (add-hook 'js3-mode-hook (lambda () (require 'js3-refactor)))
+       :depends (js3-mode dash multiple-cursors))
