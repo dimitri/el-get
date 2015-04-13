@@ -1,0 +1,6 @@
+(:name firestarter
+       :website "https://github.com/wasamasa/firestarter"
+       :description " Execute (shell) commands on save."
+       :type "github"
+       :branch "master"
+       :pkgname "wasamasa/firestarter")
