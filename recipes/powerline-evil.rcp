@@ -1,0 +1,9 @@
+
+(:name powerline-evil
+       :website "https://github.com/raugturi/powerline-evil"
+       :depends (evil powerline)
+       :description "Utilities for better Evil support for Powerline"
+       :type github
+       :pkgname "raugturi/powerline-evil"
+       :load-path "."
+       :features powerline-evil)
