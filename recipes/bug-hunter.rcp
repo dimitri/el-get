@@ -1,0 +1,5 @@
+(:name bug-hunter
+       :description "Hunt down errors in elisp files."
+       :website "https://github.com/Malabarba/elisp-bug-hunter"
+       :type github
+       :pkgname "Malabarba/elisp-bug-hunter")
