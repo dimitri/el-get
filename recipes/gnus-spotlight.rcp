@@ -1,0 +1,5 @@
+(:name gnus-spotlight
+       :description "Search mail with Spotlight."
+       :website "http://www.yoshidam.net/diary/Spotlight/"
+       :type http
+       :url "http://www.yoshidam.net/diary/Spotlight/gnus-spotlight.el")
