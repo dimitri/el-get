@@ -1,0 +1,4 @@
+(:name gnus-summary-ext
+       :description "Extra limit and process mark commands for the gnus summary buffer."
+       :type github
+       :pkgname "vapniks/gnus-summary-ext")
