@@ -1,0 +1,5 @@
+(:name avy
+       :description "Jump to things in Emacs tree-style."
+       :type github
+       :pkgname "abo-abo/avy"
+       :depends (cl-lib))
