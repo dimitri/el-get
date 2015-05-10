@@ -1,0 +1,5 @@
+(:name yagist
+       :description "Yet Another Emacs integration for gist.github.com."
+       :website "https://github.com/mhayashi1120/yagist.el"
+       :type github
+       :pkgname "mhayashi1120/yagist.el")
