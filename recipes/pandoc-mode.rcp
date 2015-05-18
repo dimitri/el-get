@@ -1,4 +1,5 @@
 (:name pandoc-mode
        :type github
        :description "Emacs mode for interacting with Pandoc."
-       :pkgname "joostkremers/pandoc-mode")
+       :pkgname "joostkremers/pandoc-mode"
+       :depends (dash hydra))
