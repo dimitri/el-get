@@ -1,0 +1,6 @@
+(:name powershell
+       :website "https://github.com/jschaf/powershell.el"
+       :description "Major mode for powershell files."
+       :type "github"
+       :branch "master"
+       :pkgname "jschaf/powershell.el")
