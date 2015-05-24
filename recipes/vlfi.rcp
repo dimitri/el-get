@@ -1,0 +1,4 @@
+(:name vlfi
+       :description "View Large Files"
+       :type github
+       :pkgname "m00natic/vlfi")
