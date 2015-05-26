@@ -1,0 +1,7 @@
+(:name color-theme-darktooth
+       :description "an Emacs 24 theme remixed from gruvbox"
+       :website "https://github.com/emacsfodder/emacs-theme-darktooth"
+       :minimum-emacs-version "24"
+       :type github
+       :pkgname "emacsfodder/emacs-theme-darktooth"
+       :prepare (add-to-list 'custom-theme-load-path default-directory))
