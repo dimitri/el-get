@@ -1,0 +1,5 @@
+(:name markdown-toc
+       :description "Generate a TOC in markdown file"
+       :type github
+       :pkgname "ardumont/markdown-toc"
+       :depends (s dash markdown-mode))
