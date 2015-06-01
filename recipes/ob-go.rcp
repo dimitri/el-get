@@ -1,0 +1,5 @@
+(:name ob-go
+       :description "Org-Babel support for evaluating go code."
+       :website "https://github.com/pope/ob-go"
+       :type github
+       :pkgname "pope/ob-go")
