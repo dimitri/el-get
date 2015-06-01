@@ -1,0 +1,5 @@
+(:name define-word
+       :website "https://github.com/abo-abo/define-word"
+       :description " Display the definition of word at point in Emacs."
+       :type github
+       :pkgname "abo-abo/define-word")

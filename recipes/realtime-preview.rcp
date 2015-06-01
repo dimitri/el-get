@@ -1,0 +1,5 @@
+(:name realtime-preview
+       :description "Realtime preview Markdown by EWW."
+       :website "https://github.com/niku/realtime-preview.el"
+       :type github
+       :pkgname "niku/realtime-preview.el")

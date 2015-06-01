@@ -3,6 +3,10 @@
        :website "https://github.com/tohojo/bbdb-vcard"
        :type github
        :pkgname "tohojo/bbdb-vcard"
+       :depends (bbdb)
+       ;; :builtin "24.3"
+       :minimum-emacs-version "24.3"
+       ;; TODO: this extensions requires BBDB v3.x. (how to write in el-get?)
        ;; :build (("make")
        ;;         ("make install"))
        )
