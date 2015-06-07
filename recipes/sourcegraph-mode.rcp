@@ -1,0 +1,11 @@
+(:name sourcegraph-mode
+       :description "
+Emacs mode for Sourcegraph, powered by srclib.
+
+    documentation lookups
+    type information
+    find usages (across all open-source projects globally)
+"
+       :website "https://github.com/sourcegraph/emacs-sourcegraph-mode"
+       :type github
+       :pkgname "sourcegraph/emacs-sourcegraph-mode")
