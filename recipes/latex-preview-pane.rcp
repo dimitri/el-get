@@ -1,0 +1,5 @@
+(:name latex-preview-pane
+       :website "http://www.emacswiki.org/emacs/LaTeXPreviewPane"
+       :description "latex-preview-pane is a minor mode for Emacs that enables you to preview your LaTeX files directly in Emacs. It supports PDF previews, your choice of pdflatex or xelatex, and it highlights errors in your LaTeX buffer."
+       :type github
+       :pkgname "jsinglet/latex-preview-pane")
