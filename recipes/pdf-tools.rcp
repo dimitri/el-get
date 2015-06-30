@@ -10,7 +10,6 @@
        :prepare (setq pdf-info-epdfinfo-program
                       (concat (el-get-package-directory "pdf-tools")
                               "server/epdfinfo"))
-       :build `(("make" "install-server-deps")
-                ("make"))
+       :build ("make")
        :load-path ("lisp")
        :compile ("lisp/"))
