@@ -5,4 +5,4 @@
        :url "http://bazaar.launchpad.net/~vm/vm/trunk/"
        :load-path ("lisp")
        :info "info"
-       :build ("autoconf" "./configure" "make"))
+       :build (("autoconf") ("./configure") ("make")))

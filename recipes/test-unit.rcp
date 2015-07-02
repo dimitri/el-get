@@ -2,5 +2,5 @@
        :description "Unit Test Framework for Emacs Lisp"
        :type github
        :pkgname "rocky/emacs-test-unit"
-       :build ("./autogen.sh" "./configure" "make")
+       :build (("./autogen.sh") ("./configure") ("make"))
        )

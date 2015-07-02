@@ -3,7 +3,7 @@
        :type github
        :pkgname "emacs-helm/helm"
        :autoloads "helm-autoloads"
-       :build ("make")
+       :build (("make"))
        :build/darwin `(("make" ,(format "EMACS_COMMAND=%s" el-get-emacs)))
        ;; Windows probably doesn't have make available so we fake it.
        :build/windows-nt

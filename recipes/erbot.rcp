@@ -2,6 +2,6 @@
        :description "Another robot for ERC."
        :type git
        :url "git://git.savannah.gnu.org/erbot.git"
-       :build ("make")
+       :build (("make"))
        :depends (erc bbdb)
        :load-path ("." "contrib"))

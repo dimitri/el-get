@@ -6,7 +6,7 @@
        :build `(("env" "LC_MESSAGES=C" "./make-wc.sh"
                  ,(format "--prefix=%s/build" (el-get-package-directory "uim-el"))
                  "--disable-gnome-applet" "--disable-fep" "--without-gtk2")
-                "make"
+                ("make")
                 ("make" "install"))
        :post-init
        ((setq uim-el-agent (concat

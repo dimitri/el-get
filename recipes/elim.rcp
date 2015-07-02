@@ -3,8 +3,8 @@
        :description "An elisp instant messenger daemon"
        :type git
        :url "git://git.sv.gnu.org/elim.git"
-       :build ("make")
-       :build/berkeley-unix ("gmake")
+       :build (("make"))
+       :build/berkeley-unix (("gmake"))
        :load-path ("./elisp")
        :prepare (progn
                   (autoload 'garak "garak" nil t)
