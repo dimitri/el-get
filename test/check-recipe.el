@@ -8,5 +8,5 @@
 (add-to-list 'load-path (expand-file-name
                          ".."
                          (file-name-directory load-file-name)))
-(require 'el-get-recipes)
+(require 'el-get-check)
 (el-get-check-recipe-batch)
