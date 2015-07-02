@@ -3,7 +3,7 @@
        :type git
        :url "http://git.gnus.org/gnus.git"
        :build `(("./configure" ,(concat "--with-emacs=" (shell-quote-argument el-get-emacs ))) ("make"))
-       :build/windows-nt `(,(concat "\"make.bat " invocation-directory "\""))
+       :build/windows-nt `(("make.bat" ,invocation-directory))
        :info "texi"
        :load-path ("lisp")
        :autoloads nil

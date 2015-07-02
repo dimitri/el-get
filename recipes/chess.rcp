@@ -2,7 +2,7 @@
        :description "Play chess in Emacs."
        :type github
        :pkgname "jwiegley/emacs-chess"
-       :build `("./autogen.sh" "./configure"
-                ,(concat "make EMACS=" el-get-emacs))
-       :build/windows-nt `("sh ./autogen.sh" "sh ./configure" "make")
+       :build `(("./autogen.sh") ("./configure")
+                ("make" ,(concat "EMACS=" el-get-emacs)))
+       :build/windows-nt `(("sh" "./autogen.sh") ("sh" "./configure") ("make"))
        :info "doc")

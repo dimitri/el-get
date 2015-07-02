@@ -3,6 +3,6 @@
        :description "Emacs Information Manager"
        :type git
        :url "http://git.savannah.gnu.org/r/ee.git"
-       :build ("make")
+       :build (("make"))
        :info "ee.info"
        :autoloads "ee-autoloads")

@@ -11,4 +11,4 @@
          (autoload 'pymacs-exec "pymacs" nil t)
          (autoload 'pymacs-call "pymacs")
          (autoload 'pymacs-apply "pymacs"))
-       :build ("make"))
+       :build (("make")))

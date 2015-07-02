@@ -2,7 +2,7 @@
        :description "An Emacs Internet Relay Chat client."
        :type git
        :url "git://git.savannah.gnu.org/erc.git"
-       :build ("make")
+       :build (("make"))
        :info "."
        :post-init (progn
                     (setq erc-nicklist-icons-directory
