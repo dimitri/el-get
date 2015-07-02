@@ -414,15 +414,17 @@ FILENAME defaults to `buffer-file-name'."
        (file-name-nondirectory (or filename (buffer-file-name)))))))
 
 (defvar el-get-check-warning-buffer)
+(defvar el-get-check-error-count)
 
 (defun el-get-check-warning (level message &rest args)
   (declare (indent 1))
   (display-warning '(el-get recipe) (apply #'format message args)
-                   level el-get-check-warning-buffer))
+                   level el-get-check-warning-buffer)
+  (incf el-get-check-error-count))
 
 (defun el-get-check-recipe-in-current-buffer (recipe-file-name)
   (let ((inhibit-read-only t)
-        (numerror 0)
+        (el-get-check-error-count 0)
         (el-get-check-warning-buffer (get-buffer-create "*el-get check recipe*")))
     (display-buffer el-get-check-warning-buffer)
     (with-current-buffer el-get-check-warning-buffer
@@ -437,7 +439,6 @@ FILENAME defaults to `buffer-file-name'."
                                        (end-of-file nil)
                                        (error `(:error . ,(error-message-string err))))))
                         (when lvl-err
-                         (incf numerror)
                          (let ((el-get-check--last-file-or-buffer
                                 (format "%s:%d:%d" recipe-file-name
                                         (line-number-at-pos) (current-column))))
@@ -445,26 +446,21 @@ FILENAME defaults to `buffer-file-name'."
       (when (and recipe-file-name
                  (not (string= (file-name-base recipe-file-name)
                                (plist-get recipe :name))))
-        (incf numerror)
         (el-get-check-warning :error
           "File name should match recipe name."))
       ;; Check if userspace property is used.
       (loop for key in '(:before :after)
             for alt in '(:prepare :post-init)
             when (plist-get recipe key)
-            do (progn
-                 (el-get-check-warning :warning
-                   "Property %S is for user.  Use %S instead."
-                   key alt)
-                 (incf numerror)))
+            do (el-get-check-warning :warning
+                 "Property %S is for user.  Use %S instead."
+                 key alt))
       ;; Check for misformatted plists
       (loop for key in recipe by #'cddr
             unless (keywordp key)
-            do (progn
-                 (el-get-check-warning :warning
-                   "Property %S is not a keyword!"
-                   key)
-                 (incf numerror)))
+            do (el-get-check-warning :warning
+                 "Property %S is not a keyword!"
+                 key))
       (destructuring-bind (&key type url autoloads feats builtin
                                 &allow-other-keys)
           recipe
@@ -474,8 +470,7 @@ FILENAME defaults to `buffer-file-name'."
         (when (and (not (memq 'github el-get-check-suppressed-warnings))
                    (eq type 'git) (string-match "//github.com/" url))
           (el-get-check-warning :warning
-            "Use `:type github' for github type recipe")
-          (incf numerror))
+            "Use `:type github' for github type recipe"))
         ;; Warn when `:autoloads nil' is specified.
         (when (and (not (memq 'autoloads el-get-check-suppressed-warnings))
                    (null autoloads) (plist-member recipe :autoloads))
@@ -498,12 +493,10 @@ FILENAME defaults to `buffer-file-name'."
       ;; Check for required properties.
       (loop for key in '(:description :name)
             unless (plist-get recipe key)
-            do (progn
-                 (el-get-check-warning :error
-                   "Required property %S is not defined." key)
-                 (incf numerror)))
-      (insert (format "\n%s: %s error(s) found." recipe-file-name numerror)))
-    numerror))
+            do (el-get-check-warning :error
+                 "Required property %S is not defined." key))
+      (insert (format "\n%s: %s error(s) found." recipe-file-name el-get-check-error-count)))
+    el-get-check-error-count))
 
 (provide 'el-get-recipes)
 
