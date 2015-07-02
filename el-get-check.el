@@ -20,6 +20,7 @@
 ;;; Code:
 
 (require 'el-get-recipes)
+(require 'el-get-build)
 
 (defvar el-get-check--last-file-or-buffer nil
   "The last file-or-buffer checked.")
@@ -119,22 +120,22 @@ FILENAME defaults to `buffer-file-name'."
     (with-current-buffer el-get-check-warning-buffer
       (erase-buffer)
       (el-get-check-mode))
-    (let ((recipe (save-excursion
-                    (goto-char (point-min))
-                    (prog1 (read (current-buffer))
-                      (let ((lvl-err (condition-case err
-                                         (progn (read (current-buffer))
-                                                `(:warning . "Extra data following recipe"))
-                                       (end-of-file nil)
-                                       (error `(:error . ,(error-message-string err))))))
-                        (when lvl-err
-                          (let ((el-get-check--last-file-or-buffer
-                                 (format "%s:%d:%d" recipe-file-name
-                                         (line-number-at-pos) (current-column))))
-                            (el-get-check-warning (car lvl-err) (cdr lvl-err)))))))))
+    (let* ((recipe (save-excursion
+                     (goto-char (point-min))
+                     (prog1 (read (current-buffer))
+                       (let ((lvl-err (condition-case err
+                                          (progn (read (current-buffer))
+                                                 `(:warning . "Extra data following recipe"))
+                                        (end-of-file nil)
+                                        (error `(:error . ,(error-message-string err))))))
+                         (when lvl-err
+                           (let ((el-get-check--last-file-or-buffer
+                                  (format "%s:%d:%d" recipe-file-name
+                                          (line-number-at-pos) (current-column))))
+                             (el-get-check-warning (car lvl-err) (cdr lvl-err))))))))
+           (pkg-name (plist-get recipe :name)))
       (when (and recipe-file-name
-                 (not (string= (file-name-base recipe-file-name)
-                               (plist-get recipe :name))))
+                 (not (string= (file-name-base recipe-file-name) pkg-name)))
         (el-get-check-warning :error
           "File name should match recipe name."))
       ;; Check if userspace property is used.
@@ -179,6 +180,13 @@ FILENAME defaults to `buffer-file-name'."
           (el-get-check-warning :warning
             "Usage of integers for :builtin is obsolete.
   Use a version string like \"24.3\" instead.")))
+      ;; Check for shell interpolated :build commands
+      (let ((build (el-get-build-commands pkg-name 'safe-eval)))
+        (when (stringp (car build))
+          (el-get-check-warning :warning
+            "Build command will be shell-interpolated. To bypass
+  shell interpolation, you should specify build commands as lists
+  of strings instead.")))
       ;; Check for required properties.
       (loop for key in '(:description :name)
             unless (plist-get recipe key)
@@ -186,3 +194,7 @@ FILENAME defaults to `buffer-file-name'."
                  "Required property %S is not defined." key))
       (insert (format "\n%s: %s error(s) found." recipe-file-name el-get-check-error-count)))
     el-get-check-error-count))
+
+(provide 'el-get-check)
+
+;;; el-get-check.el ends here

@@ -24,7 +24,7 @@
 (defvar el-get-install-info (or (executable-find "ginstall-info")
                                 (executable-find "install-info")))
 
-(defun el-get-build-commands (package)
+(defun el-get-build-commands (package &optional safe-eval)
   "Return a list of build commands for the named PACKAGE.
 
 The result will either be nil; a list of strings, each one to be
@@ -41,7 +41,9 @@ strings, each string representing a single shell argument."
               ;; expression that evaluates to a command list, rather than a
               ;; literal command list.
               (if (symbolp (car raw-build-commands))
-                  (eval raw-build-commands)
+                  (if (and safe-eval (unsafep raw-build-commands))
+                      nil
+                    (eval raw-build-commands))
                 raw-build-commands)
             (error "build commands for package %s are not a list" package)))
          (flat-build-commands
