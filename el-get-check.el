@@ -76,6 +76,7 @@ Current possibe elements are:
         finally (progn (message "%d warning/error(s) total." errors)
                        (kill-emacs (if (zerop errors) 0 1)))))
 
+;;;###autoload
 (defun el-get-check-recipe (file-or-buffer)
   "Check the format of the recipe.
 Please run this command before sending a pull request.
