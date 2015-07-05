@@ -133,6 +133,7 @@ FILENAME defaults to `buffer-file-name'."
                                   (format "%s:%d:%d" recipe-file-name
                                           (line-number-at-pos) (current-column))))
                              (el-get-check-warning (car lvl-err) (cdr lvl-err))))))))
+           (el-get-sources (list recipe))
            (pkg-name (plist-get recipe :name)))
       (when (and recipe-file-name
                  (not (string= (file-name-base recipe-file-name) pkg-name)))
@@ -181,11 +182,11 @@ FILENAME defaults to `buffer-file-name'."
             "Usage of integers for :builtin is obsolete.
   Use a version string like \"24.3\" instead.")))
       ;; Check for shell interpolated :build commands
-      (when (stringp (car (el-get-build-commands pkg-name 'safe-eval)))
-        (el-get-check-warning :warning
-          "Build command will be shell-interpolated. To bypass
-  shell interpolation, you should specify build commands as lists
-  of strings instead."))
+      (let ((safe-functions '(backquote-list* shell-quote-argument)))
+        (dolist (sys '("" "/darwin" "/berkeley-unix" "/windows-nt"))
+          (when (stringp (car (el-get-build-commands pkg-name 'safe-eval sys)))
+            (el-get-check-warning :warning
+              ":build%s should be a *list* of string lists." sys))))
       ;; Check for required properties.
       (loop for key in '(:description :name)
             unless (plist-get recipe key)
