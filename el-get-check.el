@@ -192,7 +192,8 @@ FILENAME defaults to `buffer-file-name'."
             unless (plist-get recipe key)
             do (el-get-check-warning :error
                  "Required property %S is not defined." key))
-      (insert (format "\n%s: %s error(s) found." recipe-file-name el-get-check-error-count)))
+      (with-current-buffer el-get-check-warning-buffer
+        (insert (format "\n%s: %s error(s) found." recipe-file-name el-get-check-error-count))))
     el-get-check-error-count))
 
 (provide 'el-get-check)
