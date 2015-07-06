@@ -3,14 +3,11 @@
        :type cvs
        :url ":pserver:anonymous@mailcrypt.cvs.sourceforge.net:/cvsroot/mailcrypt"
        :module "mailcrypt"
-       :build `(
-                "autoconf"
-                "./configure"
+       :build `(("autoconf")
+                ("./configure")
                 ("make"
                  ,(concat "EMACS=" el-get-emacs)
                  "INFOFILES=mailcrypt.info"
-                 "all"
-                 "info")
-                )
+                 "all" "info"))
        :info  "."
        )

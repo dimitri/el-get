@@ -191,7 +191,13 @@ FILENAME defaults to `buffer-file-name'."
             "Usage of integers for :builtin is obsolete.
   Use a version string like \"24.3\" instead.")))
       ;; Check for shell interpolated :build commands
-      (let ((safe-functions '(backquote-list* shell-quote-argument)))
+      (let ((safe-functions '(backquote-list*
+                              el-get-load-path el-get-package-exists-p
+                              el-get-package-directory el-get-print-to-string
+                              el-get-verbose-message
+                              with-temp-buffer insert-file-contents
+                              directory-files file-name-as-directory
+                              expand-file-name shell-quote-argument)))
         (dolist (sys '("" "/darwin" "/berkeley-unix" "/windows-nt"))
           (let ((unsafe (catch 'unsafe-build
                           (when (stringp (car (el-get-build-commands pkg-name 'safe-eval sys)))

@@ -5,11 +5,11 @@
        :website "http://users-phys.au.dk/harder/dpans.html"
        :url "http://users-phys.au.dk/harder/dpans2texi-1.05.tar.gz"
        :info "ansicl"
-       :build `(,(format "EMACS=%s ./configure" el-get-emacs)
-                "make wget"
-                ,(concat "make EMACS=" el-get-emacs)
+       :build `(("./configure" ,(format "EMACS=%s" el-get-emacs))
+                ("make" "wget")
+                ("make" ,(concat "EMACS=" el-get-emacs))
                 ;; info file is generated without extension
-                "ln -nfs ansicl ansicl.info")
+                ("ln" "-nfs" "ansicl" "ansicl.info"))
        :prepare (eval-after-load "info-look"
                   '(info-lookup-add-help
                     :mode 'lisp-mode
