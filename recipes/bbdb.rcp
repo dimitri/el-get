@@ -5,7 +5,7 @@
        :url "git://git.savannah.nongnu.org/bbdb.git"
        :load-path ("./lisp")
        ;; if using vm, add `--with-vm-dir=DIR' after ./configure
-       :build `("./autogen.sh" "./configure" "make")
+       :build `(("./autogen.sh") ("./configure") ("make"))
        :features bbdb-loaddefs
        :autoloads nil
        :info "doc")

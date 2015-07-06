@@ -2,5 +2,5 @@
        :description "Emacs package to save marks on locations which may change. Intended use: editing a file which you are debugging"
        :type github
        :pkgname "rocky/emacs-loc-changes"
-       :build ("./autogen.sh" "./configure" "make")
+       :build (("./autogen.sh") ("./configure") ("make"))
        )

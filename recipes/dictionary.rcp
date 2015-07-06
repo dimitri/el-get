@@ -4,4 +4,4 @@
        :type http-tar
        :options ("xzf")
        :url "http://www.myrkr.in-berlin.de/dictionary/dictionary-1.10.tar.gz"
-       :build `(,(concat "make EMACS=" el-get-emacs)))
+       :build `(("make" ,(concat "EMACS=" el-get-emacs))))

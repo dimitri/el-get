@@ -26,7 +26,7 @@ else
             https://github.com/mirrors/emacs/raw/ba08b24186711eaeb3748f3d1f23e2c2d9ed0d09/lisp/emacs-lisp/package.el;
     }
     check-recipes() {
-        "$EMACS" -Q -L . -batch -l el-get-recipes -f el-get-check-recipe-batch \
+        "$EMACS" -Q -L . -batch -l el-get-check -f el-get-check-recipe-batch \
             -Wno-features -Wno-github -Wno-autoloads \
             recipes/
     }

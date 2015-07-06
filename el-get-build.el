@@ -24,24 +24,34 @@
 (defvar el-get-install-info (or (executable-find "ginstall-info")
                                 (executable-find "install-info")))
 
-(defun el-get-build-commands (package)
+(defun el-get-build-commands (package &optional safe-eval system)
   "Return a list of build commands for the named PACKAGE.
 
 The result will either be nil; a list of strings, each one to be
 interpreted as a shell command; or a list of lists of
-strings, each string representing a single shell argument."
+strings, each string representing a single shell argument.
+
+If SAFE-EVAL is non-nil, do not evaluate the recipe's :build
+section if it is `unsafep'. This is intended for checking the
+recipe without actually executing build instructions written in
+ELisp.
+
+If SYSTEM is a string, only check `:buildSYSTEM'.
+Otherwise, use `:build/SYSTEM-TYPE' or `:build'."
   (let* ((source     (el-get-package-def package))
-         (build-type (intern (format ":build/%s" system-type)))
          (raw-build-commands
-          (or (plist-get source build-type)
-              (plist-get source :build)))
+          (if (stringp system) (plist-get source (intern (concat ":build" system)))
+            (or (plist-get source (intern (format ":build/%s" system-type)))
+                (plist-get source :build))))
          (build-commands
           (if (listp raw-build-commands)
               ;; If the :build property's car is a symbol, assume that it is an
               ;; expression that evaluates to a command list, rather than a
               ;; literal command list.
               (if (symbolp (car raw-build-commands))
-                  (eval raw-build-commands)
+                  (let ((unsafe (and safe-eval (unsafep raw-build-commands))))
+                    (if unsafe (throw 'unsafe-build unsafe)
+                      (eval raw-build-commands)))
                 raw-build-commands)
             (error "build commands for package %s are not a list" package)))
          (flat-build-commands
