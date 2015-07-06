@@ -60,13 +60,19 @@ Current possibe elements are:
              1))))
 
 (defun el-get-check-recipe-batch ()
-  "emacs -Q -batch -f el-get-check-recipe-batch [-Wno-<warning>...] *.rcp"
+  "emacs -Q -batch -f el-get-check-recipe-batch [-W<:level>] [-Wno-<warning>...] *.rcp
+
+<:level> can be any valid warning level, see `warning-levels'.
+See `el-get-check-suppressed-warnings' for possible <warning> values."
   (assert noninteractive nil
           "`el-get-check-recipe-batch' should only be used with -batch")
   (setq vc-handled-backends nil) ; avoid loading VC during batch mode
   (loop for arg in command-line-args-left
-        if (string-match "^-Wno-\\(.*\\)" arg)
+        if (string-match "\\`-Wno-\\(.*\\)" arg)
         do (push (intern (match-string 1 arg)) el-get-check-suppressed-warnings)
+        else if (string-match "\\`-W\\(:[-a-z]*\\)" arg)
+        do (setq warning-minimum-log-level
+                 (setq warning-minimum-level (intern (match-string 1 arg))))
         else summing
         (if (file-directory-p arg)
             (reduce #'+ (directory-files arg t "\\.rcp$" t)
@@ -111,7 +117,9 @@ FILENAME defaults to `buffer-file-name'."
   (declare (indent 1))
   (display-warning '(el-get recipe) (apply #'format message args)
                    level el-get-check-warning-buffer)
-  (incf el-get-check-error-count))
+  (when (>= (warning-numeric-level level)
+            (warning-numeric-level warning-minimum-level))
+    (incf el-get-check-error-count)))
 
 (defun el-get-check-recipe-in-current-buffer (recipe-file-name)
   (let ((inhibit-read-only t)
@@ -185,9 +193,13 @@ FILENAME defaults to `buffer-file-name'."
       ;; Check for shell interpolated :build commands
       (let ((safe-functions '(backquote-list* shell-quote-argument)))
         (dolist (sys '("" "/darwin" "/berkeley-unix" "/windows-nt"))
-          (when (stringp (car (el-get-build-commands pkg-name 'safe-eval sys)))
-            (el-get-check-warning :warning
-              ":build%s should be a *list* of string lists." sys))))
+          (let ((unsafe (catch 'unsafe-build
+                          (when (stringp (car (el-get-build-commands pkg-name 'safe-eval sys)))
+                            (el-get-check-warning :warning
+                              ":build%s should be a *list* of string lists." sys))
+                          nil)))
+            (when unsafe
+              (el-get-check-warning :debug ":build%s is unsafep: %s" sys unsafe)))))
       ;; Check for required properties.
       (loop for key in '(:description :name)
             unless (plist-get recipe key)

@@ -48,9 +48,10 @@ Otherwise, use `:build/SYSTEM-TYPE' or `:build'."
               ;; If the :build property's car is a symbol, assume that it is an
               ;; expression that evaluates to a command list, rather than a
               ;; literal command list.
-              (if (and (symbolp (car raw-build-commands))
-                       (not (if safe-eval (unsafep raw-build-commands))))
-                  (eval raw-build-commands)
+              (if (symbolp (car raw-build-commands))
+                  (let ((unsafe (and safe-eval (unsafep raw-build-commands))))
+                    (if unsafe (throw 'unsafe-build unsafe)
+                      (eval raw-build-commands)))
                 raw-build-commands)
             (error "build commands for package %s are not a list" package)))
          (flat-build-commands
