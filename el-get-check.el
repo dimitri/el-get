@@ -200,7 +200,7 @@ FILENAME defaults to `buffer-file-name'."
                               expand-file-name shell-quote-argument)))
         (dolist (sys '("" "/darwin" "/berkeley-unix" "/windows-nt"))
           (let ((unsafe (catch 'unsafe-build
-                          (when (stringp (car (el-get-build-commands pkg-name 'safe-eval sys)))
+                          (when (some #'stringp (el-get-build-commands pkg-name 'safe-eval sys))
                             (el-get-check-warning :warning
                               ":build%s should be a *list* of string lists." sys))
                           nil)))

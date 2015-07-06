@@ -7,6 +7,6 @@
        :load-path (".")
        :features jabber-autoloads
        :build `(("autoreconf" "-i")
-                "./configure"
+                ("./configure")
                 ("make" ,(format "EMACS=%s" el-get-emacs))
                 ("mv" "jabber.info" "emacs-jabber.info")))
