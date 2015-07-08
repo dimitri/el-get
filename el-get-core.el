@@ -216,6 +216,15 @@ entry."
   (if (string-match-p el-get-no-shell-quote arg) arg
     (shell-quote-argument arg)))
 
+(defun el-get-read-from-file (filename)
+  "Read given FILENAME and return its content (a valid sexp is expected)."
+  (condition-case err
+      (with-temp-buffer
+        (insert-file-contents filename)
+        (read (current-buffer)))
+    ((debug error)
+     (error "Error reading file %s: %S" filename err))))
+
 
 ;;
 ;; Some tools

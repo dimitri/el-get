@@ -120,15 +120,6 @@ Used to avoid errors when exploring the path for recipes"
             (insert-buffer-substring temp-buffer))
         (kill-buffer temp-buffer)))))
 
-(defun el-get-read-recipe-file (filename)
-  "Read given FILENAME and return its content (a valid form is expected)."
-  (condition-case err
-      (with-temp-buffer
-        (insert-file-contents filename)
-        (read (current-buffer)))
-    ((debug error)
-     (error "Error reading recipe %s: %S" filename err))))
-
 (defun el-get-recipe-filename (package)
   "Return the name of the file that contains the recipe for PACKAGE, if any."
   (let ((package-el  (concat (el-get-as-string package) ".el"))
@@ -143,7 +134,7 @@ Used to avoid errors when exploring the path for recipes"
   "Return the source definition for PACKAGE, from the recipes."
   (let ((filename (el-get-recipe-filename package)))
     (if filename
-        (el-get-read-recipe-file filename)
+        (el-get-read-from-file filename)
       (error "El-get can not find a recipe for package \"%s\"" package))))
 
 (defun el-get-all-recipe-file-names ()
@@ -171,7 +162,7 @@ is the one considered."
             for package = (el-get-as-symbol pname)
             unless (member package packages)
             do (push package packages)
-            and collect (ignore-errors (el-get-read-recipe-file filename))))))
+            and collect (ignore-errors (el-get-read-from-file filename))))))
 
 (defun el-get-read-all-recipes ()
   "Return the list of all the recipes, formatted like `el-get-sources'.
