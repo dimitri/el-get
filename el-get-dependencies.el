@@ -129,4 +129,36 @@ A `:minimum-emacs-version' property may also be present."
           (nconc (if min-emacs (list :minimum-emacs-version min-emacs))
                  (list :depends deps)))))
 
+(defun el-get-auto-update-dependencies (package buffer)
+  "Update the dependencies of PACKAGE according to its source headers.
+
+Interactively, update the recipe in the current buffer if it's
+visiting a recipe for the chosen PACKAGE, otherwise visit the
+corresponding recipe file."
+  (interactive (let ((pkg (el-get-read-package-with-status
+                           "Auto update dependencies of" "installed")))
+                 (list pkg
+                       (if (string= (file-name-base buffer-file-name) pkg)
+                           (current-buffer)
+                         (find-file (el-get-recipe-filename pkg))))))
+  (with-current-buffer buffer
+   (let* ((new-props (el-get-auto-dependencies package))
+          (recipe (save-excursion (goto-char (point-min))
+                                  (read (current-buffer)))))
+     (loop for (prop newval) on new-props by #'cddr
+           for prop-name = (symbol-name prop)
+           unless (equal newval (plist-get recipe prop))
+           do (save-excursion
+                (goto-char (point-min))
+                (let ((have-prop (search-forward prop-name nil t)))
+                  (if have-prop (let ((opoint (point)))
+                                  (forward-sexp)
+                                  (delete-region opoint (point)))
+                    (insert prop-name))
+                 (insert " ")
+                 (prin1 newval (current-buffer))
+                 (unless (looking-at-p " ; auto updated")
+                   (insert " ; auto updated"))
+                 (unless have-prop (insert "\n"))))))))
+
 (provide 'el-get-dependencies)
