@@ -246,6 +246,10 @@ entry."
       (apply 'append (mapcar 'el-get-flatten arg))
     (list arg)))
 
+(defun el-get-unquote (arg)
+  "Remote quote from ARG, if there is one."
+  (if (eq (car arg) 'quote) (nth 1 arg) arg))
+
 (defun el-get-load-path (package)
   "Return the list of absolute directory names to be added to
 `load-path' by the named PACKAGE."
