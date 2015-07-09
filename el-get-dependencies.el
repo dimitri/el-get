@@ -94,4 +94,36 @@ in the topological ordering (i.e., the first value)."
                 (unless all-sorted-p
                   entries))))))
 
+(defun el-get-auto-dependencies (package &optional interactive)
+  "Return a plist with `:depends' based on the `Package-Requires'
+  header in PACKAGE's elisp file(s).
+
+A `:minimum-emacs-version' property may also be present."
+  (interactive (list (el-get-read-package-with-status "Auto-get dependencies of" "installed") t))
+  (unless (el-get-package-installed-p package)
+    (error "Tried to get Package-Requires of non-installed package, `%s'!" package))
+  (loop with deps and min-emacs
+        for pdir in (el-get-load-path package)
+        do (loop for file in (directory-files pdir t "\\.el\\'" t)
+                 do (if (string-suffix-p "-pkg.el" file)
+                        (let ((def-pkg (el-get-read-from-file file)))
+                          (setq deps (nconc (el-get-unquote (nth 4 def-pkg)) deps)))
+                      (with-temp-buffer
+                        (insert-file-contents file)
+                        (setq deps
+                              (nconc (read-from-whole-string
+                                      (or (lm-header "package-requires") "nil")) deps)))))
+        finally do (setq min-emacs (car (cdr (assq 'emacs deps)))
+                         deps (remq 'emacs (delete-dups (mapcar #'car deps))))
+        finally return
+        (if interactive
+            (let ((props-str
+                   (apply #'concat ":depends " (prin1-to-string deps) "\n"
+                          (when min-emacs
+                            (list ":minimum-emacs-version " (prin1-to-string min-emacs) "\n")))))
+              (message "%s" props-str)
+              (kill-new props-str))
+          (nconc (if min-emacs (list :minimum-emacs-version min-emacs))
+                 (list :depends deps)))))
+
 (provide 'el-get-dependencies)
