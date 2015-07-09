@@ -102,19 +102,22 @@ A `:minimum-emacs-version' property may also be present."
   (interactive (list (el-get-read-package-with-status "Auto-get dependencies of" "installed") t))
   (unless (el-get-package-installed-p package)
     (error "Tried to get Package-Requires of non-installed package, `%s'!" package))
-  (loop with deps and min-emacs
+  (loop with deps and min-emacs and sub-pkgs
         for pdir in (el-get-load-path package)
         do (loop for file in (directory-files pdir t "\\.el\\'" t)
                  do (if (string-suffix-p "-pkg.el" file)
                         (let ((def-pkg (el-get-read-from-file file)))
+                          (push (intern (nth 1 def-pkg)) sub-pkgs)
                           (setq deps (nconc (el-get-unquote (nth 4 def-pkg)) deps)))
                       (with-temp-buffer
                         (insert-file-contents file)
-                        (setq deps
-                              (nconc (read-from-whole-string
-                                      (or (lm-header "package-requires") "nil")) deps)))))
+                        (let ((pkg-reqs (lm-header "package-requires")))
+                          (when pkg-reqs
+                            (push (intern (file-name-base file)) sub-pkgs)
+                            (setq deps (nconc (read-from-whole-string pkg-reqs) deps)))))))
         finally do (setq min-emacs (car (cdr (assq 'emacs deps)))
-                         deps (remq 'emacs (delete-dups (mapcar #'car deps))))
+                         deps (set-difference (remq 'emacs (delete-dups (mapcar #'car deps)))
+                                              sub-pkgs))
         finally return
         (if interactive
             (let ((props-str
