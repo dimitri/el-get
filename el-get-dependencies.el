@@ -133,7 +133,7 @@ A `:minimum-emacs-version' property may also be present."
           (nconc (if min-emacs (list :minimum-emacs-version min-emacs))
                  (list :depends deps)))))
 
-(defun el-get-auto-update-dependencies (package buffer)
+(defun el-get-auto-update-dependencies (package buffer &optional interactive)
   "Update the dependencies of PACKAGE according to its source headers.
 
 Interactively, update the recipe in the current buffer if it's
@@ -143,13 +143,14 @@ corresponding recipe file."
                            "Auto update dependencies of" "installed")))
                  (list pkg
                        (if (string= (file-name-base buffer-file-name) pkg)
-                           (current-buffer)
-                         (find-file (el-get-recipe-filename pkg))))))
+                           (current-buffer) (find-file (el-get-recipe-filename pkg)))
+                       t)))
   (with-current-buffer buffer
    (let* ((new-props (el-get-auto-dependencies package))
           (recipe (save-excursion (goto-char (point-min))
                                   (read (current-buffer)))))
-     (loop for (prop newval) on new-props by #'cddr
+     (loop with auto-updated = nil
+           for (prop newval) on new-props by #'cddr
            for prop-name = (symbol-name prop)
            unless (equal newval (plist-get recipe prop))
            do (save-excursion
@@ -163,6 +164,10 @@ corresponding recipe file."
                  (prin1 newval (current-buffer))
                  (unless (looking-at-p " ; auto updated")
                    (insert " ; auto updated"))
-                 (unless have-prop (insert "\n"))))))))
+                 (unless have-prop (insert "\n"))
+                 (setq auto-updated t)))
+           finally (when interactive
+                     (message "Dependencies of %s %s updated." package
+                              (if auto-updated "have been" "didn't need to be")))))))
 
 (provide 'el-get-dependencies)
