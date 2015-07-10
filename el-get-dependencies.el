@@ -115,9 +115,13 @@ A `:minimum-emacs-version' property may also be present."
                           (when pkg-reqs
                             (push (intern (file-name-base file)) sub-pkgs)
                             (setq deps (nconc (read-from-whole-string pkg-reqs) deps)))))))
-        finally do (setq min-emacs (car (cdr (assq 'emacs deps)))
-                         deps (set-difference (remq 'emacs (delete-dups (mapcar #'car deps)))
-                                              sub-pkgs))
+        finally do
+        (setq min-emacs (car (cdr (assq 'emacs deps)))
+              deps (set-difference (remq 'emacs (delete-dups (mapcar #'car deps)))
+                                   sub-pkgs))
+        (let ((non-el-get-pkgs (remove-if #'el-get-package-def deps)))
+          (when non-el-get-pkgs
+            (error "Found non el-get package(s): %s" non-el-get-pkgs)))
         finally return
         (if interactive
             (let ((props-str
