@@ -6,6 +6,7 @@
        :branch "master"
        :minimum-emacs-version "24.4"
        :depends (dash)
+       :provide (with-editor)
        :info "Documentation"
        :load-path "lisp/"
        :compile "lisp/"
