@@ -2,4 +2,5 @@
        :description "Window configuration rings."
        :website "https://launchpad.net/winring/"
        :type bzr
-       :url "http://bazaar.launchpad.net/~barry/winring/trunk/")
+       :url "http://bazaar.launchpad.net/~barry/winring/trunk/"
+       :prepare (autoload 'winring-initialize "winring"))
