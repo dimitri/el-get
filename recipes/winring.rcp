@@ -1,0 +1,5 @@
+(:name winring
+       :description "Window configuration rings."
+       :website "https://launchpad.net/winring/"
+       :type bzr
+       :url "http://bazaar.launchpad.net/~barry/winring/trunk/")
