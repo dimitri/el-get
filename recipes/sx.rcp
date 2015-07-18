@@ -2,5 +2,5 @@
        :description "Stack Exchange for Emacs."
        :website "https://github.com/vermiculus/sx.el"
        :type github
-       :depends (markdown-mode)
+       :depends (markdown-mode let-alist)
        :pkgname "vermiculus/sx.el")
