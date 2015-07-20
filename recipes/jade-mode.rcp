@@ -1,4 +1,4 @@
 (:name jade-mode
        :description "Emacs major mode for jade template highlighting."
        :type github
-       :url "brianc/jade-mode")
+       :pkgname "brianc/jade-mode")
