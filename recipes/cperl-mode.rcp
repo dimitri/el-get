@@ -5,5 +5,4 @@
        :pkgname "jrockway/cperl-mode"
        :depends mode-compile
        :compile "cperl-mode.el"
-       :provide cperl-mode
        :post-init (defalias 'perl-mode 'cperl-mode))
