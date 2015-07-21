@@ -49,7 +49,8 @@ Otherwise, use `:build/SYSTEM-TYPE' or `:build'."
               ;; expression that evaluates to a command list, rather than a
               ;; literal command list.
               (if (symbolp (car raw-build-commands))
-                  (let ((unsafe (and safe-eval (unsafep raw-build-commands))))
+                  (let ((default-directory (el-get-package-directory package))
+                        (unsafe (and safe-eval (unsafep raw-build-commands))))
                     (if unsafe (throw 'unsafe-build unsafe)
                       (eval raw-build-commands)))
                 raw-build-commands)
