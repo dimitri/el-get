@@ -9,9 +9,16 @@
                  "--without-texmf-dir"
                  "--with-packagelispdir=$(pwd)"
                  "--with-packagedatadir=$(pwd)"
-                 ,@(when (eq system-type 'darwin) "--with-lispdir=`pwd`")
                  ,(concat "--with-emacs=" el-get-emacs))
                 ("make"))
+       :build/darwin `(("./autogen.sh")
+                       ("./configure"
+                        "--without-texmf-dir"
+                        "--with-packagelispdir=$(pwd)"
+                        "--with-packagedatadir=$(pwd)"
+                        "--with-lispdir=$(pwd)"
+                        ,(concat "--with-emacs=" el-get-emacs))
+                       ("make"))
        :load-path (".")
        :load  ("tex-site.el" "preview-latex.el")
        :info "doc")
