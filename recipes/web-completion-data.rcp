@@ -1,0 +1,4 @@
+(:name web-completion-data
+       :description "Shared completion data for ac-html and company-web"
+       :type github
+       :pkgname "osv/web-completion-data")
