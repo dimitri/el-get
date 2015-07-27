@@ -45,7 +45,7 @@
      `((:command-name ,name
                       :buffer-name ,name
                       :default-directory ,el-get-dir
-                      :program ,el-get-brew
+                      :program ,(el-get-executable-find "brew")
                       :args ("install" ,pkgname)
                       :message ,ok
                       :error ,ko))
@@ -64,7 +64,7 @@
      `((:command-name ,name
                       :buffer-name ,name
                       :default-directory ,el-get-dir
-                      :program ,el-get-brew
+                      :program ,(el-get-executable-find "brew")
                       :args ("upgrade" ,pkgname)
                       :message ,ok
                       :error ,ko))
@@ -81,7 +81,7 @@
      `((:command-name ,name
                       :buffer-name ,name
                       :default-directory ,el-get-dir
-                      :program ,el-get-brew
+                      :program ,(el-get-executable-find "brew")
                       :args ("remove" ,pkgname)
                       :message ,ok
                       :error ,ko))

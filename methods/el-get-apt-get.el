@@ -135,7 +135,7 @@ password prompt."
      `((:command-name ,name
                       :buffer-name ,name
                       :process-filter ,(function el-get-sudo-password-process-filter)
-                      :program ,(executable-find "sudo")
+                      :program ,(el-get-executable-find "sudo")
                       :args ("-S" ,el-get-apt-get "install" ,pkgname)
                       :message ,ok
                       :error ,ko))
@@ -154,7 +154,7 @@ password prompt."
      `((:command-name ,name
                       :buffer-name ,name
                       :process-filter ,(function el-get-sudo-password-process-filter)
-                      :program ,(executable-find "sudo")
+                      :program ,(el-get-executable-find "sudo")
                       :args ("-S" ,el-get-apt-get "remove" "-y" ,pkgname)
                       :message ,ok
                       :error ,ko))

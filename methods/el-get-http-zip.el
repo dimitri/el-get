@@ -44,7 +44,7 @@
                      '((:command-name ,name
                                       :buffer-name ,name
                                       :default-directory ,pdir
-                                      :program ,(executable-find "unzip")
+                                      :program ,(el-get-executable-find "unzip")
                                       :args (,@options ,zipfile)
                                       :message ,ok
                                       :error ,ko))

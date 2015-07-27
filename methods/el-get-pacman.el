@@ -34,7 +34,7 @@
      `((:command-name ,name
                       :buffer-name ,name
                       :process-filter ,(function el-get-sudo-password-process-filter)
-                      :program ,(executable-find "sudo")
+                      :program ,(el-get-executable-find "sudo")
                       :args ("-S" ,(executable-find "pacman") "--sync" "--noconfirm" "--needed" ,pkgname)
                       :message ,ok
                       :error ,ko
@@ -54,7 +54,7 @@
      `((:command-name ,name
                       :buffer-name ,name
                       :process-filter ,(function el-get-sudo-password-process-filter)
-                      :program ,(executable-find "sudo")
+                      :program ,(el-get-executable-find "sudo")
                       :args ("-S" ,(executable-find "pacman") "--remove" "--noconfirm" ,pkgname)
                       :message ,ok
                       :error ,ko
