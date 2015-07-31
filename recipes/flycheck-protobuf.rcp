@@ -1,0 +1,4 @@
+(:name flycheck-protobuf
+       :description "flycheck-protobuf provides protobuf support to flycheck"
+       :type github
+       :pkgname "edvorg/flycheck-protobuf")
