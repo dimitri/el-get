@@ -269,10 +269,14 @@ the same setup between several machines for example).
 ## Advanced Usage with Local Recipes
 
 Placing `el-get-bundle` macro calls instead of `(el-get 'sync)` in your init
-file explicitly specify which package should be installed.  The macro
+file to explicitly specify which packages should be installed.  The macro
 accepts either a simple package name from defined recipes, a package name
 with a local recipe definition, a package with initialization code, or
 everything together.
+
+Note that if you leave in the `(el-get 'sync)` call, it *must* go
+after any recipe defining `el-get-bundle` calls, otherwise el-get
+won't know the recipe when it tries to initialize the package.
 
 ```lisp
 ;; Basic setup
