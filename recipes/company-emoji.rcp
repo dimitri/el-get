@@ -1,0 +1,5 @@
+(:name company-emoji
+       :type github
+       :pkgname "dunn/company-emoji"
+       :description "Company mode backend providing autocompletion for emoji"
+       :depends (company-mode))
