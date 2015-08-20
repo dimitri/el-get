@@ -272,17 +272,24 @@ are not."
         with whitelist = (if (eq operation 'update)
                              el-get-status-update-whitelist
                            el-get-status-init-whitelist)
+        with type = (let ((old-type (el-get-package-method source))
+                          (new-type (el-get-package-method newprops)))
+                      (if (eq old-type new-type) old-type nil))
         for (k v) on newprops by 'cddr
         ;; Not a change, so ignore it
         if (equal v (plist-get source k)) do (ignore)
         ;; whitelisted
         else if
-        (or (memq k whitelist)          ; whitelisted
-            (and (eq k :builtin)
-                 ;; Check if `:builtin' change is safe.
-                 (eq (version<= emacs-version (el-get-as-string v))
-                     (version<= emacs-version (el-get-as-string
-                                               (plist-get source k))))))
+        (cond
+         ((memq k whitelist))           ; whitelisted
+         ((eq k :builtin)  ; `:builtin' safe if not crossing versions.
+          (eq (version<= emacs-version (el-get-as-string v))
+              (version<= emacs-version (el-get-as-string
+                                        (plist-get source k)))))
+         ((eq k :url)    ; `:http*' methods can handle `:url' changes.
+          (memq type '(http http-tar http-zip
+                            github-tar github-zip
+                            builtin))))
         do (setq update (plist-put update k v))
         ;; Trying to change non-whitelisted property
         else do (setq disallowed (plist-put disallowed k v))
