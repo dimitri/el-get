@@ -2,6 +2,5 @@
        :description "Use perforce commands in emacs"
        :website "https://github.com/gareth-rees/p4.el"
        :type github
-       :autoloads nil
        :load "p4.el"
        :pkgname "gareth-rees/p4.el")
