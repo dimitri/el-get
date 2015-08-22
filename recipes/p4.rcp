@@ -1,0 +1,6 @@
+(:name p4
+       :description "Use perforce commands in emacs"
+       :website "https://github.com/gareth-rees/p4.el"
+       :type github
+       :load "p4.el"
+       :pkgname "gareth-rees/p4.el")
