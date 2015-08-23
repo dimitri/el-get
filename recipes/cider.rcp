@@ -2,4 +2,4 @@
        :description "CIDER is a Clojure IDE and REPL."
        :type github
        :pkgname "clojure-emacs/cider"
-       :depends (dash queue clojure-mode pkg-info))
+       :depends (dash queue clojure-mode pkg-info spinner))
