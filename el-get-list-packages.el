@@ -330,7 +330,7 @@ in el-get package menu."
       (run-mode-hooks 'el-get-package-menu-mode-hook)
     (run-hooks 'el-get-package-menu-mode-hook)))
 
-(defun el-get-print-package (package-name status type &optional desc)
+(defun el-get-print-package (package-name status &optional type desc)
   (let ((face
          (cond
           ((string= status "installed")
@@ -349,8 +349,9 @@ in el-get package menu."
     (put-text-property (line-beginning-position) (line-end-position)
                        'font-lock-face face)
     (indent-to 41 1)
-    (insert (propertize (replace-regexp-in-string "\n" " " type)
-                        'font-lock-face face))
+    (when type
+      (insert (propertize (replace-regexp-in-string "\n" " " type)
+                          'font-lock-face face)))
     (indent-to 60 1)
     (when desc
       (insert (propertize (replace-regexp-in-string "\n" " " desc)
