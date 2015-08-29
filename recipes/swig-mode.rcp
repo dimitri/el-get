@@ -1,0 +1,4 @@
+(:name swig-mode
+       :description "SWIG major mode."
+       :type github
+       :pkgname "dholm/swig-mode")
