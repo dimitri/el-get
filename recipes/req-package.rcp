@@ -1,4 +1,5 @@
 (:name req-package
        :description "req-package is a macro wrapper on top of use-package. It's goal is to simplify package dependencies management, when using use-package for your .emacs."
        :type github
+       :depends (use-package dash log4e)
        :pkgname "edvorg/req-package")
