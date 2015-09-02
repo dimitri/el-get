@@ -161,7 +161,6 @@ Following variables are bound to temporal values:
 
 (ert-deftest el-get-update-rcp-file-load-path ()
   "Check the `load-path' is updated."
-  :expected-result :failed
   (el-get-with-temp-home
    (let* ((rcpdir (expand-file-name "~/.emacs.d/el-get-user-recipes/"))
           (el-get-recipe-path (cons rcpdir el-get-recipe-path))
