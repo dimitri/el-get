@@ -366,23 +366,12 @@ t', this error is suppressed (but nothing is updated).
         ;; Emit a verbose message if `noerror' is t (but still quit
         ;; the function).
         (funcall (if noerror 'el-get-verbose-message 'error)
-                 "Tried to add non-whitelisted properties:
-
-%s
-
-and remove non-whitelisted properties:
-
-%s
-
-into/from source:
-
-%s
-Maybe you should use %s`el-get-reinstall' on %s instead?"
-                 (if   added-disallowed (pp-to-string   added-disallowed) "()")
-                 (if removed-disallowed (pp-to-string removed-disallowed) "()")
-                 (pp-to-string cached-recipe)
-                 (if (eq operation 'update) "" "`el-get-update' or")
-                 (el-get-source-name cached-recipe))
+                 (concat "Must %sreinstall `%s' to modify its cached recipe\n"
+                         "  adding:   %s"
+                         "  removing: %s")
+                 (if (eq operation 'update) "" "update or ") package
+                 (if   added-disallowed (pp-to-string   added-disallowed) "()\n")
+                 (if removed-disallowed (pp-to-string removed-disallowed) "()\n"))
       (when update-p
           (el-get-save-package-status package "installed" source))))))
 
