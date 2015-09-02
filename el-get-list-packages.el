@@ -203,6 +203,13 @@ in el-get package menu."
 (defvar el-get-package-menu-sort-key nil
   "sort packages by key")
 
+(defconst el-get-package-list-column-alist
+  '(("Package"     . 2)
+    ("Status"      . 30)
+    ("Type"        . 41)
+    ("Description" . 54))
+  "An alist of (NAME . COLUMN) entries.")
+
 (defun el-get-package-menu-get-package-name ()
   (save-excursion
     (beginning-of-line)
@@ -342,17 +349,17 @@ in el-get package menu."
           (t
            (setq status "available")
            'default))))
-    (indent-to 2 1)
+    (indent-to (cdr (assoc "Package" el-get-package-list-column-alist)) 1)
     (insert package-name)
-    (indent-to 30 1)
+    (indent-to (cdr (assoc "Status" el-get-package-list-column-alist)) 1)
     (insert status)
     (put-text-property (line-beginning-position) (line-end-position)
                        'font-lock-face face)
-    (indent-to 41 1)
+    (indent-to (cdr (assoc "Type" el-get-package-list-column-alist)) 1)
     (when type
       (insert (propertize (replace-regexp-in-string "\n" " " type)
                           'font-lock-face face)))
-    (indent-to 60 1)
+    (indent-to (cdr (assoc "Description" el-get-package-list-column-alist)) 1)
     (when desc
       (insert (propertize (replace-regexp-in-string "\n" " " desc)
                           'font-lock-face face)
@@ -418,8 +425,8 @@ in el-get package menu."
     (setq header-line-format
           (mapconcat
            (lambda (pair)
-             (let ((column (car pair))
-                   (name (cdr pair)))
+             (let ((name (car pair))
+                   (column (cdr pair)))
                (concat
                 ;; Insert a space that aligns the button properly.
                 (propertize " " 'display (list 'space :align-to column)
@@ -430,11 +437,7 @@ in el-get package menu."
                             'help-echo "mouse-1: sort by column"
                             'mouse-face 'highlight
                             'keymap el-get-package-menu-sort-button-map))))
-           '((2 . "Package")
-             (30 . "Status")
-             (41 . "Type")
-             (60 . "Description"))
-           ""))
+           el-get-package-list-column-alist ""))
     (pop-to-buffer (current-buffer))))
 
 ;;;###autoload
