@@ -375,7 +375,7 @@ this warning either uninstall one of the el-get or package.el
 version of %s, or call `el-get' before `package-initialize' to
 prevent package.el from loading it."  package package)))
   (when el-get-auto-update-cached-recipes
-    (el-get-merge-properties-into-status package 'init :noerror t))
+    (el-get-merge-properties-into-status package 'init))
   (condition-case err
       (let* ((el-get-sources (el-get-package-status-recipes))
              (source   (el-get-read-package-status-recipe package))
@@ -633,7 +633,7 @@ PACKAGE may be either a string or the corresponding symbol."
 (defun el-get-post-update-build (package)
   "Function to call after building the package while updating it."
   ;; fix trailing failed installs
-  (el-get-merge-properties-into-status package 'update :noerror t)
+  (el-get-merge-properties-into-status package 'update)
   (when (string= (el-get-read-package-status package) "required")
     (el-get-save-package-status package "installed"))
   (el-get-invalidate-autoloads package)
