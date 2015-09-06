@@ -260,53 +260,50 @@ that recipe in the el-get status file.")
     ,@el-get-status-init-whitelist)
   "Properties than can be updated by `el-get-update'.")
 
-(defun el-get-classify-new-properties (operation source newprops)
-  "Classify NEWPROPS into two groups: need update/disallowed.
+(defun el-get-classify-new-properties (source newprops)
+  "Determine the operations required to update SOURCE with NEWPROPS.
 
-Return a list (UPDATE DISALLOWED).  Both UPDATE and NEWPROPS are
-subset of NEWPROPS whose element is different from SOURCE.
-Elements in UPDATE are whitelisted whereas elements in DISALLOWED
-are not."
-  (loop with update
-        with disallowed
-        with whitelist = (if (eq operation 'update)
-                             el-get-status-update-whitelist
-                           el-get-status-init-whitelist)
+Partition the properties of NEWPROPS whose value is different
+from SOURCE into 3 sublists, (INIT UPDATE REINSTALL), according
+to the operation required."
+  (loop with init and update and reinstall
         with type = (let ((old-type (el-get-package-method source))
                           (new-type (el-get-package-method newprops)))
                       (if (eq old-type new-type) old-type nil))
         for (k v) on newprops by 'cddr
-        ;; Not a change, so ignore it
-        if (equal v (plist-get source k)) do (ignore)
-        ;; whitelisted
+        if (equal v (plist-get source k)) do (ignore) ; Ignore non-changes.
         else if
-        (cond
-         ((memq k whitelist))           ; whitelisted
-         ((eq k :builtin)  ; `:builtin' safe if not crossing versions.
-          (eq (version<= emacs-version (el-get-as-string v))
-              (version<= emacs-version (el-get-as-string
-                                        (plist-get source k)))))
-         ((eq k :url)    ; `:http*' methods can handle `:url' changes.
-          (memq type '(http http-tar http-zip
-                            github-tar github-zip
-                            builtin))))
+        (or (memq k el-get-status-init-whitelist)
+            (if (eq k :builtin) ; `:builtin' safe if not crossing versions.
+                (eq (version<= emacs-version (el-get-as-string v))
+                    (version<= emacs-version (el-get-as-string
+                                              (plist-get source k))))))
+        do (setq init (plist-put init k v))
+        else if (or (memq k el-get-status-update-whitelist)
+                    (if (eq k :url) ; `:http*' methods can handle `:url' changes.
+                        (memq type '(http http-tar http-zip
+                                          github-tar github-zip
+                                          builtin))))
         do (setq update (plist-put update k v))
-        ;; Trying to change non-whitelisted property
-        else do (setq disallowed (plist-put disallowed k v))
-        finally return (list update disallowed)))
+        else do (setq reinstall (plist-put reinstall k v))
+        finally return (list init update reinstall)))
 
-(defun el-get-diagnosis-properties (operation old-source new-source)
+(defun el-get-diagnosis-properties (old-source new-source)
   "Diagnosis difference between OLD-SOURCE and NEW-SOURCE.
 
-Return a list (UPDATE-P ADDED-DISALLOWED REMOVED-DISALLOWED).
-UPDATE-P is non-nil when OLD-SOURCE and NEW-SOURCE are different.
-ADDED-DISALLOWED and REMOVED-DISALLOWED are added and removed
-properties, respectively."
-  (let ((added   (el-get-classify-new-properties operation old-source new-source))
-        (removed (el-get-classify-new-properties operation new-source old-source)))
-    (list (or (car added) (car removed))
-          (cadr added)
-          (cadr removed))))
+Return a list (REQUIRED-OPS ADDED REMOVED).  REQUIRED-OPS is list
+of one or more of `init', `update', or `reinstall' when
+OLD-SOURCE and NEW-SOURCE are different (nil otherwise).  It
+indicates which operations can perform the change.  ADDED and
+REMOVED are added and removed properties, respectively."
+  (let* ((added   (el-get-classify-new-properties old-source new-source))
+         (removed (el-get-classify-new-properties new-source old-source))
+         (min-op  (cond ((or (nth 2 added) (nth 2 removed)) 2)
+                        ((or (nth 1 added) (nth 1 removed)) 1)
+                        ((or (nth 0 added) (nth 0 removed)) 0))))
+    (list (and min-op (nthcdr min-op '(init update reinstall)))
+          (el-get-flatten (nthcdr (or min-op 0) added))
+          (el-get-flatten (nthcdr (or min-op 0) removed)))))
 
 (defun el-get-package-or-source (package-or-source)
   "Given either a package name or a full source entry, return a
@@ -360,19 +357,19 @@ t', this error is suppressed (but nothing is updated).
           (el-get-read-cached-recipe package source)))
     (unless (el-get-package-is-installed package)
       (error "Package %s is not installed. Cannot update recipe." package))
-    (destructuring-bind (update-p added-disallowed removed-disallowed)
-        (el-get-diagnosis-properties operation cached-recipe source)
-      (if (or added-disallowed removed-disallowed)
+    (destructuring-bind (required-ops added removed)
+        (el-get-diagnosis-properties cached-recipe source)
+      (if (and required-ops (not (memq operation required-ops)))
         ;; Emit a verbose message if `noerror' is t (but still quit
         ;; the function).
         (funcall (if noerror 'el-get-verbose-message 'error)
-                 (concat "Must %sreinstall `%s' to modify its cached recipe\n"
+                 (concat "Must %s `%s' to modify its cached recipe\n"
                          "  adding:   %s"
                          "  removing: %s")
-                 (if (eq operation 'update) "" "update or ") package
-                 (if   added-disallowed (pp-to-string   added-disallowed) "()\n")
-                 (if removed-disallowed (pp-to-string removed-disallowed) "()\n"))
-      (when update-p
-          (el-get-save-package-status package "installed" source))))))
+                 (mapconcat #'symbol-name required-ops " or ") package
+                 (if   added (pp-to-string   added) "()\n")
+                 (if removed (pp-to-string removed) "()\n"))
+      (when required-ops
+        (el-get-save-package-status package "installed" source))))))
 
 (provide 'el-get-status)
