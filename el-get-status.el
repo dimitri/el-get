@@ -252,7 +252,7 @@ that recipe in the el-get status file.")
 (defconst el-get-status-update-whitelist
   `(:depends
     :build
-    :build/system-type
+    ;; :build/* ; special cased below
     :compile
     :checksum
     :checkout
@@ -280,6 +280,8 @@ to the operation required."
                                               (plist-get source k))))))
         do (setq init (plist-put init k v))
         else if (or (memq k el-get-status-update-whitelist)
+                    ;; All `:build/*' props are update safe, like `:build'.
+                    (string-prefix-p ":build/" (symbol-name k))
                     (if (eq k :url) ; `:http*' methods can handle `:url' changes.
                         (memq type '(http http-tar http-zip
                                           github-tar github-zip
