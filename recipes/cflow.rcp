@@ -1,0 +1,6 @@
+(:name cflow
+       :description "Major mode for viewing cflow output files."
+       :type http
+       :url "http://git.savannah.gnu.org/cgit/cflow.git/plain/elisp/cflow-mode.el?h=master"
+       :localname "cflow-mode.el"
+       :prepare (add-to-list 'auto-mode-alist '("\\.cflow$" . cflow-mode)))
