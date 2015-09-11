@@ -1,0 +1,5 @@
+(:name exwm
+       :description "Full-featured tiling X window manager for Emacs built on top of XELB."
+       :type github
+       :pkgname "ch11ng/exwm"
+       :depends (xelb))
