@@ -304,8 +304,8 @@ REMOVED are added and removed properties, respectively."
                         ((or (nth 1 added) (nth 1 removed)) 1)
                         ((or (nth 0 added) (nth 0 removed)) 0))))
     (list (and min-op (nthcdr min-op '(init update reinstall)))
-          (el-get-flatten (nthcdr (or min-op 0) added))
-          (el-get-flatten (nthcdr (or min-op 0) removed)))))
+          (apply #'append (nthcdr (or min-op 0) added))
+          (apply #'append (nthcdr (or min-op 0) removed)))))
 
 (defun el-get-package-or-source (package-or-source)
   "Given either a package name or a full source entry, return a
