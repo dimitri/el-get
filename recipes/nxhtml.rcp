@@ -2,8 +2,8 @@
        :type emacsmirror
        :description "An addon for Emacs mainly for web development."
        :build `((,el-get-emacs
-                 "-batch" "-q" "-no-site-file" "-L" "."
+                 "-batch" "-q" "-no-site-file" "-L" "./elisp"
                  "-l" "nxhtmlmaint.el"
                  "--eval" "(setq inhibit-read-only t)" ; `web-vcs-message-with-face' writes to `*Messages*' buffer.
                  "-f" "nxhtmlmaint-start-byte-compilation"))
-       :load "autostart.el")
+       :load "elisp/autostart.el")
