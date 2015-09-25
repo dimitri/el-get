@@ -1,0 +1,4 @@
+(:name pythonic
+       :description "Utility functions for writing pythonic emacs package."
+       :type github
+       :pkgname "proofit404/pythonic")
