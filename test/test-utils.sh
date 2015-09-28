@@ -71,7 +71,7 @@ test_recipe () {
 (progn
   (setq debug-on-error (not noninteractive)
         el-get-default-process-sync t
-        pdef (el-get-read-recipe-file "$recipe_file")
+        pdef (el-get-read-from-file "$recipe_file")
         pname (plist-get pdef :name)
         el-get-sources (cons pdef (bound-and-true-p el-get-sources)))
   (el-get (quote sync) pname)
