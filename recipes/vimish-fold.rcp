@@ -1,0 +1,6 @@
+(:name vimish-fold
+       :description "This package mostly mimics text folding feature found in Vim."
+       :type github
+       :pkgname "mrkkrp/vimish-fold"
+       :depends (f)
+       :minimum-emacs-version "24.4")
