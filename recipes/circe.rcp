@@ -4,4 +4,4 @@
        :type github
        :pkgname "jorgenschaefer/circe"
        :depends cl-lib
-       :load-path ("lisp"))
+       :load-path ("."))
