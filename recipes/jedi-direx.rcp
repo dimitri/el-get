@@ -1,0 +1,5 @@
+(:name jedi-direx
+       :description "Python source tree viewer for jedi"
+       :type github
+       :pkgname "tkf/emacs-jedi-direx"
+       :depends (jedi direx))
