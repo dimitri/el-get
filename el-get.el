@@ -1001,9 +1001,6 @@ the packages you use are welcome to use `autoload' too.
 PACKAGES is expected to be a list of packages you want to install
 or init.  When PACKAGES is omited (the default), the list of
 already installed packages is considered."
-  ;; If there's no autoload file, everything needs to be regenerated.
-  (unless (file-exists-p el-get-autoload-file) (el-get-invalidate-autoloads))
-
   ;; Autoloads path are relative to el-get-dir, so add it to load-path
   (add-to-list 'load-path (file-name-as-directory el-get-dir))
 
