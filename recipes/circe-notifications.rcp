@@ -1,0 +1,7 @@
+(:name circe-notifications
+       :website "https://github.com/eqyiel/circe-notifications"
+       :description "Add desktop notifications to Circe"
+       :type github
+       :pkgname "eqyiel/circe-notifications"
+       :depends (circe cl-lib s)
+       :load-path ("."))
