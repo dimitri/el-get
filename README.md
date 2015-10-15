@@ -102,6 +102,9 @@ your `user-init-file`).
    (eval-print-last-sexp)))
 ```
 
+NOTE: if you are using Windows see
+[Installation on Windows](https://github.com/dimitri/el-get/wiki/Installation-on-Windows).
+
 Evaluating this code after copying it into your `*scratch*` buffer by typing
 `C-j` or `M-x eval-print-last-exp` will retrieve the El-Get installation
 script.  This script will then use `git` to clone El-Get and install it to
