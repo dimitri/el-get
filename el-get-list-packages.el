@@ -29,58 +29,10 @@
   "Global var holding pointing to the package menu buffer, so
   that it can be updated from `el-get-save-package-status'")
 
-(define-button-type 'el-get-help-package-def
-  :supertype 'help-xref
-  'help-function (lambda (package) (find-file (el-get-recipe-filename package)))
-  'help-echo (purecopy "mouse-2, RET: find package's recipe"))
-
-(define-button-type 'el-get-help-install
-  :supertype 'help-xref
-  'help-function (lambda (package)
-                   (when (y-or-n-p
-                          (format "Do you really want to install `%s'? "
-                                  package))
-                     (el-get-install package)))
-  'help-echo (purecopy "mouse-2, RET: install package"))
-
-(define-button-type 'el-get-help-remove
-  :supertype 'help-xref
-  'help-function (lambda (package)
-                   (when (y-or-n-p
-                          (format "Do you really want to uninstall `%s'? "
-                                  package))
-                     (el-get-remove package)))
-  'help-echo (purecopy "mouse-2, RET: remove package"))
-
-(define-button-type 'el-get-help-update
-  :supertype 'help-xref
-  'help-function (lambda (package)
-                   (when (y-or-n-p
-                          (format "Do you really want to update `%s'? "
-                                  package))
-                     (el-get-update package)))
-  'help-echo (purecopy "mouse-2, RET: update package"))
-
-(define-button-type 'el-get-help-cd
-  :supertype 'help-xref
-  'help-function #'dired
-  'help-echo (purecopy "mouse-2, RET: open directory"))
-
-(define-button-type 'el-get-help-describe-package
+(define-button-type 'el-get-describe-package
   :supertype 'help-xref
   'help-function #'el-get-describe
   'help-echo (purecopy "mouse-2, RET: describe package"))
-
-(defun el-get-describe-princ-button (label regex type &rest args)
-  "Princ a new button with label LABEL.
-
-The LABEL is made clickable by calling `help-xref-button' for a backwards
-matching REGEX with TYPE and ARGS as parameter."
-  (princ label)
-  (with-current-buffer standard-output
-    (save-excursion
-      (re-search-backward regex nil t)
-      (apply #'help-xref-button 1 type args))))
 
 (defun el-get-guess-website (package)
   (let* ((type (el-get-package-type package))
@@ -102,70 +54,61 @@ matching REGEX with TYPE and ARGS as parameter."
          (minimum-version (plist-get def :minimum-emacs-version))
          (url (plist-get def :url))
          (depends (plist-get def :depends)))
-    (princ (format "%s is an `el-get' package.  " name))
+    (insert (format "%s is an `el-get' package.  " name))
     (if (eq type 'builtin)
-        (princ (format "It is built-in since Emacs %s" builtin))
-      (princ (format "It is currently %s "
-                     (if status
-                         status
-                       "not installed")))
+        (insert (format "It is built-in since Emacs %s" builtin))
+      (insert (format "It is currently %s "
+                      (or status "not installed")))
       (cond
        ((string= status "installed")
-        (el-get-describe-princ-button "[update]" "\\[\\([^]]+\\)\\]"
-                                      'el-get-help-update package)
-        (el-get-describe-princ-button "[remove]" "\\[\\([^]]+\\)\\]"
-                                      'el-get-help-remove package))
+        (insert (el-get-fmt-button "[%s]" "update" :type 'el-get-update
+                                   'el-get-package package))
+        (insert (el-get-fmt-button "[%s]" "remove" :type 'el-get-remove
+                                   'el-get-package package)))
        ((string= status "required")
-        (el-get-describe-princ-button "[update]" "\\[\\([^]]+\\)\\]"
-                                      'el-get-help-update package))
+        (insert (el-get-fmt-button "[%s]" "update" :type 'el-get-update
+                                   'el-get-package package)))
        (t
-        (el-get-describe-princ-button "[install]" "\\[\\([^]]+\\)\\]"
-                                      'el-get-help-install package))))
-    (princ ".\n\n")
+        (insert (el-get-fmt-button "[%s]" "install" :type 'el-get-install
+                                   'el-get-package package)))))
+    (insert ".\n\n")
 
     (let ((website (or website
                        (el-get-guess-website package))))
       (when website
-        (el-get-describe-princ-button (format "Website: %s\n" website)
-                                      ": \\(.+\\)" 'help-url website)))
+        (insert (el-get-fmt-button "Website: %s\n" website :type 'help-url
+                                   'help-args website))))
     (when descr
-      (princ (format "Description: %s\n" descr)))
+      (insert (format "Description: %s\n" descr)))
     (when depends
-      (if (listp depends)
-          (progn
-            (princ "Dependencies: ")
-            (loop for i in depends
-                  do (el-get-describe-princ-button
-                      (format "`%s'" i) "`\\([^`']+\\)"
-                      'el-get-help-describe-package i)))
-        (princ "Dependency: ")
-        (el-get-describe-princ-button
-         (format "`%s'" depends) "`\\([^`']+\\)"
-         'el-get-help-describe-package depends))
-      (princ ".\n"))
+      (insert "Dependencies:")
+      (loop for d in (el-get-as-list depends)
+            do (insert (el-get-fmt-button
+                        " `%s'" (symbol-name d)
+                        :type 'el-get-describe-package 'help-args d)))
+      (insert ".\n"))
     (when minimum-version
-      (princ (format "Requires minimum Emacs version: %s." minimum-version))
+      (insert (format "Requires minimum Emacs version: %s." minimum-version))
       (when (version-list-< (version-to-list emacs-version)
                             (el-get-version-to-list minimum-version))
-        (princ (format "  Warning: Your Emacs is too old (%s)!" emacs-version)))
-      (princ "\n"))
+        (insert (format "  Warning: Your Emacs is too old (%s)!" emacs-version)))
+      (insert "\n"))
     (if (eq type 'builtin)
-        (princ (format "The package is built-in since Emacs %s.\n" builtin))
-      (princ (format "The default installation method is %s%s.\n" type
-                     (if url (format " from %s" url) ""))))
+        (insert (format "The package is built-in since Emacs %s.\n" builtin))
+      (insert (format "The default installation method is %s%s.\n" type
+                      (if url (format " from %s" url) ""))))
     (when (string= status "installed")
-      (princ "Installed in ")
-      (el-get-describe-princ-button (format "`%s'" directory) "`\\([^']+\\)"
-                                    'el-get-help-cd directory)
-      (princ ".\n"))
-    (princ "\n")
-    (princ "Full definition")
+      (insert "Installed in ")
+      (insert (el-get-fmt-button "`%s'" directory :type 'el-get-cd
+                                 'el-get-file directory))
+      (insert ".\n"))
+    (insert "\n")
+    (insert "Full definition")
     (let ((file (el-get-recipe-filename package)))
-      (if (not file)
-          (princ ":\n")
-        (el-get-describe-princ-button (format " in `%s':\n" file)
-                                      "`\\([^`']+\\)"
-                                      'el-get-help-package-def package)))
+      (when file
+        (insert (el-get-fmt-button " in `%s'" file :type 'el-get-file-jump
+                                   'el-get-file file)))
+      (insert ":\n"))
     (el-get-recipe-pprint def)))
 
 (defun el-get-describe (package &optional interactive-p)
