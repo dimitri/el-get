@@ -240,22 +240,23 @@ entry."
     (when (y-or-n-p
            (format "Really %s `%s'? "
                    (button-get button 'el-get-pkg-verb) package))
-      (funcall (button-get button 'el-get-pkg-fun) package))))
+      (apply (button-get button 'el-get-pkg-fun) package
+             (button-get button 'el-get-pkg-extra-args)))))
 
 (define-button-type 'el-get-pkg-op
   'action #'el-get-pkg-op-button-action
   'follow-link t)
 
-(defun el-get-define-pkg-op-button-type (operation)
-  (let ((verb (replace-regexp-in-string "\\`el-get-" "" (symbol-name operation))))
-    (define-button-type operation :supertype 'el-get-pkg-op
-      'el-get-pkg-fun operation
-      'el-get-pkg-verb verb
-      'help-echo (format "mouse-2, RET: %s package" verb))))
+(defun el-get-define-pkg-op-button-type (operation verb)
+  (define-button-type operation :supertype 'el-get-pkg-op
+    'el-get-pkg-fun operation
+    'el-get-pkg-verb verb
+    'help-echo (format "mouse-2, RET: %s package" verb)))
 
-(el-get-define-pkg-op-button-type 'el-get-install)
-(el-get-define-pkg-op-button-type 'el-get-update)
-(el-get-define-pkg-op-button-type 'el-get-remove)
+(el-get-define-pkg-op-button-type 'el-get-install "install")
+(el-get-define-pkg-op-button-type 'el-get-reinstall "reinstall")
+(el-get-define-pkg-op-button-type 'el-get-update "update")
+(el-get-define-pkg-op-button-type 'el-get-remove "remove")
 
 (define-button-type 'el-get-file-jump
   'action (lambda (button) (find-file (button-get button 'el-get-file)))

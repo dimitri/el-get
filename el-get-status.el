@@ -336,20 +336,26 @@ a list of operations that would allow a full update."
         (error "Package %s is nowhere to be found in el-get status file."
                package))))
 
-(defun el-get-merge-properties-into-status (package
-                                            operation
-                                            &rest keys)
+(el-get-define-pkg-op-button-type 'el-get-merge-properties-into-status
+                                  "force cached recipe update of")
+
+(defun el-get-merge-properties-into-status (package operation &rest keys)
   "Merge updatable properties for package into status file.
 
 PACKAGE is either a package source or name, in which case the
 source will be read using `el-get-package-def'.  The named
 package must already be installed.
 
-Warn about any non-whitelisted properties differing from the
-cached values."
+Warn about any non-whitelisted for OPERATION properties differing
+from the cached values.
+
+Interactively, OPERATION is `update' with prefix arg, `reinstall'
+with double prefix arg, or `init' otherwise."
   (interactive
    (list (el-get-read-package-with-status "Update cached recipe" "installed")
-         'init))
+         (cond ((equal '(16) current-prefix-arg) 'reinstall)
+               (current-prefix-arg 'update)
+               (t 'init))))
   (let* ((source       (el-get-package-or-source package))
          (package      (plist-get source :name))
          (cached       (el-get-read-cached-recipe package source)))
@@ -362,8 +368,18 @@ cached values."
         (lwarn '(el-get recipe-cache) :warning
                (concat "Must %s `%s' to modify its cached recipe\n"
                        "  adding:   %s"
-                       "  removing: %s")
-               (mapconcat #'symbol-name required-ops " or ") package
+                       "  removing: %s"
+                       (el-get-fmt-button
+                        "  Or %s if you know these changes are safe.\n"
+                        "force update the cached recipe"
+                        :type 'el-get-merge-properties-into-status
+                        'el-get-package package 'el-get-pkg-extra-args '(reinstall)))
+               (mapconcat (lambda (op)
+                            (el-get-fmt-button
+                             "%s" op :type (intern (concat "el-get-" op))
+                             'el-get-package package))
+                          (mapcar #'symbol-name required-ops) " or ")
+               package
                (if no-add (pp-to-string no-add) "()\n")
                (if no-rem (pp-to-string no-rem) "()\n"))))))
 
