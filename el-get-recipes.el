@@ -73,7 +73,8 @@ compiled version."
            (package-init-file
             (expand-file-name init-file-name el-get-user-package-directory))
            (file-name-no-extension (file-name-sans-extension package-init-file))
-           (compiled-init-file (concat file-name-no-extension ".elc")))
+           (compiled-init-file (concat file-name-no-extension ".elc"))
+           (default-directory (el-get-package-directory package)))
       (when (file-exists-p package-init-file)
         (when el-get-byte-compile
           (el-get-byte-compile-file package-init-file))
