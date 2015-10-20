@@ -7,4 +7,4 @@
                 ("make" ,@el-get-parallel-make-args))
        :compile "src"
        :load-path "src"
-       :post-init (setq rtags-path default-directory))
+       :post-init (setq rtags-path (concat default-directory "/bin/")))
