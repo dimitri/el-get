@@ -1,0 +1,4 @@
+(:name jenkins
+       :description "Jenkins plugin for emacs"
+       :type github
+       :url "https://github.com/rmuslimov/jenkins.el.git")
