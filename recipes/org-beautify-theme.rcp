@@ -1,0 +1,6 @@
+(:name org-beautify-theme
+       :description "Sub-theme to beautify org mode"
+       :website "https://github.com/jonnay/emagicians-starter-kit/blob/master/themes/org-beautify-theme.org"
+       :type http
+       :url "https://raw.githubusercontent.com/jonnay/emagicians-starter-kit/master/themes/org-beautify-theme.el"
+       :prepare (add-to-list 'custom-theme-load-path default-directory))
