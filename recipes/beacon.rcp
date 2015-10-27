@@ -1,0 +1,5 @@
+(:name beacon
+       :description "A light following your cursor around so you don't lose it!"
+       :type github
+       :pkgname "Malabarba/beacon"
+       :depends seq)
