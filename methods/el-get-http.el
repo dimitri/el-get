@@ -74,8 +74,8 @@ into the package :localname option or its `file-name-nondirectory' part."
         (el-get-http-retrieve-callback
          (let ((http-response (if (looking-at "^HTTP/[0-9]\\.[0-9] \\([0-9]\\{3\\}\\)")
                                   (string-to-number (match-string 1)))))
-           (unless (and http-response (<= 200 http-response) (<= http-response 299))
-             `(:error (error http ,http-response))))
+           (if (and http-response (or (< http-response 200) (< 299 http-response)))
+               `(:error (error http ,http-response))))
          package url post-install-fun dest el-get-sources)))))
 
 (defun el-get-http-compute-checksum (package &optional url)
