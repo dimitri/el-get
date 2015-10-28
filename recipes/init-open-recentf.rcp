@@ -1,0 +1,4 @@
+(:name init-open-recentf
+       :description "open-recentf on Emacs startup"
+       :type github
+       :pkgname "zonuexe/init-open-recentf.el")
