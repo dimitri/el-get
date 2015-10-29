@@ -2,4 +2,5 @@
        :description "Erlang Development Tool Suite."
        :type github
        :pkgname "tjarvstrand/edts"
+       :depends (auto-highlight-symbol)
        :build (("make")))
