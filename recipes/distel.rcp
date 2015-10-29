@@ -3,10 +3,11 @@
        :description "Distributed Emacs Lisp for Erlang."
        :type github
        :pkgname "massemanet/distel"
+       :depends (erlang-mode)
        :info "doc"
        :build `,(mapcar
                  (lambda (target)
                    (list "make" target (format "EMACS=%s" el-get-emacs)))
                  '("clean" "all"))
        :load-path ("elisp")
-       :features distel)
+       :prepare (autoload 'distel-setup "distel"))
