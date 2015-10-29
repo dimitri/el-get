@@ -1,0 +1,11 @@
+(:name wrangler
+       :description "Erlang refactorer."
+       :website "http://www.cs.kent.ac.uk/projects/wrangler/Wrangler/Home.html"
+       :type github
+       :pkgname "RefactoringTools/Wrangler"
+       :depends (distel graphviz-dot-mode)
+       :build (("autoreconf" "-i")
+               ("./configure")
+               ("make"))
+       :load-path ("elisp")
+       :prepare (autoload 'erlang-wrangler-on "wrangler" nil t))
