@@ -10,4 +10,6 @@
                    (list "make" target (format "EMACS=%s" el-get-emacs)))
                  '("clean" "all"))
        :load-path ("elisp")
-       :prepare (autoload 'distel-setup "distel"))
+       :prepare (let ((distel-path (el-get-package-directory 'distel)))
+                  (setq distel-ebin-directory (expand-file-name "ebin" distel-path))
+                  (autoload 'distel-setup "distel")))
