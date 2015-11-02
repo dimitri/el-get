@@ -2,4 +2,4 @@
        :description "Elixir Tooling Integration Into Emacs"
        :type github
        :pkgname "tonini/alchemist.el"
-       :depends (elixir dash company pkg-info))
+       :depends (elixir dash company-mode pkg-info))
