@@ -3,4 +3,5 @@
        :type github
        :submodule nil
        :pkgname "tkf/emacs-request"
-       :depends(deferred))
+       :depends (deferred)
+       :provide (request-deferred))
