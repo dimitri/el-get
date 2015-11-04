@@ -21,7 +21,7 @@
         (or (bound-and-true-p el-get-dir)
             (concat (file-name-as-directory user-emacs-directory) "el-get")))))
 
-  (unless (gnutls-available-p)
+  (unless (and (fboundp 'gnutls-available-p) (gnutls-available-p))
     (display-warning
      'el-get
      (concat "Your Emacs doesn't support HTTPS (TLS)"
