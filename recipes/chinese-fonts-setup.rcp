@@ -1,0 +1,6 @@
+(:name chinese-fonts-setup
+       :website "https://github.com/tumashu/chinese-fonts-setup#readme"
+       :description "A fonts config tool enforcing double-width Chinese character display"
+       :depends (cl-lib)
+       :type github
+       :pkgname "tumashu/chinese-fonts-setup")
