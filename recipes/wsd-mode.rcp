@@ -1,0 +1,5 @@
+(:name wsd-mode
+       :website "https://github.com/josteink/wsd-mode#readme"
+       :description "Emacs major-mode for www.websequencediagrams.com"
+       :type github
+       :pkgname "josteink/wsd-mode")
