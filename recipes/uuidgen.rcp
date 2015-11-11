@@ -1,0 +1,6 @@
+(:name uuidgen
+       :website "https://github.com/kanru/uuidgen-el#readme"
+       :description "Provides various UUID generating functions"
+       :type github
+       :pkgname "kanru/uuidgen-el"
+       :library uuidgen)

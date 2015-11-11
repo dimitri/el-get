@@ -1,0 +1,7 @@
+(:name pip-requirements
+       :website "https://github.com/Wilfred/pip-requirements.el#readme"
+       :description "A major mode for editing pip requirements files."
+       :depends (dash)
+       :type github
+       :pkgname "Wilfred/pip-requirements.el"
+       :library pip-requirements)

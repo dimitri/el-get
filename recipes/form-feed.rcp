@@ -1,0 +1,5 @@
+(:name form-feed
+       :website "https://github.com/wasamasa/form-feed#readme"
+       :description "Display ^L glyphs as horizontal lines"
+       :type github
+       :pkgname "wasamasa/form-feed")
