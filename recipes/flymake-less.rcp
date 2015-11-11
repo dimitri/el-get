@@ -1,0 +1,7 @@
+(:name flymake-less
+       :type github
+       :pkgname "purcell/flymake-less"
+       :description "Flymake handler for LESS stylesheets (lesscss.org)"
+       :website "https://github.com/purcell/flymake-less#readme"
+       :depends (flymake-easy less-css-mode)
+       :post-init (add-hook 'less-css-mode-hook 'flymake-less-load))
