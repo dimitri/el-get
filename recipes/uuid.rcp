@@ -1,0 +1,6 @@
+(:name uuid
+       :website "https://github.com/nicferrier/emacs-uuid#readme"
+       :description "UUID's for EmacsLisp"
+       :type github
+       :pkgname "nicferrier/emacs-uuid"
+       :library uuid)
