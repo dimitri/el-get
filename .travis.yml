@@ -9,5 +9,6 @@ install:
   - '"$EMACS" --version'
 script:
   - byte-compile
+  - ert-tests
   - check-recipes
   - check-whitespace

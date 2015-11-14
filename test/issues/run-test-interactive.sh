@@ -5,7 +5,8 @@ if [ -z "$1" ]; then
   exit 0
 fi
 
-source "$(dirname $0)"/test-utils.sh
+EL_GET_LIB_DIR=$(dirname "$(dirname "$(dirname "$(readlink -f "$0")")")")
+source "$(dirname $0)"/../test-utils.sh
 
 for t in "$@"; do
   run_test interactive "$t"
