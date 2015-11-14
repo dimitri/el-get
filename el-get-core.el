@@ -227,6 +227,14 @@ entry."
     ((debug error)
      (error "Error reading file %s: %S" filename err))))
 
+(defun el-get-package-is-installed (package)
+  "Return true if PACKAGE is installed"
+  (and (file-directory-p (el-get-package-directory package))
+       (string= "installed"
+                (el-get-read-package-status package))))
+
+(defalias 'el-get-package-installed-p #'el-get-package-is-installed)
+
 
 ;;
 ;; Some tools

@@ -239,14 +239,6 @@ package names."
     (unless (plist-member recipe :type)
       (error "el-get: package `%s' has incomplete recipe (no :type)" package))))
 
-(defun el-get-package-is-installed (package)
-  "Return true if PACKAGE is installed"
-  (and (file-directory-p (el-get-package-directory package))
-       (string= "installed"
-                (el-get-read-package-status package))))
-
-(defalias 'el-get-package-installed-p #'el-get-package-is-installed)
-
 (defun el-get-read-package-name (action &optional filtered)
   "Ask user for a package name in minibuffer, with completion.
 
@@ -589,11 +581,11 @@ PACKAGE may be either a string or the corresponding symbol."
 
 (defun el-get-reload (package &optional package-status-alist)
   "Reload PACKAGE."
-  (declare (advertised-calling-convention (package) "Feb 2015"))
   (interactive
    (progn
      (el-get-clear-status-cache)
      (list (el-get-read-package-with-status "Reload" "installed"))))
+  (declare (advertised-calling-convention (package) "Feb 2015"))
   (el-get-verbose-message "el-get-reload: %s" package)
   (el-get-with-status-sources ()
     (let* ((all-features features)

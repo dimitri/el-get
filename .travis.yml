@@ -8,7 +8,7 @@ install:
   - prereqs
   - '"$EMACS" --version'
 script:
-  - byte-compile
-  - ert-tests
+  - folded_call byte-compile
+  - folded_call ert-tests
   - check-recipes
   - check-whitespace
