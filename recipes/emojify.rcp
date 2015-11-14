@@ -1,0 +1,6 @@
+(:name emojify
+       :description "Display emojis in Emacs."
+       :type github
+       :depends (seq ht)
+       :minimum-emacs-version "24.3"
+       :pkgname "iqbalansari/emacs-emojify")
