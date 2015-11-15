@@ -16,6 +16,16 @@
 (require 'el-get-core)
 (require 'el-get-recipes)
 
+(eval-and-compile
+  (unless (fboundp 'string-suffix-p) ; introduced in 24.4
+    (defun string-suffix-p (suffix string  &optional ignore-case)
+      "Return non-nil if SUFFIX is a suffix of STRING.
+If IGNORE-CASE is non-nil, the comparison is done without paying
+attention to case differences."
+      (let ((start-pos (- (length string) (length suffix))))
+        (and (>= start-pos 0)
+             (eq t (compare-strings suffix nil nil
+                                    string start-pos nil ignore-case)))))))
 (defun el-get-dependencies (packages)
   "Return the list of packages to install in order."
   (multiple-value-bind (plist all-sorted-p non-sorted)
@@ -102,6 +112,9 @@ A `:minimum-emacs-version' property may also be present."
   (interactive (list (el-get-read-package-with-status "Auto-get dependencies of" "installed") t))
   (unless (el-get-package-installed-p package)
     (error "Tried to get Package-Requires of non-installed package, `%s'!" package))
+  (eval-and-compile
+    (require 'lisp-mnt)                 ; `lm-header'
+    (require 'thingatpt))               ; `read-from-whole-string'
   (loop with deps and min-emacs and sub-pkgs
         for pdir in (el-get-load-path package)
         do (loop for file in (directory-files pdir t "\\.el\\'" t)

@@ -22,6 +22,10 @@
 (require 'el-get-recipes)
 (require 'el-get-build)
 
+(defvar warning-minimum-log-level)
+(defvar warning-minimum-level)
+(declare-function warning-numeric-level "warnings" (level))
+
 (defvar el-get-check--last-file-or-buffer nil
   "The last file-or-buffer checked.")
 

@@ -38,6 +38,7 @@ get_file () {
 emacs_with_test_home() {
   mode=$1
   testfile=$2
+  shift 2
 
   if [ -n "$DO_NOT_CLEAN" ]; then
     echo "Running test without removing $TEST_HOME first";
@@ -53,7 +54,7 @@ emacs_with_test_home() {
   HOME="$TEST_HOME" "$EMACS" "${args[@]}" -L "$EL_GET_LIB_DIR" \
       -l "$EL_GET_LIB_DIR/el-get.el" -l "$EL_GET_LIB_DIR/test/test-setup.el" \
       --eval '(setq enable-local-variables :safe)' \
-      -l "$testfile"
+      -l "$testfile" "$@"
   return $?
 }
 
