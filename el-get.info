@@ -227,13 +227,13 @@ block (just after the last closing paren) and you type `C-j'.
 
 * Menu:
 
-* Install the developper version::
+* Install the developer version::
 * Skip Emacswiki recipes when installing::
 
 
-File: el-get.info,  Node: Install the developper version,  Next: Skip Emacswiki recipes when installing,  Up: Installing
+File: el-get.info,  Node: Install the developer version,  Next: Skip Emacswiki recipes when installing,  Up: Installing
 
-4.1 Developper version
+4.1 Developer version
 ======================
 
 The lazy installer uses the default `el-get-install.el' file which
@@ -242,7 +242,7 @@ targets the `stable' branch.  To install El-Get directly on the
 existence:
 
      ;; So the idea is that you copy/paste this code into your *scratch* buffer,
-     ;; hit C-j, and you have a working developper edition of el-get.
+     ;; hit C-j, and you have a working developer edition of el-get.
      (url-retrieve
       "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
       (lambda (s)
@@ -251,7 +251,7 @@ existence:
           (eval-print-last-sexp))))
 
 
-File: el-get.info,  Node: Skip Emacswiki recipes when installing,  Prev: Install the developper version,  Up: Installing
+File: el-get.info,  Node: Skip Emacswiki recipes when installing,  Prev: Install the developer version,  Up: Installing
 
 4.2 Skip Emacswiki recipes when installing
 ==========================================
@@ -1244,7 +1244,7 @@ Ref: Glossary - Recipe6607
 Ref: Glossary - Status7031
 Ref: Glossary - Update7289
 Node: Installing7527
-Node: Install the developper version8400
+Node: Install the developer version8400
 Node: Skip Emacswiki recipes when installing9145
 Node: Usage9981
 Node: Setup12270

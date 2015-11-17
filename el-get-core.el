@@ -14,7 +14,7 @@
 
 ;;; Commentary:
 ;;
-;; el-get-core provides basic el-get API, intended for developpers of el-get
+;; el-get-core provides basic el-get API, intended for developers of el-get
 ;; and its methods.  See the methods directory for implementation of them.
 ;;
 

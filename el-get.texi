@@ -234,12 +234,12 @@ To evaluate that code, you place the point at the end of the text
 block (just after the last closing paren) and you type @kbd{C-j}.
 
 @menu
-* Install the developper version::
+* Install the developer version::
 * Skip Emacswiki recipes when installing::
 @end menu
 
-@node Install the developper version
-@section Developper version
+@node Install the developer version
+@section Developer version
 
 The lazy installer uses the default @file{el-get-install.el} file
 which targets the @code{stable} branch.  To install El-Get directly on
@@ -248,7 +248,7 @@ variable into existence:
 
 @example
 ;; So the idea is that you copy/paste this code into your *scratch* buffer,
-;; hit C-j, and you have a working developper edition of el-get.
+;; hit C-j, and you have a working developer edition of el-get.
 (url-retrieve
  "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
  (lambda (s)
