@@ -1,0 +1,5 @@
+(:name wakatime-mode
+       :description "Automatic time tracking extension for WakaTime"
+       :website "https://github.com/wakatime/wakatime-mode"
+       :type github
+       :pkgname "wakatime/wakatime-mode")
