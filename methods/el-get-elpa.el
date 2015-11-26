@@ -274,40 +274,44 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
                         (car command-line-args-left)
                         el-get-recipe-path-elpa))
         (coding-system-for-write 'utf-8)
-        pkg package description)
+        (pkgs nil))
+
+    (unless (file-directory-p target-dir)
+      (make-directory target-dir 'recursive))
 
     (when (or (not package-archive-contents)
               (and package-archive-contents
                    (not do-not-update)))
       (package-refresh-contents))
+    (setq pkgs package-archive-contents)
 
-    (unless (file-directory-p target-dir)
-      (make-directory target-dir 'recursive))
-
-    (mapc (lambda (pkg)
-            (let* ((package     (format "%s" (car pkg)))
-                   (pkg-desc    (car (el-get-elpa-descs pkg)))
-                   (description (package-desc-summary pkg-desc))
-                   (pkg-deps    (package-desc-reqs pkg-desc))
-                   (depends     (remq 'emacs (mapcar #'car pkg-deps)))
-                   (emacs-dep   (assq 'emacs pkg-deps))
-                   (repo
-                    (assoc (aref pkg-desc (- (length pkg-desc) 1))
-                           package-archives)))
-              (with-temp-file (expand-file-name (concat package ".rcp")
-                                                target-dir)
-                (message "%s:%s" package description)
-                (insert
-                 (format
-                  "(:name %s\n:auto-generated t\n:type elpa\n:description \"%s\"\n:repo %S\n"
-                  package description repo))
-                (when depends
-                  (insert (format ":depends %s\n" depends)))
-                (when emacs-dep
-                  (insert (format ":minimum-emacs-version %s\n"
-                                  (cadr emacs-dep))))
-                (insert ")")
-                (indent-region (point-min) (point-max)))))
-          package-archive-contents)))
+    (with-temp-buffer
+      (dotimes-with-progress-reporter (_ (length package-archive-contents))
+          "Generating recipes from package.el descriptors..."
+        (let* ((pkg         (pop pkgs))
+               (package     (format "%s" (car pkg)))
+               (pkg-desc    (car (el-get-elpa-descs pkg)))
+               (description (package-desc-summary pkg-desc))
+               (pkg-deps    (package-desc-reqs pkg-desc))
+               (depends     (remq 'emacs (mapcar #'car pkg-deps)))
+               (emacs-dep   (assq 'emacs pkg-deps))
+               (repo
+                (assoc (aref pkg-desc (- (length pkg-desc) 1))
+                       package-archives)))
+          (erase-buffer)
+          (insert
+           (format
+            "(:name %s\n:auto-generated t\n:type elpa\n:description %S\n:repo %S\n"
+            package description repo))
+          (when depends
+            (insert (format ":depends %s\n" depends)))
+          (when emacs-dep
+            (insert (format ":minimum-emacs-version %s\n"
+                            (cadr emacs-dep))))
+          (insert ")")
+          (goto-char (point-min))
+          (write-region nil nil
+                        (expand-file-name (concat package ".rcp") target-dir)
+                        nil 0))))))
 
 (provide 'el-get-elpa)

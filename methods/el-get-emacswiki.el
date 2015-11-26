@@ -111,7 +111,7 @@ into a local recipe file set"
           (progress-reporter-update progress recipe-num)
           (insert
            (format
-            "(:name %s\n:auto-generated t\n:type emacswiki\n:description \"%s\"\n:website \"%s\")\n"
+            "(:name %s\n:auto-generated t\n:type emacswiki\n:description %S\n:website %S)\n"
             (file-name-sans-extension package) description url)))
      finally (progress-reporter-done progress))))
 
