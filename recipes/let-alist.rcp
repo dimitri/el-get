@@ -1,5 +1,5 @@
 (:name let-alist
        :description "Easily let-bind values of an assoc-list by their names."
        :builtin "25.0.50"
-       :type http
-       :url "http://git.savannah.gnu.org/cgit/emacs/elpa.git/plain/packages/let-alist/let-alist.el")
+       :type elpa
+       :url "https://elpa.gnu.org/packages/let-alist.html")
