@@ -1,0 +1,6 @@
+(:name mb-url
+       :website "https://github.com/dochang/mb-url#readme"
+       :description "Multiple Backends for Emacs URL package."
+       :type github
+       :pkgname "dochang/mb-url"
+       :library mb-url)
