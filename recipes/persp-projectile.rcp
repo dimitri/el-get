@@ -1,0 +1,5 @@
+(:name persp-projectile
+       :description "Perspective integration with Projectile."
+       :type github
+       :pkgname "bbatsov/persp-projectile"
+       :depends (projectile perspective cl-lib))
