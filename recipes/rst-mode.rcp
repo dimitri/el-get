@@ -1,4 +1,5 @@
 (:name rst-mode
+       :website "http://docutils.sourceforge.net/docs/user/emacs.html"
        :description "Mode for viewing and editing reStructuredText-documents."
-       :type http
-       :url "http://docutils.sourceforge.net/tools/editors/emacs/rst.el")
+       :type svn
+       :url "http://svn.code.sf.net/p/docutils/code/trunk/docutils/tools/editors/emacs")
