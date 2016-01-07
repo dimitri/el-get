@@ -2,4 +2,5 @@
        :description "Keybindings for cargo tasks within your Rust projects."
        :type github
        :pkgname "attichacker/cargo.el"
+       :depends (rust-mode)
        :prepare (add-hook 'rust-mode-hook #'cargo-minor-mode))
