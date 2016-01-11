@@ -1,8 +1,7 @@
 (:name duckpan
        :description "Tools for working with DuckDuckHack development"
        :type github
-       :pkgname "duckpan-emacs"
-       :username "GuiltyDolphin"
+       :pkgname "GuiltyDolphin/duckpan-emacs"
        :branch "master"
        :url "https://github.com/GuiltyDolphin/duckpan-emacs"
        :features duckpan)
