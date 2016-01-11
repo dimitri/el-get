@@ -3,5 +3,4 @@
        :type github
        :pkgname "GuiltyDolphin/duckpan-emacs"
        :branch "master"
-       :url "https://github.com/GuiltyDolphin/duckpan-emacs"
-       :features duckpan)
+       :url "https://github.com/GuiltyDolphin/duckpan-emacs")
