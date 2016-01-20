@@ -11,6 +11,8 @@ setup the extension. Or call it a package.
 
 # Introduction
 
+[![Join the chat at https://gitter.im/dimitri/el-get](https://badges.gitter.im/dimitri/el-get.svg)](https://gitter.im/dimitri/el-get?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 There are many methods to keep track of your emacs setup.  You can manage it
 all in a private git repository, you can set up `git submodules` or directly
 import external repositories.  You can manually retrieve the various
