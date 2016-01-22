@@ -3,5 +3,5 @@
        :type github
        :pkgname "flycheck/flycheck-haskell"
        :depends (flycheck haskell-mode dash f)
-       :prepare (eval-after-load 'flycheck
+       :prepare (eval-after-load 'haskell-mode
                   '(add-hook 'flycheck-mode-hook #'flycheck-haskell-setup)))
