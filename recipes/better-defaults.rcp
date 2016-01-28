@@ -1,0 +1,5 @@
+(:name better-defaults
+       :type github
+       :pkgname "technomancy/better-defaults"
+       :description "Fixing weird quirks and poor defaults."
+       :checkout "0.1.3")
