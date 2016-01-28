@@ -5,8 +5,7 @@
        :pkgname "magit/magit"
        :branch "master"
        :minimum-emacs-version "24.4"
-       :depends (dash)
-       :provide (with-editor)
+       :depends (dash with-editor emacs-async)
        :info "Documentation"
        :load-path "lisp/"
        :compile "lisp/"
