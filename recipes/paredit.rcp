@@ -1,6 +1,6 @@
 (:name paredit
        :description "Minor mode for editing parentheses"
-       :type http
+       :type github
        :prepare (progn (autoload 'enable-paredit-mode "paredit")
                        (autoload 'disable-paredit-mode "paredit"))
-       :url "http://mumble.net/~campbell/emacs/paredit.el")
+       :pkgname "emacsmirror/paredit")
