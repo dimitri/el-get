@@ -1,7 +1,6 @@
 (:name jdee
        :website "http://jdee.sourceforge.net/"
        :description "The JDEE is an add-on software package that turns Emacs into a comprehensive system for creating, editing, debugging, and documenting Java applications."
-       :type svn
-       :url "https://svn.code.sf.net/p/jdee/code/trunk/jdee/"
-       ;; :build ("touch `find . -name Makefile`" "make")
-       :load-path ("lisp"))
+       :type github
+       :pkgname "jdee-emacs/jdee"
+       :load-path ("."))
