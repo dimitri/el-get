@@ -1,0 +1,5 @@
+(:name org-grep
+       :description "Kind of M-x rgrep adapted for Org mode"
+       :website "https://github.com/pinard/org-grep"
+       :type github
+       :pkgname "pinard/org-grep")
