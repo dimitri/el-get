@@ -2,4 +2,5 @@
        :description "Calls CMake to find out include paths and other compiler flags."
        :type github
        :pkgname "atilaneves/cmake-ide"
-       :depends (auto-complete-clang flycheck))
+       :minimum-emacs-version "24.1"
+       :depends (cl-lib seq levenshtein))
