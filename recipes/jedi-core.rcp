@@ -2,4 +2,4 @@
        :website "https://github.com/tkf/emacs-jedi"
        :description "Python auto-completion for Emacs."
        :type http
-       :url "https://github.com/tkf/emacs-jedi/blob/master/jedi-core.el")
+       :url "https://github.com/tkf/emacs-jedi/raw/master/jedi-core.el")
