@@ -2,4 +2,6 @@
        :website "https://github.com/tkf/emacs-jedi"
        :description "Python auto-completion for Emacs."
        :type http
-       :url "https://github.com/tkf/emacs-jedi/raw/master/jedi-core.el")
+       :url "https://github.com/tkf/emacs-jedi/raw/master/jedi-core.el"
+       :minimum-emacs-version "24"
+       :depends (epc python-environment cl-lib))
