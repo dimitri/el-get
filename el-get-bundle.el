@@ -165,8 +165,7 @@
     (when (plist-member def :depends)
       (let ((old (el-get-as-list (plist-get def :depends))))
         (dolist (d old) (add-to-list 'ds d))
-        (setq src (plist-put src :depends ds)))
-      (prin1 (plist-get src :depends)))
+        (setq src (plist-put src :depends ds))))
 
     ;; merge src with the oriiginal definition
     (setq def (let ((el-get-sources (list src)))
