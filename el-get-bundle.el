@@ -153,12 +153,20 @@
 ;;;###autoload
 (defun el-get-bundle-el-get (src)
   (let ((package (plist-get src :name)) (def (el-get-bundle-package-def src))
-        (fs (plist-get src :features)) (sync 'sync))
+        (fs (plist-get src :features))
+        (ds (plist-get src :depends))
+        (sync 'sync))
     ;; merge features
     (when (plist-member def :features)
       (let ((old (el-get-as-list (plist-get def :features))))
         (dolist (f old) (add-to-list 'fs f))
         (setq src (plist-put src :features fs))))
+    ;; merge depends
+    (when (plist-member def :depends)
+      (let ((old (el-get-as-list (plist-get def :depends))))
+        (dolist (d old) (add-to-list 'ds d))
+        (setq src (plist-put src :depends ds))))
+
     ;; merge src with the oriiginal definition
     (setq def (let ((el-get-sources (list src)))
                 (el-get-package-def (el-get-source-name src))))
