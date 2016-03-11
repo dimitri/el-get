@@ -1,0 +1,6 @@
+(:name typing-speed
+       :website "https://github.com/candera/emacs"
+       :description "Display typing speed in the mode line."
+       :type http
+       :url "https://github.com/candera/emacs/raw/master/candera/typing-speed.el"
+       :load "typing-speed.elc")
