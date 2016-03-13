@@ -1,0 +1,5 @@
+(:name tide
+       :description "TypeScript IDE"
+       :depends (typescript-mode flycheck dash)
+       :type github
+       :pkgname "ananthakumaran/tide")
