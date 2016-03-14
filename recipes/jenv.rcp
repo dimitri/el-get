@@ -1,0 +1,5 @@
+(:name jenv
+       :description "Emacs integration for jenv"
+       :type github
+       :pkgname "shellbj/jenv.el"
+       :compile "jenv.el")
