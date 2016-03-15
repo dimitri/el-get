@@ -2,4 +2,4 @@
       :website "https://github.com/david-christiansen/prop-menu-el"
       :description "Compute pop-up menus from text and overlay properties "
       :type github
-      :pgkname "david-christiansen/prop-menu-el")
+      :pkgname "david-christiansen/prop-menu-el")
