@@ -1,4 +1,5 @@
 (:name bind-key
        :description "Simplify key binding calls in elisp"
        :type github
-       :pkgname "emacsattic/bind-key")
+       :pkgname "jwiegley/use-package"
+       :features bind-key)
