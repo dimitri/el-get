@@ -1,5 +1,0 @@
-(:name bind-key
-       :description "Simplify key binding calls in elisp"
-       :type github
-       :pkgname "jwiegley/use-package"
-       :features bind-key)
