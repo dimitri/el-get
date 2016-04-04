@@ -1,0 +1,5 @@
+(:name erc-image
+       :description "Show received image urls in the ERC buffer."
+       :type github
+       :pkgname "kidd/erc-image.el"
+       :depends (erc))
