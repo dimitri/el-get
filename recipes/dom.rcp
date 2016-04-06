@@ -1,0 +1,5 @@
+(:name dom
+       :description "XML/HTML (etc.) DOM manipulation and searching functions."
+       :builtin "25"
+       :type http
+       :url "http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/dom.el?h=master")
