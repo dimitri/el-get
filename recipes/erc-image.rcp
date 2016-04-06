@@ -2,4 +2,6 @@
        :description "Show received image urls in the ERC buffer."
        :type github
        :pkgname "kidd/erc-image.el"
-       :depends (erc))
+       :depends (erc)
+       :prepare (progn
+                  (autoload 'erc-image "erc-image")))
