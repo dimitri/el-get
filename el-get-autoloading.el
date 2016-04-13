@@ -120,8 +120,14 @@ with the named PACKAGE"
         (while (search-forward generate-autoload-section-header nil t)
           (when (member (nth 2 (autoload-read-section-header)) load-names)
             ;; We found a matching section, remove it.
-            (autoload-remove-section (match-beginning 0))))))
-    (el-get-update-autoloads package)))
+            (autoload-remove-section (match-beginning 0)))))
+      (el-get-update-autoloads package)
+      (let ((visiting (find-buffer-visiting el-get-autoload-file)))
+        (when visiting
+          (when (buffer-modified-p visiting) ; Save loaddefs, if needed.
+            (with-current-buffer visiting (save-buffer)))
+          ;; Close loaddefs buffer, if we opened it ourselves.
+          (unless visited (kill-buffer visiting)))))))
 
 (defun el-get-want-autoloads-p (package)
   "Return t iff the given PACKAGE should have its autoloads
