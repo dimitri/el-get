@@ -1,0 +1,4 @@
+(:name keyword-search
+       :description "Browser style keyword search for Emacs based on browse-apropos-url"
+       :type github
+       :pkgname "keyword-search/keyword-search")
