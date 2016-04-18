@@ -6,7 +6,5 @@
        :pkgname "phildawes/racer"
        :description "Rust code completion and code navigation"
        :build '(("cargo" "build" "--release"))
-       :depends (rust-mode company-mode)
-       :load-path "editors/emacs"
-       :prepare (add-hook 'rust-mode-hook #'racer-activate)
-       :post-init (setq racer-cmd (concat default-directory "/target/release/racer")))
+       :prepare (setq racer-cmd (concat default-directory "/target/release/racer"))
+       :post-init (add-hook 'racer-mode-hook #'eldoc-mode))
