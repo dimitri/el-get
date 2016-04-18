@@ -2,4 +2,4 @@
        :description "Racer support for Emacs"
        :type github
        :pkgname "racer-rust/emacs-racer"
-       :depends (rust-mode company-mode))
+       :depends (rust-mode company-mode s))
