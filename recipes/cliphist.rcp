@@ -1,0 +1,5 @@
+(:name cliphist
+       :website "https://github.com/redguardtoo/cliphist"
+       :description "Read clipboard history from Parcellite on GNU/Linux and Flycut on OS X."
+       :type github
+       :pkgname "redguardtoo/cliphist")
