@@ -1,0 +1,5 @@
+(:name agda-input
+       :description "A highly customisable input method for typing many symbols, especially mathematical symbols such as the ones that are used in Agda programs.  To use it, put \"(setq default-input-method 'Agda)\" in your init file.  This enables you to use the Agda input method for Unicode in any buffer.  Type `C-\\' (`toggle-input-method') to activate the input method, and use its key sequences to input various Unicode characters.  To deactivate the input method, type `C-\\' again.  See the URL `http://people.inf.elte.hu/divip/AgdaTutorial/Symbols.html' for a long list of characters that can be input with this method."
+       :type http
+       :url "https://raw.github.com/agda/agda/master/src/data/emacs-mode/agda-input.el"
+       :website "http://wiki.portal.chalmers.se/agda/pmwiki.php?n=Docs.UnicodeInput")
