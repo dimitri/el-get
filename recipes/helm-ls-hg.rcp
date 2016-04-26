@@ -1,0 +1,5 @@
+(:name helm-ls-hg
+       :description "Yet another helm to list mercurial file."
+       :type github
+       :pkgname "emacs-helm/helm-ls-hg"
+       :depends (helm))
