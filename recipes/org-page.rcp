@@ -1,0 +1,5 @@
+(:name org-page
+       :depends (simple-httpd mustache dash ht git)
+       :type github
+       :description "A static site generator based on Emacs org mode."
+       :pkgname "kelvinh/org-page")
