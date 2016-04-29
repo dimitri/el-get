@@ -1,0 +1,5 @@
+(:name swiper-helm
+       :description "Gives you an overview as you search for a regex (using the helm backend)."
+       :type github
+       :pkgname "abo-abo/swiper-helm"
+       :depends (helm swiper))
