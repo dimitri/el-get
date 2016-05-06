@@ -1,0 +1,5 @@
+(:name dired-quick-sort
+       :description "Persistent quick sorting of Dired buffers in various ways with hydra"
+       :type git
+       :url "https://gitlab.com/xuhdev/dired-quick-sort.git"
+       :depends hydra)
