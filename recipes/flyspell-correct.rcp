@@ -1,0 +1,4 @@
+(:name flyspell-correct
+       :description "Correcting words with flyspell via custom interface."
+       :type github
+       :pkgname "d12frosted/flyspell-correct")
