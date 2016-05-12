@@ -11,4 +11,11 @@
          (autoload 'pymacs-exec "pymacs" nil t)
          (autoload 'pymacs-call "pymacs")
          (autoload 'pymacs-apply "pymacs"))
-       :build (("make")))
+       :build (("make"))
+       ;; Assume windows lacks make, emulate what make does, as
+       ;; suggested in manual (although we're emulating "make", not
+       ;; "make install").
+       :build/windows-nt
+       (("python" "pppp" "-C" "ppppconfig.py"
+         "Pymacs.py.in" "pppp.rst.in" "pymacs.el.in" "pymacs.rst.in" "contrib" "tests")
+        ("python" "setup.py" "--quiet" "build")))
