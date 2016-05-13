@@ -403,7 +403,9 @@ in el-get package menu."
 (defun el-get-package-menu-sort-by-column (&optional e)
   "Sort the package menu by the last column clicked on."
   (interactive (list last-input-event))
-  (if e (mouse-select-window e))
+  ;; On Emacs 24.3 and earlier, `mouse-select-window' is not defined
+  ;; on tty only builds.
+  (if (and e (fboundp 'mouse-select-window)) (mouse-select-window e))
   (let* ((pos (event-start e))
          (obj (posn-object pos))
          (col (if obj
