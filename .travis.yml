@@ -1,12 +1,15 @@
 language: generic
+sudo: false
 env:
-  - EMACS=emacs
-  - EMACS=emacs-snapshot
+  - EMACS_VERSION=23.4
+  - EMACS_VERSION=24.3
+  - EMACS_VERSION=24.5
+  - EMACS_VERSION=25-prerelease
 install:
   - env
   - source test/travis-ci.sh
   - prereqs
-  - '"$EMACS" --version'
+  - emacs --version
 script:
   - folded_call byte-compile
   - folded_call ert-tests
