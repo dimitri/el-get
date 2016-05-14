@@ -113,21 +113,20 @@ A `:minimum-emacs-version' property may also be present."
   (unless (el-get-package-installed-p package)
     (error "Tried to get Package-Requires of non-installed package, `%s'!" package))
   (eval-and-compile
-    (require 'lisp-mnt)                 ; `lm-header'
-    (require 'thingatpt))               ; `read-from-whole-string'
+    (require 'lisp-mnt))                ; `lm-header'
   (loop with deps and min-emacs and sub-pkgs
         for pdir in (el-get-load-path package)
-        do (loop for file in (directory-files pdir t "\\.el\\'" t)
-                 do (if (string-suffix-p "-pkg.el" file)
-                        (let ((def-pkg (el-get-read-from-file file)))
-                          (push (intern (nth 1 def-pkg)) sub-pkgs)
-                          (setq deps (nconc (el-get-unquote (nth 4 def-pkg)) deps)))
-                      (with-temp-buffer
-                        (insert-file-contents file)
-                        (let ((pkg-reqs (lm-header "package-requires")))
-                          (when pkg-reqs
-                            (push (intern (file-name-base file)) sub-pkgs)
-                            (setq deps (nconc (read-from-whole-string pkg-reqs) deps)))))))
+        do (dolist (file (directory-files pdir t "\\.el\\'" t))
+             (if (string-suffix-p "-pkg.el" file)
+                 (let ((def-pkg (el-get-read-from-file file)))
+                   (push (intern (nth 1 def-pkg)) sub-pkgs)
+                   (setq deps (nconc (el-get-unquote (nth 4 def-pkg)) deps)))
+               (with-temp-buffer
+                 (insert-file-contents file)
+                 (let ((pkg-reqs (lm-header "package-requires")))
+                   (when pkg-reqs
+                     (push (intern (file-name-base file)) sub-pkgs)
+                     (setq deps (nconc (car (read-from-string pkg-reqs)) deps)))))))
         finally do
         (setq min-emacs (car (cdr (assq 'emacs deps)))
               deps (set-difference (remq 'emacs (delete-dups (mapcar #'car deps)))
