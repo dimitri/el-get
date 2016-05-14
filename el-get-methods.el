@@ -34,6 +34,9 @@
                (not (string-match "^file:///" url))
                (not (string-match "^https://" url))
                (not (string-match "^[-_\.A-Za-z0-9]+@" url))
+               (not (string-match "^sftp://" url))
+               (not (string-match "^bzr\\+ssh://" url))
+               (not (string-match "^git\\+ssh://" url))
                (not (string-match "^ssh" url)))
       ;; With not empty :checksum, we can rely on `el-get-post-install' calling
       ;; `el-get-verify-checksum' for security.

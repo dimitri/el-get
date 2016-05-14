@@ -129,9 +129,6 @@ Following variables are bound to temporal values:
 (defconst insecure-urls '("http://example.com"
                           "ftp://example.com"
                           "file://example.com/home/user"
-                          "git+ssh://example.com/"
-                          "bzr+ssh://example.com/"
-                          "sftp://example.com/"
                           ":pserver:anonymous@example.com"))
 
 (ert-deftest el-get-insecure-check-insecure ()
@@ -144,6 +141,9 @@ Following variables are bound to temporal values:
 
 (defconst secure-urls '("https://example.com"
                         "ssh://example.com"
+                        "git+ssh://example.com/"
+                        "bzr+ssh://example.com/"
+                        "sftp://example.com/"
                         "file:///home/user"
                         "file:///c|/WINDOWS/clock.avi"
                         "file:///c:/WINDOWS/clock.avi"
