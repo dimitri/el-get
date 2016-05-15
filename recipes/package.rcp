@@ -22,12 +22,20 @@
          (setq package-archives (bound-and-true-p package-archives))
          ;; Ensure needed entries are in `package-archives' without
          ;; clobbering what's already there.
-         (mapc
-          (lambda (pa)
-            (add-to-list 'package-archives pa 'append))
-          '(("melpa" . "https://melpa.org/packages/")
-            ("gnu" . "https://elpa.gnu.org/packages/")
-            ("marmalade" . "https://marmalade-repo.org/packages/")))))
+         (let ((protocol
+                (if (and (fboundp 'gnutls-available-p) (gnutls-available-p))
+                    "https://"
+                  (lwarn '(el-get tls) :warning "Your Emacs doesn't support HTTPS (TLS)%s"
+                         (if (eq system-type 'windows-nt)
+                             ",\n  see https://github.com/dimitri/el-get/wiki/Installation-on-Windows."
+                           "."))
+                  "http://"))
+               (archives '(("melpa" . "melpa.org/packages/")
+                           ("gnu" . "elpa.gnu.org/packages/")
+                           ("marmalade" . "marmalade-repo.org/packages/"))))
+           (dolist (archive archives)
+             (add-to-list 'package-archives
+                          (cons (car archive) (concat protocol (cdr archive))))))))
 
 ;; Don't init, elpa packages installed by el-get is
 ;; initialized from loaddefs (package-initialize)
