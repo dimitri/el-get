@@ -1,4 +1,0 @@
-(:name Enhanced-Ruby-Mode
-       :description "Major mode for editing Ruby files"
-       :type github
-       :pkgname "zenspider/enhanced-ruby-mode")
