@@ -1,0 +1,7 @@
+(:name spaceline
+       :website "https://github.com/TheBB/spaceline"
+       :depends (dash powerline s)
+       :description "Powerline theme from Spacemacs."
+       :type github
+       :minimum-emacs-version "24.3"
+       :pkgname "TheBB/spaceline")
