@@ -1,4 +1,3 @@
 (:name magnus
        :description "A newsreader for GNU Emacs"
-       :type builtin
-       :depends gnus)
+       :type builtin)
