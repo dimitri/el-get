@@ -1,0 +1,5 @@
+(:name flycheck-pkg-config
+       :description "Configure flycheck using pkg-config."
+       :type github
+       :pkgname "Wilfred/flycheck-pkg-config"
+       :depends (cl-lib dash flycheck s))
