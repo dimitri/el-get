@@ -23,7 +23,7 @@
 
   (unless (and (fboundp 'gnutls-available-p) (gnutls-available-p))
     (display-warning
-     'el-get
+     '(el-get tls)
      (concat "Your Emacs doesn't support HTTPS (TLS)"
              (if (eq system-type 'windows-nt)
                  ",\n  see https://github.com/dimitri/el-get/wiki/Installation-on-Windows."
