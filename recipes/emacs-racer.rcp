@@ -3,4 +3,4 @@
        :type github
        :pkgname "racer-rust/emacs-racer"
        :depends (rust-mode rust-racer company-mode dash s)
-       :post-init (add-hook 'rust-mode-hook #'racer-mode))
+       :prepare (add-hook 'rust-mode-hook #'racer-mode))
