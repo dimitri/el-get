@@ -1,0 +1,5 @@
+(:name helm-bbdb
+       :description "Helm interface for BBDB."
+       :type github
+       :pkgname "emacs-helm/helm-bbdb"
+       :depends (bbdb helm))
