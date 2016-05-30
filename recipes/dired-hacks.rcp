@@ -1,5 +1,5 @@
 (:name dired-hacks
        :description "Collection of useful dired additions."
-       :depends dash
+       :depends (dash f)
        :type github
        :pkgname "Fuco1/dired-hacks")
