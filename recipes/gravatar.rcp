@@ -1,4 +1,5 @@
 (:name gravatar
        :description "Get Gravatars"
+       :builtin "25"
        :type http
-       :url "http://git.gnus.org/cgit/gnus.git/plain/lisp/gravatar.el")
+       :url "http://git.savannah.gnu.org/cgit/emacs.git/plain/lisp/image/gravatar.el?h=master")
