@@ -1,4 +1,15 @@
 (:name caml-mode
-       :description "O'Caml code editing commands for Emacs"
-       :type svn
-       :url "http://caml.inria.fr/svn/ocaml/trunk/emacs")
+       :description "OCaml code editing commands for Emacs"
+       :type github
+       :pkgname "ocaml/ocaml"
+       :load-path ("emacs")
+       :shallow t
+       :prepare
+       (progn
+         (autoload 'caml-mode "caml" "Major mode for editing OCaml code." t)
+         (autoload 'run-caml "inf-caml" "Run an inferior OCaml process." t)
+         (autoload 'camldebug "camldebug" "Run ocamldebug on program." t)
+         (add-to-list 'auto-mode-alist '("\\.ml[iylp]?$" . caml-mode))
+         (add-to-list 'interpreter-mode-alist '("ocamlrun" . caml-mode))
+         (add-to-list 'interpreter-mode-alist '("ocaml" . caml-mode)))
+       )
