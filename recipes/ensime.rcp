@@ -6,7 +6,7 @@
                  dash
                  popup
                  auto-complete
-                 scala-mode2
+                 scala-mode
                  sbt-mode
                  company-mode
                  yasnippet)
