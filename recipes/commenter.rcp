@@ -1,0 +1,8 @@
+(:name commenter
+       :website "https://github.com/yuutayamada/commenter#readme"
+       :description "multiline-comment support package"
+       :type github
+       :pkgname "yuutayamada/commenter"
+       :branch "master"
+       :minimum-emacs-version "24.4"
+       :depends (let-alist))
