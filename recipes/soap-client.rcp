@@ -1,5 +1,4 @@
 (:name soap-client
-       :website "http://code.google.com/p/emacs-soap-client/"
-       :description "The soap-client.el library provides access to SOAP web-services from Emacs. It supports encoding/decoding SOAP messages based on WSDL descriptors."
-       :type hg
-       :url "https://code.google.com/p/emacs-soap-client/")
+       :description "Access SOAP web services."
+       :type github
+       :pkgname "alex-hhh/emacs-soap-client")
