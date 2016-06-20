@@ -1,0 +1,5 @@
+(:name emaps
+       :description "Utilities for working with keymaps in Emacs"
+       :type github
+       :pkgname "GuiltyDolphin/emaps"
+       :branch "master")
