@@ -1,0 +1,4 @@
+(:name buttercup
+       :description "Behavior-Driven Emacs Lisp Testing"
+       :type github
+       :pkgname "jorgenschaefer/emacs-buttercup")
