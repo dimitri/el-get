@@ -1,7 +1,8 @@
+
 (:name jedi-core
-       :website "https://github.com/tkf/emacs-jedi"
-       :description "Python auto-completion for Emacs."
-       :type http
-       :url "https://github.com/tkf/emacs-jedi/raw/master/jedi-core.el"
+       :type github
+       :pkgname "tkf/emacs-jedi"
+       :description "Python jedi core functionality for Emacs. Required for company-jedi"
        :minimum-emacs-version "24"
+       :compile "jedi-core.el"
        :depends (epc python-environment cl-lib))
