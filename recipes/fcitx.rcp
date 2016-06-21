@@ -1,0 +1,4 @@
+(:name fcitx
+       :description "Make fcitx better in Emacs"
+       :type github
+       :pkgname "cute-jumper/fcitx.el")
