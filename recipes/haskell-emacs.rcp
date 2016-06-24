@@ -1,0 +1,4 @@
+(:name haskell-emacs
+       :description "Write emacs extensions in haskell"
+       :type github
+       :pkgname "knupfer/haskell-emacs")
