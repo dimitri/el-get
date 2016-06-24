@@ -1,0 +1,5 @@
+(:name evil-anzu
+       :description "anzu for evil-mode"
+       :type github
+       :depends (evil anzu)
+       :pkgname "syohex/emacs-evil-anzu")
