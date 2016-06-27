@@ -2,7 +2,4 @@
        :description "Make Emacs functions by Nim"
        :type github
        :pkgname "yuutayamada/nim-emacs-module"
-       :minimum-emacs-version "25"
-       :prepare
-       (eval-after-load "nim-mode"
-         '(el-get 'sync 'nim-emacs-module)))
+       :minimum-emacs-version "25")
