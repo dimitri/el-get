@@ -130,7 +130,7 @@ The installation status is retrieved from the system, not el-get."
   "echo $pass | sudo -S apt-get install PACKAGE"
   (let* ((source  (el-get-package-def package))
          (pkgname (or (plist-get source :pkgname) (el-get-as-string package)))
-         (name (format "*apt-get install %s*" package))
+         (name (format "*apt-get install %s*" pkgname))
          (ok   (format "Package %s installed." package))
          (ko   (format "Could not install package %s." package)))
 
