@@ -1,0 +1,6 @@
+(:name elpa-clone
+       :website "https://github.com/dochang/elpa-clone"
+       :description "Clone ELPA archive"
+       :depends (cl-lib)
+       :type github
+       :pkgname "dochang/elpa-clone")
