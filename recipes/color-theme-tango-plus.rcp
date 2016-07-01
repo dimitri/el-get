@@ -1,0 +1,6 @@
+(:name color-theme-tango-plus
+       :description "Color theme for Emacs loosely based on the tango palette."
+       :minimum-emacs-version "24"
+       :type github
+       :pkgname "tmalsburg/tango-plus-theme"
+       :prepare (add-to-list 'custom-theme-load-path default-directory))
