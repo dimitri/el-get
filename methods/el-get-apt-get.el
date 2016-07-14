@@ -40,7 +40,7 @@
 ;;
 (defun el-get-dpkg-package-installed-p (package)
   "Return non-nil if PACKAGE is installed according to dpkg."
-  (equal "installed"
+  (equal "install ok installed"
          (car (process-lines "dpkg-query" "--show" "--showformat=${Status}\n" package))))
 
 ;;
