@@ -1,9 +1,5 @@
 (:name coffee-mode
-       :website "http://ozmm.org/posts/coffee_mode.html"
+       :website "https://github.com/defunkt/coffee-mode"
        :description "Emacs Major Mode for CoffeeScript"
        :type github
-       :pkgname "defunkt/coffee-mode"
-       :features coffee-mode
-       :prepare (progn
-                  (add-to-list 'auto-mode-alist '("\\.coffee$" . coffee-mode))
-                  (add-to-list 'auto-mode-alist '("Cakefile" . coffee-mode))))
+       :pkgname "defunkt/coffee-mode")

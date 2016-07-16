@@ -1,5 +1,4 @@
 (:name io-mode
        :description "Major mode to edit Io language files in Emacs"
        :type github
-       :pkgname "superbobry/io-mode"
-       :features io-mode)
+       :pkgname "superbobry/io-mode")
