@@ -1,9 +1,0 @@
-(:name haskell-mode-exts
-       :description "Modular Emacs extensions to Haskell's editing and interactive modes."
-       :type github
-       :pkgname "pheaver/haskell-mode-exts"
-       :load-path (".")
-       :features (haskell-align-imports haskell-installed-packages
-                                        haskell-navigate-imports haskell-sort-imports
-                                        inf-haskell-send-cmd)
-       )
