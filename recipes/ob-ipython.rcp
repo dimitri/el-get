@@ -1,0 +1,5 @@
+(:name ob-ipython
+       :description "org-babel integration with Jupyter for evaluation of (Python by default) code blocks"
+       :type github
+       :pkgname "gregsexton/ob-ipython"
+       :depends (dash s f))
