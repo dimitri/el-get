@@ -3,5 +3,4 @@
        :website "https://github.com/for-GET/know-your-http-well"
        :type github
        :pkgname "for-GET/know-your-http-well"
-       :load-path ("emacs")
-       :load ("emacs/know-your-http-well.el"))
+       :load-path ("emacs"))
