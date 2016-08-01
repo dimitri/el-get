@@ -1,0 +1,4 @@
+(:name crystal-mode
+       :description "Major mode for editing Crystal programs"
+       :type github
+       :pkgname "jpellerin/emacs-crystal-mode")
