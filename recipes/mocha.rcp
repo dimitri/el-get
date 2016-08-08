@@ -1,0 +1,5 @@
+(:name mocha
+       :description "Emacs mode for running mocha tests"
+       :website "https://github.com/scottaj/mocha.el"
+       :type github
+       :pkgname "scottaj/mocha.el")
