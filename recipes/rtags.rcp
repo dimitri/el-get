@@ -3,7 +3,9 @@
        :type github
        :website "https://github.com/Andersbakken/rtags"
        :pkgname "Andersbakken/rtags"
-       :build `(("cmake" ".")
+       ;; Set `el-get-rtags-no-build-clang' to non-nil before
+       ;; install/update in order to avoid building clang.
+       :build `(("cmake" ,@(if el-get-rtags-no-build-clang '("-DRTAGS_NO_BUILD_CLANG=1")) ".")
                 ("make" ,@el-get-parallel-make-args))
        :compile "src"
        :load-path "src"
