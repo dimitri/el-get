@@ -2,4 +2,4 @@
        :type github
        :description "A bibliography manager for Emacs."
        :pkgname "tmalsburg/helm-bibtex"
-       :depends (helm parsebib dash s f))
+       :depends (helm parsebib dash s f biblio))

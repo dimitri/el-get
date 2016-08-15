@@ -1,0 +1,5 @@
+(:name biblio
+       :type github
+       :description "Bibliography utilities for Emacs."
+       :pkgname "cpitclaudel/biblio.el"
+       :depends (let-alist seq dash))
