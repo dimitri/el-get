@@ -359,11 +359,11 @@ in el-get package menu."
     (when type
       (insert (propertize (replace-regexp-in-string "\n" " " type)
                           'font-lock-face face)))
-    (indent-to (cdr (assoc "Description" el-get-package-list-column-alist)) 1)
     (when desc
-      (insert (propertize (replace-regexp-in-string "\n" " " desc)
-                          'font-lock-face face)
-              "\n"))))
+      (indent-to (cdr (assoc "Description" el-get-package-list-column-alist)) 1)
+      (let ((eol (position ?\n desc)))
+        (when eol (setq desc (substring desc 0 eol))))
+      (insert (propertize desc 'font-lock-face face) "\n"))))
 
 (defun el-get-list-all-packages ()
   (with-current-buffer (get-buffer-create "*el-get packages*")
