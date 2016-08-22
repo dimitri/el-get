@@ -4,4 +4,4 @@
        :type github
        :pkgname "GuiltyDolphin/evil-org"
        :branch "master"
-       :depends (emaps evil hook))
+       :depends (dash emaps evil hook))
