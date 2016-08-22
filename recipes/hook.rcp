@@ -2,4 +2,5 @@
        :description "Utilities for generating hooks in Emacs"
        :type github
        :pkgname "GuiltyDolphin/hook"
-       :branch "master")
+       :branch "master"
+       :depends dash)
