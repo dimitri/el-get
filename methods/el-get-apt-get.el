@@ -40,8 +40,8 @@
 ;;
 (defun el-get-dpkg-package-installed-p (package)
   "Return non-nil if PACKAGE is installed according to dpkg."
-  (equal "installed"
-         (car (process-lines "dpkg-query" "--show" "--showformat=${Status}\n"))))
+  (equal "install ok installed"
+         (car (process-lines "dpkg-query" "--show" "--showformat=${Status}\n" package))))
 
 ;;
 ;; those functions are meant as hooks at install and remove, and they will
@@ -123,7 +123,8 @@ password prompt."
 (defun el-get-apt-get-install-if-needed (package url post-install-fun)
   "Call `el-get-apt-get-install' if PACKAGE isn't installed yet.
 The installation status is retrieved from the system, not el-get."
-  (when (el-get-dpkg-package-installed-p package)
+  (when (el-get-dpkg-package-installed-p (or (plist-get (el-get-package-def package) :pkgname)
+					     (el-get-as-string package)))
     (el-get-apt-get-install package url post-install-fun)))
 
 (defun el-get-apt-get-install (package url post-install-fun)
