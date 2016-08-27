@@ -1,0 +1,6 @@
+(:name hook
+       :description "Utilities for generating hooks in Emacs"
+       :type github
+       :pkgname "GuiltyDolphin/hook"
+       :branch "master"
+       :depends dash)
