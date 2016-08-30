@@ -30,8 +30,9 @@
     ;; If we have :checksum, we can rely on `el-get-post-install' for
     ;; security.
     (unless (plist-get (el-get-package-def package) :checksum)
-      (error (concat "Attempting to install insecure package "
+      (error (concat "Attempting to install package "
                      (el-get-as-string package)
+                     " from insecure URL " url
                      " without `el-get-allow-insecure'.")))))
 
 (require 'el-get-apt-get)
