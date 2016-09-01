@@ -1,0 +1,5 @@
+(:name helm-bibtex
+       :type github
+       :description "A BibTeX bibliography manager based on Ivy."
+       :pkgname "tmalsburg/helm-bibtex"
+       :depends (swiper parsebib s dash f cl-lib biblio))

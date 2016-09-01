@@ -1,5 +1,5 @@
 (:name helm-bibtex
        :type github
-       :description "A bibliography manager for Emacs."
+       :description "A BibTeX bibliography manager based on Helm."
        :pkgname "tmalsburg/helm-bibtex"
-       :depends (helm parsebib dash s f biblio))
+       :depends (helm parsebib s dash f cl-lib biblio))
