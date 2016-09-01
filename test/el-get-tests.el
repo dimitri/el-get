@@ -159,3 +159,12 @@ Following variables are bound to temporal values:
     (let ((el-get-allow-insecure nil)
           (el-get-sources '((:name "dummy" :type github :checksum "checksum"))))
       (should-not (el-get-insecure-check "dummy" url)))))
+
+(ert-deftest el-get-insecure-check-checksum-empty ()
+  "Insecure URL for a package with empty :checksum"
+  (dolist (url insecure-urls)
+    (dolist (checksum '("" "   "))
+      (let ((el-get-allow-insecure nil)
+            (el-get-sources '((:name "dummy" :type github :checksum checksum))))
+        ;; TODO check for error message?
+        (should-error (el-get-insecure-check "dummy" url) :type 'error)))))

@@ -12,6 +12,8 @@
 ;; Install
 ;;     Please see the README.md file from the same distribution
 (require 'el-get-core)
+(unless (version< emacs-version "24.4")
+  (require 'subr-x))
 
 ;;
 ;; NOTE: this will probably benefit from some autoloading magic, later.
@@ -23,18 +25,23 @@
                (file-name-directory (or load-file-name byte-compile-current-file buffer-file-name)))))
 
 (defun el-get-insecure-check (package url)
-  (when (and (not el-get-allow-insecure)
-             (not (string-match "^file:///" url))
-             (not (string-match "^https://" url))
-             (not (string-match "^[-_\.A-Za-z0-9]+@" url))
-             (not (string-match "^ssh" url)))
-    ;; If we have :checksum, we can rely on `el-get-post-install' for
-    ;; security.
-    (unless (plist-get (el-get-package-def package) :checksum)
-      (error (concat "Attempting to install package "
-                     (el-get-as-string package)
-                     " from insecure URL " url
-                     " without `el-get-allow-insecure'.")))))
+  (let* ((checksum (plist-get (el-get-package-def package) :checksum))
+         (checksum-empty (or (not (stringp checksum))
+                             (if (fboundp 'string-blank-p)
+                                 (string-blank-p checksum)
+                               (string-match-p "\\`[ \t\n\r]*\\'" checksum)))))
+    (when (and (not el-get-allow-insecure)
+               (not (string-match "^file:///" url))
+               (not (string-match "^https://" url))
+               (not (string-match "^[-_\.A-Za-z0-9]+@" url))
+               (not (string-match "^ssh" url)))
+      ;; With not empty :checksum, we can rely on `el-get-post-install' calling
+      ;; `el-get-verify-checksum' for security.
+      (unless (not checksum-empty)
+        (error (concat "Attempting to install package "
+                       (el-get-as-string package)
+                       " from insecure URL " url
+                       " without `el-get-allow-insecure'."))))))
 
 (require 'el-get-apt-get)
 (require 'el-get-builtin)
