@@ -125,3 +125,33 @@ Following variables are bound to temporal values:
      (should-not (featurep pkg))
      (el-get 'sync (mapcar 'el-get-source-name el-get-sources))
      (should (featurep pkg)))))
+
+(defconst insecure-urls '("http://example.com"
+                          "ftp://example.com"
+                          ":pserver:anonymous@example.com"))
+
+(ert-deftest el-get-insecure-check-insecure ()
+  "Insecure URL for a package without :checksum"
+  (dolist (url insecure-urls)
+    (let ((el-get-allow-insecure nil)
+          (el-get-sources '((:name "dummy" :type github))))
+      ;; TODO check for error message?
+      (should-error (el-get-insecure-check "dummy" url) :type 'error))))
+
+(defconst secure-urls '("https://example.com"
+                        "ssh://example.com"
+                        "John.Doe-123_@example.com"))
+
+(ert-deftest el-get-insecure-check-secure ()
+  "Secure URL for a package without :checksum doesn't matter"
+  (dolist (url secure-urls)
+    (let ((el-get-allow-insecure nil)
+          (el-get-sources '((:name "dummy" :type github))))
+      (should-not (el-get-insecure-check "dummy" url)))))
+
+(ert-deftest el-get-insecure-check-checksum ()
+  "Either secure or insecure URL for a package with :checksum"
+  (dolist (url (append insecure-urls secure-urls))
+    (let ((el-get-allow-insecure nil)
+          (el-get-sources '((:name "dummy" :type github :checksum "checksum"))))
+      (should-not (el-get-insecure-check "dummy" url)))))
