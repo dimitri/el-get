@@ -612,8 +612,7 @@ platforms where this recipe should apply"
                       )
               ,el-get-build-recipe-body))))))
 
-;; TODO: this should be nil; change at the next major version bump
-(defcustom el-get-allow-insecure t
+(defcustom el-get-allow-insecure nil
   "Allow packages to be installed over insecure connections.
 
 See `el-get-insecure-check'."
@@ -625,6 +624,7 @@ See `el-get-insecure-check'."
 
 See `el-get-insecure-check'."
   :group 'el-get
+  :package-version '(el-get . "6")
   :type '(repeat string))
 
 (provide 'el-get-custom)
