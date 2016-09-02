@@ -24,6 +24,7 @@
 
 (defun el-get-insecure-check (package url)
   (when (and (not el-get-allow-insecure)
+             (not (string-match "^file:///" url))
              (not (string-match "^https://" url))
              (not (string-match "^[-_\.A-Za-z0-9]+@" url))
              (not (string-match "^ssh" url)))
