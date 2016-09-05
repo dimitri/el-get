@@ -2,6 +2,7 @@
        :description "ENhanced Scala Interaction Mode for Emacs"
        :type github
        :pkgname "ensime/ensime-emacs"
+       :branch "1.0"
        :depends (s 
                  dash
                  popup
