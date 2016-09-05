@@ -2,7 +2,6 @@
        :description "ENhanced Scala Interaction Mode for Emacs"
        :type github
        :pkgname "ensime/ensime-emacs"
-       :branch "1.0"
        :depends (s 
                  dash
                  popup
@@ -12,5 +11,4 @@
                  company-mode
                  yasnippet)
        :prepare (progn
-                  (autoload 'ensime-scala-mode-hook "ensime")
-                  (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)))
+                  (autoload 'ensime-scala-mode-hook "ensime")))
