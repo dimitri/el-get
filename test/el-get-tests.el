@@ -129,7 +129,13 @@ Following variables are bound to temporal values:
 (defconst insecure-urls '("http://example.com"
                           "ftp://example.com"
                           "file://example.com/home/user"
-                          ":pserver:anonymous@example.com"))
+                          ":pserver:anonymous@example.com"
+                        "
+https://example.com"
+                        "
+file:///home/user"
+                        "
+John.Doe-123_@example.com"))
 
 (ert-deftest el-get-insecure-check-insecure ()
   "Insecure URL for a package without :checksum"
