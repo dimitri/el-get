@@ -1,0 +1,7 @@
+(:name color-theme-idea-darkula
+       :description " Emacs theme based on IntelliJ IDEA Darkula theme"
+       :website "https://github.com/fourier/idea-darkula-theme"
+       :type github
+       :minimum-emacs-version "24"
+       :pkgname "fourier/idea-darkula-theme"
+       :prepare (add-to-list 'custom-theme-load-path default-directory))
