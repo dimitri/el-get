@@ -9,7 +9,4 @@
                  scala-mode
                  sbt-mode
                  company-mode
-                 yasnippet)
-       :prepare (progn
-                  (autoload 'ensime-scala-mode-hook "ensime")
-                  (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)))
+                 yasnippet))
