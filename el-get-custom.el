@@ -614,8 +614,17 @@ platforms where this recipe should apply"
 
 ;; TODO: this should be nil; change at the next major version bump
 (defcustom el-get-allow-insecure t
-  "Allow packages to be installed over insecure connections."
+  "Allow packages to be installed over insecure connections.
+
+See `el-get-insecure-check'."
   :group 'el-get
   :type 'boolean)
+
+(defcustom el-get-secure-protocols '("https" "ssh" "git+ssh" "bzr+ssh" "sftp")
+  "List of secure protocols.
+
+See `el-get-insecure-check'."
+  :group 'el-get
+  :type '(repeat string))
 
 (provide 'el-get-custom)
