@@ -1,0 +1,5 @@
+(:name material-theme
+       :description "Color Theme for emacs based on material design colors"
+       :type github
+       :pkgname "cpaulik/emacs-material-theme"
+       :prepare (add-to-list 'custom-theme-load-path default-directory))
