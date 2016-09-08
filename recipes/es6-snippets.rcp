@@ -1,0 +1,5 @@
+(:name es6-snippets
+       :description  "A collection of Yasnippets for writing ECMAScript2015 in Emacs"
+       :type github
+       :pkgname "CodyReichert/es6-snippets"
+       :depends (yasnippet))
