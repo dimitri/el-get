@@ -26,7 +26,7 @@ prereqs() {
      fi)
 }
 
-if [ "$EMACS" = '24.5' ]; then
+if [ "$EMACS_VERSION" = '24.5' ]; then
     # check-recipes [-W<check>...] <path>
     check-recipes() {
         emacs -Q -L . -batch -l el-get-check -f el-get-check-recipe-batch "$@"
@@ -37,7 +37,8 @@ if [ "$EMACS" = '24.5' ]; then
 else
     # If we have only changes to recipe files, there is no need to run
     # with more than 1 emacs version.
-    git diff --name-only "$TRAVIS_COMMIT_RANGE" | grep -Fvq recipes/ || exit 0
+    git diff --name-only "$TRAVIS_COMMIT_RANGE" | grep -Fvq recipes/ ||
+        { echo 'Recipe only diff, skipping tests' ; exit 0 ; }
 
     # Only need to run these for 1 version, so make them nops here
     check-recipes() { :; }
