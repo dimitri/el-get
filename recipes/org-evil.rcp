@@ -4,4 +4,4 @@
        :type github
        :pkgname "GuiltyDolphin/org-evil"
        :branch "master"
-       :depends (dash evil hook))
+       :depends (dash evil monitor))
