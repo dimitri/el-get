@@ -1,0 +1,6 @@
+(:name flycheck-stack
+       :description "Flychecker using stack ghci"
+       :type github
+       :pkgname "chrisdone/flycheck-stack"
+       :website "https://github.com/chrisdone/flycheck-stack"
+       :depends (flycheck haskell-mode))
