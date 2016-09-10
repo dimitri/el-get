@@ -45,14 +45,6 @@ else
     check-whitespace() { :; }
 fi
 
-folded_call() {
-    travis_fold start $1
-    "$@"
-    ret=$?
-    travis_fold end $1
-    return $ret
-}
-
 ert-tests() {
     emacs -batch -Q -L pkg/ -L . -l test/el-get-tests.el -f ert-run-tests-batch-and-exit
 }

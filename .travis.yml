@@ -11,8 +11,8 @@ install:
   - prereqs
   - emacs --version
 script:
-  - folded_call byte-compile pkg/*.el
-  - folded_call byte-compile -Werror *.el methods/*.el
-  - folded_call ert-tests
+  - byte-compile pkg/*.el
+  - byte-compile -Werror *.el methods/*.el
+  - ert-tests
   - check-recipes -Wno-features -Wno-github -Wno-autoloads recipes/
   - check-whitespace

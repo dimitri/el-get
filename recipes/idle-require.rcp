@@ -1,4 +1,4 @@
 (:name idle-require
-       :descrition "load elisp libraries while Emacs is idle"
+       :description "load elisp libraries while Emacs is idle"
        :type github
        :pkgname "nschum/idle-require.el")
