@@ -1,0 +1,6 @@
+(:name prompt
+       :description "Utilities for text-input and read-completion."
+       :type github
+       :pkgname "GuiltyDolphin/prompt"
+       :branch "master"
+       :depends dash)
