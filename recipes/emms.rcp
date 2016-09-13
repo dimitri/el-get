@@ -14,5 +14,4 @@
                               ("gmake" ,(format "EMACS=%s" el-get-emacs)
                                ,(format "SITEFLAG=--no-site-file -L %s"
                                         (shell-quote-argument (el-get-package-directory "emacs-w3m")))
-                               "autoloads" "lisp" "docs"))
-       :depends emacs-w3m)
+                               "autoloads" "lisp" "docs")))
