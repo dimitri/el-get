@@ -274,7 +274,7 @@ version is used if `el-get-bundle-byte-compile' is non-nil."
       (setq form (nthcdr 2 form) require t))
     ;; parse keywords
     (while (keywordp (nth 0 form))
-      (cl-case (nth 0 form)
+      (case (nth 0 form)
         (:bundle-sync (setq sync (nth 1 form)))
         (:bundle-async (setq sync (not (nth 1 form))))
         (t (setq src (plist-put src (nth 0 form) (nth 1 form)))))
@@ -295,7 +295,7 @@ version is used if `el-get-bundle-byte-compile' is non-nil."
     ;; init script
     (setq src (plist-put src :after form))
 
-    `(el-get-bundle-el-get ',src ,(and sync ''sync))))
+    `(el-get-bundle-el-get ',src ',(when sync 'sync))))
 
 ;;;###autoload
 (defmacro el-get-bundle! (package &rest args)
