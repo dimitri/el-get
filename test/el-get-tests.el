@@ -115,7 +115,7 @@ Following variables are bound to temporal values:
   (el-get-with-temp-home
    (require 'package-x) ; create local package archive
    (let* ((pkg 'el-get-test-package)
-          (package-archive-upload-base (expand-file-name "~/pkg-repo"))
+          (package-archive-upload-base (expand-file-name "pkg-repo" user-emacs-directory))
           (package-archives nil)
           (el-get-sources
            `((:name package :post-init nil) ; avoid adding other repos
