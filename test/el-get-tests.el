@@ -149,6 +149,24 @@ John.Doe-123_@example.com"))
       ;; TODO check for error message?
       (should-error (el-get-insecure-check "dummy" url) :type 'error))))
 
+(ert-deftest el-get-insecure-elpa ()
+  (el-get-with-temp-home
+   (require 'package-x)                 ; create local package archive
+   (let* ((el-get-allow-insecure nil)
+          (pkg 'el-get-test-package)
+          (package-archive-upload-base (expand-file-name "pkg-repo" user-emacs-directory))
+          (package-archives nil)
+          (el-get-sources
+           `((:name package :post-init nil) ; avoid adding other repos
+             (:name el-get-test-package
+                    :type elpa
+                    :repo ("test-repo" . ,package-archive-upload-base)
+                    :features el-get-test-package))))
+     (make-directory package-archive-upload-base t)
+     (package-upload-file (expand-file-name "pkgs/el-get-test-package.el"
+                                            el-get-test-files-dir))
+     (el-get 'sync 'el-get-test-package))))
+
 (defconst secure-urls '("https://example.com"
                         "ssh://example.com"
                         "git+ssh://example.com/"
