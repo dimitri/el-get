@@ -14,6 +14,10 @@
     (if el-get-test-output-buffer
         (with-current-buffer el-get-test-output-buffer
           (insert (apply #'format (ad-get-args 0)) "\n"))
+      ad-do-it))
+  (defadvice cl--assertion-failed (around el-get-test-suppress-debugger activate)
+    "Prevent failed `assert' from jumping into debugger."
+    (let ((debug-on-error nil))
       ad-do-it)))
 
 (defconst el-get-test-files-dir
@@ -111,7 +115,7 @@ Following variables are bound to temporal values:
   (el-get-with-temp-home
    (require 'package-x) ; create local package archive
    (let* ((pkg 'el-get-test-package)
-          (package-archive-upload-base (expand-file-name "~/pkg-repo"))
+          (package-archive-upload-base (expand-file-name "pkg-repo" user-emacs-directory))
           (package-archives nil)
           (el-get-sources
            `((:name package :post-init nil) ; avoid adding other repos
