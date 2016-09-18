@@ -14,6 +14,10 @@
     (if el-get-test-output-buffer
         (with-current-buffer el-get-test-output-buffer
           (insert (apply #'format (ad-get-args 0)) "\n"))
+      ad-do-it))
+  (defadvice cl--assertion-failed (around el-get-test-suppress-debugger activate)
+    "Prevent failed `assert' from jumping into debugger."
+    (let ((debug-on-error nil))
       ad-do-it)))
 
 (defconst el-get-test-files-dir
