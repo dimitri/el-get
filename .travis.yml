@@ -1,18 +1,20 @@
 language: generic
 sudo: false
 env:
-  - EMACS_VERSION=23.4
-  - EMACS_VERSION=24.3
-  - EMACS_VERSION=24.5
-  - EMACS_VERSION=25-prerelease
+  # - EMACS_VERSION=23.4
+  # - EMACS_VERSION=24.3
+  # - EMACS_VERSION=24.5
+  - EMACS_VERSION=25.1
 install:
   - env
   - source test/travis-ci.sh
   - prereqs
   - emacs --version
 script:
-  - byte-compile pkg/*.el
+#  - byte-compile pkg/*.el
   - byte-compile -Werror *.el methods/*.el
-  - ert-tests
-  - check-recipes -Wno-features -Wno-github -Wno-autoloads recipes/
-  - check-whitespace
+#  - ert-tests
+  - emacs -batch -Q -L pkg/ -L . -l test/el-get-tests.el --eval "(ert-run-tests-batch-and-exit '(and (not \"el-get-github-update\") t))"
+  - emacs -batch -Q -L pkg/ -L . -l test/el-get-tests.el --eval "(ert-run-tests-batch-and-exit \"el-get-github-update\")"
+# - check-recipes -Wno-features -Wno-github -Wno-autoloads recipes/
+# - check-whitespace

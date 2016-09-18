@@ -8,13 +8,13 @@
       (message "Skipping tests, ERT is not available"))))
 
 (defvar el-get-test-output-buffer nil)
-(when noninteractive
-  (defadvice message (around el-get-test-catch-output activate)
-    "redirect all `message' output to `el-get-test-output-buffer'."
-    (if el-get-test-output-buffer
-        (with-current-buffer el-get-test-output-buffer
-          (insert (apply #'format (ad-get-args 0)) "\n"))
-      ad-do-it)))
+;; (when noninteractive
+;;   (defadvice message (around el-get-test-catch-output activate)
+;;     "redirect all `message' output to `el-get-test-output-buffer'."
+;;     (if el-get-test-output-buffer
+;;         (with-current-buffer el-get-test-output-buffer
+;;           (insert (apply #'format (ad-get-args 0)) "\n"))
+;;       ad-do-it)))
 
 (defconst el-get-test-files-dir
   (file-name-directory
@@ -180,17 +180,25 @@ John.Doe-123_@example.com"))
 
 (ert-deftest el-get-github-update ()
   "Update :type github"
+  (message "el-get-github-update 1")
   (let* ((github-pkgname "user/dummy.el")
          (el-get-sources `((:name "dummy" :type github :pkgname ,github-pkgname)))
          (el-get-allow-insecure nil))
+    (message "el-get-github-update 2")
     (letf (((symbol-function 'el-get-package-is-installed)
-               (lambda (package)
-                 (string= package "dummy")))
-              ((symbol-function 'el-get-git-pull)
-               (lambda (package url post-install)
-                 (should (string= package "dummy"))
-                 (should (string= url (concat "https://github.com/" github-pkgname ".git")))))
-              ((symbol-function 'el-get-insecure-check)
-               (lambda (package url)
-                 (error "Leave 'el-get-insecure-check to git"))))
-      (should (el-get-do-update "dummy")))))
+            (lambda (package)
+              (message "el-get-github-update is-installed stub")
+              (string= package "dummy")))
+           ((symbol-function 'el-get-git-pull)
+            (lambda (package url post-install)
+              (message "el-get-github-update git-pull stub")
+              (should (string= package "dummy"))
+              (should (string= url (concat "https://github.com/" github-pkgname ".git")))))
+           ((symbol-function 'el-get-insecure-check)
+            (lambda (package url)
+              (message "el-get-github-update insecure-check stub")
+              (error "Leave 'el-get-insecure-check to git"))))
+      (should (progn (message "el-get-github-update 3")
+                     (prog1 (el-get-do-update "dummy")
+                       (message "el-get-github-update 4"))))
+      (message "el-get-github-update 5"))))
