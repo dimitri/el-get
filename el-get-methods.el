@@ -39,6 +39,7 @@ following is true and retun nil:
   SCP-like syntax
 
 - PACKAGE definition has a non-empty :checksum"
+  (assert (stringp URL) nil "URL is nil, can't decide if it's safe to install package '%s'" PACKAGE)
   (let* ((checksum (plist-get (el-get-package-def PACKAGE) :checksum))
          (checksum-empty (or (not (stringp checksum))
                              (if (fboundp 'string-blank-p)

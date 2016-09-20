@@ -78,11 +78,13 @@ USERNAME and REPONAME are strings."
                         el-get-github-default-url-type))))
     (el-get-github-url-private url-type username reponame)))
 
-(defun el-get-github-clone (package url post-install-fun)
+(defun el-get-github-clone (package _url post-install-fun)
   "Clone the given package from Github following the URL."
-  (let ((url (or url (el-get-github-url package))))
-    (el-get-insecure-check package url)
-    (el-get-git-clone package url post-install-fun)))
+  (el-get-git-clone package (el-get-github-url package) post-install-fun))
+
+(defun el-get-github-pull (package _url post-install-fun)
+  "Update the given package from Github following the URL."
+  (el-get-git-pull package (el-get-github-url package) post-install-fun))
 
 (defun el-get-github-guess-website (package)
   (let* ((user-and-repo (el-get-github-parse-user-and-repo package))
@@ -92,6 +94,7 @@ USERNAME and REPONAME are strings."
 
 (el-get-register-derived-method :github :git
   :install #'el-get-github-clone
+  :update #'el-get-github-pull
   :guess-website #'el-get-github-guess-website)
 
 (provide 'el-get-github)
