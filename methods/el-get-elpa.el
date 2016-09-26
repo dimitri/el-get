@@ -151,8 +151,13 @@ the recipe, then return nil."
                                    (bound-and-true-p package-archive-base)))
          ;; Prepend elpa-repo to `package-archives' for new package.el
          (package-archives (append (when elpa-repo (list elpa-repo))
-                                   (when (boundp 'package-archives) package-archives))))
-    (el-get-insecure-check package url)
+                                   (when (boundp 'package-archives) package-archives)))
+         ;; URL to use in security check
+         (package-url (or url (cdr (or elpa-repo
+                                       (assoc (package-desc-archive
+                                               (cadr (assq package package-archive-contents)))
+                                              package-archives))))))
+    (el-get-insecure-check package package-url)
 
     (unless (and elpa-dir (file-directory-p elpa-dir))
       ;; package-install does these only for interactive calls
