@@ -253,7 +253,7 @@ removing any packages in FILTERED."
 
 This function does not deal with `el-get-sources' at all."
   (completing-read (format "%s recipe: " action)
-                   (el-get-read-all-recipe-names) nil))
+                   (el-get-read-all-recipe-names) nil nil (thing-at-point 'symbol t)))
 
 (defun el-get-find-recipe-file (package &optional dir)
   "Find recipe file for PACKAGE.
