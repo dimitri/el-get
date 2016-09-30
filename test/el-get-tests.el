@@ -209,3 +209,16 @@ John.Doe-123_@example.com"))
             (lambda (package url)
               (error "Leave 'el-get-insecure-check to git"))))
       (should (el-get-do-update "dummy")))))
+
+(ert-deftest el-get-emacswiki-install-secure ()
+  "Consider :emacswiki over HTTPS as secure"
+  (let* ((pkg-name "dummy")
+         (el-get-sources `((:name ,pkg-name :type emacswiki)))
+         (el-get-allow-insecure nil)
+         ;; some secure URL
+         (el-get-emacswiki-base-url "https://example.com/"))
+    (letf (((symbol-function 'el-get-http-install)
+            (lambda (PACKAGE URL POST-INSTALL-FUN &optional DEST)
+              (should (string= PACKAGE pkg-name))
+              (should (string= URL "https://example.com/dummy.el")))))
+      (should (el-get-emacswiki-install pkg-name nil nil)))))
