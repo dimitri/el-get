@@ -149,6 +149,17 @@ John.Doe-123_@example.com"))
       ;; TODO check for error message?
       (should-error (el-get-insecure-check "dummy" url) :type 'error))))
 
+(ert-deftest el-get-insecure-url-nil ()
+  "Installing from nil URL is insecure"
+  (dolist (url insecure-urls)
+    (let* ((el-get-allow-insecure nil)
+           (pkg-name "dummy")
+           (el-get-sources '((:name pkg-name :type github)))
+           (expected-message (format "URL is nil, can't decide if it's safe to install package '%s'" pkg-name)))
+      (condition-case err
+          (el-get-insecure-check pkg-name nil)
+        (error (should (string= (error-message-string err) expected-message)))))))
+
 (defconst secure-urls '("https://example.com"
                         "ssh://example.com"
                         "git+ssh://example.com/"
