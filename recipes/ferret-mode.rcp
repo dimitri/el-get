@@ -1,0 +1,5 @@
+(:name ferret-mode
+       :description "Ferret mode for GNU Emacs"
+       :website "https://github.com/yyr/ferret-mode"
+       :type github
+       :pkgname "yyr/ferret-mode")

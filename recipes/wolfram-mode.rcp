@@ -1,0 +1,5 @@
+(:name wolfram-mode
+       :description "Mathematica editing and inferior mode."
+       :website "https://github.com/kawabata/wolfram-mode/"
+       :type github
+       :pkgname "kawabata/wolfram-mode")
