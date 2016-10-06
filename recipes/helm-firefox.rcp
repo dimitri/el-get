@@ -1,0 +1,5 @@
+(:name helm-firefox
+       :description "Helm source for Firefox bookmarks."
+       :type github
+       :pkgname "emacs-helm/helm-firefox"
+       :depends (helm))

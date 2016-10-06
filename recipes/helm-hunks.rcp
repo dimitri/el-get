@@ -1,0 +1,5 @@
+(:name helm-hunks
+       :description "Helm interface for git hunks."
+       :type github
+       :pkgname "torgeir/helm-hunks.el"
+       :depends (helm))

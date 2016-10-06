@@ -11,6 +11,8 @@ setup the extension. Or call it a package.
 
 # Introduction
 
+[![Join the chat at https://gitter.im/dimitri/el-get](https://badges.gitter.im/dimitri/el-get.svg)](https://gitter.im/dimitri/el-get?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 There are many methods to keep track of your emacs setup.  You can manage it
 all in a private git repository, you can set up `git submodules` or directly
 import external repositories.  You can manually retrieve the various
@@ -101,6 +103,9 @@ your `user-init-file`).
    (goto-char (point-max))
    (eval-print-last-sexp)))
 ```
+
+NOTE: if you are using Windows see
+[Installation on Windows](https://github.com/dimitri/el-get/wiki/Installation-on-Windows).
 
 Evaluating this code after copying it into your `*scratch*` buffer by typing
 `C-j` or `M-x eval-print-last-exp` will retrieve the El-Get installation
@@ -269,10 +274,14 @@ the same setup between several machines for example).
 ## Advanced Usage with Local Recipes
 
 Placing `el-get-bundle` macro calls instead of `(el-get 'sync)` in your init
-file explicitly specify which package should be installed.  The macro
+file to explicitly specify which packages should be installed.  The macro
 accepts either a simple package name from defined recipes, a package name
 with a local recipe definition, a package with initialization code, or
 everything together.
+
+Note that if you leave in the `(el-get 'sync)` call, it *must* go
+after any recipe defining `el-get-bundle` calls, otherwise el-get
+won't know the recipe when it tries to initialize the package.
 
 ```lisp
 ;; Basic setup

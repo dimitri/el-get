@@ -1,0 +1,7 @@
+(:name company-dict
+       :description " A port of ac-source-dictionary to company-mode,
+       plus annotation and documentation support."
+       :website "https://github.com/hlissner/emacs-company-dict"
+       :type github
+       :depends (company-mode)
+       :pkgname "hlissner/emacs-company-dict")

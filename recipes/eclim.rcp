@@ -1,8 +1,8 @@
 (:name eclim
-       :website "https://github.com/senny/emacs-eclim/"
+       :website "https://github.com/emacs-eclim/emacs-eclim/"
        :description "This project brings some of the great eclipse features to emacs developers."
        :type github
-       :pkgname "senny/emacs-eclim"
+       :pkgname "emacs-eclim/emacs-eclim"
        :features eclim
        :depends (s)
        :post-init (progn

@@ -2,6 +2,6 @@
        :description "The Emacs Predictive Completion package adds a new minor-mode to the GNU Emacs editor."
        :type git
        :url "http://www.dr-qubit.org/git/predictive.git"
-       :build ("make")
-       :load-path ("." "latex" "texinfo")
+       :build (("make"))
+       :load-path ("." "html" "latex" "texinfo")
        :features predictive)

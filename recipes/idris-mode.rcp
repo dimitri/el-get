@@ -2,5 +2,6 @@
        :website "https://github.com/idris-hackers/idris-mode"
        :description "Major mode for the Idris language"
        :type github
+       :depends (prop-menu)
        :pkgname "idris-hackers/idris-mode"
        :features idris-mode)

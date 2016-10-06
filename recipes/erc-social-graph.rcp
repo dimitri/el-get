@@ -1,0 +1,7 @@
+(:name erc-social-graph
+       :description "A social network graph module for ERC."
+       :type github
+       :pkgname "vibhavp/erc-social-graph"
+       :depends (erc)
+       :prepare (progn
+                  (autoload 'erc-social-graph-enable "erc-social-graph")))

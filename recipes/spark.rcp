@@ -1,0 +1,5 @@
+(:name spark
+       :website "https://github.com/alvinfrancis/spark"
+       :description "Port of cl-spark to emacs lisp. Generates a sparkline string for a list of numbers."
+       :type github
+       :pkgname "alvinfrancis/spark")

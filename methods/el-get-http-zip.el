@@ -35,14 +35,16 @@
                           do (if (file-directory-p fullpath)
                                  (delete-directory fullpath 'recursive)
                                (delete-file fullpath))))
-                  ;; zip xzf `basename url`
+                  ;; verify checksum before operating on untrusted data
+                  (el-get-verify-checksum package)
+                  ;; unzip `basename url`
                   (let ((el-get-sources '(,@el-get-sources)))
                     (el-get-start-process-list
                      package
                      '((:command-name ,name
                                       :buffer-name ,name
                                       :default-directory ,pdir
-                                      :program ,(executable-find "unzip")
+                                      :program ,(el-get-executable-find "unzip")
                                       :args (,@options ,zipfile)
                                       :message ,ok
                                       :error ,ko))
@@ -56,6 +58,7 @@
   :update #'el-get-http-zip-install
   :remove #'el-get-rmdir
   :install-hook 'el-get-http-zip-install-hook
-  :update-hook 'el-get-http-zip-install-hook)
+  :update-hook 'el-get-http-zip-install-hook
+  :compute-checksum #'el-get-http-compute-checksum)
 
 (provide 'el-get-http-zip)

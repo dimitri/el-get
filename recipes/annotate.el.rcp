@@ -1,0 +1,4 @@
+(:name annotate.el
+       :description "Annotate files without changing them."
+       :type github
+       :pkgname "bastibe/annotate.el")

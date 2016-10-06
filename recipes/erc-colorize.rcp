@@ -1,0 +1,5 @@
+(:name erc-colorize
+       :description "Per user colorization of whole message."
+       :depends (erc)
+       :type github
+       :pkgname "thisirs/erc-colorize")

@@ -1,0 +1,4 @@
+(:name comment-dwim-2
+       :description "An all-in-one comment command to rule them all."
+       :type github
+       :pkgname "remyferre/comment-dwim-2")

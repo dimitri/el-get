@@ -2,4 +2,4 @@
        :description "impress.js export for Org-mode"
        :type github
        :pkgname "kinjo/org-impress-js.el"
-       :features org-impress-js)
+       :features ox-impress-js)

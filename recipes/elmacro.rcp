@@ -1,0 +1,5 @@
+(:name elmacro
+       :website "https://github.com/Silex/elmacro"
+       :description "Package to display keyboard macros or latest interactive commands as emacs lisp."
+       :type github
+       :pkgname "Silex/elmacro")

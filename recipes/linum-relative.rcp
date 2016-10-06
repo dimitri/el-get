@@ -1,4 +1,5 @@
 (:name linum-relative
-       :type emacswiki
+       :type github
+       :pkgname "coldnew/linum-relative"
        :description "Display relative line number in the left margin"
        :features linum-relative)

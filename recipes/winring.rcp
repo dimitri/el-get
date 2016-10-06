@@ -1,0 +1,6 @@
+(:name winring
+       :description "Window configuration rings."
+       :website "https://launchpad.net/winring/"
+       :type git
+       :url "https://gitlab.com/warsaw/winring.git"
+       :prepare (autoload 'winring-initialize "winring"))

@@ -1,0 +1,8 @@
+
+(:name jedi-core
+       :type github
+       :pkgname "tkf/emacs-jedi"
+       :description "Python jedi core functionality for Emacs. Required for company-jedi"
+       :minimum-emacs-version "24"
+       :compile "jedi-core.el"
+       :depends (epc python-environment cl-lib))

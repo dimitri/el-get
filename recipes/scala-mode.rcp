@@ -1,7 +1,5 @@
 (:name scala-mode
-       :description "Major mode for editing Scala code."
-       :type git
-       :url "https://github.com/scala/scala-tool-support.git"
-       :build `(("make" "-C" "tool-support/emacs" "all" ,(concat "ELISP_COMMAND=" el-get-emacs)))
-       :load-path ("tool-support/emacs")
-       :features scala-mode-auto)
+       :description "The definitive scala-mode for emacs"
+       :type github
+       :website "http://ensime.org"
+       :pkgname "ensime/emacs-scala-mode")

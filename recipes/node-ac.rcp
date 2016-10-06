@@ -1,0 +1,5 @@
+(:name node-ac
+       :description "A Node.js auto-complete package for Emacs"
+       :website "https://github.com/MaokaiLin/node-ac"
+       :type github
+       :pkgname "MaokaiLin/node-ac")

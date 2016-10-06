@@ -1,0 +1,6 @@
+(:name ox-pandoc
+       :description "Another org-mode exporter via pandoc."
+       :website "https://github.com/kawabata/ox-pandoc/"
+       :type github
+       :minimum-emacs-version "24.3"
+       :pkgname "kawabata/ox-pandoc")

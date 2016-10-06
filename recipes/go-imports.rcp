@@ -1,5 +1,5 @@
 (:name go-imports
        :description "Tool to fix (add, remove) your Go imports automatically"
        :type go
-       :pkgname "github.com/bradfitz/goimports"
+       :pkgname "golang.org/x/tools/cmd/goimports"
        :post-init (setq gofmt-command (concat default-directory "bin/goimports")))

@@ -1,0 +1,5 @@
+(:name solidity-mode
+       :description "Language mode for Ethereum's Solidity Language"
+       :type github
+       :website "https://github.com/ethereum/emacs-solidity"
+       :pkgname "ethereum/emacs-solidity")

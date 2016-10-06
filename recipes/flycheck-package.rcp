@@ -1,0 +1,9 @@
+(:name flycheck-package
+       :type github
+       :description "Flycheck checker for elisp package metadata"
+       :pkgname "purcell/flycheck-package"
+       :depends (flycheck)
+       :minimum-emacs-version "24"
+       :prepare
+       (eval-after-load "flycheck"
+         '(flycheck-package-setup)))

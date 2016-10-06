@@ -1,4 +1,4 @@
-;;; el-get --- Manage the external elisp bits and pieces you depend upon
+;;; el-get-list-packages.el --- Manage the external elisp bits and pieces you depend upon
 ;;
 ;; Copyright (C) 2010-2011 Dimitri Fontaine
 ;;
@@ -166,7 +166,7 @@ matching REGEX with TYPE and ARGS as parameter."
         (el-get-describe-princ-button (format " in `%s':\n" file)
                                       "`\\([^`']+\\)"
                                       'el-get-help-package-def package)))
-    (princ (el-get-print-to-string def))))
+    (el-get-recipe-pprint def)))
 
 (defun el-get-describe (package &optional interactive-p)
   "Generate a description for PACKAGE."
@@ -180,9 +180,8 @@ matching REGEX with TYPE and ARGS as parameter."
                      interactive-p)
     (save-excursion
       (with-help-window (help-buffer)
-        (el-get-describe-1 package)
         (with-current-buffer standard-output
-          (buffer-string))))))
+          (el-get-describe-1 package))))))
 
 (defcustom el-get-package-menu-view-recipe-function
   'find-file-other-window
@@ -203,6 +202,13 @@ in el-get package menu."
 
 (defvar el-get-package-menu-sort-key nil
   "sort packages by key")
+
+(defconst el-get-package-list-column-alist
+  '(("Package"     . 2)
+    ("Status"      . 30)
+    ("Type"        . 41)
+    ("Description" . 54))
+  "An alist of (NAME . COLUMN) entries.")
 
 (defun el-get-package-menu-get-package-name ()
   (save-excursion
@@ -331,7 +337,7 @@ in el-get package menu."
       (run-mode-hooks 'el-get-package-menu-mode-hook)
     (run-hooks 'el-get-package-menu-mode-hook)))
 
-(defun el-get-print-package (package-name status &optional desc)
+(defun el-get-print-package (package-name status &optional type desc)
   (let ((face
          (cond
           ((string= status "installed")
@@ -343,17 +349,21 @@ in el-get package menu."
           (t
            (setq status "available")
            'default))))
-    (indent-to 2 1)
+    (indent-to (cdr (assoc "Package" el-get-package-list-column-alist)) 1)
     (insert package-name)
-    (indent-to 30 1)
+    (indent-to (cdr (assoc "Status" el-get-package-list-column-alist)) 1)
     (insert status)
     (put-text-property (line-beginning-position) (line-end-position)
                        'font-lock-face face)
-    (indent-to 41 1)
+    (indent-to (cdr (assoc "Type" el-get-package-list-column-alist)) 1)
+    (when type
+      (insert (propertize (replace-regexp-in-string "\n" " " type)
+                          'font-lock-face face)))
     (when desc
-      (insert (propertize (replace-regexp-in-string "\n" " " desc)
-                          'font-lock-face face)
-              "\n"))))
+      (indent-to (cdr (assoc "Description" el-get-package-list-column-alist)) 1)
+      (let ((eol (position ?\n desc)))
+        (when eol (setq desc (substring desc 0 eol))))
+      (insert (propertize desc 'font-lock-face face) "\n"))))
 
 (defun el-get-list-all-packages ()
   (with-current-buffer (get-buffer-create "*el-get packages*")
@@ -365,6 +375,9 @@ in el-get package menu."
                         #'(lambda (package)
                             (let ((package-name (el-get-as-string (plist-get package :name))))
                               (el-get-read-package-status package-name))))
+                       ((string= el-get-package-menu-sort-key "Type")
+                        #'(lambda (package)
+                            (el-get-as-string (plist-get package :type))))
                        ((string= el-get-package-menu-sort-key "Description")
                         #'(lambda (package)
                             (plist-get package :description)))
@@ -381,6 +394,7 @@ in el-get package menu."
               (let ((package-name (el-get-as-string (plist-get package :name))))
                 (el-get-print-package package-name
                                       (el-get-read-package-status package-name)
+                                      (el-get-as-string (plist-get package :type))
                                       (or (plist-get package :description) ""))))
             packages))
     (goto-char (point-min))
@@ -389,7 +403,9 @@ in el-get package menu."
 (defun el-get-package-menu-sort-by-column (&optional e)
   "Sort the package menu by the last column clicked on."
   (interactive (list last-input-event))
-  (if e (mouse-select-window e))
+  ;; On Emacs 24.3 and earlier, `mouse-select-window' is not defined
+  ;; on tty only builds.
+  (if (and e (fboundp 'mouse-select-window)) (mouse-select-window e))
   (let* ((pos (event-start e))
          (obj (posn-object pos))
          (col (if obj
@@ -411,8 +427,8 @@ in el-get package menu."
     (setq header-line-format
           (mapconcat
            (lambda (pair)
-             (let ((column (car pair))
-                   (name (cdr pair)))
+             (let ((name (car pair))
+                   (column (cdr pair)))
                (concat
                 ;; Insert a space that aligns the button properly.
                 (propertize " " 'display (list 'space :align-to column)
@@ -423,10 +439,7 @@ in el-get package menu."
                             'help-echo "mouse-1: sort by column"
                             'mouse-face 'highlight
                             'keymap el-get-package-menu-sort-button-map))))
-           '((2 . "Package")
-             (30 . "Status")
-             (41 . "Description"))
-           ""))
+           el-get-package-list-column-alist ""))
     (pop-to-buffer (current-buffer))))
 
 ;;;###autoload

@@ -1,0 +1,8 @@
+(:name shelldoc
+       :description "Shell command editing support with man page."
+       :type github
+       :pkgname "mhayashi1120/Emacs-shelldoc"
+       :depends (s)
+       :prepare (progn
+                  (autoload 'shelldoc-minor-mode "shelldoc" nil t)
+                  (autoload 'shelldoc-minor-mode-on "shelldoc" nil t)))

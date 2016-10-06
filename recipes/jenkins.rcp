@@ -1,0 +1,4 @@
+(:name jenkins
+       :description "Jenkins plugin for emacs"
+       :type github
+       :pkgname "rmuslimov/jenkins.el")

@@ -157,30 +157,28 @@
           else
           collect (cons p prop))))
 
-(defun el-get-package-status-alist (&optional package-status-alist)
+(defun el-get-package-status-alist ()
   "return an alist of (PACKAGE . STATUS)"
-  (loop for (p . prop) in (or package-status-alist
-                              (el-get-read-status-file))
+  (loop for (p . prop) in (el-get-read-status-file)
         collect (cons p (plist-get prop 'status))))
 
-(defun el-get-package-status-recipes (&optional package-status-alist)
+(defun el-get-package-status-recipes ()
   "return the list of recipes stored in the status file"
-  (loop for (p . prop) in (or package-status-alist
-                              (el-get-read-status-file))
+  (loop for (p . prop) in (el-get-read-status-file)
         when (string= (plist-get prop 'status) "installed")
         collect (plist-get prop 'recipe)))
 
-(defun el-get-read-package-status (package &optional package-status-alist)
+(defun el-get-read-package-status (package)
   "return current status for PACKAGE"
-  (let ((p-alist (or package-status-alist (el-get-read-status-file))))
-    (plist-get (cdr (assq (el-get-as-symbol package) p-alist)) 'status)))
+  (plist-get (cdr (assq (el-get-as-symbol package) (el-get-read-status-file)))
+             'status))
 
 (define-obsolete-function-alias 'el-get-package-status 'el-get-read-package-status)
 
-(defun el-get-read-package-status-recipe (package &optional package-status-alist)
+(defun el-get-read-package-status-recipe (package)
   "return current status recipe for PACKAGE"
-  (let ((p-alist (or package-status-alist (el-get-read-status-file))))
-    (plist-get (cdr (assq (el-get-as-symbol package) p-alist)) 'recipe)))
+  (plist-get (cdr (assq (el-get-as-symbol package) (el-get-read-status-file)))
+             'recipe))
 
 (defun el-get-filter-package-alist-with-status (package-status-alist &rest statuses)
   "Return package names that are currently in given status"
@@ -225,16 +223,14 @@
             unless (equal s "removed")
             collect (list x s)))))
 
-(defmacro el-get-with-status-sources (package-status-alist &rest body)
-  "Evaluate BODY with `el-get-sources' bound to recipes from PACKAGE-STATUS-ALIST.
-
-If PACKAGE-STATUS-ALIST is nil, read recipes from status file."
-  `(let ((el-get-sources (el-get-package-status-recipes package-status-alist)))
+(defmacro el-get-with-status-sources (_ &rest body)
+  "Evaluate BODY with `el-get-sources' according to the status file."
+  (declare (debug t) (indent 1))
+  `(let ((el-get-sources (el-get-package-status-recipes)))
      (progn ,@body)))
-(put 'el-get-with-status-sources 'lisp-indent-function
-     (get 'prog1 'lisp-indent-function))
 
-(defvar el-get-status-recipe-update-whitelist
+
+(defconst el-get-status-init-whitelist
   '(:load-path
     :info
     :load
@@ -247,43 +243,69 @@ If PACKAGE-STATUS-ALIST is nil, read recipes from status file."
     :lazy
     :website
     :description)
-  "Properties that can be updated without `el-get-update'/`el-get-reinstall'.
+  "Properties that can be updated with only `el-get-init'.
 
 If any of these properties change on the recipe for an installed
 package, the changes may be merged into the cached version of
 that recipe in the el-get status file.")
 
-(defun el-get-classify-new-properties (source newprops)
-  "Classify NEWPROPS into two groups: need update/disallowed.
+(defconst el-get-status-update-whitelist
+  `(:depends
+    :build
+    ;; :build/* ; special cased below
+    :compile
+    :checksum
+    :checkout
+    :options
+    ,@el-get-status-init-whitelist)
+  "Properties than can be updated by `el-get-update'.")
 
-Return a list (UPDATE DISALLOWED).  Both UPDATE and NEWPROPS are
-subset of NEWPROPS whose element is different from SOURCE.
-Elements in UPDATE are whitelisted whereas elements in DISALLOWED
-are not."
-  (loop with update
-        with disallowed
-        with whitelist = el-get-status-recipe-update-whitelist
+(defun el-get-classify-new-properties (source newprops)
+  "Determine the operations required to update SOURCE with NEWPROPS.
+
+Partition the properties of NEWPROPS whose value is different
+from SOURCE into 3 sublists, (INIT UPDATE REINSTALL), according
+to the operation required."
+  (loop with init and update and reinstall
+        with type = (let ((old-type (el-get-package-method source))
+                          (new-type (el-get-package-method newprops)))
+                      (if (eq old-type new-type) old-type nil))
         for (k v) on newprops by 'cddr
-        ;; Not a change, so ignore it
-        if (equal v (plist-get source k)) do (ignore)
-        ;; whitelisted
-        else if (memq k whitelist) do (setq update (plist-put update k v))
-        ;; Trying to change non-whitelisted property
-        else do (setq disallowed (plist-put disallowed k v))
-        finally return (list update disallowed)))
+        if (equal v (plist-get source k)) do (ignore) ; Ignore non-changes.
+        else if
+        (or (memq k el-get-status-init-whitelist)
+            (if (eq k :builtin) ; `:builtin' safe if not crossing versions.
+                (eq (version<= emacs-version (el-get-as-string v))
+                    (version<= emacs-version (el-get-as-string
+                                              (plist-get source k))))))
+        do (setq init (plist-put init k v))
+        else if (or (memq k el-get-status-update-whitelist)
+                    ;; All `:build/*' props are update safe, like `:build'.
+                    (string-prefix-p ":build/" (symbol-name k))
+                    (if (eq k :url) ; `:http*' methods can handle `:url' changes.
+                        (memq type '(http http-tar http-zip
+                                          github-tar github-zip
+                                          builtin))))
+        do (setq update (plist-put update k v))
+        else do (setq reinstall (plist-put reinstall k v))
+        finally return (list init update reinstall)))
 
 (defun el-get-diagnosis-properties (old-source new-source)
   "Diagnosis difference between OLD-SOURCE and NEW-SOURCE.
 
-Return a list (UPDATE-P ADDED-DISALLOWED REMOVED-DISALLOWED).
-UPDATE-P is non-nil when OLD-SOURCE and NEW-SOURCE are different.
-ADDED-DISALLOWED and REMOVED-DISALLOWED are added and removed
-properties, respectively."
-  (let ((added   (el-get-classify-new-properties old-source new-source))
-        (removed (el-get-classify-new-properties new-source old-source)))
-    (list (or (car added) (car removed))
-          (cadr added)
-          (cadr removed))))
+Return a list (REQUIRED-OPS ADDED REMOVED).  REQUIRED-OPS is list
+of one or more of `init', `update', or `reinstall' when
+OLD-SOURCE and NEW-SOURCE are different (nil otherwise).  It
+indicates which operations can perform the change.  ADDED and
+REMOVED are added and removed properties, respectively."
+  (let* ((added   (el-get-classify-new-properties old-source new-source))
+         (removed (el-get-classify-new-properties new-source old-source))
+         (min-op  (cond ((or (nth 2 added) (nth 2 removed)) 2)
+                        ((or (nth 1 added) (nth 1 removed)) 1)
+                        ((or (nth 0 added) (nth 0 removed)) 0))))
+    (list (and min-op (nthcdr min-op '(init update reinstall)))
+          (apply #'append (nthcdr (or min-op 0) added))
+          (apply #'append (nthcdr (or min-op 0) removed)))))
 
 (defun el-get-package-or-source (package-or-source)
   "Given either a package name or a full source entry, return a
@@ -293,12 +315,12 @@ properties, respectively."
           (error "package-or-source cannot be nil"))
     (el-get-package-def package-or-source)))
 
-(defun el-get-read-cached-recipe (package source &optional package-status-alist)
+(defun el-get-read-cached-recipe (package source)
   "Read the cached recipe for given PACKAGE: the one we have in the status file.
 
    If given PACKAGE isn't registered in the status file, and if
    it's a builtin package, then install it."
-  (or (el-get-read-package-status-recipe package package-status-alist)
+  (or (el-get-read-package-status-recipe package)
       (if (eq 'builtin (el-get-package-method source))
           (let ((el-get-default-process-sync t))
             (el-get-install package))
@@ -306,9 +328,9 @@ properties, respectively."
         (error "Package %s is nowhere to be found in el-get status file."
                package))))
 
-(defun* el-get-merge-properties-into-status (package-or-source
-                                             &optional package-status-alist
-                                             &key noerror)
+(defun el-get-merge-properties-into-status (package-or-source
+                                            operation
+                                            &rest keys)
   "Merge updatable properties for package into package status alist (or status file).
 
 The first argument is either a package source or a package name,
@@ -318,54 +340,38 @@ installed.
 
 If the new source differs only in whitelisted properties (see
 `el-get-status-recipe-updatable-properties'), then the updated
-values for those properties will be incorporated into the
-package's recipe from PACKAGE-STATUS-ALIST, which is modified in
-place. If PACKAGE-STATUS-ALIST is not given, it will be read from
-the status file and the modifications will be written to the
-status file. When run interactively, the updated recipe is always
-saved to the status file.
+values for those properties will be written to the status
+file.
 
 If any non-whitelisted properties differ from the cached values,
 then an error is raise. With optional keyword argument `:noerror
-t', this error is suppressed (but nothing is updated)."
+t', this error is suppressed (but nothing is updated).
+
+\(fn PACKAGE-OR-SOURCE &key NOERROR)"
   (interactive
    (list (el-get-read-package-with-status "Update cached recipe" "installed")
-         nil
+         'init
          :noerror current-prefix-arg))
-  (let* ((save-to-file (null package-status-alist))
+  (let* ((noerror      (cadr (memq :noerror keys)))
          (source       (el-get-package-or-source package-or-source))
          (package      (el-get-as-symbol (el-get-source-name source)))
          (cached-recipe
-          (el-get-read-cached-recipe package source package-status-alist)))
+          (el-get-read-cached-recipe package source)))
     (unless (el-get-package-is-installed package)
       (error "Package %s is not installed. Cannot update recipe." package))
-    (destructuring-bind (update-p added-disallowed removed-disallowed)
+    (destructuring-bind (required-ops added removed)
         (el-get-diagnosis-properties cached-recipe source)
-      (when (or added-disallowed removed-disallowed)
+      (if (and required-ops (not (memq operation required-ops)))
         ;; Emit a verbose message if `noerror' is t (but still quit
         ;; the function).
         (funcall (if noerror 'el-get-verbose-message 'error)
-                 "Tried to add non-whitelisted properties:
-
-%s
-
-and remove non-whitelisted properties:
-
-%s
-
-into/from source:
-
-%s
-Maybe you should use `el-get-update' or `el-get-reinstall' on %s instead?"
-                 (if   added-disallowed (pp-to-string   added-disallowed) "()")
-                 (if removed-disallowed (pp-to-string removed-disallowed) "()")
-                 (pp-to-string cached-recipe)
-                 (el-get-source-name cached-recipe))
-        (return-from el-get-merge-properties-into-status))
-      (when update-p
-        (if save-to-file
-            (el-get-save-package-status package "installed" source)
-          (plist-put (cdr (assq package package-status-alist))
-                     'recipe source))))))
+                 (concat "Must %s `%s' to modify its cached recipe\n"
+                         "  adding:   %s"
+                         "  removing: %s")
+                 (mapconcat #'symbol-name required-ops " or ") package
+                 (if   added (pp-to-string   added) "()\n")
+                 (if removed (pp-to-string removed) "()\n"))
+      (when required-ops
+        (el-get-save-package-status package "installed" source))))))
 
 (provide 'el-get-status)

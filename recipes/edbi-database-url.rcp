@@ -1,0 +1,5 @@
+(:name edbi-database-url
+       :description "Run Edbi with database url."
+       :depends (edbi)
+       :type github
+       :pkgname "proofit404/edbi-database-url")

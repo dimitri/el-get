@@ -14,7 +14,7 @@
 
 ;;; Commentary:
 ;;
-;; el-get-core provides basic el-get API, intended for developpers of el-get
+;; el-get-core provides basic el-get API, intended for developers of el-get
 ;; and its methods.  See the methods directory for implementation of them.
 ;;
 
@@ -40,6 +40,17 @@ the original object."
 
 (defun el-get-verbose-message (format &rest arguments)
   (when el-get-verbose (apply 'message format arguments)))
+
+(defmacro el-get-with-errors-as-warnings (prefix &rest body)
+  (declare (indent 1) (debug t))
+  (let ((error-var (make-symbol "err")))
+    `(condition-case ,error-var
+         (progn ,@body)
+       ((debug error)
+        (display-warning 'el-get
+                         (concat ,prefix (error-message-string ,error-var))
+                         :error)
+        nil))))
 
 (defsubst el-get-plist-keys (plist)
   "Return a list of all keys in PLIST.
@@ -129,11 +140,13 @@ already-defined method DERIVED-FROM-NAME."
 ;; interface to write such structures as raw elisp.
 ;;
 ;;;  "Fuzzy" data structure conversion utilities
-(defun el-get-as-string (symbol-or-string)
-  "If STRING-OR-SYMBOL is already a string, return it.  Otherwise
-convert it to a string and return that."
-  (if (stringp symbol-or-string) symbol-or-string
-    (symbol-name symbol-or-string)))
+(defun el-get-as-string (obj)
+  "Return OBJ as a string."
+  (cond
+   ((stringp obj) obj)
+   ((symbolp obj) (symbol-name obj))
+   ((numberp obj) (number-to-string obj))
+   (t (error "Can't convert %S to string." obj))))
 
 (defun el-get-as-symbol (string-or-symbol)
   "If STRING-OR-SYMBOL is already a symbol, return it.  Otherwise
@@ -205,6 +218,23 @@ entry."
   (if (string-match-p el-get-no-shell-quote arg) arg
     (shell-quote-argument arg)))
 
+(defun el-get-read-from-file (filename)
+  "Read given FILENAME and return its content (a valid sexp is expected)."
+  (condition-case err
+      (with-temp-buffer
+        (insert-file-contents filename)
+        (read (current-buffer)))
+    ((debug error)
+     (error "Error reading file %s: %S" filename err))))
+
+(defun el-get-package-is-installed (package)
+  "Return true if PACKAGE is installed"
+  (and (file-directory-p (el-get-package-directory package))
+       (string= "installed"
+                (el-get-read-package-status package))))
+
+(defalias 'el-get-package-installed-p #'el-get-package-is-installed)
+
 
 ;;
 ;; Some tools
@@ -225,6 +255,10 @@ entry."
   (if (listp arg)
       (apply 'append (mapcar 'el-get-flatten arg))
     (list arg)))
+
+(defun el-get-unquote (arg)
+  "Remote quote from ARG, if there is one."
+  (if (eq (car arg) 'quote) (nth 1 arg) arg))
 
 (defun el-get-load-path (package)
   "Return the list of absolute directory names to be added to

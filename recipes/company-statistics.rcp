@@ -1,0 +1,5 @@
+(:name company-statistics
+       :description "Sort completion candidates by previous completion choices."
+       :website "https://github.com/company-mode/company-statistics"
+       :type github
+       :pkgname "company-mode/company-statistics")

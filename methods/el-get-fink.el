@@ -47,7 +47,7 @@
      `((:command-name ,name
                       :buffer-name ,name
                       :process-filter ,(function el-get-sudo-password-process-filter)
-                      :program ,(executable-find "sudo")
+                      :program ,(el-get-executable-find "sudo")
                       :args ("-S" ,(executable-find "fink") "install" ,pkgname)
                       :message ,ok
                       :error ,ko))
@@ -68,7 +68,7 @@
      `((:command-name ,name
                       :buffer-name ,name
                       :process-filter ,(function el-get-sudo-password-process-filter)
-                      :program ,(executable-find "sudo")
+                      :program ,(el-get-executable-find "sudo")
                       :args ("-S" ,(executable-find "fink") "-y" "remove" ,pkgname)
                       :message ,ok
                       :error ,ko))

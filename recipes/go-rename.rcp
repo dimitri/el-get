@@ -5,4 +5,4 @@
        :load-path "src/golang.org/x/tools/refactor/rename"
        :post-init (progn
                     (setq go-rename-command (concat default-directory "bin/gorename"))
-                    (load "rename.el")))
+                    (load "go-rename.el")))

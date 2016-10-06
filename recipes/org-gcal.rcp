@@ -3,5 +3,5 @@
        :website "https://github.com/myuhe/org-gcal"
        :type github
        :minimum-emacs-version "24"
-       :depends (request-deferred alert cl-lib)
+       :depends (request alert cl-lib)
        :pkgname "myuhe/org-gcal.el")

@@ -1,0 +1,5 @@
+(:name excorporate
+       :description "Exchange calendar integration."
+       :website "http://www.fitzsim.org/blog/?cat=3"
+       :type elpa
+       :depends (calfw fsm soap-client url-http-ntlm))

@@ -1,0 +1,6 @@
+(:name helm-bibtex
+       :type github
+       :description "A BibTeX bibliography manager based on Helm."
+       :pkgname "tmalsburg/helm-bibtex"
+       :depends (helm parsebib s dash f cl-lib biblio)
+       :compile ("bibtex-completion.el" "helm-bibtex.el"))

@@ -1,0 +1,6 @@
+(:name xwidgete
+       :description "Enhance usability for Xwidget browser in Emacs 25"
+       :website "https://github.com/tuhdo/xwidgete"
+       :type github
+       :minimum-emacs-version "25.1"
+       :pkgname "tuhdo/xwidgete")

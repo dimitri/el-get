@@ -1,0 +1,5 @@
+(:name nim-emacs-module
+       :description "Make Emacs functions by Nim"
+       :type github
+       :pkgname "yuutayamada/nim-emacs-module"
+       :minimum-emacs-version "25")

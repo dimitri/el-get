@@ -1,0 +1,9 @@
+
+(:name relative-line-numbers
+       :website "https://github.com/Fanael/relative-line-numbers"
+       :depends ()
+       :description "relative-line-numbers is an Emacs package that displays relative line numbers on the left margin."
+       :type github
+       :pkgname "Fanael/relative-line-numbers"
+       :load-path "."
+       :features relative-line-numbers)

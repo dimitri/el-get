@@ -1,0 +1,5 @@
+(:name typo
+       :description "Emacs extension for typographical editing."
+       :website "https://github.com/jorgenschaefer/typoel"
+       :type github
+       :pkgname "jorgenschaefer/typoel")

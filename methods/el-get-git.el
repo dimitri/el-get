@@ -198,8 +198,7 @@ not return 'smart' headers despite supporting shallow clones"
 
 (defun el-get-git-compute-checksum (package)
   "Return the hash of the checked-out revision of PACKAGE."
-  (with-temp-buffer
-    (cd (el-get-package-directory package))
+  (let ((default-directory (el-get-package-directory package)))
     ;; We cannot simply check the recipe for `:type git' because it
     ;; could also be github, emacsmirror, or any other unknown git-ish
     ;; type. Instead, we check for the existence of a ".git" directory
@@ -207,10 +206,10 @@ not return 'smart' headers despite supporting shallow clones"
     ;; "git status" and check that it returns success.
     (assert (file-directory-p ".git") nil
             "Package %s is not a git package" package)
-    (let* ((git-executable (el-get-executable-find "git"))
-           (args (list git-executable "log" "--pretty=format:%H" "-n1"))
-           (cmd (mapconcat 'shell-quote-argument args " ")))
-      (shell-command-to-string cmd))))
+    (with-temp-buffer
+      (call-process (el-get-executable-find "git") nil '(t t) nil
+                    "log" "--pretty=format:%H" "-n1")
+      (buffer-string))))
 
 (el-get-register-method :git
   :install #'el-get-git-clone

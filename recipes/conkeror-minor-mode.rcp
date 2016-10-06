@@ -1,0 +1,5 @@
+(:name conkeror-minor-mode
+       :website "https://github.com/Malabarba/conkeror-minor-mode#readme"
+       :description "Mode for editing conkeror javascript files."
+       :type github
+       :pkgname "Malabarba/conkeror-minor-mode")

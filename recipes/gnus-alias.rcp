@@ -1,0 +1,6 @@
+(:name gnus-alias
+       :description "An alternative to gnus-posting-styles."
+       :type github
+       :pkgname "hexmode/gnus-alias"
+       :prepare (progn
+                  (add-hook 'message-setup-hook 'gnus-alias-determine-identity)))

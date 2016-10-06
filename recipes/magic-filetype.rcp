@@ -1,0 +1,4 @@
+(:name magic-filetype
+       :description "Enhance filetype major mode"
+       :type github
+       :pkgname "zonuexe/magic-filetype.el")

@@ -1,0 +1,10 @@
+(:name puml-mode
+       :description "Major mode for PlantUML."
+       :type github
+       :pkgname "skuro/puml-mode"
+       :post-init (let ((plantuml-url "http://sourceforge.net/projects/plantuml/files/plantuml.jar/download")
+                        (plantuml-jar (expand-file-name "plantuml.jar" default-directory)))
+                    (when (not (file-exists-p plantuml-jar))
+                      (url-copy-file plantuml-url plantuml-jar)))
+       :prepare (setq puml-plantuml-jar-path
+                      (expand-file-name "plantuml.jar" default-directory)))

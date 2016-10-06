@@ -1,4 +1,5 @@
 (:name git-auto-commit-mode
-       :website "http://projects.ryuslash.org/git-auto-commit-mode/"
        :description "Minor mode to automatically commit (and push) a git repository."
-       :type elpa)
+       :website "https://github.com/ryuslash/git-auto-commit-mode/"
+       :type github
+       :pkgname "ryuslash/git-auto-commit-mode")

@@ -1,0 +1,4 @@
+(:name typescript-mode
+       :description "TypeScript mode"
+       :type github
+       :pkgname "ananthakumaran/typescript.el")

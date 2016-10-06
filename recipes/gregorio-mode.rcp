@@ -4,5 +4,5 @@
        :type github
        :pkgname "cajetanus/gregorio-mode.el"
        :features gregorio-mode
-       :post-init (progn
-                    (add-to-list 'auto-mode-alist '("\\.gabc$" . gregorio-mode))))
+       :prepare (progn
+                  (add-to-list 'auto-mode-alist '("\\.gabc$" . gregorio-mode))))

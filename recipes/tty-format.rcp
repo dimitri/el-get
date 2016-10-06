@@ -1,0 +1,5 @@
+(:name tty-format
+       :description "Text file backspacing and ANSI SGR as faces."
+       :website "http://user42.tuxfamily.org/tty-format/"
+       :type http
+       :url "http://download.tuxfamily.org/user42/tty-format.el")

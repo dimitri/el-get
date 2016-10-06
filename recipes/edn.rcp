@@ -1,0 +1,5 @@
+(:name edn
+       :description "Edn.el is an emacs lisp library for reading and writing the data format edn."
+       :type github
+       :depends (dash cl-lib s peg)
+       :pkgname "expez/edn.el")

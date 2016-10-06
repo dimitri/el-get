@@ -56,6 +56,8 @@
                           do (if (file-directory-p fullpath)
                                  (delete-directory fullpath 'recursive)
                                (delete-file fullpath))))
+                  ;; verify checksum before operating on untrusted data
+                  (el-get-verify-checksum package)
                   ;; tar xzf `basename url`
                   (let ((el-get-sources '(,@el-get-sources)))
                     (el-get-start-process-list
@@ -77,6 +79,7 @@
   :update #'el-get-http-tar-install
   :remove #'el-get-rmdir
   :install-hook 'el-get-http-tar-install-hook
-  :update-hook 'el-get-http-tar-install-hook)
+  :update-hook 'el-get-http-tar-install-hook
+  :compute-checksum #'el-get-http-compute-checksum)
 
 (provide 'el-get-http-tar)

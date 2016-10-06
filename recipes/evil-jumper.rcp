@@ -1,0 +1,6 @@
+(:name evil-jumper
+       :website "https://github.com/bling/evil-jumper"
+       :description "Jump like vimmers do!"
+       :type github
+       :pkgname "bling/evil-jumper"
+       :depends (evil))

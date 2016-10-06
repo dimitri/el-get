@@ -1,0 +1,5 @@
+(:name marshal
+       :description "EIEIO marshalling, inspired by Go tagged structs."
+       :type github
+       :pkgname "sigma/marshal.el"
+       :depends (ht))

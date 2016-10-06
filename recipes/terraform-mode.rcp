@@ -1,0 +1,5 @@
+(:name terraform-mode
+       :type github
+       :pkgname "syohex/emacs-terraform-mode"
+       :description "Major mode for Terraform configuration files"
+       :depends (hcl-mode))

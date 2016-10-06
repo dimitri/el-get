@@ -1,0 +1,6 @@
+(:name swiper
+       :description "Gives you an overview as you search for a regex."
+       :type github
+       :pkgname "abo-abo/swiper"
+       :build (("makeinfo" "-o" "doc/ivy.info" "doc/ivy.texi"))
+       :info "doc/ivy.info")

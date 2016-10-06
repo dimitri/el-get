@@ -1,0 +1,4 @@
+(:name emoji-fontset
+       :description "Set font face for Emoji"
+       :type github
+       :pkgname "zonuexe/emoji-fontset.el")

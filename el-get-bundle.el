@@ -23,6 +23,16 @@
   :type 'boolean
   :group 'el-get-bundle)
 
+(defcustom el-get-bundle-sync t
+  "t means to run el-get with the argument 'sync.
+The default can be overriden on a per-package basis by adding one of
+`:bundle-async [t|nil]'
+`:bundle-sync [t|nil]
+to the list of keywords that follow
+`el-get-bundle PACKAGE|el-get-bundle FEATURE in PACKAGE'."
+  :type 'boolean
+  :group 'el-get-bundle)
+
 (defcustom el-get-bundle-init-directory
   (expand-file-name "bundle-init/" el-get-dir)
   "Directory to save auto generated init files."
@@ -118,8 +128,9 @@
              (ignore-errors
                (or (file-exists-p el-get-bundle-init-directory)
                    (make-directory el-get-bundle-init-directory t) t)))
-    (let* ((path (file-name-sans-extension (expand-file-name load-file-name)))
-           (callsite (mapconcat #'identity (split-string path "/") "_"))
+    (let* ((path (expand-file-name (convert-standard-filename load-file-name)))
+           (path (file-name-sans-extension path))
+           (callsite (replace-regexp-in-string "[^a-zA-Z0-9._-]" "_" path))
            (package (plist-get src :name))
            (id (el-get-bundle-init-id path))
            (init-file (concat el-get-bundle-init-directory
@@ -150,14 +161,21 @@
       `((el-get-bundle-load-init ,el)))))
 
 ;;;###autoload
-(defun el-get-bundle-el-get (src)
+(defun el-get-bundle-el-get (src sync)
   (let ((package (plist-get src :name)) (def (el-get-bundle-package-def src))
-        (fs (plist-get src :features)) (sync 'sync))
+        (fs (plist-get src :features))
+        (ds (plist-get src :depends)))
     ;; merge features
     (when (plist-member def :features)
       (let ((old (el-get-as-list (plist-get def :features))))
         (dolist (f old) (add-to-list 'fs f))
         (setq src (plist-put src :features fs))))
+    ;; merge depends
+    (when (plist-member def :depends)
+      (let ((old (el-get-as-list (plist-get def :depends))))
+        (dolist (d old) (add-to-list 'ds d))
+        (setq src (plist-put src :depends ds))))
+
     ;; merge src with the oriiginal definition
     (setq def (let ((el-get-sources (list src)))
                 (el-get-package-def (el-get-source-name src))))
@@ -235,16 +253,22 @@ same.  If you wish to `require' more than one feature, then use
 `:features' property in FORM.
 
 The initialization FORM may start with a property list that
-describes a local recipe.  The FORM after the property list is
-treated as initialization code, which is actually an `:after'
-property of the local recipe.
+describes a local recipe.  The property list may include the keyword
+`:bundle-sync' with a value of either `t' or `nil' to request that
+`el-get-bundle' invoke `el-get' synchronously (respectively asynchronously).
+The keyword `:bundle-async' is the inverse of `:bundle-sync'.
+\(Note that the request to run el-get synchronously may not be respected in all
+circumstances: see the definition of `el-get-bundle-el-get' for details.)
+The FORM after the property list is treated as initialization code,
+which is actually an `:after' property of the local recipe.
 
 A copy of the initialization code is stored in a directory
 specified by `el-get-bundle-init-directory' and its byte-compiled
 version is used if `el-get-bundle-byte-compile' is non-nil."
   (declare (indent defun) (debug t))
   (let* ((package (or (and (listp package) (nth 1 package)) package))
-         (src (el-get-bundle-parse-name package)) require)
+         (src (el-get-bundle-parse-name package))
+         (sync el-get-bundle-sync) require)
     ;; set parsed name
     (setq package (plist-get src :name))
     ;; (el-get-bundle FEATURE in PACKAGE ...) form
@@ -255,8 +279,11 @@ version is used if `el-get-bundle-byte-compile' is non-nil."
       (setq form (nthcdr 2 form) require t))
     ;; parse keywords
     (while (keywordp (nth 0 form))
-      (setq src (plist-put src (nth 0 form) (nth 1 form))
-            form (cdr-safe (cdr form))))
+      (case (nth 0 form)
+        (:bundle-sync (setq sync (nth 1 form)))
+        (:bundle-async (setq sync (not (nth 1 form))))
+        (t (setq src (plist-put src (nth 0 form) (nth 1 form)))))
+      (setq form (cdr-safe (cdr form))))
     ;; put default type
     (unless (or (plist-member src :type) (el-get-bundle-defined-p src))
       (setq src (plist-put src :type (el-get-bundle-guess-type src))))
@@ -273,7 +300,7 @@ version is used if `el-get-bundle-byte-compile' is non-nil."
     ;; init script
     (setq src (plist-put src :after form))
 
-    `(el-get-bundle-el-get ',src)))
+    `(el-get-bundle-el-get ',src ',(when sync 'sync))))
 
 ;;;###autoload
 (defmacro el-get-bundle! (package &rest args)

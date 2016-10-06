@@ -1,0 +1,5 @@
+(:name nxmless
+       :description "nXML extension to pretty-print xml and hide noise characters"
+       :type github
+       :pkgname "orivej/nxmless"
+       :features nxmless-hide-tags)

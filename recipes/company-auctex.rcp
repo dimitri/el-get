@@ -2,6 +2,6 @@
        :description "Company-mode auto-completion for AUCTeX."
        :type github
        :pkgname "alexeyr/company-auctex"
-       :depends (auctex company-mode)
+       :depends (auctex company-mode yasnippet)
        :post-init (eval-after-load 'auctex
                     '(company-auctex-init)))

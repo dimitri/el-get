@@ -1,0 +1,5 @@
+(:name jl-encrypt
+       :website "http://www.informationelle-selbstbestimmung-im-internet.de/Emacs.html"
+       :description "Insert MML encryption tags if public keys are available."
+       :type http
+       :url "http://www.informationelle-selbstbestimmung-im-internet.de/emacs/jl-encrypt4.3/jl-encrypt.el")

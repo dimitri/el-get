@@ -1,0 +1,4 @@
+(:name ff-paths
+       :description "Searches certain paths to find files"
+       :type http
+       :url "http://people.debian.org/~psg/elisp/ff-paths.el")

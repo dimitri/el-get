@@ -2,8 +2,7 @@
        :description "Major mode for the LLVM assembler language."
        :website "http://llvm.org/"
        :type http
-       :url "http://llvm.org/viewvc/llvm-project/llvm/trunk/utils/emacs/llvm-mode.el?view=co"
-       :build (("mv" "llvm-mode.el_view_co" "llvm-mode.el"))
+       :url "https://raw.githubusercontent.com/llvm-mirror/llvm/master/utils/emacs/llvm-mode.el"
        :prepare (progn
                   (autoload 'llvm-mode "llvm-mode"
                     "LLVM assembler language editing mode." t)

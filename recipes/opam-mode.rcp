@@ -1,0 +1,4 @@
+(:name opam-mode
+       :description "Major mode for editing opam files"
+       :type github
+       :pkgname "sagotch/opam-mode.el")

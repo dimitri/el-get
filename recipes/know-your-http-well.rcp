@@ -1,0 +1,6 @@
+(:name know-your-http-well
+       :description "HTTP headers, media-types, methods, relations and status codes, all summarized and linking to their specification."
+       :website "https://github.com/for-GET/know-your-http-well"
+       :type github
+       :pkgname "for-GET/know-your-http-well"
+       :load-path ("emacs"))

@@ -1,3 +1,6 @@
 (:name ido-ubiquitous
        :description "Use ido (nearly) everywhere"
-       :type elpa)
+       :website "https://github.com/DarwinAwardWinner/ido-ubiquitous"
+       :type github
+       :depends (cl-lib s)
+       :pkgname "DarwinAwardWinner/ido-ubiquitous")

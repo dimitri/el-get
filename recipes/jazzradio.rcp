@@ -1,0 +1,5 @@
+(:name jazzradio
+       :description "www.jazzradio.com for Emacs."
+       :website "https://github.com/syohex/emacs-jazzradio"
+       :type github
+       :pkgname "syohex/emacs-jazzradio")

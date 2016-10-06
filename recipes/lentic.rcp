@@ -1,0 +1,5 @@
+(:name lentic
+       :website "https://github.com/phillord/lentic"
+       :description "Create views of the same content in two Emacs buffers."
+       :type github
+       :pkgname "phillord/lentic")

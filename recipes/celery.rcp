@@ -1,0 +1,5 @@
+(:name celery
+       :description "a minor mode to draw stats from celery and more?"
+       :type github
+       :pkgname "ardumont/emacs-celery"
+       :depends (dash s deferred))

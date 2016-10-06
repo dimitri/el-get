@@ -1,0 +1,11 @@
+(:name proof-general
+       :description "A generic Emacs interface for interactive proof assistants."
+       :type github
+       :pkgname "ProofGeneral/PG"
+       :build `(("make" "clean")
+                ("make" ,(concat "EMACS=" el-get-emacs) "compile")
+                ("makeinfo" "doc/ProofGeneral.texi" "-o" "doc")
+                ("makeinfo" "doc/PG-adapting.texi" "-o" "doc"))
+       :info "doc"
+       :load "generic/proof-site.el"
+       :website "http://proofgeneral.inf.ed.ac.uk/")

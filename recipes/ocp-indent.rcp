@@ -1,0 +1,5 @@
+(:name ocp-indent
+       :description "Automatic indentation with ocp-indent"
+       :type http
+       :url "https://raw.githubusercontent.com/OCamlPro/ocp-indent/master/tools/ocp-indent.el"
+       :features ocp-indent)

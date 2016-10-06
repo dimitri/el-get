@@ -16,6 +16,16 @@
 (require 'el-get-core)
 (require 'el-get-recipes)
 
+(eval-and-compile
+  (unless (fboundp 'string-suffix-p) ; introduced in 24.4
+    (defun string-suffix-p (suffix string  &optional ignore-case)
+      "Return non-nil if SUFFIX is a suffix of STRING.
+If IGNORE-CASE is non-nil, the comparison is done without paying
+attention to case differences."
+      (let ((start-pos (- (length string) (length suffix))))
+        (and (>= start-pos 0)
+             (eq t (compare-strings suffix nil nil
+                                    string start-pos nil ignore-case)))))))
 (defun el-get-dependencies (packages)
   "Return the list of packages to install in order."
   (multiple-value-bind (plist all-sorted-p non-sorted)
@@ -93,5 +103,83 @@ in the topological ordering (i.e., the first value)."
                 all-sorted-p
                 (unless all-sorted-p
                   entries))))))
+
+(defun el-get-auto-dependencies (package &optional interactive)
+  "Return a plist with `:depends' based on the `Package-Requires'
+  header in PACKAGE's elisp file(s).
+
+A `:minimum-emacs-version' property may also be present."
+  (interactive (list (el-get-read-package-with-status "Auto-get dependencies of" "installed") t))
+  (unless (el-get-package-installed-p package)
+    (error "Tried to get Package-Requires of non-installed package, `%s'!" package))
+  (eval-and-compile
+    (require 'lisp-mnt))                ; `lm-header'
+  (loop with deps and min-emacs and sub-pkgs
+        for pdir in (el-get-load-path package)
+        do (dolist (file (directory-files pdir t "\\.el\\'" t))
+             (if (string-suffix-p "-pkg.el" file)
+                 (let ((def-pkg (el-get-read-from-file file)))
+                   (push (intern (nth 1 def-pkg)) sub-pkgs)
+                   (setq deps (nconc (el-get-unquote (nth 4 def-pkg)) deps)))
+               (with-temp-buffer
+                 (insert-file-contents file)
+                 (let ((pkg-reqs (lm-header "package-requires")))
+                   (when pkg-reqs
+                     (push (intern (file-name-base file)) sub-pkgs)
+                     (setq deps (nconc (car (read-from-string pkg-reqs)) deps)))))))
+        finally do
+        (setq min-emacs (car (cdr (assq 'emacs deps)))
+              deps (set-difference (remq 'emacs (delete-dups (mapcar #'car deps)))
+                                   sub-pkgs))
+        (let ((non-el-get-pkgs (remove-if #'el-get-package-def deps)))
+          (when non-el-get-pkgs
+            (error "Found non el-get package(s): %s" non-el-get-pkgs)))
+        finally return
+        (if interactive
+            (let ((props-str
+                   (apply #'concat ":depends " (prin1-to-string deps) "\n"
+                          (when min-emacs
+                            (list ":minimum-emacs-version " (prin1-to-string min-emacs) "\n")))))
+              (message "%s" props-str)
+              (kill-new props-str))
+          (nconc (if min-emacs (list :minimum-emacs-version min-emacs))
+                 (list :depends deps)))))
+
+(defun el-get-auto-update-dependencies (package buffer &optional interactive)
+  "Update the dependencies of PACKAGE according to its source headers.
+
+Interactively, update the recipe in the current buffer if it's
+visiting a recipe for the chosen PACKAGE, otherwise visit the
+corresponding recipe file."
+  (interactive (let ((pkg (el-get-read-package-with-status
+                           "Auto update dependencies of" "installed")))
+                 (list pkg
+                       (if (string= (file-name-base buffer-file-name) pkg)
+                           (current-buffer) (find-file (el-get-recipe-filename pkg)))
+                       t)))
+  (with-current-buffer buffer
+   (let* ((new-props (el-get-auto-dependencies package))
+          (recipe (save-excursion (goto-char (point-min))
+                                  (read (current-buffer)))))
+     (loop with auto-updated = nil
+           for (prop newval) on new-props by #'cddr
+           for prop-name = (symbol-name prop)
+           unless (equal newval (plist-get recipe prop))
+           do (save-excursion
+                (goto-char (point-min))
+                (let ((have-prop (search-forward prop-name nil t)))
+                  (if have-prop (let ((opoint (point)))
+                                  (forward-sexp)
+                                  (delete-region opoint (point)))
+                    (insert prop-name))
+                 (insert " ")
+                 (prin1 newval (current-buffer))
+                 (unless (looking-at-p " ; auto updated")
+                   (insert " ; auto updated"))
+                 (unless have-prop (insert "\n"))
+                 (setq auto-updated t)))
+           finally (when interactive
+                     (message "Dependencies of %s %s updated." package
+                              (if auto-updated "have been" "didn't need to be")))))))
 
 (provide 'el-get-dependencies)

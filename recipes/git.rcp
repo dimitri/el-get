@@ -1,0 +1,5 @@
+(:name git
+       :depends (s dash f)
+       :type github
+       :description "An Elisp API for programmatically using Git"
+       :pkgname "rejeep/git.el")

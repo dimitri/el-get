@@ -1,0 +1,5 @@
+(:name ocodo-svg-modelines
+       :description "A collection of beautiful, modern SVG modelines for Emacs"
+       :type github
+       :pkgname "ocodo/ocodo-svg-modelines"
+       :depends (svg-mode-line-themes))

@@ -1,0 +1,4 @@
+(:name zone-sl
+       :description "Zone out with steam locomotives."
+       :type github
+       :pkgname "kawabata/zone-sl")

@@ -1,0 +1,6 @@
+(:name es-mode
+       :website "https://github.com/dakrone/es-mode"
+       :description "An Emacs major mode for editing Elasticsearch requests"
+       :type github
+       :pkgname "dakrone/es-mode"
+       :depends (dash cl-lib spark))

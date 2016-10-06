@@ -1,0 +1,5 @@
+(:name ac-php
+       :description "Auto complete source for php"
+       :type github
+       :pkgname "xcwen/ac-php"
+       :depends (php-mode auto-complete yasnippet xcscope f s))

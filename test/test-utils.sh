@@ -38,6 +38,7 @@ get_file () {
 emacs_with_test_home() {
   mode=$1
   testfile=$2
+  shift 2
 
   if [ -n "$DO_NOT_CLEAN" ]; then
     echo "Running test without removing $TEST_HOME first";
@@ -53,7 +54,7 @@ emacs_with_test_home() {
   HOME="$TEST_HOME" "$EMACS" "${args[@]}" -L "$EL_GET_LIB_DIR" \
       -l "$EL_GET_LIB_DIR/el-get.el" -l "$EL_GET_LIB_DIR/test/test-setup.el" \
       --eval '(setq enable-local-variables :safe)' \
-      -l "$testfile"
+      -l "$testfile" "$@"
   return $?
 }
 
@@ -71,7 +72,7 @@ test_recipe () {
 (progn
   (setq debug-on-error (not noninteractive)
         el-get-default-process-sync t
-        pdef (el-get-read-recipe-file "$recipe_file")
+        pdef (el-get-read-from-file "$recipe_file")
         pname (plist-get pdef :name)
         el-get-sources (cons pdef (bound-and-true-p el-get-sources)))
   (el-get (quote sync) pname)

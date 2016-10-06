@@ -1,0 +1,7 @@
+(:name atom-dark-theme
+       :description "A Emacs port of the ATom Dark theme from Atom.io"
+       :type github
+       :pkgname "whitlockjc/atom-dark-theme-emacs"
+       :minimum-emacs-version 24
+       :prepare (add-to-list 'custom-theme-load-path
+                             default-directory))

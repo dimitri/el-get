@@ -1,4 +1,5 @@
 (:name gradle-mode
        :type github
        :pkgname "jacobono/emacs-gradle-mode"
+       :depends s
        :description "Minor mode for emacs to run gradle from emacs and not have to go to a terminal!")

@@ -1,0 +1,4 @@
+(:name top-mode
+       :type emacswiki
+       :description "run \"top\" from emacs"
+       :website "https://raw.github.com/emacsmirror/emacswiki.org/master/top-mode.el")

@@ -1,0 +1,4 @@
+(:name bats-mode
+       :description "A major-mode for editing Bats test files."
+       :pkgname "dougm/bats-mode"
+       :type github)

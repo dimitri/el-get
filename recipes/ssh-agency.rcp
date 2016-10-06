@@ -1,0 +1,6 @@
+(:name ssh-agency
+       :description "Use ssh-agent on win32 from Emacs"
+       :type github
+       :pkgname "magit/ssh-agency"
+       :depends (dash)
+       :minimum-emacs-version "24.4")

@@ -1,0 +1,6 @@
+(:name monitor
+       :description "Utilities for monitoring expressions"
+       :type github
+       :pkgname "GuiltyDolphin/monitor"
+       :branch "master"
+       :depends dash)

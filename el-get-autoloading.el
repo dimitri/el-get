@@ -47,6 +47,8 @@
     (el-get-verbose-message "el-get: evaluating autoload file")
     (el-get-load-fast el-get-autoload-file)))
 
+(defvar recentf-exclude)
+
 (defun el-get-update-autoloads (package)
   "Regenerate, compile, and load any outdated packages' autoloads."
   (when (el-get-want-autoloads-p package)
@@ -59,7 +61,19 @@
           ;; use dynamic scoping to set up our loaddefs file for
           ;; update-directory-autoloads
           (generated-autoload-file el-get-autoload-file)
-          (visited (get-file-buffer el-get-autoload-file)))
+          (visited (find-buffer-visiting el-get-autoload-file))
+          ;; .loaddefs.el's buffer name MUST be `el-get-autoload-file'
+          ;; or else `autoloads.el' thinks it's a secondary autoload
+          ;; file and puts MD5 checksums instead of timestamps.
+          (find-file-visit-truename nil)
+          (recentf-exclude (cons (regexp-quote el-get-autoload-file)
+                                 (bound-and-true-p recentf-exclude))))
+
+      (unless (or (not visited)
+                  (equal generated-autoload-file (buffer-file-name visited)))
+        ;; Kill .loaddefs.el buffer if it has a different name.
+        (kill-buffer visited)
+        (setq visited nil))
 
       ;; make sure we can actually byte-compile it
       (el-get-ensure-byte-compilable-autoload-file generated-autoload-file)
@@ -69,7 +83,7 @@
               (remove-if-not #'file-directory-p
                              (el-get-load-path package)))
 
-        (let ((visiting (get-file-buffer el-get-autoload-file)))
+        (let ((visiting (find-buffer-visiting el-get-autoload-file)))
           ;; `update-directory-autoloads' leaves file open
           (when (and (not visited) visiting)
             (kill-buffer visiting))))
@@ -97,14 +111,23 @@ with the named PACKAGE"
                               (directory-files dir t el-get-autoload-regexp)))
                           (el-get-load-path package)))
            (generated-autoload-file el-get-autoload-file)
-           (load-names (mapcar #'autoload-file-load-name files)))
-      (with-current-buffer (find-file-noselect el-get-autoload-file)
+           (load-names (mapcar #'autoload-file-load-name files))
+           (recentf-exclude (cons (regexp-quote el-get-autoload-file)
+                                  (bound-and-true-p recentf-exclude)))
+           (visited (find-buffer-visiting el-get-autoload-file)))
+      (with-current-buffer (or visited (find-file-noselect el-get-autoload-file))
         (widen) (goto-char (point-min))
         (while (search-forward generate-autoload-section-header nil t)
           (when (member (nth 2 (autoload-read-section-header)) load-names)
             ;; We found a matching section, remove it.
-            (autoload-remove-section (match-beginning 0))))))
-    (el-get-update-autoloads package)))
+            (autoload-remove-section (match-beginning 0)))))
+      (el-get-update-autoloads package)
+      (let ((visiting (find-buffer-visiting el-get-autoload-file)))
+        (when visiting
+          (when (buffer-modified-p visiting) ; Save loaddefs, if needed.
+            (with-current-buffer visiting (save-buffer)))
+          ;; Close loaddefs buffer, if we opened it ourselves.
+          (unless visited (kill-buffer visiting)))))))
 
 (defun el-get-want-autoloads-p (package)
   "Return t iff the given PACKAGE should have its autoloads

@@ -1,0 +1,4 @@
+(:name restart-emacs
+       :description "A simple package to restart Emacs from within Emacs."
+       :type github
+       :pkgname "iqbalansari/restart-emacs")

@@ -1,0 +1,5 @@
+(:name native2ascii
+       :description "Hooks for Java properties (native2ascii) files."
+       :type github
+       :pkgname "gleexpp/native2ascii.el"
+       :features native2ascii)

@@ -1,0 +1,5 @@
+(:name window-purpose
+       :description "Organize Windows and Buffers According to Purposes."
+       :website "https://github.com/bmag/emacs-purpose"
+       :type github
+       :pkgname "bmag/emacs-purpose")

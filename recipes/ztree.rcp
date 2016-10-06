@@ -1,0 +1,4 @@
+(:name ztree
+       :description "Text-tree applications inside Emacs."
+       :type github
+       :pkgname "fourier/ztree")

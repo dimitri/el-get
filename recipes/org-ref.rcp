@@ -1,0 +1,6 @@
+(:name org-ref
+       :website "https://github.com/jkitchin/org-ref"
+       :description "org-mode modules for citations, cross-references, bibliographies in org-mode and useful bibtex tools to go with it."
+       :type github
+       :pkgname "jkitchin/org-ref"
+       :depends (dash helm helm-bibtex hydra key-chord))

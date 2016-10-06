@@ -1,0 +1,4 @@
+(:name delete-nl-spaces
+       :description "removing unnecessary spaces from a buffer"
+       :type github
+       :pkgname "targzeta/delete-nl-spaces")

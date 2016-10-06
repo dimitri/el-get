@@ -1,0 +1,5 @@
+(:name visual-fill-column
+       :description "fill-column for visual-line-mode"
+       :type github
+       :pkgname "joostkremers/visual-fill-column"
+       :minimum-emacs-version "24.3")

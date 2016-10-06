@@ -1,0 +1,5 @@
+(:name ansible-doc
+       :website "https://github.com/lunaryorn/ansible-doc.el"
+       :description "Ansible documentation for GNU Emacs"
+       :type github
+       :pkgname "lunaryorn/ansible-doc.el")

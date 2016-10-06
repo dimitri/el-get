@@ -1,0 +1,5 @@
+(:name elscreen-persist
+       :description "Persist the elscreen across sessions."
+       :type github
+       :pkgname "robario/elscreen-persist"
+       :depends (elscreen revive))

@@ -1,0 +1,7 @@
+(:name jl-smime
+       :website "http://www.informationelle-selbstbestimmung-im-internet.de/Emacs.html"
+       :description "Improved support for S/MIME with MML and LDAP."
+       :type http
+       :url "http://www.informationelle-selbstbestimmung-im-internet.de/emacs/jl-smime3.3/jl-smime.el"
+       :depends (jl-encrypt)
+       :post-init (eval-after-load 'gnus '(load "jl-smime")))

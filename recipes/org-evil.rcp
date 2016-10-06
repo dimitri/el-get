@@ -1,0 +1,7 @@
+(:name org-evil
+       :description "Evil extensions for Org-mode"
+       :website "https://github.com/GuiltyDolphin/org-evil"
+       :type github
+       :pkgname "GuiltyDolphin/org-evil"
+       :branch "master"
+       :depends (dash evil monitor))

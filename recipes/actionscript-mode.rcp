@@ -2,5 +2,5 @@
        :type github
        :description "An actionscript-mode for Emacs"
        :pkgname "austinhaas/actionscript-mode"
-       :post-init (progn
-                    (add-to-list 'auto-mode-alist '("\\.as$" . actionscript-mode))))
+       :prepare (progn
+                  (add-to-list 'auto-mode-alist '("\\.as$" . actionscript-mode))))

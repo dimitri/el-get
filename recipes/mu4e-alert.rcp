@@ -1,0 +1,5 @@
+(:name mu4e-alert
+       :description "Desktop notification and mode-line display for mu4e."
+       :type github
+       :depends (mu4e alert s ht)
+       :pkgname "iqbalansari/mu4e-alert")

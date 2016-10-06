@@ -2,4 +2,4 @@
        :description "Code navigation, documentation lookup and completion for Python."
        :type github
        :pkgname "proofit404/anaconda-mode"
-       :depends (dash f json-rpc))
+       :depends (dash f json-rpc pythonic))

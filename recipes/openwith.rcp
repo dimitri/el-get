@@ -1,6 +1,5 @@
 (:name openwith
        :description "Open files with external programs"
-       :type http
-       :url "http://stud4.tuwien.ac.at/~e0225855/misc/openwith.el"
+       :type emacsmirror
        :features openwith
        :post-init (openwith-mode t))

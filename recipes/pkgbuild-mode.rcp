@@ -3,4 +3,4 @@
        :type github
        :pkgname "juergenhoetzel/pkgbuild-mode"
        :features pkgbuild-mode
-       :post-init (add-to-list 'auto-mode-alist '("PKGBUILD$" . pkgbuild-mode)))
+       :prepare (add-to-list 'auto-mode-alist '("PKGBUILD$" . pkgbuild-mode)))

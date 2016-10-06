@@ -2,5 +2,5 @@
        :description "emacs bindings to the ycmd completion server."
        :website "https://github.com/abingham/emacs-ycmd"
        :type github
-       :depends (anaphora request deferred request-deferred popup)
+       :depends (anaphora request deferred popup)
        :pkgname "abingham/emacs-ycmd")

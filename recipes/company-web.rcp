@@ -1,0 +1,5 @@
+(:name company-web
+       :description "Company-web is an alternative emacs plugin for autocompletion in html-mode, web-mode, jade-mode, slim-mode and use data of ac-html. It uses company-mode."
+       :website "https://github.com/osv/company-web"
+       :type github
+       :pkgname "osv/company-web")

@@ -38,12 +38,10 @@
 ;;
 ;; utilities for both apt-get and fink support (dpkg based)
 ;;
-(defun el-get-dpkg-package-status (package)
-  "Return the package status from dpkg --get-selections."
-  (substring
-   (shell-command-to-string
-    (format
-     "dpkg -l %s| awk '/^ii/ && $2 = \"%s\" {print \"ok\"}'" package package)) 0 -1))
+(defun el-get-dpkg-package-installed-p (package)
+  "Return non-nil if PACKAGE is installed according to dpkg."
+  (equal "install ok installed"
+         (car (process-lines "dpkg-query" "--show" "--showformat=${Status}\n" package))))
 
 ;;
 ;; those functions are meant as hooks at install and remove, and they will
@@ -122,11 +120,18 @@ password prompt."
 
       (setq el-get-sudo-password-process-filter-pos (point-max)))))
 
+(defun el-get-apt-get-install-if-needed (package url post-install-fun)
+  "Call `el-get-apt-get-install' if PACKAGE isn't installed yet.
+The installation status is retrieved from the system, not el-get."
+  (unless (el-get-dpkg-package-installed-p (or (plist-get (el-get-package-def package) :pkgname)
+                                               (el-get-as-string package)))
+    (el-get-apt-get-install package url post-install-fun)))
+
 (defun el-get-apt-get-install (package url post-install-fun)
   "echo $pass | sudo -S apt-get install PACKAGE"
   (let* ((source  (el-get-package-def package))
          (pkgname (or (plist-get source :pkgname) (el-get-as-string package)))
-         (name (format "*apt-get install %s*" package))
+         (name (format "*apt-get install %s*" pkgname))
          (ok   (format "Package %s installed." package))
          (ko   (format "Could not install package %s." package)))
 
@@ -135,7 +140,7 @@ password prompt."
      `((:command-name ,name
                       :buffer-name ,name
                       :process-filter ,(function el-get-sudo-password-process-filter)
-                      :program ,(executable-find "sudo")
+                      :program ,(el-get-executable-find "sudo")
                       :args ("-S" ,el-get-apt-get "install" ,pkgname)
                       :message ,ok
                       :error ,ko))
@@ -154,7 +159,7 @@ password prompt."
      `((:command-name ,name
                       :buffer-name ,name
                       :process-filter ,(function el-get-sudo-password-process-filter)
-                      :program ,(executable-find "sudo")
+                      :program ,(el-get-executable-find "sudo")
                       :args ("-S" ,el-get-apt-get "remove" "-y" ,pkgname)
                       :message ,ok
                       :error ,ko))
@@ -163,7 +168,7 @@ password prompt."
 (add-hook 'el-get-apt-get-remove-hook 'el-get-dpkg-remove-symlink)
 
 (el-get-register-method :apt-get
-  :install #'el-get-apt-get-install
+  :install #'el-get-apt-get-install-if-needed
   :update #'el-get-apt-get-install
   :remove #'el-get-apt-get-remove
   :install-hook 'el-get-apt-get-install-hook

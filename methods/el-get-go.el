@@ -40,7 +40,7 @@
      `((:command-name ,name
                       :buffer-name ,name
                       :default-directory ,el-get-dir
-                      :program ,el-get-go
+                      :program ,(el-get-executable-find "go")
                       :args ("get" "-v" "-u" ,pkgname)
                       :message ,ok
                       :error ,ko))

@@ -1,0 +1,5 @@
+(:name prop-menu
+      :website "https://github.com/david-christiansen/prop-menu-el"
+      :description "Compute pop-up menus from text and overlay properties "
+      :type github
+      :pkgname "david-christiansen/prop-menu-el")

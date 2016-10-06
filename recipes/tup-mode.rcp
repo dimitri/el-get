@@ -1,0 +1,4 @@
+(:name tup-mode
+       :description "Tup major mode"
+       :type github
+       :pkgname "ejmr/tup-mode")

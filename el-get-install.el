@@ -21,6 +21,14 @@
         (or (bound-and-true-p el-get-dir)
             (concat (file-name-as-directory user-emacs-directory) "el-get")))))
 
+  (unless (and (fboundp 'gnutls-available-p) (gnutls-available-p))
+    (display-warning
+     '(el-get tls)
+     (concat "Your Emacs doesn't support HTTPS (TLS)"
+             (if (eq system-type 'windows-nt)
+                 ",\n  see https://github.com/dimitri/el-get/wiki/Installation-on-Windows."
+               "."))))
+
   (when (file-directory-p el-get-root)
     (add-to-list 'load-path el-get-root))
 
@@ -71,6 +79,7 @@
           (error "Couldn't `git checkout -t %s`" branch)))
 
       (add-to-list 'load-path pdir)
+      (add-to-list 'load-path el-get-root)
       (load package)
       (let ((el-get-default-process-sync t) ; force sync operations for installer
             (el-get-verbose t))             ; let's see it all

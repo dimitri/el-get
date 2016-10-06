@@ -1,0 +1,6 @@
+(:name 4clojure
+       :description "Open and evaluate 4clojure.com questions in emacs"
+       :website "https://github.com/losingkeys/4clojure"
+       :type github
+       :depends (json request)
+       :pkgname "losingkeys/4clojure.el")

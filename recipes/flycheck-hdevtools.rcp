@@ -3,5 +3,5 @@
        :pkgname "flycheck/flycheck-hdevtools"
        :description "A Flycheck checker for Haskell using hdevtools"
        :depends (flycheck)
-       :prepare (eval-after-load 'flycheck
+       :prepare (eval-after-load 'haskell-mode
                   '(require 'flycheck-hdevtools)))

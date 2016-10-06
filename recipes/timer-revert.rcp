@@ -1,0 +1,5 @@
+(:name timer-revert
+       :description "minor mode to revert buffer for a given time interval."
+       :website "https://github.com/yyr/timer-revert"
+       :type github
+       :pkgname "yyr/timer-revert")

@@ -1,0 +1,4 @@
+(:name cask-mode
+       :description "Major mode for editing Cask files."
+       :type github
+       :pkgname "Wilfred/cask-mode")

@@ -1,0 +1,7 @@
+(:name ascope-ext
+       :description "An extension for ascope"
+       :website "https://github.com/zeph1e/ascope-ext"
+       :type github
+       :depends (ascope)
+       :pkgname "zeph1e/ascope-ext"
+       :post-init (ascope-install-hooks))

@@ -1,0 +1,7 @@
+(:name company-coq
+       :description "A collection of company-mode based extensions to Proof General's Coq mode.  Do `M-x company-coq-tutorial' after installation to open a tutorial."
+       :type github
+       :pkgname "cpitclaudel/company-coq"
+       :depends (cl-lib company-math company-mode dash proof-general yasnippet)
+       :prepare (add-hook 'coq-mode-hook 'company-coq-mode)
+       :website "https://github.com/cpitclaudel/company-coq/")

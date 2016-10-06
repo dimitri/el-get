@@ -1,0 +1,5 @@
+(:name docker
+       :description "Manage docker images & containers from Emacs"
+       :type github
+       :pkgname "Silex/docker.el"
+       :depends (magit s dash docker-tramp tablist json-mode))

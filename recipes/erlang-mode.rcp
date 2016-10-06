@@ -2,5 +2,5 @@
        :description "Major mode for editing and running Erlang"
        :type http
        :url "http://www.erlang.org/download/contrib/erlang.el"
-       :post-init (progn
-                    (add-to-list 'auto-mode-alist '("\\.erl$" . erlang-mode))))
+       :prepare (progn
+                  (add-to-list 'auto-mode-alist '("\\.erl$" . erlang-mode))))

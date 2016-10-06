@@ -1,6 +1,12 @@
 (:name bbdb-vcard
-       :website "https://github.com/trebb/bbdb-vcard#readme"
-       :description "vCard Import and Export for The Insidious Big Brother Database (BBDB)"
+       :description "vCard Import and Export for the Insidious Big Brother Database (BBDB)."
+       :website "https://github.com/tohojo/bbdb-vcard"
        :type github
-       :pkgname "trebb/bbdb-vcard"
-       :features bbdb-vcard)
+       :pkgname "tohojo/bbdb-vcard"
+       :depends (bbdb)
+       ;; :builtin "24.3"
+       :minimum-emacs-version "24.3"
+       ;; TODO: this extensions requires BBDB v3.x. (how to write in el-get?)
+       ;; :build (("make")
+       ;;         ("make install"))
+       )

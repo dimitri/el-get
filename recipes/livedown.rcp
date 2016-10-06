@@ -1,0 +1,6 @@
+(:name livedown
+       :description "Realtime Markdown previews for Emacs."
+       :type github
+       :pkgname "shime/emacs-livedown"
+       :post-init (eval-after-load 'markdown-mode
+                    '(require 'livedown)))

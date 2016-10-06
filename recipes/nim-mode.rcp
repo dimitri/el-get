@@ -1,0 +1,8 @@
+(:name nim-mode
+       :website "https://github.com/nim-lang/nim-mode#readme"
+       :description "Major mode for the Nim programming language"
+       :type github
+       :pkgname "nim-lang/nim-mode"
+       :branch "master"
+       :minimum-emacs-version "24.4"
+       :depends (flycheck company-mode epc let-alist commenter))

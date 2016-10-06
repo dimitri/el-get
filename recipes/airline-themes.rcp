@@ -1,0 +1,8 @@
+(:name airline-themes
+       :website "https://github.com/AnthonyDiGirolamo/airline-themes"
+       :depends (powerline)
+       :description "A port of the themes in vim-airline to emacs powerline."
+       :type github
+       :pkgname "AnthonyDiGirolamo/airline-themes"
+       :load-path "."
+       :features airline-themes)

@@ -1,0 +1,5 @@
+(:name eww-lnum
+       :description "Conkeror-like functionality for eww"
+       :type github
+       :pkgname "m00natic/eww-lnum"
+       :minimum-emacs-version "24.4")

@@ -1,6 +1,5 @@
 (:name elscreen
        :description "Screen Manager for Emacsen"
        :website "https://github.com/emacs-jp/elscreen"
-       :depends apel
        :type github
        :pkgname "emacs-jp/elscreen")

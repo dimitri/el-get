@@ -1,0 +1,7 @@
+(:name slime-company
+       :type github
+       :description "slime completion backend for company mode"
+       :website "https://github.com/anwyn/slime-company"
+       :pkgname "anwyn/slime-company"
+       :depends (slime company-mode)
+       :prepare (slime-setup '(slime-company)))

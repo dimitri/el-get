@@ -1,0 +1,4 @@
+(:name ac-python-async
+       :description "Simple Python Completion Source for Auto-Complete"
+       :type github
+       :pkgname "thorrr/ac-python-async")

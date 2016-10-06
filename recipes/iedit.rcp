@@ -1,4 +1,7 @@
 (:name iedit
        :description "Edit multiple regions with the same content simultaneously."
-       :type emacswiki
+       :type github
+       :pkgname "victorhge/iedit"
+       ;; We load iedit so that it inserts iedit-toggle-key-default into the
+       ;; global key map.
        :features iedit)

@@ -1,0 +1,6 @@
+(:name magit-topgit
+       :website "https://github.com/magit/magit-topgit"
+       :description "Topgit extension for Magit"
+       :type github
+       :pkgname "magit/magit-topgit"
+       :depends (magit))

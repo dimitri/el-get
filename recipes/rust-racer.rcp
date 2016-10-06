@@ -1,0 +1,10 @@
+;; user should also set `racer-rust-src-path' to the path of the source-directory
+;; of rust in his system and also set his keybinding as described in
+;; https://github.com/phildawes/racer
+(:name rust-racer
+       :type github
+       :pkgname "phildawes/racer"
+       :description "Rust code completion and code navigation"
+       :build '(("cargo" "build" "--release"))
+       :prepare (setq racer-cmd (concat default-directory "/target/release/racer"))
+       :post-init (add-hook 'racer-mode-hook #'eldoc-mode))

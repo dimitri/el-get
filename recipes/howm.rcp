@@ -4,4 +4,4 @@
        :type http-tar
        :options ("xzf")
        :url "http://howm.sourceforge.jp/a/howm-1.4.1.tar.gz"
-       :build `(("./configure" ,(concat "--with-emacs=" el-get-emacs)) "make"))
+       :build `(("./configure" ,(concat "--with-emacs=" el-get-emacs)) ("make")))
