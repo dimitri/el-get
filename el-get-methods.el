@@ -24,7 +24,7 @@
                "methods"
                (file-name-directory (or load-file-name byte-compile-current-file buffer-file-name)))))
 
-(defun el-get-insecure-check (PACKAGE URL)
+(defun el-get-insecure-check (package url)
   "Raise an error if it's not safe to install PACKAGE from URL.
 
 When `el-get-allow-insecure' is non-nil, check if either of the
@@ -39,25 +39,25 @@ following is true and retun nil:
   SCP-like syntax
 
 - PACKAGE definition has a non-empty :checksum"
-  (assert (stringp URL) nil "URL is nil, can't decide if it's safe to install package '%s'" PACKAGE)
-  (let* ((checksum (plist-get (el-get-package-def PACKAGE) :checksum))
-         (checksum-empty (or (not (stringp checksum))
-                             (if (fboundp 'string-blank-p)
-                                 (string-blank-p checksum)
-                               (string-match-p "\\`[ \t\n\r]*\\'" checksum)))))
-    (when (and (not el-get-allow-insecure)
-               (not (string-match "\\`file:///" URL))
-               (not (car (member 0 (mapcar (lambda (secure-proto)
-                                             (let ((proto-rx (concat "\\`" (regexp-quote secure-proto) "://")))
-                                               (string-match-p proto-rx URL))) el-get-secure-protocols))))
-               (not (string-match "\\`[-_\.A-Za-z0-9]+@" URL)))
-      ;; With not empty :checksum, we can rely on `el-get-post-install' calling
-      ;; `el-get-verify-checksum' for security.
-      (unless (not checksum-empty)
-        (error (concat "Attempting to install PACKAGE "
-                       (el-get-as-string PACKAGE)
-                       " from insecure URL " URL
-                       " without `el-get-allow-insecure'."))))))
+  (unless el-get-allow-insecure
+    (assert (stringp url) nil "URL is nil, can't decide if it's safe to install package '%s'" package)
+    (let* ((checksum (plist-get (el-get-package-def package) :checksum))
+           (checksum-empty (or (not (stringp checksum))
+                               (if (fboundp 'string-blank-p)
+                                   (string-blank-p checksum)
+                                 (string-match-p "\\`[ \t\n\r]*\\'" checksum)))))
+      (when (and (not (string-match "\\`file:///" url))
+                 (not (car (member 0 (mapcar (lambda (secure-proto)
+                                               (let ((proto-rx (concat "\\`" (regexp-quote secure-proto) "://")))
+                                                 (string-match-p proto-rx url))) el-get-secure-protocols))))
+                 (not (string-match "\\`[-_\.A-Za-z0-9]+@" url)))
+        ;; With not empty :checksum, we can rely on `el-get-post-install' calling
+        ;; `el-get-verify-checksum' for security.
+        (unless (not checksum-empty)
+          (error (concat "Attempting to install PACKAGE "
+                         (el-get-as-string package)
+                         " from insecure URL " url
+                         " without `el-get-allow-insecure'.")))))))
 
 (require 'el-get-apt-get)
 (require 'el-get-builtin)
