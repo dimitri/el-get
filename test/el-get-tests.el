@@ -11,7 +11,7 @@
 (when noninteractive
   (defadvice message (around el-get-test-catch-output activate)
     "redirect all `message' output to `el-get-test-output-buffer'."
-    (if (and el-get-test-output-buffer (ad-get-args 0))
+    (if (and el-get-test-output-buffer (ad-get-arg 0))
         (with-current-buffer el-get-test-output-buffer
           (insert (apply #'format (ad-get-args 0)) "\n"))
       ad-do-it))
