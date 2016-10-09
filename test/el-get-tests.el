@@ -34,6 +34,7 @@ error.
 
 Following variables are bound to temporal values:
 * `user-emacs-directory'
+* `package-user-dir'
 * `el-get-dir'
 * `el-get-status-file'
 * `el-get-status-cache'
@@ -41,6 +42,7 @@ Following variables are bound to temporal values:
   (declare (debug t))
   `(let* ((user-emacs-directory
            (make-temp-file "emacs.d.el-get-testing" 'dir "/"))
+          (package-user-dir (locate-user-emacs-file "elpa"))
           (el-get-dir (mapconcat #'file-name-as-directory
                                  `(,user-emacs-directory "el-get") ""))
           (el-get-status-file (concat el-get-dir ".status.el"))
@@ -155,13 +157,10 @@ John.Doe-123_@example.com"))
    (let* ((el-get-allow-insecure nil)
           (pkg 'el-get-test-package)
           (package-archive-upload-base (expand-file-name "pkg-repo" user-emacs-directory))
-          (package-archives nil)
+          (package-archives `(("test-repo" . ,package-archive-upload-base)))
           (el-get-sources
            `((:name package :post-init nil) ; avoid adding other repos
-             (:name el-get-test-package
-                    :type elpa
-                    :repo ("test-repo" . ,package-archive-upload-base)
-                    :features el-get-test-package))))
+             (:name el-get-test-package :type elpa))))
      (make-directory package-archive-upload-base t)
      (package-upload-file (expand-file-name "pkgs/el-get-test-package.el"
                                             el-get-test-files-dir))
