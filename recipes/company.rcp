@@ -1,0 +1,6 @@
+(:name company
+       :website "https://www.github.com/company-mode/company-mode"
+       :description "Company is a modern, lightweight completion framework."
+       :type github
+       :pkgname "company-mode/company-mode"
+       :depends (cl-lib))
