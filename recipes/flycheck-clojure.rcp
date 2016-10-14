@@ -1,0 +1,7 @@
+(:name flycheck-clojure
+       :website "https://www.github.com/clojure-emacs/squiggly-clojure"
+       :description "Flycheck module for Clojure."
+       :type github
+       :pkgname "clojure-emacs/squiggly-clojure"
+       :load-path ("elisp/flycheck-clojure" "elisp/typed-clojure")
+       :depends (flycheck))
