@@ -1,0 +1,7 @@
+(:name flyspell-babel
+       :website "http://community.dur.ac.uk/p.j.heslin/Software/Emacs/"
+       :description "AUCTeX Babel extension for flyspell."
+       :type http
+       :url "http://community.dur.ac.uk/p.j.heslin/Software/Emacs/Download/flyspell-babel.el"
+       :load-path "."
+       :depends (auctex flyspell))
