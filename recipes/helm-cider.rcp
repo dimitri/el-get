@@ -3,4 +3,5 @@
        :description "HELM interface to CIDER."
        :type github
        :pkgname "clojure-emacs/helm-cider"
+       :load-path "."
        :depends (helm cider))
