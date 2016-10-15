@@ -1,0 +1,5 @@
+(:name esqlite
+       :description "Manipulate sqlite file from Emacs."
+       :type github
+       :pkgname "mhayashi1120/Emacs-esqlite"
+       :depends (cl-lib pcsv))
