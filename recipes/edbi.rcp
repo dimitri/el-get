@@ -2,4 +2,4 @@
        :description "Database GUI and API for Emacs"
        :type github
        :pkgname "kiwanami/emacs-edbi"
-       :depends (epc auto-complete))
+       :depends (deferred cl-lib ctable epc auto-complete))
