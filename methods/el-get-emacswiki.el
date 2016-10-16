@@ -41,7 +41,7 @@ filename.el ;;; filename.el --- description"
 (defun el-get-emacswiki-install (package url post-install-fun)
   "Download a single-file PACKAGE over HTTP from emacswiki."
   (let ((url (or url (format "%s%s.el" el-get-emacswiki-base-url package))))
-    (el-get-insecure-check package "http://insecure") ; insecure even over HTTPS
+    (el-get-insecure-check package url)
     (el-get-http-install package url post-install-fun)))
 
 (defun el-get-emacswiki-compute-checksum (package)

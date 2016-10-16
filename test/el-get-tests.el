@@ -149,6 +149,17 @@ John.Doe-123_@example.com"))
       ;; TODO check for error message?
       (should-error (el-get-insecure-check "dummy" url) :type 'error))))
 
+(ert-deftest el-get-insecure-url-nil ()
+  "Installing from nil URL is insecure"
+  (dolist (url insecure-urls)
+    (let* ((el-get-allow-insecure nil)
+           (pkg-name "dummy")
+           (el-get-sources '((:name pkg-name :type github)))
+           (expected-message (format "URL is nil, can't decide if it's safe to install package '%s'" pkg-name)))
+      (condition-case err
+          (el-get-insecure-check pkg-name nil)
+        (error (should (string= (error-message-string err) expected-message)))))))
+
 (defconst secure-urls '("https://example.com"
                         "ssh://example.com"
                         "git+ssh://example.com/"
@@ -198,3 +209,16 @@ John.Doe-123_@example.com"))
             (lambda (package url)
               (error "Leave 'el-get-insecure-check to git"))))
       (should (el-get-do-update "dummy")))))
+
+(ert-deftest el-get-emacswiki-install-secure ()
+  "Consider :emacswiki over HTTPS as secure"
+  (let* ((pkg-name "dummy")
+         (el-get-sources `((:name ,pkg-name :type emacswiki)))
+         (el-get-allow-insecure nil)
+         ;; some secure URL
+         (el-get-emacswiki-base-url "https://example.com/"))
+    (letf (((symbol-function 'el-get-http-install)
+            (lambda (PACKAGE URL POST-INSTALL-FUN &optional DEST)
+              (should (string= PACKAGE pkg-name))
+              (should (string= URL "https://example.com/dummy.el")))))
+      (should (el-get-emacswiki-install pkg-name nil nil)))))
