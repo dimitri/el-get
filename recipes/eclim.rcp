@@ -4,7 +4,7 @@
        :type github
        :pkgname "emacs-eclim/emacs-eclim"
        :features eclim
-       :depends (s)
+       :depends (s dash json popup cl-lib yasnippet)
        :post-init (progn
                     (setq eclim-auto-save t)
                     (global-eclim-mode -1)))
