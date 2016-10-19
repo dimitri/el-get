@@ -4,7 +4,14 @@
        :type git
        :module "auctex"
        :url "git://git.savannah.gnu.org/auctex.git"
-       :build `(("export" "MAKE=gmake")
+       :build `(("./autogen.sh")
+                ("./configure"
+                 "--without-texmf-dir"
+                 "--with-packagelispdir=$(pwd)"
+                 "--with-packagedatadir=$(pwd)"
+                 ,(concat "--with-emacs=" el-get-emacs))
+                ("make"))
+       :build/berkeley-unix `(("export" "MAKE=gmake")
                 ("./autogen.sh")
                 ("./configure"
                  "--without-texmf-dir"
