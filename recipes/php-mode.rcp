@@ -2,4 +2,6 @@
        :description "A PHP mode for GNU Emacs "
        :type github
        :pkgname  "ejmr/php-mode"
-       :website "https://github.com/ejmr/php-mode")
+       :website "https://github.com/ejmr/php-mode"
+       :post-init (progn
+                    (add-to-list 'auto-mode-alist '("\\.php$" . php-mode))))
