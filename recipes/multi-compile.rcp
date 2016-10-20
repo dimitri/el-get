@@ -1,0 +1,5 @@
+(:name multi-compile
+       :description "Multi target interface to compile."
+       :type github
+       :pkgname "ReanGD/emacs-multi-compile"
+       :depends (dash))
