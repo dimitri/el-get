@@ -1,0 +1,7 @@
+(:name oceanic-theme
+       :description "A Emacs port of the Oceanic theme."
+       :type github
+       :pkgname "terry3/oceanic-theme"
+       :minimum-emacs-version 24
+       :prepare (add-to-list 'custom-theme-load-path
+                             default-directory))
