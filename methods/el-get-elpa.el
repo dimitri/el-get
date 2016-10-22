@@ -44,16 +44,24 @@ ALIST-ELEM should be an element from `package-alist' or
           (mapc #'package-delete descs)
         ;; Otherwise, just delete the package directory.
         (delete-directory (el-get-elpa-package-directory pkg) 'recursive))))
+
+  (defun el-get-elpa-package-id (pkg)
+    "A compat utility function."
+    ;; In 24.4+ we have a list of descs, earlier versions just use the
+    ;; name (a symbol) to specify the package.
+    (let* ((descs (cdr (assq pkg package-archive-contents))))
+      (if (listp descs) (car descs) pkg)))
+
+  (defun el-get-elpa-package-archive-base (pkg)
+    "Compat wrapper for `package-archive-base'."
+    (package-archive-base (el-get-elpa-package-id pkg)))
+
   (defun el-get-elpa-install-package (pkg have-deps-p)
     "A wrapper for package.el installion.
 
 Installs the 1st available version. If HAVE-DEPS-P skip
 package.el's dependency computations."
-    (let* ((pkg-avail (assq pkg package-archive-contents))
-           (descs (cdr pkg-avail))
-           ;; In 24.4+ we have a list of descs, earlier versions just
-           ;; have a single package name
-           (to-install (if (listp descs) (car descs) pkg)))
+    (let ((to-install (el-get-elpa-package-id pkg)))
       (if have-deps-p
           (package-download-transaction (list to-install))
         (package-install to-install)))))
@@ -152,7 +160,6 @@ the recipe, then return nil."
          ;; Prepend elpa-repo to `package-archives' for new package.el
          (package-archives (append (when elpa-repo (list elpa-repo))
                                    (when (boundp 'package-archives) package-archives))))
-    (el-get-insecure-check package url)
 
     (unless (and elpa-dir (file-directory-p elpa-dir))
       ;; package-install does these only for interactive calls
@@ -167,6 +174,12 @@ the recipe, then return nil."
                                (car elpa-new-repo)
                                (cdr elpa-new-repo))))
              (package-read-all-archive-contents)))
+      ;; We can only get the url after `package-archive-contents' is
+      ;; initialized.
+      (setq url (or (cdr elpa-repo)
+                    (el-get-elpa-package-archive-base package)))
+      (el-get-insecure-check package url)
+
       ;; TODO: should we refresh and retry once if package-install fails?
       ;; package-install generates autoloads, byte compiles
       (let (emacs-lisp-mode-hook fundamental-mode-hook prog-mode-hook)
