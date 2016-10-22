@@ -2,4 +2,4 @@
        :description "Display file icons in dired buffers."
        :type git
        :url "https://gitlab.com/xuhdev/dired-icon.git"
-       :depends (cl-lib))
+       :minimum-emacs-version "24.3")
