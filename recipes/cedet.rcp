@@ -1,4 +1,5 @@
 (:name cedet
+       :builtin "23.3"
        :website "http://cedet.sourceforge.net/"
        :description "CEDET is a Collection of Emacs Development Environment Tools written with the end goal of creating an advanced development environment in Emacs."
        :type git
