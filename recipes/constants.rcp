@@ -1,0 +1,4 @@
+(:name constants
+       :description "Enter definition of constants into source code"
+       :type http
+       :url "https://staff.fnwi.uva.nl/c.dominik/Tools/constants/constants.el")
