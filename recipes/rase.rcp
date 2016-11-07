@@ -1,0 +1,5 @@
+(:name rase
+       :website "https://www.github.com/m00natic/rase"
+       :description "Run At Sun Event daemon"
+       :type github
+       :pkgname "m00natic/rase")
