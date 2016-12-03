@@ -2,4 +2,4 @@
        :type github
        :description "Writeroom-mode: distraction-free writing for Emacs."
        :pkgname "joostkremers/writeroom-mode"
-       :shallow nil)
+       :depends (visual-fill-column))
