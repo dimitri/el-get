@@ -1,6 +1,6 @@
 (:name markdown-preview-mode
        :description "Markdown preview mode with websocket.el"
        :type github
-       :depends (websocket markdown-mode)
+       :depends (websocket markdown-mode uuidgen web-server)
        :website "https://github.com/ancane/markdown-preview-mode.git"
        :pkgname "ancane/markdown-preview-mode")
