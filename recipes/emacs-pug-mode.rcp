@@ -1,4 +1,4 @@
 (:name emacs-pug-mode
-       :description "Major mode for jade/pug template files" 
+       :description "Major mode for jade/pug template files"
        :type github
        :pkgname "hlissner/emacs-pug-mode")
