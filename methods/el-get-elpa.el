@@ -25,6 +25,10 @@
     (defalias 'package-desc-summary 'package-desc-doc))
   (unless (fboundp 'package-desc-version)
     (defalias 'package-desc-version 'package-desc-vers))
+  ;; Introduced in 24.4
+  (unless (fboundp 'package-desc-archive)
+    (defun package-desc-archive (desc)
+      (aref desc (1- (length desc)))))
 
   ;; In 24.4 each package has a *list* of descriptors, pretend it's so
   ;; in 24.3 and below as well.
@@ -308,9 +312,8 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
                (pkg-deps    (package-desc-reqs pkg-desc))
                (depends     (remq 'emacs (mapcar #'car pkg-deps)))
                (emacs-dep   (assq 'emacs pkg-deps))
-               (repo
-                (assoc (aref pkg-desc (- (length pkg-desc) 1))
-                       package-archives)))
+               (repo        (assoc (package-desc-archive pkg-desc)
+                                   package-archives)))
           (erase-buffer)
           (insert
            (format
