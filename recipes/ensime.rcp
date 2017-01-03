@@ -5,7 +5,6 @@
        :depends (s
                  dash
                  popup
-                 auto-complete
                  scala-mode
                  sbt-mode
                  company-mode
