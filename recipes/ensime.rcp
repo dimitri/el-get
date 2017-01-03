@@ -2,10 +2,9 @@
        :description "ENhanced Scala Interaction Mode for Emacs"
        :type github
        :pkgname "ensime/ensime-emacs"
-       :depends (s 
+       :depends (s
                  dash
                  popup
-                 auto-complete
                  scala-mode
                  sbt-mode
                  company-mode
