@@ -2,7 +2,7 @@
        :description "Github API client libraries"
        :type github
        :pkgname "sigma/gh.el"
-       :depends (pcache logito request marshal)
+       :depends (pcache logito request marshal s)
        ;; gh autoloads eioeio which will be added to loaddefs.el making it
        ;; impossible to install CEDET since the built-in version will be loaded
        ;; first.
