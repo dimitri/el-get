@@ -1,6 +1,6 @@
 (:name evil-magit
-       :website "http://github.com/justbur/evil-magit"
+       :website "https://github.com/emacs-evil/evil-magit"
        :description "Evil-based key bindings for magit"
        :type github
-       :pkgname "justbur/evil-magit"
+       :pkgname "emacs-evil/evil-magit"
        :depends (evil magit))
