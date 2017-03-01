@@ -1,0 +1,6 @@
+(:name evil-magit
+       :website "https://github.com/emacs-evil/evil-magit"
+       :description "Evil-based key bindings for magit"
+       :type github
+       :pkgname "emacs-evil/evil-magit"
+       :depends (evil magit))
