@@ -1,7 +1,7 @@
 (:name python-mode
        :description "Major mode for editing Python programs"
-       :type bzr
-       :url "lp:python-mode"
+       :type git
+       :url "https://gitlab.com/python-mode-devs/python-mode"
        :load-path ("." "test")
        :compile nil
        :prepare (progn
