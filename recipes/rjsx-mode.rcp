@@ -1,0 +1,4 @@
+(:name rjsx-mode
+       :description "A major mode for editing JSX files"
+       :type github
+       :pkgname "felipeochoa/rjsx-mode")
