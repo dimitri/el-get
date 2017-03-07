@@ -1,0 +1,6 @@
+(:name rjsx-mode
+       :description "A major mode for editing JSX files"
+       :type github
+       :pkgname "felipeochoa/rjsx-mode"
+       :depends (js2-mode)
+       :minimum-emacs-version "24.4")
