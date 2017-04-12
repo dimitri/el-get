@@ -1,0 +1,8 @@
+(:name org-mode
+       :description "Edit OPML files using Org mode in Emacs."
+       :type github
+       :pkgname "edavis/org-opml"
+       :depends org-mode
+       :post-init (progn
+                    (el-get-envpath-prepend "PATH" default-directory)
+                    (eval-after-load 'org '(load-library "org-opml"))))
