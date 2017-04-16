@@ -1,0 +1,5 @@
+(:name ll-debug
+       :description "Low level debug tools for C/C++"
+       :type http
+       :url "http://www.cbrunzema.de/download/ll-debug/ll-debug.el"
+       :features ll-debug)
