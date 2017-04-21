@@ -2,6 +2,10 @@
        :website "https://github.com/jdenen/mastodon.el"
        :description "Emacs client for Mastodon"
        :type github
+<<<<<<< HEAD
        :pkgname "jdenen/mastodon.el"
        :load-path ("./lisp")
        )
+=======
+       :pkgname "jdenen/mastodon.el")
+>>>>>>> e690a8106cabfb4b363516b939b465d2842fb3ef
