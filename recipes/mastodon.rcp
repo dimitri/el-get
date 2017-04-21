@@ -3,4 +3,5 @@
        :description "Emacs client for Mastodon"
        :type github
        :pkgname "jdenen/mastodon.el"
+       :load-path ("./lisp")
        )
