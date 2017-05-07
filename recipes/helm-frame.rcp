@@ -1,0 +1,6 @@
+(:name helm-frame
+       :type git
+       :description "open helm buffers in a dedicated frame"
+       :website "https://gitlab.com/chee/helm-frame"
+       :depends (helm)
+       :url "https://gitlab.com/chee/helm-frame.git")
