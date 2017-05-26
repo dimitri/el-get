@@ -3,9 +3,13 @@
        :type github
        :pkgname "emacs-helm/helm"
        :autoloads "helm-autoloads"
-       :build (("make"))
+       :build (("sed" "-i" "s/elpa/el-get/g" "Makefile")
+               ("sed" "-i" "s/async-\[.0-9\]*/emacs-async/g" "Makefile")
+               ("make"))
        :depends (emacs-async)
-       :build/darwin `(("make" ,(format "EMACS_COMMAND=%s" el-get-emacs)))
+       :build/darwin `(("sed" "-i" ".old" "s/elpa/el-get/g" "Makefile")
+                       ("sed" "-i" ".old" "s/async-\[.0-9\]*/emacs-async/g" "Makefile")
+                       ("make" ,(format "EMACS_COMMAND=%s" el-get-emacs)))
        ;; Windows probably doesn't have make available so we fake it.
        :build/windows-nt
        (let ((generated-autoload-file (expand-file-name "helm-autoloads.el")) \
