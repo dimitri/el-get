@@ -201,6 +201,9 @@
 (defvar el-get-next-packages nil
   "List of packages to install next, used when dealing with dependencies.")
 
+(defvar el-get-ignore-packages nil
+  "List of packages to be ignored.")
+
 (defun el-get-installation-failed (package signal-data)
   "Run all the failure hooks for PACKAGE and `signal' the car and cdr of SIGNAL-DATA."
   (run-hook-with-args 'el-get-post-error-hooks package signal-data)
@@ -548,36 +551,39 @@ PACKAGE may be either a string or the corresponding symbol."
 
 (defun el-get-do-install (package)
   "Install any PACKAGE for which you have a recipe."
-  (el-get-error-unless-package-p package)
-  (if (el-get-package-is-installed package)
-      (progn
-        (el-get-verbose-message "el-get: `%s' package is already installed" package)
-        (el-get-do-init package))
-    (let* ((status   (el-get-read-package-status package))
-           (source   (el-get-package-def package))
-           (method   (el-get-package-method source))
-           (install  (el-get-method method :install))
-           (url      (plist-get source :url))
-           (pdir     (el-get-package-directory package)))
+  (if (member package el-get-ignore-packages)
+      (message "el-get ignore %s" package)
+    (progn
+      (el-get-error-unless-package-p package)
+      (if (el-get-package-is-installed package)
+          (progn
+            (el-get-verbose-message "el-get: `%s' package is already installed" package)
+            (el-get-do-init package))
+        (let* ((status   (el-get-read-package-status package))
+               (source   (el-get-package-def package))
+               (method   (el-get-package-method source))
+               (install  (el-get-method method :install))
+               (url      (plist-get source :url))
+               (pdir     (el-get-package-directory package)))
 
-      (el-get-error-unless-required-emacs-version source)
+          (el-get-error-unless-required-emacs-version source)
 
-      (cond ((string= "installed" status)
-             (error "Package %s is already installed." package))
-            ((string= "required" status)
-             (message "Package %s previously failed to install, removing it first." package)
-             (el-get-remove package))
-            ((file-exists-p pdir)
-             (message "Package %s has an install dir but is not known to be installed. Removing it so we can install a known version." package)
-             (el-get-remove package)))
+          (cond ((string= "installed" status)
+                 (error "Package %s is already installed." package))
+                ((string= "required" status)
+                 (message "Package %s previously failed to install, removing it first." package)
+                 (el-get-remove package))
+                ((file-exists-p pdir)
+                 (message "Package %s has an install dir but is not known to be installed. Removing it so we can install a known version." package)
+                 (el-get-remove package)))
 
-      ;; check we can install the package and save to "required" status
-      (el-get-check-init)
-      (el-get-save-package-status package "required")
+          ;; check we can install the package and save to "required" status
+          (el-get-check-init)
+          (el-get-save-package-status package "required")
 
-      ;; and install the package now, *then* message about it
-      (funcall install package url 'el-get-post-install)
-      (message "el-get install %s" package))))
+          ;; and install the package now, *then* message about it
+          (funcall install package url 'el-get-post-install)
+          (message "el-get install %s" package))))))
 
 (defun el-get-reload (package &optional package-status-alist)
   "Reload PACKAGE."
