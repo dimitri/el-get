@@ -1,4 +1,4 @@
 (:name org-mime
        :type github
        :description "org html export for text/html MIME emails"
-       :pkgname "redguardtoo/org-mime")
+       :pkgname "org-mime/org-mime")
