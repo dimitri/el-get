@@ -23,8 +23,9 @@
        ;; setup.
        :lazy nil
        :post-init
-       (if (or (featurep 'cedet-devel-load)
-               (featurep 'eieio))
-           (message (concat "Emacs' built-in CEDET has already been loaded!  Restart"
-                            " Emacs to load CEDET from el-get instead."))
-         (load (expand-file-name "cedet-devel-load.el" pdir))))
+       (unless (eq (el-get-package-method 'cedet) 'builtin)
+         (if (or (featurep 'cedet-devel-load)
+                 (featurep 'eieio))
+             (message (concat "Emacs' built-in CEDET has already been loaded!  Restart"
+                              " Emacs to load CEDET from el-get instead."))
+           (load (expand-file-name "cedet-devel-load.el" pdir)))))
