@@ -2,7 +2,7 @@
        :website "http://savannah.nongnu.org/projects/elim"
        :description "An elisp instant messenger daemon"
        :type git
-       :url "git://git.sv.gnu.org/elim.git"
+       :url "http://git.savannah.gnu.org/elim.git"
        :build (("make"))
        :build/berkeley-unix (("gmake"))
        :load-path ("./elisp")
