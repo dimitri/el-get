@@ -1,0 +1,11 @@
+(:name c-xrefactory
+       :description "C Refactoring tool"
+       :type github
+       :pkgname "thoni56/c-xrefactory"
+       :load-path "env/emacs"
+       :build (("make"))
+       :load "env/emacs/c-xrefactory.el"
+       :post-init (progn
+                    (add-to-list 'exec-path (concat default-directory "src"))
+                    (el-get-envpath-prepend "PATH" (concat default-directory "src"))))
+)
