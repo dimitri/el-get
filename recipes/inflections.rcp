@@ -1,3 +1,0 @@
-(:name inflections
-       :description "Convert english words between singular and plural"
-       :type elpa)
