@@ -1,0 +1,4 @@
+(:name godoctor
+       :description "Frontend for godoctor"
+       :type github
+       :pkgname "microamp/godoctor.el")

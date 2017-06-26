@@ -2,4 +2,5 @@
        :description "Company-web is an alternative emacs plugin for autocompletion in html-mode, web-mode, jade-mode, slim-mode and use data of ac-html. It uses company-mode."
        :website "https://github.com/osv/company-web"
        :type github
+       :depends (company-mode dash cl-lib web-completion-data)
        :pkgname "osv/company-web")
