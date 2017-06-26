@@ -1,0 +1,5 @@
+(:name jump
+       :description "Defining function which contextually jump between files"
+       :type github
+       :pkgname "eschulte/jump.el"
+       :website "https://github.com/eschulte/jump.el")
