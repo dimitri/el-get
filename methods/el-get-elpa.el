@@ -54,7 +54,10 @@ ALIST-ELEM should be an element from `package-alist' or
     ;; In 24.4+ we have a list of descs, earlier versions just use the
     ;; name (a symbol) to specify the package.
     (let* ((descs (cdr (assq pkg package-archive-contents))))
-      (if (listp descs) (car descs) pkg)))
+      (cond
+       ((consp descs) (car descs))
+       ((null descs) (error "Couln't find package `%s'" pkg))
+       (t pkg))))
 
   (defun el-get-elpa-package-archive-base (pkg)
     "Compat wrapper for `package-archive-base'."
