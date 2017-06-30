@@ -1,5 +1,7 @@
 (:name cedet
-       :builtin "23.3"
+       ;; While CEDET is builtin since Emacs 23.3, CEDET users
+       ;; probably want the latest from git.
+       ;; :builtin "23.3"
        :website "http://cedet.sourceforge.net/"
        :description "CEDET is a Collection of Emacs Development Environment Tools written with the end goal of creating an advanced development environment in Emacs."
        :type git
@@ -17,12 +19,7 @@
          ("gmake" ,(format "EMACS=%s" (shell-quote-argument el-get-emacs)) "-C" "contrib"))
        :build/windows-nt
        `(("sh" "-c" "touch `/usr/bin/find . -name Makefile` && make FIND=/usr/bin/find"))
-       :features nil
-       ;; This package isn't really non-lazy, but we want to call the
-       ;; post-init immediately, because it handles the lazy autoload
-       ;; setup.
-       :lazy nil
-       :post-init
+       :prepare
        (if (or (featurep 'cedet-devel-load)
                (featurep 'eieio))
            (message (concat "Emacs' built-in CEDET has already been loaded!  Restart"
