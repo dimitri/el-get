@@ -1,6 +1,7 @@
 (:name c-xrefactory
-       :description "c-xrefactory - a refactoring browser for C and Java. See https://github.com/thoni56/c-xrefactory"
+       :description "c-xrefactory - a refactoring browser for C and Java."
        :type github
+       :website "https://github.com/thoni56/c-xrefactory"
        :pkgname "thoni56/c-xrefactory"
        :load-path "env/emacs"
        :build (("make"))
