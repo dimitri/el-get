@@ -1,0 +1,4 @@
+(:name logstash-conf-mode
+       :description "Basic mode for editing logstash configuration"
+       :type github
+       :pkgname "Wilfred/logstash-conf.el")
