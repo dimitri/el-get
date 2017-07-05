@@ -1,8 +1,8 @@
 (:name gregorio-mode
-       :website "http://christusrex.pl:8080"
+       :website "https://jsrjenkins.github.io/gregorio-mode/"
        :description "Major derived mode for .gabc (gregorio) files"
        :type github
-       :pkgname "cajetanus/gregorio-mode.el"
+       :pkgname "jsrjenkins/gregorio-mode.el"
        :features gregorio-mode
        :prepare (progn
-                  (add-to-list 'auto-mode-alist '("\\.gabc$" . gregorio-mode))))
+                     (add-to-list 'auto-mode-alist '("\\.gabc$" . gregorio-mode))))
