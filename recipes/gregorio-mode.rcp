@@ -2,7 +2,7 @@
        :website "https://jsrjenkins.github.io/gregorio-mode/"
        :description "Major derived mode for .gabc (gregorio) files"
        :type github
-       :pkgname "jsrjenkins/gregorio-mode.el"
+       :pkgname "jsrjenkins/gregorio-mode"
        :features gregorio-mode
        :prepare (progn
                      (add-to-list 'auto-mode-alist '("\\.gabc$" . gregorio-mode))))
