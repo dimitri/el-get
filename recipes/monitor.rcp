@@ -2,5 +2,6 @@
        :description "Utilities for monitoring expressions"
        :type github
        :pkgname "GuiltyDolphin/monitor"
+       :info "doc"
        :branch "master"
        :depends dash)
