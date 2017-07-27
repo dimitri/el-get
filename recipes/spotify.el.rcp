@@ -1,0 +1,4 @@
+(:name spotify.el
+       :type github
+       :pkgname "remvee/spotify-el"
+       :description "Control Spotify from Emacs.")
