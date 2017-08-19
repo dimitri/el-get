@@ -1,7 +1,7 @@
 (:name epkg
-       :website "https://github.com/tarsius/epkg"
-       :description "The stupid package tracker for Emacs"
+       :description "Browse the Emacsmirror package database"
        :type github
-       :pkgname "tarsius/epkg"
-       :depends (vcomp magit listing)
+       :pkgname "emacscollective/epkg"
+       :depends (closql dash)
+       :minimum-emacs-version "25.1"
        :compile ("epkg.el" "epkg-ui.el"))
