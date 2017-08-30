@@ -1,0 +1,4 @@
+(:name apiwrap
+       :type github
+       :description "Generate wrappers for your API endpoints!"
+       :pkgname "vermiculus/apiwrap.el")
