@@ -1,0 +1,6 @@
+(:name memoize
+       :description "Elisp memoization functions"
+       :website "https://github.com/skeeto/emacs-memoize"
+       :type github
+       :depends cl-lib
+       :pkgname "skeeto/emacs-memoize")
