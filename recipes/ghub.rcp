@@ -1,0 +1,4 @@
+(:name ghub
+       :type github
+       :description "Minuscule client for the Github API"
+       :pkgname "magit/ghub")
