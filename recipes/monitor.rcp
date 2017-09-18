@@ -2,6 +2,7 @@
        :description "Utilities for monitoring expressions"
        :type github
        :pkgname "GuiltyDolphin/monitor"
+       :build `(("make" "-C" "doc" "monitor.info"))
        :info "doc"
        :branch "master"
        :depends dash)
