@@ -1,0 +1,5 @@
+(:name atomic-chrome
+       :description "Edit text in browsers with Emacs"
+       :type github
+       :pkgname "alpha22jp/atomic-chrome"
+       :depends (json let-alist websocket))

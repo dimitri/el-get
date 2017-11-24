@@ -2,5 +2,6 @@
        :description "Perl Development Environment"
        :type github
        :pkgname "wenbinye/emacs-pde"
+       :info "lisp/doc"
        :load-path ("lisp")
        :load "lisp/pde-loaddefs.el")
