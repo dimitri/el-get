@@ -1,0 +1,4 @@
+(:name ninja-mode
+       :description "Major mode for editing .ninja files"
+       :type http
+       :url "https://raw.githubusercontent.com/ninja-build/ninja/master/misc/ninja-mode.el")
