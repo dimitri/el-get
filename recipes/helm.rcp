@@ -15,5 +15,7 @@
              (backup-inhibited t))
          (update-directory-autoloads default-directory)
          nil)
+       :build/berkeley-unix `(("gmake"
+                               ,(concat "ASYNC_ELPA_DIR=" (el-get-package-directory 'emacs-async))))
        :features "helm-config"
        :post-init (helm-mode))
