@@ -1,0 +1,7 @@
+(:name general
+       :website "https://github.com/noctuid/general.el"
+       :description "More convenient key definitions in emacs"
+       :type github
+       :pkgname "noctuid/general.el"
+       :features general
+       :depends (cl-lib))
