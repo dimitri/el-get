@@ -3,7 +3,7 @@
        :website "http://www.iis.ee.ethz.ch/~zimmi/emacs/vhdl-mode.html"
        :type http-tar
        :options ("xzf")
-       :url "https://iis.ee.ethz.ch/~zimmi/emacs/vhdl-mode-3.38.1.tar.gz"
+       :url "https://guest.iis.ee.ethz.ch/~zimmi/emacs/vhdl-mode-3.38.1.tar.gz"
        :prepare (progn
                   (add-to-list 'auto-mode-alist
                                '("\\.vhdl?\\'" . vhdl-mode))))

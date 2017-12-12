@@ -25,6 +25,10 @@
     (defalias 'package-desc-summary 'package-desc-doc))
   (unless (fboundp 'package-desc-version)
     (defalias 'package-desc-version 'package-desc-vers))
+  ;; Introduced in 24.4
+  (unless (fboundp 'package-desc-archive)
+    (defun package-desc-archive (desc)
+      (aref desc (1- (length desc)))))
 
   ;; In 24.4 each package has a *list* of descriptors, pretend it's so
   ;; in 24.3 and below as well.
@@ -44,16 +48,27 @@ ALIST-ELEM should be an element from `package-alist' or
           (mapc #'package-delete descs)
         ;; Otherwise, just delete the package directory.
         (delete-directory (el-get-elpa-package-directory pkg) 'recursive))))
+
+  (defun el-get-elpa-package-id (pkg)
+    "A compat utility function."
+    ;; In 24.4+ we have a list of descs, earlier versions just use the
+    ;; name (a symbol) to specify the package.
+    (let* ((descs (cdr (assq pkg package-archive-contents))))
+      (cond
+       ((consp descs) (car descs))
+       ((null descs) (error "Couln't find package `%s'" pkg))
+       (t pkg))))
+
+  (defun el-get-elpa-package-archive-base (pkg)
+    "Compat wrapper for `package-archive-base'."
+    (package-archive-base (el-get-elpa-package-id pkg)))
+
   (defun el-get-elpa-install-package (pkg have-deps-p)
     "A wrapper for package.el installion.
 
 Installs the 1st available version. If HAVE-DEPS-P skip
 package.el's dependency computations."
-    (let* ((pkg-avail (assq pkg package-archive-contents))
-           (descs (cdr pkg-avail))
-           ;; In 24.4+ we have a list of descs, earlier versions just
-           ;; have a single package name
-           (to-install (if (listp descs) (car descs) pkg)))
+    (let ((to-install (el-get-elpa-package-id pkg)))
       (if have-deps-p
           (package-download-transaction (list to-install))
         (package-install to-install)))))
@@ -152,7 +167,6 @@ the recipe, then return nil."
          ;; Prepend elpa-repo to `package-archives' for new package.el
          (package-archives (append (when elpa-repo (list elpa-repo))
                                    (when (boundp 'package-archives) package-archives))))
-    (el-get-insecure-check package url)
 
     (unless (and elpa-dir (file-directory-p elpa-dir))
       ;; package-install does these only for interactive calls
@@ -167,6 +181,12 @@ the recipe, then return nil."
                                (car elpa-new-repo)
                                (cdr elpa-new-repo))))
              (package-read-all-archive-contents)))
+      ;; We can only get the url after `package-archive-contents' is
+      ;; initialized.
+      (setq url (or (cdr elpa-repo)
+                    (el-get-elpa-package-archive-base package)))
+      (el-get-insecure-check package url)
+
       ;; TODO: should we refresh and retry once if package-install fails?
       ;; package-install generates autoloads, byte compiles
       (let (emacs-lisp-mode-hook fundamental-mode-hook prog-mode-hook)
@@ -217,8 +237,8 @@ first time.")
     ;; in windows, we don't have real symlinks, so its better to remove
     ;; the directory and copy everything again
     (when (memq system-type '(ms-dos windows-nt))
-      (delete-directory (el-get-elpa-package-directory package) t)
-      (el-get-elpa-symlink-package package)))
+      (delete-directory (el-get-elpa-package-directory package) t))
+    (el-get-elpa-symlink-package package))
   (funcall post-update-fun package))
 
 (defun el-get-elpa-remove (package url post-remove-fun)
@@ -295,9 +315,8 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
                (pkg-deps    (package-desc-reqs pkg-desc))
                (depends     (remq 'emacs (mapcar #'car pkg-deps)))
                (emacs-dep   (assq 'emacs pkg-deps))
-               (repo
-                (assoc (aref pkg-desc (- (length pkg-desc) 1))
-                       package-archives)))
+               (repo        (assoc (package-desc-archive pkg-desc)
+                                   package-archives)))
           (erase-buffer)
           (insert
            (format

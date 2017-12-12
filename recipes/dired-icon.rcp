@@ -1,0 +1,5 @@
+(:name dired-icon
+       :description "Display file icons in dired buffers."
+       :type git
+       :url "https://gitlab.com/xuhdev/dired-icon.git"
+       :minimum-emacs-version "24.3")

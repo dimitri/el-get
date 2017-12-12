@@ -4,5 +4,5 @@
        :type github
        :pkgname "jorgenschaefer/elpy"
        :post-init (el-get-envpath-prepend "PYTHONPATH" default-directory)
-       :depends (company-mode yasnippet highlight-indentation
-                              find-file-in-project idomenu pyvenv))
+       :depends (company-mode find-file-in-project highlight-indentation
+                              pyvenv yasnippet s))

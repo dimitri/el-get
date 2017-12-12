@@ -1,0 +1,7 @@
+(:name helm-cider
+       :website "https://www.github.com/clojure-emacs/helm-cider"
+       :description "HELM interface to CIDER."
+       :type github
+       :pkgname "clojure-emacs/helm-cider"
+       :load-path "."
+       :depends (helm cider))

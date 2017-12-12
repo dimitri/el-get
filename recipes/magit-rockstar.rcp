@@ -1,0 +1,6 @@
+(:name magit-rockstar
+       :website "https://github.com/tarsius/magit-rockstar"
+       :description "commit like a rockstar"
+       :type github
+       :pkgname "tarsius/magit-rockstar"
+       :depends (dash magit))

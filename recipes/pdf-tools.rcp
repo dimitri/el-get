@@ -13,5 +13,6 @@
                       (concat (el-get-package-directory "pdf-tools")
                               "server/epdfinfo"))
        :build (("make"))
+       :build/berkeley-unix (("gmake"))
        :load-path (("lisp"))
        :compile ("lisp/"))

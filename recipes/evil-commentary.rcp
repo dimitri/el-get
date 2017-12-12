@@ -1,0 +1,7 @@
+(:name evil-commentary
+       :website "https://www.github.com/linktohack/evil-commentary"
+       :description "A port of vim-commentary to EMACS/Evil."
+       :type github
+       :pkgname "linktohack/evil-commentary"
+       :load-path "."
+       :depends (evil))

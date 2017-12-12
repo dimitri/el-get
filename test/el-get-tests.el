@@ -11,7 +11,7 @@
 (when noninteractive
   (defadvice message (around el-get-test-catch-output activate)
     "redirect all `message' output to `el-get-test-output-buffer'."
-    (if el-get-test-output-buffer
+    (if (and el-get-test-output-buffer (ad-get-arg 0))
         (with-current-buffer el-get-test-output-buffer
           (insert (apply #'format (ad-get-args 0)) "\n"))
       ad-do-it))
@@ -34,6 +34,7 @@ error.
 
 Following variables are bound to temporal values:
 * `user-emacs-directory'
+* `package-user-dir'
 * `el-get-dir'
 * `el-get-status-file'
 * `el-get-status-cache'
@@ -41,6 +42,7 @@ Following variables are bound to temporal values:
   (declare (debug t))
   `(let* ((user-emacs-directory
            (make-temp-file "emacs.d.el-get-testing" 'dir "/"))
+          (package-user-dir (locate-user-emacs-file "elpa"))
           (el-get-dir (mapconcat #'file-name-as-directory
                                  `(,user-emacs-directory "el-get") ""))
           (el-get-status-file (concat el-get-dir ".status.el"))
@@ -148,6 +150,21 @@ John.Doe-123_@example.com"))
           (el-get-sources '((:name "dummy" :type github))))
       ;; TODO check for error message?
       (should-error (el-get-insecure-check "dummy" url) :type 'error))))
+
+(ert-deftest el-get-insecure-elpa ()
+  (el-get-with-temp-home
+   (require 'package-x)                 ; create local package archive
+   (let* ((el-get-allow-insecure nil)
+          (pkg 'el-get-test-package)
+          (package-archive-upload-base (expand-file-name "pkg-repo" user-emacs-directory))
+          (package-archives `(("test-repo" . ,package-archive-upload-base)))
+          (el-get-sources
+           `((:name package :post-init nil) ; avoid adding other repos
+             (:name el-get-test-package :type elpa))))
+     (make-directory package-archive-upload-base t)
+     (package-upload-file (expand-file-name "pkgs/el-get-test-package.el"
+                                            el-get-test-files-dir))
+     (el-get 'sync 'el-get-test-package))))
 
 (defconst secure-urls '("https://example.com"
                         "ssh://example.com"

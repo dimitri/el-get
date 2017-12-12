@@ -1,0 +1,4 @@
+(:name perl6-mode
+       :type github
+       :description "Emacs major mode for Perl 6"
+       :pkgname "hinrik/perl6-mode")

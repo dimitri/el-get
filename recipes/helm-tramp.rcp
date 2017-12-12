@@ -1,0 +1,5 @@
+(:name helm-tramp
+       :description "Tramp with helm interface."
+       :type github
+       :pkgname "masasam/emacs-helm-tramp"
+       :depends (helm))

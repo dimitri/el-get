@@ -1,0 +1,5 @@
+(:name py-isort
+       :description "py-isort.el integrates isort into Emacs"
+       :website "https://github.com/paetzke/py-isort"
+       :type github
+       :pkgname "paetzke/py-isort.el")

@@ -1,0 +1,6 @@
+(:name xref-js2
+       :description ""
+       :website "https://github.com/nicolaspetton/xref-js2"
+       :type github
+       :depends (js2-mode)
+       :pkgname "nicolaspetton/xref-js2")

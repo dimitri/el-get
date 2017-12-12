@@ -1,7 +1,7 @@
 (:name textile-mode
        :description "Textile editing mode"
-       :type http
-       :url "http://dev.nozav.org/scripts/textile-mode.el"
+       :type github
+       :pkgname "juba/textile-mode"
        :prepare (progn
                   (autoload 'textile-mode "textile-mode"
                     "Textile editing mode." t)

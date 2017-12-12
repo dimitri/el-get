@@ -2,5 +2,5 @@
        :description "Helm extension for Rails projects"
        :type github
        :pkgname "asok/helm-rails"
-       :depends (helm magit inflections)
+       :depends (helm magit jump)
        :features helm-rails-loaddefs)

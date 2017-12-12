@@ -1,0 +1,4 @@
+(:name osx-dictionary
+       :description "Interface for OSX Dictionary.app."
+       :type github
+       :pkgname "xuchunyang/osx-dictionary.el")

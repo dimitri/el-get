@@ -1,0 +1,6 @@
+(:name no-littering
+       :website "https://github.com/emacscollective/no-littering"
+       :description "Help keeping ~/.emacs.d clean"
+       :type github
+       :pkgname "emacscollective/no-littering"
+       :depends (cl-lib))

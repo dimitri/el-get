@@ -1,0 +1,4 @@
+(:name zig-mode
+       :description "Syntax highlighting for the Zig programming language"
+       :type github
+       :pkgname "AndreaOrru/zig-mode")

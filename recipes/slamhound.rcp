@@ -1,0 +1,6 @@
+(:name slamhound
+       :website "https://www.github.com/technomancy/slamhound"
+       :description "Slamhound rips your ns form apart and reconstructs it. No Dutch surgeon required."
+       :type github
+       :load-path "."
+       :pkgname "technomancy/slamhound")

@@ -1,0 +1,5 @@
+(:name emacsql
+       :description "High-level SQL database front-end."
+       :type github
+       :pkgname "skeeto/emacsql"
+       :depends (finalize))

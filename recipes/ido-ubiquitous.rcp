@@ -2,5 +2,5 @@
        :description "Use ido (nearly) everywhere"
        :website "https://github.com/DarwinAwardWinner/ido-ubiquitous"
        :type github
-       :depends (cl-lib s)
+       :depends (cl-lib s memoize)
        :pkgname "DarwinAwardWinner/ido-ubiquitous")

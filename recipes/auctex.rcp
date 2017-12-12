@@ -11,6 +11,15 @@
                  "--with-packagedatadir=$(pwd)"
                  ,(concat "--with-emacs=" el-get-emacs))
                 ("make"))
+       :build/berkeley-unix `(("sed" "-i" "" "-e" "s/MAKE=make/MAKE=gmake/g" "autogen.sh")
+                              ("./autogen.sh")
+                              ("./configure"
+                               "--without-texmf-dir"
+                               "--with-packagelispdir=$(pwd)"
+                               "--with-packagedatadir=$(pwd)"
+                               ,(concat "--with-emacs=" el-get-emacs)
+                               "MAKE=gmake")
+                              ("gmake"))
        :build/darwin `(("./autogen.sh")
                        ("./configure"
                         "--without-texmf-dir"

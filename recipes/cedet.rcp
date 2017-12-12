@@ -1,4 +1,5 @@
 (:name cedet
+       :builtin "23.3"
        :website "http://cedet.sourceforge.net/"
        :description "CEDET is a Collection of Emacs Development Environment Tools written with the end goal of creating an advanced development environment in Emacs."
        :type git
@@ -22,8 +23,9 @@
        ;; setup.
        :lazy nil
        :post-init
-       (if (or (featurep 'cedet-devel-load)
-               (featurep 'eieio))
-           (message (concat "Emacs' built-in CEDET has already been loaded!  Restart"
-                            " Emacs to load CEDET from el-get instead."))
-         (load (expand-file-name "cedet-devel-load.el" pdir))))
+       (unless (eq (el-get-package-method 'cedet) 'builtin)
+         (if (or (featurep 'cedet-devel-load)
+                 (featurep 'eieio))
+             (message (concat "Emacs' built-in CEDET has already been loaded!  Restart"
+                              " Emacs to load CEDET from el-get instead."))
+           (load (expand-file-name "cedet-devel-load.el" pdir)))))

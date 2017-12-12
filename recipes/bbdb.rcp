@@ -2,7 +2,7 @@
        :website "http://bbdb.sourceforge.net/"
        :description "The Insidious Big Brother Database (BBDB) is a contact management utility."
        :type git
-       :url "git://git.savannah.nongnu.org/bbdb.git"
+       :url "https://git.savannah.nongnu.org/git/bbdb.git"
        :load-path ("./lisp")
        ;; if using vm, add `--with-vm-dir=DIR' after ./configure
        :build `(("./autogen.sh") ("./configure") ("make"))

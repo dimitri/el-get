@@ -1,0 +1,5 @@
+(:name py-yapf
+       :description "Use yapf to beautify a Python buffer"
+       :website "https://github.com/paetzke/py-yapf.el"
+       :type github
+       :pkgname "paetzke/py-yapf.el")

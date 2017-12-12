@@ -1,0 +1,4 @@
+(:name highlight-indentation-guides
+       :description "This minor mode highlights indentation levels via font-lock"
+       :type git
+       :url "https://github.com/DarthFennec/highlight-indent-guides.git")

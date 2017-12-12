@@ -22,7 +22,8 @@ prereqs() {
      fi
      if ! emacs -Q --batch --eval "(require 'package)" ; then
          pkg_compat23=https://raw.githubusercontent.com/mirrors/emacs/ba08b24186711eaeb3748f3d1f23e2c2d9ed0d09
-         curl -LO $pkg_compat23/lisp/emacs-lisp/package.el
+         curl -LO $pkg_compat23/lisp/emacs-lisp/package.el \
+              -O  $pkg_compat23/lisp/emacs-lisp/package-x.el
      fi)
 }
 

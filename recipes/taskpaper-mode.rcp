@@ -1,0 +1,4 @@
+(:name taskpaper-mode
+       :description "TaskPaper major mode for emacs"
+       :type github
+       :pkgname "al3xandru/taskpaper-mode")

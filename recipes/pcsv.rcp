@@ -1,0 +1,4 @@
+(:name pcsv
+       :description "Parser of CSV."
+       :type github
+       :pkgname "mhayashi1120/Emacs-pcsv")

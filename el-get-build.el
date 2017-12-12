@@ -44,17 +44,20 @@ Otherwise, use `:build/SYSTEM-TYPE' or `:build'."
             (or (plist-get source (intern (format ":build/%s" system-type)))
                 (plist-get source :build))))
          (build-commands
-          (if (listp raw-build-commands)
-              ;; If the :build property's car is a symbol, assume that it is an
-              ;; expression that evaluates to a command list, rather than a
-              ;; literal command list.
-              (if (symbolp (car raw-build-commands))
-                  (let ((default-directory (el-get-package-directory package))
-                        (unsafe (and safe-eval (unsafep raw-build-commands))))
-                    (if unsafe (throw 'unsafe-build unsafe)
-                      (eval raw-build-commands)))
-                raw-build-commands)
-            (error "build commands for package %s are not a list" package)))
+          (cond
+           ;; Nothing to do for `:builtin' packages.
+           ((eq (el-get-package-method source) 'builtin) nil)
+           ((listp raw-build-commands)
+            ;; If the :build property's car is a symbol, assume that it is an
+            ;; expression that evaluates to a command list, rather than a
+            ;; literal command list.
+            (if (symbolp (car raw-build-commands))
+                (let ((default-directory (el-get-package-directory package))
+                      (unsafe (and safe-eval (unsafep raw-build-commands))))
+                  (if unsafe (throw 'unsafe-build unsafe)
+                    (eval raw-build-commands)))
+              raw-build-commands))
+            (t (error "build commands for package %s are not a list" package))))
          (flat-build-commands
           ;; Flatten lists, but not strings
           (mapcar (lambda (x) (if (stringp x) x (el-get-flatten x)))

@@ -1,5 +1,5 @@
 (:name hlinum
        :description "Extension for linum.el to highlight current line number"
-       :type http :url "http://hlinum-mode.googlecode.com/hg/hlinum.el"
-       :features hlinum
+       :type github
+       :pkgname "tom-tan/hlinum-mode"
        :depends linum-ex)
