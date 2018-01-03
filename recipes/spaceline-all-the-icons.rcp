@@ -1,0 +1,7 @@
+(:name spaceline-all-the-icons
+       :website "https://github.com/domtronn/spaceline-all-the-icons.el"
+       :depends (all-the-icons spaceline memoize)
+       :description "Modified spaceline with icons"
+       :type github
+       :minimum-emacs-version "24.3"
+       :pkgname "domtronn/spaceline-all-the-icons.el")
