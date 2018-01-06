@@ -4,8 +4,8 @@
        :type github
        :pkgname "capitaomorte/yasnippet"
        :compile "yasnippet.el"
-
-       ;; only fetch the `snippets' submodule, others have funny
-       ;; file names that can cause problems
-       ;; see https://github.com/dimitri/el-get/issues/1511
+       ;; Yasnippet used to have submodules which failed to checkout
+       ;; on Windows (see #1511), keep them disabled though there are
+       ;; no submodules anymore.  See the `yasnippet-snippets' package
+       ;; to get the snippets which previously came with yasnippet.
        :submodule nil)
