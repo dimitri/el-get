@@ -1,0 +1,5 @@
+(:name winum
+       :description "Window numbers for Emacs - Navigate windows and frames using numbers"
+       :type github
+       :depends (cl-lib dash)
+       :pkgname "deb0ch/emacs-winum")
