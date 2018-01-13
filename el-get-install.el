@@ -49,8 +49,11 @@
 
            ;; First clone el-get
            (status
-            (call-process
-             git nil `(,buf t) t "--no-pager" "clone" "-v" url package)))
+            (apply #'call-process
+                   `(,git nil (,buf t) t "--no-pager" "clone" "-v"
+                     ,@(when (boundp 'el-get-install-shallow-clone)
+                         '("--depth" "1"))
+                     ,url ,package))))
 
       (unless (zerop status)
         (error "Couldn't clone el-get from the Git repository: %s" url))
