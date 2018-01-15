@@ -51,7 +51,7 @@ See Info node `(el-get) Authoring Recipes'.")
   "List of `el-get-check-recipe' warnings to suppress.
 
 Current possibe elements are:
- `features', `github', `autoloads'")
+ `features', `github', `gitlab', `autoloads'")
 
 (defun el-get-check-recipe-batch-1 (recipe-file)
   (let ((warning-prefix-function
@@ -175,6 +175,12 @@ FILENAME defaults to `buffer-file-name'."
                    (eq type 'git) (string-match "//github.com/" url))
           (el-get-check-warning :warning
             "Use `:type github' for github type recipe"))
+	;; Is gitlab type used?
+        (when (and (not (memq 'gitlab el-get-check-suppressed-warnings))
+                   (eq type 'git) (string-match "//gitlab.com/" url))
+          (el-get-check-warning :warning
+            "Use `:type gitlab' for gitlab type recipe"))
+
         ;; Warn when `:autoloads nil' is specified.
         (when (and (not (memq 'autoloads el-get-check-suppressed-warnings))
                    (null autoloads) (plist-member recipe :autoloads))
