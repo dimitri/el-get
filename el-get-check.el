@@ -175,7 +175,7 @@ FILENAME defaults to `buffer-file-name'."
                    (eq type 'git) (string-match "//github.com/" url))
           (el-get-check-warning :warning
             "Use `:type github' for github type recipe"))
-	;; Is gitlab type used?
+        ;; Is gitlab type used?
         (when (and (not (memq 'gitlab el-get-check-suppressed-warnings))
                    (eq type 'git) (string-match "//gitlab.com/" url))
           (el-get-check-warning :warning
