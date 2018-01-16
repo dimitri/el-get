@@ -14,5 +14,5 @@ script:
   - byte-compile pkg/*.el
   - byte-compile -Werror *.el methods/*.el
   - ert-tests
-  - check-recipes -Wno-features -Wno-github -Wno-autoloads recipes/
+  - check-recipes -Wno-features -Wno-github -Wno-gitlab -Wno-autoloads recipes/
   - check-whitespace
