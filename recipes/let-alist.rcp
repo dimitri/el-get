@@ -2,4 +2,4 @@
        :description "Easily let-bind values of an assoc-list by their names."
        :builtin "25.0.50"
        :type elpa
-       :url "https://elpa.gnu.org/packages/let-alist.html")
+       :website "https://elpa.gnu.org/packages/let-alist.html")
