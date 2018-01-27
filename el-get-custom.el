@@ -40,7 +40,9 @@
 
 (defcustom el-get-status-file
   (concat (file-name-as-directory el-get-dir) ".status.el")
-  "Define where to store and read the package statuses")
+  "Define where to store and read the package statuses"
+  :group 'el-get
+  :type 'file)
 
 (defvar el-get-autoload-file
   (concat (file-name-as-directory el-get-dir) ".loaddefs.el")
