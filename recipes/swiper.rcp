@@ -2,8 +2,8 @@
        :description "Gives you an overview as you search for a regex."
        :type github
        :pkgname "abo-abo/swiper"
-       :build (("make" "compile")
+       :build `(("make" ,(format "emacs=%s" el-get-emacs) "compile")
                ("makeinfo" "-o" "doc/ivy.info" "doc/ivy.texi"))
-       :build/berkeley-unix (("gmake" "compile")
+       :build/berkeley-unix `(("gmake" ,(format "emacs=%s" el-get-emacs) "compile")
                              ("gmakeinfo" "-o" "doc/ivy.info" "doc/ivy.texi"))
        :info "doc/ivy.info")
