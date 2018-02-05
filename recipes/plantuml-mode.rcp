@@ -1,7 +1,7 @@
 (:name plantuml-mode
        :description "Major mode for PlantUML."
        :type github
-       :pkgname "zwz/plantuml-mode"
+       :pkgname "skuro/plantuml-mode"
        :post-init (let ((plantuml-url "http://sourceforge.net/projects/plantuml/files/plantuml.jar/download")
                         (plantuml-jar (expand-file-name "plantuml.jar" default-directory)))
                     (when (not (file-exists-p plantuml-jar))
