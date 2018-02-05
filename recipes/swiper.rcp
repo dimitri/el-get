@@ -1,6 +1,7 @@
 (:name swiper
        :description "Gives you an overview as you search for a regex."
        :type github
+       :depends (cl-lib)
        :pkgname "abo-abo/swiper"
        :build `(("make" ,(format "emacs=%s" el-get-emacs) "compile")
                ("makeinfo" "-o" "doc/ivy.info" "doc/ivy.texi"))

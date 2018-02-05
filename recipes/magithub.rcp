@@ -2,6 +2,6 @@
        :type github
        :description "Magit interfaces for GitHub."
        :pkgname "vermiculus/magithub"
-       :depends (ghub+ magit s)
+       :depends (ghub+ magit s markdown-mode)
        :features magithub
        :post-init (magithub-feature-autoinject t))
