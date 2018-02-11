@@ -11,7 +11,9 @@
                           "mu"
                           (el-get-package-directory 'mu4e))))
        :build `(("./autogen.sh")
-                ("make"))
+                ("make")
+                ;; generate mu4e/mu4e.info
+                ("sh" "-c" "cd mu4e && make"))
        :load-path "mu4e"
        :info "mu4e/mu4e.info"
        )
