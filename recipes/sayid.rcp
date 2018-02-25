@@ -1,0 +1,7 @@
+(:name sayid
+       :description "sayid nREPL middleware client"
+       :website "http://bpiel.github.io/sayid/"
+       :features sayid
+       :type elpa
+       :repo ("melpa" . "http://melpa.org/packages/")
+       :depends (cider))
