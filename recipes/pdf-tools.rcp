@@ -12,7 +12,7 @@
        :prepare (setq pdf-info-epdfinfo-program
                       (concat (el-get-package-directory "pdf-tools")
                               "server/epdfinfo"))
-       :build (("make"))
-       :build/berkeley-unix (("gmake"))
+       :build (("make" "autobuild"))
+       :build/berkeley-unix (("gmake" "autobuild"))
        :load-path (("lisp"))
        :compile ("lisp/"))
