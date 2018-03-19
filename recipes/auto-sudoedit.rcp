@@ -1,0 +1,7 @@
+(:name auto-sudoedit
+       :description "automatic do sudo by tramp when need root file."
+       :website "https://github.com/ncaq/auto-sudoedit"
+       :type github
+       :minimum-emacs-version 24
+       :depends (f)
+       :pkgname "ncaq/auto-sudoedit")
