@@ -1,0 +1,7 @@
+(:name apib-mode
+       :description "Api BluePrint mode"
+       :website "https://github.com/w-vi/apib-mode"
+       :type github
+       :depends (markdown-mode)
+       :pkgname "w-vi/apib-mode"
+       :post-init (add-to-list 'auto-mode-alist '("\\.apib\\'" . apib-mode)))
