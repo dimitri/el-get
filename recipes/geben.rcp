@@ -1,6 +1,7 @@
 (:name geben
-       :website "https://code.google.com/p/geben-on-emacs/"
        :description "GEBEN is a software package that interfaces Emacs to DBGp protocol with which you can debug running scripts interactively."
-       :type svn
-       :url "http://geben-on-emacs.googlecode.com/svn/trunk/"
+       :website "https://github.com/ahungry/geben"
+       :type "github"
+       :branch "master"
+       :pkgname "ahungry/geben"
 )
