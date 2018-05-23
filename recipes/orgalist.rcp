@@ -1,0 +1,6 @@
+(:name orgalist
+       :description
+       "Manage Org-like lists in non-Org buffers."
+       :website "https://elpa.gnu.org/packages/orgalist.html"
+       :depends (org-mode)
+       :type elpa)
