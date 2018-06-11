@@ -5,8 +5,7 @@ env:
   - EMACS_VERSION=24.3
   - EMACS_VERSION=24.5
   - EMACS_VERSION=25.3
-  # Load mm-util to work around Bug#30258
-  - EMACS_VERSION=26-prerelease EMACS_OPT='-l mm-util'
+  - EMACS_VERSION=26.1
 install:
   - env
   - source test/travis-ci.sh
