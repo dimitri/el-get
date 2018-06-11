@@ -1,0 +1,5 @@
+(:name lispyville
+       :description "lispy + evil = lispyville"
+       :type github
+       :pkgname "noctuid/lispyville"
+       :depends (evil))
