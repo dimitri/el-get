@@ -1,0 +1,5 @@
+(:name company-lua
+       :description "company-mode completion backend for Lua"
+       :depends (company-mode)
+       :type github
+       :pkgname "ptrv/company-lua")

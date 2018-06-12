@@ -1,0 +1,6 @@
+(:name ace-mc
+       :description "Add Multiple Cursors using Ace Jump."
+       :website "https://github.com/mm--/ace-mc"
+       :type github
+       :depends (ace-jump-mode multiple-cursors)
+       :pkgname "mm--/ace-mc")
