@@ -1,3 +1,5 @@
+;;; currently nightly compiler is needed to install racer.
+;;; See https://github.com/racer-rust/racer for detail.
 (:name rust-racer
        :type github
        :pkgname "racer-rust/racer"
