@@ -1,0 +1,5 @@
+(:name helm-smex
+       :description "Helm interface for smex."
+       :type github
+       :pkgname "ptrv/helm-smex"
+       :depends (helm smex))
