@@ -1,0 +1,5 @@
+(:name vue-mode
+       :description "Emacs major mode for vue.js"
+       :type github
+      ;; :depends cl-lib
+       :pkgname "AdamNiederer/vue-mode/vue-mode.el")
