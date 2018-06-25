@@ -1,0 +1,4 @@
+-(:name go-add-tags
+-       :description "Add field tags for struct fields. This package is inspired by GoAddTags of vim-go."
+-       :type github
+-       :pkgname "syohex/emacs-go-add-tags/go-add-tags.el")
