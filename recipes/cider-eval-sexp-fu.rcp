@@ -1,0 +1,5 @@
+(:name cider-eval-sexp-fu
+       :description "Highlight evaluated sexps with CIDER."
+       :type github
+       :pkgname "clojure-emacs/cider-eval-sexp-fu"
+       :depends (highlight eval-sexp-fu))

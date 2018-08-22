@@ -236,6 +236,7 @@ block (just after the last closing paren) and you type @kbd{C-j}.
 @menu
 * Install the developer version::
 * Skip Emacswiki recipes when installing::
+* Shallow clone when installing::
 @end menu
 
 @node Install the developer version
@@ -273,6 +274,23 @@ to:
  "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
  (lambda (s)
    (let (el-get-install-skip-emacswiki-recipes)
+     (goto-char (point-max))
+     (eval-print-last-sexp))))
+@end example
+
+@node Shallow clone when installing
+@section Shallow clone when installing
+
+@code{--depth 1}
+
+Should you want to run @code{git-clone} with @code{--depth 1} when
+installing El-Get itself, the following snippet is showing how to:
+
+@example
+(url-retrieve
+ "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
+ (lambda (s)
+   (let (el-get-install-shallow-clone)
      (goto-char (point-max))
      (eval-print-last-sexp))))
 @end example

@@ -2,4 +2,4 @@
        :builtin "24.3"
        :type elpa
        :description "Properly prefixed CL functions and macros"
-       :url "http://elpa.gnu.org/packages/cl-lib.html")
+       :website "http://elpa.gnu.org/packages/cl-lib.html")

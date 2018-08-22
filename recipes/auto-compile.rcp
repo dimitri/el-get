@@ -1,5 +1,5 @@
 (:name auto-compile
        :type github
-       :pkgname "tarsius/auto-compile"
+       :pkgname "emacscollective/auto-compile"
        :description "Automatically compile Emacs Lisp libraries."
-       :depends (packed dash))
+       :depends (packed))

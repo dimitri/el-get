@@ -1,0 +1,6 @@
+(:name ido-completing-read-plus
+       :description "Fancy completion all over Emacs, not just for buffers and files."
+       :website "https://github.com/DarwinAwardWinner/ido-completing-read-plus"
+       :type github
+       :depends (cl-lib s memoize)
+       :pkgname "DarwinAwardWinner/ido-completing-read-plus")

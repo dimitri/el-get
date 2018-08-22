@@ -47,7 +47,7 @@ else
 fi
 
 ert-tests() {
-    emacs -batch -Q -L pkg/ -L . -l test/el-get-tests.el -f ert-run-tests-batch-and-exit
+    emacs -batch -Q $EMACS_OPT -L pkg/ -L . -l test/el-get-tests.el -f ert-run-tests-batch-and-exit
 }
 
 # byte-compile [-Werror] <files>...

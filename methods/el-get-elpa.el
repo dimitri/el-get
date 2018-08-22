@@ -153,6 +153,7 @@ the recipe, then return nil."
 
 (defun el-get-elpa-install (package url post-install-fun)
   "Ask elpa to install given PACKAGE."
+  (setq package (el-get-as-symbol package))
   (let* ((have-deps-p (plist-member (el-get-package-def package) :depends))
          (elpa-dir (el-get-elpa-package-directory package))
          (elpa-repo (el-get-elpa-package-repo package))
@@ -222,6 +223,7 @@ first time.")
 
 (defun el-get-elpa-update (package url post-update-fun)
   "Ask elpa to update given PACKAGE."
+  (setq package (el-get-as-symbol package))
   (unless package--initialized
     (package-initialize t))
   (el-get-insecure-check package url)
@@ -250,6 +252,7 @@ first time.")
 
 (defun el-get-elpa-post-remove (package)
   "Do remove the ELPA bits for package, now"
+  (setq package (el-get-as-symbol package))
   (el-get-elpa-delete-package package))
 
 (add-hook 'el-get-elpa-remove-hook 'el-get-elpa-post-remove)

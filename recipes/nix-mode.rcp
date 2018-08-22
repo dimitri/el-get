@@ -1,4 +1,5 @@
 (:name nix-mode
-       :type http
-       :url "https://raw.github.com/NixOS/nix/master/misc/emacs/nix-mode.el"
+       :website "https://github.com/NixOS/nix-mode#readme"
+       :type github
+       :pkgname "NixOS/nix-mode"
        :description "Major mode for editing Nix expressions")

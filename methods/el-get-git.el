@@ -25,7 +25,7 @@
   :group 'el-get
   :type 'boolean)
 
-(defcustom el-get-git-known-smart-domains '("www.github.com" "www.bitbucket.org" "repo.or.cz")
+(defcustom el-get-git-known-smart-domains '("www.github.com" "www.bitbucket.org" "repo.or.cz" "code.orgmode.org")
   "List of domains which are known to support shallow clone, el-get will not make
 explicit checks for these"
   :group 'el-get

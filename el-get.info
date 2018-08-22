@@ -1,4 +1,4 @@
-This is el-get.info, produced by makeinfo version 4.11 from el-get.texi.
+This is el-get.info, produced by makeinfo version 4.13 from el-get.texi.
 
 INFO-DIR-SECTION Emacs
 START-INFO-DIR-ENTRY
@@ -229,12 +229,13 @@ block (just after the last closing paren) and you type `C-j'.
 
 * Install the developer version::
 * Skip Emacswiki recipes when installing::
+* Shallow clone when installing::
 
 
 File: el-get.info,  Node: Install the developer version,  Next: Skip Emacswiki recipes when installing,  Up: Installing
 
 4.1 Developer version
-======================
+=====================
 
 The lazy installer uses the default `el-get-install.el' file which
 targets the `stable' branch.  To install El-Get directly on the
@@ -251,7 +252,7 @@ existence:
           (eval-print-last-sexp))))
 
 
-File: el-get.info,  Node: Skip Emacswiki recipes when installing,  Prev: Install the developer version,  Up: Installing
+File: el-get.info,  Node: Skip Emacswiki recipes when installing,  Next: Shallow clone when installing,  Prev: Install the developer version,  Up: Installing
 
 4.2 Skip Emacswiki recipes when installing
 ==========================================
@@ -268,6 +269,24 @@ to:
       "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
       (lambda (s)
         (let (el-get-install-skip-emacswiki-recipes)
+          (goto-char (point-max))
+          (eval-print-last-sexp))))
+
+
+File: el-get.info,  Node: Shallow clone when installing,  Prev: Skip Emacswiki recipes when installing,  Up: Installing
+
+4.3 Shallow clone when installing
+=================================
+
+`--depth 1'
+
+   Should you want to run `git-clone' with `--depth 1' when installing
+El-Get itself, the following snippet is showing how to:
+
+     (url-retrieve
+      "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
+      (lambda (s)
+        (let (el-get-install-shallow-clone)
           (goto-char (point-max))
           (eval-print-last-sexp))))
 
@@ -1244,28 +1263,29 @@ Ref: Glossary - Recipe6607
 Ref: Glossary - Status7031
 Ref: Glossary - Update7289
 Node: Installing7527
-Node: Install the developer version8400
-Node: Skip Emacswiki recipes when installing9145
-Node: Usage9981
-Node: Setup12270
-Node: Basic Setup12694
-Node: The el-get function14005
-Node: Distributed Setup15281
-Node: The el-get-bundle macro18191
-Node: Setup Customization24137
-Node: User Init25555
-Node: Before and After properties26242
-Node: Initialization files27750
-Node: Recipes28403
-Node: Organizing recipes28878
-Node: Getting more recipes30509
-Node: Overriding package files31207
-Node: Authoring Recipes31590
-Node: Recipe format32205
-Node: Dependencies41994
-Node: Byte Compilation42340
-Node: Autoloads42906
-Node: Build44032
-Node: Recipe checker45004
+Node: Install the developer version8433
+Node: Skip Emacswiki recipes when installing9174
+Node: Shallow clone when installing10047
+Node: Usage10603
+Node: Setup12892
+Node: Basic Setup13316
+Node: The el-get function14627
+Node: Distributed Setup15903
+Node: The el-get-bundle macro18813
+Node: Setup Customization24759
+Node: User Init26177
+Node: Before and After properties26864
+Node: Initialization files28372
+Node: Recipes29025
+Node: Organizing recipes29500
+Node: Getting more recipes31131
+Node: Overriding package files31829
+Node: Authoring Recipes32212
+Node: Recipe format32827
+Node: Dependencies42616
+Node: Byte Compilation42962
+Node: Autoloads43528
+Node: Build44654
+Node: Recipe checker45626
 
 End Tag Table

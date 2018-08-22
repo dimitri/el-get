@@ -1,5 +1,5 @@
 (:name seq
-       :description "Sequence manipulation library for Emacs"
+       :description "Sequence manipulation functions"
        :builtin "25"
-       :type github
-       :pkgname "NicolasPetton/seq.el")
+       :type elpa
+       :website "https://elpa.gnu.org/packages/seq.html")

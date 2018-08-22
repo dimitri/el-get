@@ -1,0 +1,7 @@
+(:name posframe
+       :description "Pop a posframe (just a frame) at point"
+       :website "https://github.com/tumashu/posframe"
+       :type github
+       :minimum-emacs-version "26"
+       :depends cl-lib
+       :pkgname "tumashu/posframe")
