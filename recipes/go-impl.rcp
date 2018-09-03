@@ -1,0 +1,4 @@
+(:name go-impl
+       :description "Emacs Go Impl"
+       :type github
+       :pkgname "syohex/emacs-go-impl")
