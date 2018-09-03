@@ -7,6 +7,9 @@
        :build `(("./autogen.sh")
                 ("./configure"
                  "--without-texmf-dir"
+                 ;; The values of these args only matter at make
+                 ;; install time (which we don't do), we just give
+                 ;; some value so ./configure doesn't fail.
                  "--with-packagelispdir=$(pwd)"
                  "--with-packagedatadir=$(pwd)"
                  "--with-lispdir=$(pwd)"
@@ -21,14 +24,6 @@
                                ,(concat "--with-emacs=" el-get-emacs)
                                "MAKE=gmake")
                               ("gmake"))
-       :build/darwin `(("./autogen.sh")
-                       ("./configure"
-                        "--without-texmf-dir"
-                        "--with-packagelispdir=$(pwd)"
-                        "--with-packagedatadir=$(pwd)"
-                        "--with-lispdir=$(pwd)"
-                        ,(concat "--with-emacs=" el-get-emacs))
-                       ("make"))
        :load-path (".")
        :load  ("tex-site.el" "preview-latex.el")
        :info "doc")
