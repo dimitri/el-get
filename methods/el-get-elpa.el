@@ -140,8 +140,14 @@ the recipe, then return nil."
       (if (memq system-type '(ms-dos windows-nt))
           ;; in windows, we have to actually copy the directories,
           ;; since symlink is not exactly reliable on those systems
-          (copy-directory (el-get-elpa-package-directory package)
-                          (file-name-as-directory (expand-file-name package el-get-dir)))
+          (let ((arglist (list (el-get-elpa-package-directory package)
+                               (file-name-as-directory (expand-file-name package el-get-dir))
+                               nil nil t)))
+            ;; The COPY-CONTENTS argument is new in 24.1.
+            (condition-case ()
+                (apply #'copy-directory arglist)
+              (wrong-number-of-arguments
+               (apply #'copy-directory (nbutlast arglist 3)))))
         (let ((default-directory el-get-dir))
           (make-symbolic-link elpa-dir package))))))
 
