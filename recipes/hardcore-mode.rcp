@@ -1,0 +1,4 @@
+(:name hardcore-mode
+       :type github
+       :pkgname "magnars/hardcore-mode.el"
+       :description "Disable arrow keys, and optionally backspace and return")

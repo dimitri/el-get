@@ -1,0 +1,5 @@
+(:name go-dlv
+       :type github
+       :description "Debug Go programs interactively with the GUD."
+       :pkgname "benma/go-dlv.el"
+       :depends (go-mode))
