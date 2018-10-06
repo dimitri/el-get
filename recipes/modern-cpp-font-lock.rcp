@@ -1,0 +1,4 @@
+(:name modern-cpp-font-lock
+       :description "Syntax highlighting support for \"Modern C++\" - until C++20 and Technical Specification."
+       :type github
+       :pkgname "ludwigpacifici/modern-cpp-font-lock")

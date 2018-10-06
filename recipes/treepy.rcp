@@ -1,0 +1,4 @@
+(:name treepy
+       :description "A set of generic functions for traversing tree-like data structures recursively and/or iteratively."
+       :type github
+       :pkgname "volrath/treepy.el")

@@ -1,4 +1,5 @@
 (:name ghub
        :type github
        :description "Minuscule client for the Github API"
-       :pkgname "magit/ghub")
+       :pkgname "magit/ghub"
+       :depends (graphql treepy))
