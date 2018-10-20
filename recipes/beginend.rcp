@@ -1,0 +1,4 @@
+(:name beginend
+       :description "Redefine beginning-of-buffer and end-of-buffer to more meaningful locations"
+       :type github
+       :pkgname "DamienCassou/beginend")
