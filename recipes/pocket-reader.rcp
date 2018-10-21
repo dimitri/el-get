@@ -1,0 +1,4 @@
+(:name pocket-reader
+       :description "Emacs client for Pocket reading list (getpocket.com)"
+       :type github
+       :pkgname "alphapapa/pocket-reader.el")
