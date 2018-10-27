@@ -2,5 +2,5 @@
        :description "Provide oef-mode (Online Exercise Format for wims) to emacs"
        :type github
        :pkgname "raoulhatterer/oef-mode"
-       :depends (emmet-mode company rainbow-delimiters rainbow-mode yafolding-mode LaTeX-math-mode wrap-region-mode  expand-region)
+       :depends (emmet-mode company-mode rainbow-delimiters rainbow-mode yafolding-mode LaTeX-math-mode wrap-region-mode  expand-region)
        :info ".")
