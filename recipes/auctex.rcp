@@ -4,6 +4,7 @@
        :type git
        :module "auctex"
        :url "git://git.savannah.gnu.org/auctex.git"
+       :depends s
        :build `(("./autogen.sh")
                 ("./configure"
                  "--without-texmf-dir"

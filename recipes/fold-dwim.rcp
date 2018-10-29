@@ -1,5 +1,5 @@
 (:name fold-dwim
-       :website "https://github.com/emacsmirror/fold-dwim"
        :description "Unified user interface for Emacs folding mode"
-       :type github
-       :pkgname "emacsmirror/fold-dwim")
+       :type http
+       :url "http://community.dur.ac.uk/p.j.heslin/Software/Emacs/Download/fold-dwim.el.txt"
+       :localname "fold-dwim.el")
