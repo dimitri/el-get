@@ -1,0 +1,5 @@
+(:name jflex-mode
+       :website "https://jflex.de"
+       :description "Emacs mode for JFLEX (a Flex for Java)"
+       :type http
+       :url "http://jflex.de/jflex-mode.el")
