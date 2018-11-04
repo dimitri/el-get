@@ -1,0 +1,5 @@
+(:name common-lisp-snippets
+       :description "Yasnippets for Common Lisp"
+       :depends yasnippet
+       :type github
+       :pkgname "mrkkrp/common-lisp-snippets")
