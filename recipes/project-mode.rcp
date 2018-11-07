@@ -1,6 +1,5 @@
 (:name project-mode
-       :website "http://code.google.com/p/emacs-project-mode/"
        :description "Emacs global minor mode for defining and navigating projects"
-       :type svn
-       :url "http://emacs-project-mode.googlecode.com/svn/trunk/"
-       :depends levenshtein)
+       :type github
+       :pkgname "kurtharriger/emacs-project-mode"
+       :depends (levenshtein))

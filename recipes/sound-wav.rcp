@@ -1,0 +1,5 @@
+(:name sound-wav
+       :type github
+       :pkgname "syohex/emacs-sound-wav"
+       :description "Play WAV files in Emacs"
+       :depends (deferred))
