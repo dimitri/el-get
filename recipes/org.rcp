@@ -1,0 +1,9 @@
+(:name org
+       :website "http://www.orgmode.org"
+       :description "The famous orgmode to organize your life."
+       :type git
+       :url "https://code.orgmode.org/bzg/org-mode.git"
+       :checkout "maint"
+       :build (("make" "all"))
+       :build/berkeley-unix (("gmake" "all"))
+       :load-path ("lisp"))
