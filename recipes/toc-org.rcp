@@ -3,4 +3,4 @@
        :description "toc-org is an Emacs utility to have an up-to-date table of contents in the org files without exporting (useful primarily for readme files on GitHub)"
        :type github
        :pkgname "snosov1/toc-org"
-       :depends (org))
+       :depends (org-mode))
