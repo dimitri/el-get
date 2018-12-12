@@ -1,0 +1,5 @@
+(:name symbol-overlay
+       :description "Highlight symbols with keymap-enabled overlays"
+       :type github
+       :pkgname "wolray/symbol-overlay"
+       :features symbol-overlay)
