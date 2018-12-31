@@ -1,0 +1,15 @@
+(:name forge
+       :website "https://github.com/magit/forge#readme"
+       :description "Work with Git forges from the comfort of Magit."
+       :type github
+       :pkgname "magit/forge"
+       :branch "master"
+       :minimum-emacs-version "25.1"
+       :depends (closql dash emacsql-sqlite ghub graphql let-alist magit magit-popup markdown-mode)
+       :info "docs"
+       :load-path "lisp/"
+       :compile "lisp/"
+       ;; Use the Makefile to produce the info manual, el-get can
+       ;; handle compilation and autoloads on its own.
+       :build `(("make" ,(format "EMACSBIN=%s" el-get-emacs) "info"))
+       :build/berkeley-unix `(("gmake" ,(format "EMACSBIN=%s" el-get-emacs) "info")))
