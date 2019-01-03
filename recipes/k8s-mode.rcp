@@ -1,0 +1,6 @@
+(:name k8s-mode
+       :website "https://github.com/TxGVNN/emacs-k8s-mode"
+       :description "Mode to edit Kubernetes files"
+       :type github
+       :depends (yaml-mode)
+       :pkgname "TxGVNN/emacs-k8s-mode")
