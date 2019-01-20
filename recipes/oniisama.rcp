@@ -1,5 +1,4 @@
 (:name oniisama
-       :description "summon the beauteous sister on your Emacs."
-       :website "https://github.com/yu-i9/oniisama"
+       :description "Summon the beauteous sister on your Emacs"
        :type github
-       :pkgname "yu-i9/oniisama")
+       :pkgname "nna774/oniisama")
