@@ -1,0 +1,5 @@
+(:name ass-mode
+       :description "Major mode for editing ASS/SSA subtitle files"
+       :type github
+       :pkgname "disbeliever/ass-mode"
+       :depends (s))

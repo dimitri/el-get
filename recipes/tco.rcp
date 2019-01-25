@@ -1,0 +1,5 @@
+(:name tco
+       :description "Tail call optimisation in Emacs Lisp"
+       :type github
+       :pkgname "Wilfred/tco.el"
+       :depends (dash))

@@ -1,0 +1,4 @@
+(:name poet
+       :description "An emacs theme that's well suited for modes using variable pitch"
+       :type github
+       :pkgname "kunalb/poet")
