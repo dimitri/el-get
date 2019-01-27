@@ -1,0 +1,6 @@
+(:name doom-modeline
+       :website "https://github.com/seagle0128/doom-modeline"
+       :description "A fancy and fast mode-line which was from DOOM Emacs, but it's more powerful and much faster."
+       :depends (all-the-icons dash eldoc-eval shrink-path)
+       :type github
+       :pkgname "seagle0128/doom-modeline")
