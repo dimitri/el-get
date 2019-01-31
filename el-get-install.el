@@ -43,7 +43,7 @@
            (git       (or (executable-find "git")
                           (error "Unable to find `git'")))
            (url       (or (bound-and-true-p el-get-git-install-url)
-                          "https://github.com/dimitri/el-get.git"))
+                          "https://github.com/zilti/el-get.git"))
            (default-directory el-get-root)
            (process-connection-type nil)   ; pipe, no pty (--no-progress)
 
