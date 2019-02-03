@@ -1,0 +1,12 @@
+(:name org-mind-map
+       :type github
+       :pkgname "theodorewiles/org-mind-map"
+       :description "Create graphviz directed graphs from org-mode files"
+       :website "http://github.com/theodorewiles/org-mind-map"
+       :prepare
+       (progn
+         (autoload 'org-mind-map-write "org-mind-map"
+           "Create a digraph based on all org trees in the current buffer."))
+       :post-init
+       (progn
+         (require 'ox-org)))
