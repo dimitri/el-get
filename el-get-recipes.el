@@ -326,7 +326,7 @@ Use this to modify environment variable such as $PATH or $PYTHONPATH."
 
 (defun el-get-latest-tag ()
   "Returns the latest tag of the git repository of the given package."
-  (replace-regexp-in-string "\n$" "" (shell-command-to-string "cd /home/zilti/projects/cider; git describe --abbrev=0 --tags")))
+  (replace-regexp-in-string "\n$" "" (shell-command-to-string "git describe --abbrev=0 --tags")))
 
 (provide 'el-get-recipes)
 
