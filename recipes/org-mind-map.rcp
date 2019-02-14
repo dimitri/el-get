@@ -1,0 +1,9 @@
+(:name org-mind-map
+       :type github
+       :pkgname "theodorewiles/org-mind-map"
+       :description "Create graphviz directed graphs from org-mode files"
+       :website "http://github.com/theodorewiles/org-mind-map"
+       :depends (dash org-mode)
+       :post-init
+       (progn
+         (require 'ox-org)))
