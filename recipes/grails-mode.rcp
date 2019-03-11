@@ -1,0 +1,4 @@
+(:name grails-mode
+       :description "Extends project-mode to add grails specific functionality such as fast switching between related files and unit testing."
+       :pkgname "kurtharriger/emacs-grails-mode"
+       :depends (project-mode))

@@ -1,0 +1,6 @@
+(:name package-lint
+       :website "https://github.com/purcell/package-lint"
+       :description "A linting library for elisp package metadata"
+       :depends (cl-lib)
+       :type github
+       :pkgname "purcell/package-lint")

@@ -1,0 +1,6 @@
+(:name shrink-path
+       :website "https://github.com/c0001/shrink-path.el"
+       :description "Small utility functions that allow for fish-style trunctated directories in eshell and for example modeline."
+       :depends (dash f s)
+       :type github
+       :pkgname "c0001/shrink-path.el")

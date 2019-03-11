@@ -2,7 +2,7 @@
        :type github
        :description "Flycheck checker for elisp package metadata"
        :pkgname "purcell/flycheck-package"
-       :depends (flycheck)
+       :depends (flycheck package-lint)
        :minimum-emacs-version "24"
        :prepare
        (eval-after-load "flycheck"

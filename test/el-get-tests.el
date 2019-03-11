@@ -111,6 +111,23 @@ Following variables are bound to temporal values:
        (when (featurep pkg)
          (unload-feature pkg))))))
 
+(ert-deftest el-get-elpa-install ()
+  "Test installation with ELPA type."
+  (el-get-with-temp-home
+   (require 'package-x) ; create local package archive
+   (let* ((pkg 'el-get-test-package)
+          (package-archive-upload-base (expand-file-name "pkg-repo" user-emacs-directory))
+          (package-archives nil)
+          (el-get-sources
+           `((:name package :post-init nil) ; avoid adding other repos
+             (:name el-get-test-package
+                    :type elpa
+                    :repo ("test-repo" . ,package-archive-upload-base)))))
+     (make-directory package-archive-upload-base t)
+     (package-upload-file (expand-file-name "pkgs/el-get-test-package.el"
+                                            el-get-test-files-dir))
+     (el-get 'sync (mapcar 'el-get-source-name el-get-sources)))))
+
 (ert-deftest el-get-elpa-feature ()
   "`:features' option should work for ELPA type recipe."
   :expected-result :failed

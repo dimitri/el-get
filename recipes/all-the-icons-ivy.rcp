@@ -2,4 +2,4 @@
        :description "all-the-icons integration for ivy/counsel."
        :type github
        :pkgname "asok/all-the-icons-ivy"
-       :depends (ivy all-the-icons))
+       :depends (swiper all-the-icons))

@@ -1,0 +1,4 @@
+(:name number-lock
+       :description "Enter symbols on your number keys without pressing shift "
+       :type github
+       :pkgname "Liu233w/number-lock.el")

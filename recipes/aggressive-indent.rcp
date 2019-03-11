@@ -1,0 +1,5 @@
+(:name aggressive-indent
+ :website "https://github.com/Malabarba/aggressive-indent-mode"
+ :description "Emacs minor mode that keeps your code always indented. More reliable than electric-indent-mode."
+ :type github
+ :pkgname "Malabarba/aggressive-indent-mode")

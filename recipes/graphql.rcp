@@ -1,0 +1,4 @@
+(:name graphql
+       :description "GraphQL.el provides a set of generic functions for interacting with GraphQL web services."
+       :type github
+       :pkgname "vermiculus/graphql.el")

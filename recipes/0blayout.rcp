@@ -1,0 +1,4 @@
+(:name 0blayout
+       :description "Small global-minor-mode to Emacs to handle several layouts"
+       :type github
+       :pkgname "etu/0blayout-mode")

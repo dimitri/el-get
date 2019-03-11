@@ -1,0 +1,5 @@
+(:name cider-hydra
+       :description "Hydras for CIDER."
+       :type github
+       :pkgname "clojure-emacs/cider-hydra"
+       :depends (cider hydra))

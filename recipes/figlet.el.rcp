@@ -1,0 +1,6 @@
+(:name "figlet.el"
+       :description "figlet definitions for Emacs."
+       :type github
+       :pkgname "nanjj/figlet.el"
+       :autoloads nil
+       :load "figlet.el")

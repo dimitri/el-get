@@ -1,0 +1,5 @@
+(:name reformatter
+       :website "https://github.com/purcell/reformatter.el"
+       :description "Major mode for Elm"
+       :type github
+       :pkgname "purcell/reformatter.el")
