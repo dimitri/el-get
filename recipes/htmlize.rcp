@@ -1,5 +1,4 @@
 (:name htmlize
-       :website "http://www.emacswiki.org/emacs/Htmlize"
+       :type github
        :description "Convert buffer text and decorations to HTML."
-       :type emacsmirror
-       :localname "htmlize.el")
+       :pkgname "hniksic/emacs-htmlize")
