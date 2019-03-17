@@ -5,7 +5,7 @@
        :pkgname "magit/forge"
        :branch "master"
        :minimum-emacs-version "25.1"
-       :depends (closql dash emacsql-sqlite ghub graphql let-alist magit magit-popup markdown-mode)
+       :depends (closql dash emacsql-sqlite ghub graphql let-alist magit markdown-mode)
        :info "docs"
        :load-path "lisp/"
        :compile "lisp/"
