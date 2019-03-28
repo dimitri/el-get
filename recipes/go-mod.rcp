@@ -1,0 +1,4 @@
+(:name go-mod
+       :description "Major mode for go mod file and go sum file"
+       :type "github"
+       :pkgname "nanjj/go-mod.el")
