@@ -1,5 +1,8 @@
 (:name finalize
        :description "Lisp object finalization."
+       ;; From its REAME: Emacs 25 directly supports finalizers via
+       ;; make-finalizer.  Only use this package if you must support
+       ;; Emacs 24 or earlier.
        :type github
        :pkgname "skeeto/elisp-finalize"
        :depends (cl-lib))
