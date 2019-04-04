@@ -1,0 +1,4 @@
+(:name sam
+       :description "SAM-like (a Plan9 text editor) editing mode"
+       :type github
+       :pkgname "realwhz/sam.el")
