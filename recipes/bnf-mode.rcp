@@ -1,0 +1,5 @@
+(:name bnf-mode
+       :website "https://github.com/sergeyklay/bnf-mode"
+       :description "BNF Mode: A major mode for editing BNF grammars"
+       :type github
+       :pkgname "sergeyklay/bnf-mode")
