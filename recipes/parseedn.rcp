@@ -1,0 +1,5 @@
+(:name parseedn
+       :description "EDN parser for Emacs Lisp"
+       :type github
+       :pkgname "clojure-emacs/parseedn"
+       :depends (a parseclj))
