@@ -2,7 +2,7 @@
        :description "IPython notebook client in Emacs"
        :type github
        :pkgname "millejoh/emacs-ipython-notebook"
-       :depends (websocket request dash s auto-complete skewer-mode)
+       :depends (websocket request dash s auto-complete skewer-mode deferred polymode markdown-mode)
        :load-path ("lisp")
        :submodule nil
        :features ein)
