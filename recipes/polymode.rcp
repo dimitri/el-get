@@ -1,6 +1,7 @@
+
 (:name polymode
        :description "Object oriented framework for multiple emacs
        modes based on indirect buffers"
        :type github
        :pkgname "vitoshka/polymode"
-       :load-path ("." "modes"))
+       :load-path ("."))
