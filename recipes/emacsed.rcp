@@ -1,0 +1,4 @@
+(:name emacsed
+       :description "ed-like editing mode"
+       :type http
+       :url "http://aon.iki.fi/files/emacsed/emacsed.el")

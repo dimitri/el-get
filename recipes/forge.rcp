@@ -5,7 +5,9 @@
        :pkgname "magit/forge"
        :branch "master"
        :minimum-emacs-version "25.1"
-       :depends (closql dash emacsql-sqlite ghub graphql let-alist magit magit-popup markdown-mode)
+       ;; The package.el dependency is on `emacsql-sqlite', but el-get
+       ;; provides that via `emacsql'.
+       :depends (closql dash emacsql ghub graphql let-alist magit markdown-mode)
        :info "docs"
        :load-path "lisp/"
        :compile "lisp/"

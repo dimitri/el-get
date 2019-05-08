@@ -1,8 +1,8 @@
 (:name caml-mode
        :description "OCaml code editing commands for Emacs"
        :type github
-       :pkgname "ocaml/ocaml"
-       :load-path ("emacs")
+       :pkgname "ocaml/caml-mode"
+       :load-path (".")
        :shallow t
        :prepare
        (progn

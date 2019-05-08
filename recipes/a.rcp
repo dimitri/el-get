@@ -1,0 +1,4 @@
+(:name a
+       :description "Emacs Lisp functions for associative structures"
+       :type github
+       :pkgname "plexus/a.el")

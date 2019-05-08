@@ -3,4 +3,4 @@
        :description "Define prefix-infix-suffix command combos"
        :type github
        :pkgname "magit/magit-popup"
-       :depends (emacs-async dash))
+       :depends (dash))

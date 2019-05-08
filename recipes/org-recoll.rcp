@@ -1,0 +1,6 @@
+(:name org-recoll
+       :description "Recoll text-search integration for Org Mode"
+       :website "https://github.com/alraban/org-recoll"
+       :type github
+       :pkgname "alraban/org-recoll"
+       :depends (org-mode))
