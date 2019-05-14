@@ -35,6 +35,21 @@ if [ "$EMACS_VERSION" = '24.5' ]; then
     check-whitespace() {
         git --no-pager -c core.whitespace=tab-in-indent diff --check "$TRAVIS_COMMIT_RANGE"
     }
+    # Adapted from Emacs' build-aux/git-hooks/pre-commit.
+    check-filenames() {
+        git diff --name-only --diff-filter=A "$TRAVIS_COMMIT_RANGE" |
+            grep -E '^-|/-|[^-+./_0-9A-Z_a-z]' |
+            while IFS= read -r new_name; do
+                case $new_name in
+                    -* | */-*)
+                        echo "$new_name: File name component begins with '-'."
+                        return 1;;
+                    *)
+                        echo "$new_name: File name does not consist of -+./_ or ASCII letters or digits."
+                        return 1;;
+                esac
+            done
+    }
 else
     # If we have only changes to recipe files, there is no need to run
     # with more than 1 emacs version.
@@ -44,6 +59,7 @@ else
     # Only need to run these for 1 version, so make them nops here
     check-recipes() { :; }
     check-whitespace() { :; }
+    check-filenames() { :; }
 fi
 
 ert-tests() {
