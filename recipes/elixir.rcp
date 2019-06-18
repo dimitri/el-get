@@ -1,5 +1,5 @@
 (:name elixir
        :type github
-       :pkgname "elixir-lang/emacs-elixir"
+       :pkgname "elixir-editors/emacs-elixir"
        :description "Elixir language's major mode for Emacs"
-       :website "http://github.com/elixir-lang/emacs-elixir")
+       :website "http://github.com/elixir-editors/emacs-elixir")
