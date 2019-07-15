@@ -1,0 +1,7 @@
+(:name deadgrep
+       :description "deadgrep: use ripgrep from emacs"
+       :website "https://github.com/pft/elisp-assorted"
+       :type github
+       :pkgname "Wilfred/deadgrep"
+       :depends (spinner)
+       :load-path ("."))
