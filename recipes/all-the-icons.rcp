@@ -4,4 +4,4 @@
        :type github
        :branch "master"
        :pkgname "domtronn/all-the-icons.el"
-       :depends (font-lock+ memoize))
+       :depends (memoize))

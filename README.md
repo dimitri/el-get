@@ -279,9 +279,11 @@ accepts either a simple package name from defined recipes, a package name
 with a local recipe definition, a package with initialization code, or
 everything together.
 
-Note that if you leave in the `(el-get 'sync)` call, it *must* go
-after any recipe defining `el-get-bundle` calls, otherwise el-get
-won't know the recipe when it tries to initialize the package.
+Note that if you leave in the `(el-get 'sync)` call (which you need
+to, unless you've also made sure to explicitly call `el-get-bundle`
+for all dependency packages), it *must* go after any recipe defining
+`el-get-bundle` calls, otherwise el-get won't know the recipe when it
+tries to initialize the package.
 
 ```lisp
 ;; Basic setup
@@ -311,6 +313,9 @@ won't know the recipe when it tries to initialize the package.
   :url "https://raw.githubusercontent.com/bbatsov/zenburn-emacs/master/zenburn-theme.el"
   (load-theme 'zenburn t))
 
+;; End of recipes, call `el-get' to make sure all packages (including
+;; dependencies) are setup.
+(el-get- 'sync)
 ```
 
 If a package with a local recipe definition has a recipe file, the
