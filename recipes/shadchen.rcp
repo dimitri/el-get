@@ -1,5 +1,0 @@
-(:name shadchen
-       :description "Pattern matching library"
-       :type git
-       :url "https://github.com/VincentToups/shadchen-el.git"
-       :features shadchen)
