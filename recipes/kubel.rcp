@@ -1,0 +1,4 @@
+(:name kubernetes-helm
+       :description "Utilities for Kubernetes with limited permissions"
+       :type github
+       :pkgname "abrochard/kubel")
