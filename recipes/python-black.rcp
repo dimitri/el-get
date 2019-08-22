@@ -1,0 +1,6 @@
+ (:name python-black
+       :description "An Emacs package to reformat python code using black"
+       :type github
+       :pkgname "wbolster/emacs-python-black"
+       :depends (dash reformatter)
+       :minimum-emacs-version "25")
