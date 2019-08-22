@@ -1,0 +1,5 @@
+(:name ed-mode
+       :description "ed: The Standard Unix Editor"
+       :type github
+       :pkgname "cbbrowne/ed-mode"
+       :load-path ("."))
