@@ -3,3 +3,8 @@
        :type github
        :pkgname "disbeliever/ass-mode"
        :depends (s))
+       :prepare (progn
+                  (add-to-list auto-mode-alist '("\\.ssa$" . ass-mode))
+                  (autoload 'ass-mode "ass-mode"
+                    "Major mode for editing SSA/ASS ((Advanced) SubStation Alpha) subtitles"
+                    t t))))
