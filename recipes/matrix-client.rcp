@@ -1,0 +1,6 @@
+(:name matrix-client
+       :type github
+       :pkgname "alphapapa/matrix-client.el"
+       :minimum-emacs-version "26"
+       :description "A Matrix client for Emacs!"
+       :depends (anaphora f ov tracking a ht request rainbow-identifiers esxml notify frame-purpose))
