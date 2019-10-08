@@ -1,0 +1,6 @@
+(:name flycheck-joker
+       :description "Clojure syntax checker (via Joker) for flycheck"
+       :website "https://github.com/candid82/flycheck-joker"
+       :type github
+       :depends (flycheck)
+       :pkgname "candid82/flycheck-joker")
