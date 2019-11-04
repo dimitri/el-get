@@ -2,6 +2,6 @@
        :description "Multiple ispell processes and multiple flyspell languages"
        :website "http://www.dur.ac.uk/p.j.heslin/Software/Emacs"
        :type http
-       :url "http://www.dur.ac.uk/p.j.heslin/Software/Emacs/Download/ispell-multi.el"
-       :localname "ispell-multi.el.gz"
+       :url "http://www.dur.ac.uk/p.j.heslin/Software/Emacs/Download/ispell-multi.el.txt"
+       :localname "ispell-multi.el"
        :features ispell-multi)
