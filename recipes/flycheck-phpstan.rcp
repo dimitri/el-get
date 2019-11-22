@@ -1,0 +1,5 @@
+(:name flycheck-phpstan
+       :description "Flycheck integration for PHPStan."
+       :type github
+       :pkgname "emacs-php/phpstan.el"
+       :depends (flycheck))
