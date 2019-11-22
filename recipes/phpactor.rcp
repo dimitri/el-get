@@ -1,5 +1,5 @@
 (:name phpactor
-       :description "Phpactor is an intelligent code-completion and refactoring tool for PHP." 
+       :description "Phpactor is an intelligent code-completion and refactoring tool for PHP."
        :type github
        :pkgname "emacs-php/phpactor.el"
        :checkout "develop"
