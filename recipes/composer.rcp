@@ -1,0 +1,5 @@
+(:name composer
+       :description "`composer.el' is PHP Composer interface for Emacs."
+       :type github
+       :pkgname "emacs-php/composer.el"
+       :depends (f php-runtime request s))
