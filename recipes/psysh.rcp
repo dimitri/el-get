@@ -1,0 +1,5 @@
+(:name psysh
+       :description "PsySH, PHP interactive shell (REPL)"
+       :type github
+       :pkgname "emacs-php/psysh.el"
+       :depends (f s php-runtime))
