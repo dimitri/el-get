@@ -1,0 +1,7 @@
+(:name phpactor
+       :description "Phpactor is an intelligent code-completion and refactoring tool for PHP." 
+       :type github
+       :pkgname "emacs-php/phpactor.el"
+       :checkout "develop"
+       :build (("rm" "-f" "company-phpactor.el"))
+       :depends (emacs-async composer f php-runtime))
