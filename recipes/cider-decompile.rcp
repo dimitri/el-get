@@ -2,4 +2,4 @@
        :description "An extension to CIDER which provides a decompilation command"
        :type github
        :pkgname "clojure-emacs/cider-decompile"
-       :depends (cider))
+       :depends (cider javap-mode))
