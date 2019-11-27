@@ -1,0 +1,5 @@
+(:name evalator
+       :description "Emacs package for interactive evaluation and transformation of data."
+       :type github
+       :pkgname "seanirby/evalator"
+       :depends (helm))
