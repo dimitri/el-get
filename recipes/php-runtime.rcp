@@ -1,0 +1,5 @@
+(:name php-runtime
+       :description "Execute PHP code.  This package requires `php' command in runtime."
+       :type github
+       :pkgname "emacs-php/php-runtime.el"
+       :depends (cl-lib f s))
