@@ -1,5 +1,5 @@
-(:name clj-refactor
-       :description "A collection of simple clojure refactoring functions"
+(:name ivy-clojuredocs
+       :description "Search for help in clojuredocs.org"
        :type github
        :pkgname "wandersoncferreira/ivy-clojuredocs"
        :depends (edn swiper))
