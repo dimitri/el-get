@@ -1,0 +1,4 @@
+(:name ac-html-bootstrap
+       :description "Bootstrap completion candidates for ac-html.el and company-web"
+       :type github
+       :pkgname "osv/ac-html-bootstrap")

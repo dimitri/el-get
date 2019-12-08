@@ -1,0 +1,6 @@
+(:name company-phpactor
+       :description "Company integration for Phpactor."
+       :type github
+       :pkgname "emacs-php/phpactor.el"
+       :build (("rm" "-f" "phpactor.el" "composer.json" "composer.lock"))
+       :depends (company-mode phpactor))
