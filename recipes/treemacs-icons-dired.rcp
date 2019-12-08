@@ -1,0 +1,8 @@
+(:name treemacs-icons-dired
+       :description "Treemacs icons for dired"
+       :type github
+       :pkgname "Alexander-Miller/treemacs"
+       :build (("cp" "src/extra/treemacs-icons-dired.el" ".")
+               ("rm" "-rf" "src"))
+       :compile "treemacs-icons-dired.el"
+       :depends (treemacs))

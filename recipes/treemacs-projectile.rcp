@@ -1,0 +1,8 @@
+(:name treemacs-projectile
+       :description "Projectile integration for treemacs"
+       :type github
+       :pkgname "Alexander-Miller/treemacs"
+       :build (("cp" "src/extra/treemacs-projectile.el" ".")
+               ("rm" "-rf" "src"))
+       :compile "treemacs-projectile.el"
+       :depends (treemacs projectile))

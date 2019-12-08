@@ -1,0 +1,8 @@
+(:name treemacs-evil
+       :description "Evil integration for treemacs"
+       :type github
+       :pkgname "Alexander-Miller/treemacs"
+       :build (("cp" "src/extra/treemacs-evil.el" ".")
+               ("rm" "-rf" "src"))
+       :compile "treemacs-evil.el"
+       :depends (treemacs evil))

@@ -3,4 +3,4 @@
        :website "https://github.com/emacs-lsp/dap-mode"
        :type github
        :pkgname "emacs-lsp/dap-mode"
-       :depends (bui dash f lsp-mode lsp-treemacs posframe s))
+       :depends (bui dash f lsp-mode lsp-treemacs tree-mode posframe s))
