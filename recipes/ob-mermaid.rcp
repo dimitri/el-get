@@ -1,0 +1,5 @@
+(:name ob-mermaid
+       :description "Generate mermaid diagrams within Emacs org-mode babel."
+       :website "https://github.com/arnm/ob-mermaid"
+       :type github
+       :pkgname "arnm/ob-mermaid")
