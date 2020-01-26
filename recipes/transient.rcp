@@ -13,4 +13,6 @@
        ;; handle compilation and autoloads on its own.
        :build `(("make" ,(format "EMACSBIN=%s" el-get-emacs) "info"))
        :build/berkeley-unix `(("gmake" ,(format "EMACSBIN=%s" el-get-emacs)
-                               "info")))
+                               "info"))
+       ;; Assume windows lacks a build environment.
+       :build/windows-nt (with-temp-file "lisp/transient-autoloads.el" nil))
