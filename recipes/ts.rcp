@@ -1,0 +1,5 @@
+(:name ts
+       :description "Timestamp and date/time library."
+       :type github
+       :depends (dash s)
+       :pkgname "alphapapa/ts.el")
