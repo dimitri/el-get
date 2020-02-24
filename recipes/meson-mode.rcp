@@ -1,0 +1,4 @@
+(:name meson-mode
+       :description "Major mode for the Meson build system files"
+       :type github
+       :pkgname "wentasah/meson-mode")

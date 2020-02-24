@@ -1,0 +1,6 @@
+(:name flycheck-clj-kondo
+       :description "Emacs integration for clj-kondo via flycheck."
+       :website "https://github.com/borkdude/flycheck-clj-kondo"
+       :type github
+       :depends (flycheck)
+       :pkgname "borkdude/flycheck-clj-kondo")

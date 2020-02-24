@@ -1,0 +1,6 @@
+(:name opencl-mode
+       :website "https://github.com/salmanebah/opencl-mode"
+       :description "Syntax coloring for opencl kernels"
+       :type github
+       :pkgname "salmanebah/opencl-mode"
+       :prepare (add-to-list 'auto-mode-alist '("\\.cl\\'" . opencl-mode)))

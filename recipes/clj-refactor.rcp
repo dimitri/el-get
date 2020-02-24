@@ -3,4 +3,4 @@
        :type github
        :depends (dash s clojure-mode yasnippet paredit multiple-cursors cider
                       edn jump hydra)
-       :pkgname "magnars/clj-refactor.el")
+       :pkgname "clojure-emacs/clj-refactor.el")

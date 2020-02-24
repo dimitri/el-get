@@ -1,0 +1,5 @@
+(:name org-ql
+       :description "An Org-mode query language, including search commands and saved views."
+       :type github
+       :depends (dash f org-mode org-super-agenda ov peg s ts)
+       :pkgname "alphapapa/org-ql")

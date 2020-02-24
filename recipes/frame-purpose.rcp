@@ -1,0 +1,5 @@
+(:name frame-purpose
+       :type github
+       :pkgname "alphapapa/frame-purpose.el"
+       :minimum-emacs-version "26"
+       :description "Purpose-specific frames for Emacs")
