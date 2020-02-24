@@ -1,0 +1,4 @@
+(:name vterm
+       :description "libvterm bridge"
+       :type github
+       :pkgname "akermu/emacs-libvterm")
