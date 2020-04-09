@@ -1,8 +1,6 @@
 (:name ledger-mode
        :description "A major mode for editing ledger .dat files"
        :type github
-       :pkgname "ledger/ledger"
-       :checkout "v3.1"
-       :load-path "lisp"
+       :pkgname "ledger/ledger-mode"
        :prepare (progn
                   (add-to-list 'auto-mode-alist '("\\.dat$" . ledger-mode))))
