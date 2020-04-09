@@ -1,0 +1,6 @@
+(:name org-make-toc
+       :type github
+       :pkgname "alphapapa/org-make-toc"
+       :features org-make-toc
+       :depends '("s" "dash")
+       :description "Automatically generate Org Mode table of contents")
