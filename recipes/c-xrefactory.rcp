@@ -1,6 +1,6 @@
 (:name c-xrefactory
        :description "c-xrefactory - a refactoring browser for C and Java."
-       :type "github"
+       :type github
        :branch "stable"
        :website "https://github.com/thoni56/c-xrefactory"
        :pkgname "thoni56/c-xrefactory"
