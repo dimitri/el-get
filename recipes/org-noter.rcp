@@ -1,0 +1,5 @@
+(:name org-noter
+       :description "Emacs document annotator, using org-mode."
+       :type github
+       :depends (org-mode cl-lib)
+       :pkgname "weirdNox/org-noter")
