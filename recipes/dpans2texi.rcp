@@ -1,5 +1,5 @@
 (:name dpans2texi
-       :description "onverts the TeX sources of the draft ANSI Common Lisp standard"
+       :description "Converts the TeX sources of the draft ANSI Common Lisp standard"
        :type http-tar
        :options ("xzf")
        :website "http://users-phys.au.dk/harder/dpans.html"
