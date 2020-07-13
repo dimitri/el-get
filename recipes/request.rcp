@@ -2,6 +2,6 @@
        :description "Easy HTTP request for Emacs Lisp"
        :type github
        :submodule nil
-       :pkgname "abingham/emacs-request"
+       :pkgname "tkf/emacs-request"
        :depends (deferred)
        :provide (request-deferred))
