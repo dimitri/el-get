@@ -1,0 +1,14 @@
+;; On MacOS requires libvterm, cmake and libtool:
+;;
+;;    brew install libvterm cmake libtool
+;;
+(:name vterm
+       :description "Fully-fledged terminal emulator based on libvterm."
+       :website "https://github.com/akermu/emacs-libvterm"
+       :type github
+       :pkgname "akermu/emacs-libvterm"
+       :build `((,el-get-emacs
+                 "-batch" "-q" "-no-site-file"
+                 "-L" ,(concat el-get-dir "/vterm")
+                 ;; vterm has a predefined function to build the binary module
+                 "--execute" "(progn (setq vterm-always-compile-module t) (require 'vterm) (vterm-module-compile))")))
