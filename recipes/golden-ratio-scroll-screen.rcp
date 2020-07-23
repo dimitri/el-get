@@ -1,0 +1,4 @@
+(:name golden-ratio-scroll-screen
+       :description "Scroll half screen down or up, and highlight current line"
+       :type github
+       :pkgname "jixiuf/golden-ratio-scroll-screen")
