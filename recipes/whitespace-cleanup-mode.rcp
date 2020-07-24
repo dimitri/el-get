@@ -1,0 +1,4 @@
+(:name whitespace-cleanup-mode
+       :description "Intelligently call whitespace-cleanup on save"
+       :type github
+       :pkgname "purcell/whitespace-cleanup-mode")
