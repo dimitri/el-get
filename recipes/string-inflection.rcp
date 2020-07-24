@@ -1,0 +1,4 @@
+(:name string-inflection
+       :description "underscore -> UPCASE -> CamelCase conversion of names."
+       :type github
+       :pkgname "akicho8/string-inflection")
