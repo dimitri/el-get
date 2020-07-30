@@ -1,4 +1,4 @@
 (:name deft
        :description "Quickly browse, filter, and edit plain text notes."
        :type git
-       :url "git://jblevins.org/git/deft.git")
+       :url "https://jblevins.org/git/deft.git")
