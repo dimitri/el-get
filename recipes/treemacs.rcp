@@ -1,0 +1,9 @@
+(:name treemacs
+       :description "A tree layout file explorer for Emacs"
+       :website "https://github.com/Alexander-Miller/treemacs"
+       :type github
+       :pkgname "Alexander-Miller/treemacs"
+       :build (("rm" "-rf" "src/extra"))
+       :load-path "src/elisp"
+       :compile "src/elisp"
+       :depends (ace-window dash f ht hydra pfuture s))

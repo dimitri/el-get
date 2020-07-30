@@ -1,0 +1,5 @@
+(:name pfuture
+       :description "A simple wrapper around asynchronous processes"
+       :website "https://github.com/Alexander-Miller/pfuture"
+       :type github
+       :pkgname "Alexander-Miller/pfuture")
