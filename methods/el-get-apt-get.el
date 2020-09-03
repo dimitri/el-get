@@ -144,7 +144,7 @@ The installation status is retrieved from the system, not el-get."
                       :buffer-name ,name
                       :process-filter ,(function el-get-sudo-password-process-filter)
                       :program ,(el-get-executable-find "sudo")
-                      :args ("-S" ,el-get-apt-get "install" ,pkgname)
+                      :args ("-S" ,el-get-apt-get "install" "-y" ,pkgname)
                       :message ,ok
                       :error ,ko
                       :sync t))
