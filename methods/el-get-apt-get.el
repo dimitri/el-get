@@ -41,7 +41,10 @@
 (defun el-get-dpkg-package-installed-p (package)
   "Return non-nil if PACKAGE is installed according to dpkg."
   (equal "install ok installed"
-         (car (process-lines "dpkg-query" "--show" "--showformat=${Status}\n" package))))
+         (condition-case nil
+             (car (process-lines
+                   "dpkg-query" "--show" "--showformat=${Status}\n" package))
+           (error ""))))
 
 ;;
 ;; those functions are meant as hooks at install and remove, and they will
