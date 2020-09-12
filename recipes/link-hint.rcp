@@ -1,0 +1,5 @@
+(:name link-hint
+       :description "Pentadactyl-like Link Hinting in Emacs with Avy."
+       :type github
+       :depends (avy)
+       :pkgname "noctuid/link-hint.el")

@@ -1,0 +1,5 @@
+(:name org-chef
+       :description "A package for making a cookbook and managing recipes with org-mode."
+       :type github
+       :depends (org-mode)
+       :pkgname "Chobbes/org-chef")

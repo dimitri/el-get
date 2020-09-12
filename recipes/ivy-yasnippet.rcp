@@ -2,4 +2,4 @@
        :description "Preview yasnippet snippets with ivy"
        :type github
        :pkgname "mkcms/ivy-yasnippet"
-       :depends (dash ivy yasnippet))
+       :depends (dash swiper yasnippet))

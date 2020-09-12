@@ -1,0 +1,4 @@
+(:name edit-indirect
+       :description "Edit regions in separate buffers"
+       :type github
+       :pkgname "Fanael/edit-indirect")
