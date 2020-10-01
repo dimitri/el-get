@@ -1,0 +1,4 @@
+(:name org-cliplink
+       :description "Insert org-mode links from the clipboard."
+       :type github
+       :pkgname "rexim/org-cliplink")

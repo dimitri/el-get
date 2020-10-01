@@ -1,0 +1,8 @@
+(:name helm-org
+       :description "Helm for org headlines and keywords completion."
+       :type github
+       :depends (org-mode helm)
+       ;; Generates autoloads which require helm-easymenu, which is
+       ;; not on the loadpath.
+       :autoloads nil
+       :pkgname "emacs-helm/helm-org")

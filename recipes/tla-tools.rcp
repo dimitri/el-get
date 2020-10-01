@@ -1,0 +1,6 @@
+(:name tla-tools
+       :description "TLA+ tools for Emacs"
+       :type github
+       :pkgname "mrc/tla-tools"
+       :features (tla-tools tla-pcal-mode)
+       :depends (polymode))

@@ -1,0 +1,5 @@
+(:name org-super-agenda
+       :description "Supercharge your Org daily/weekly agenda by grouping items."
+       :type github
+       :depends (org-mode s dash ht ts)
+       :pkgname "alphapapa/org-super-agenda")

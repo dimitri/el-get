@@ -1,0 +1,4 @@
+(:name reveal-in-osx-finder
+       :description "Reveal file associated with buffer in OS X Finder"
+       :type github
+       :pkgname "kaz-yos/reveal-in-osx-finder")

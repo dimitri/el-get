@@ -1,3 +1,5 @@
+; Available in GNU ELPA, but out of date there; see https://github.com/dengste/minimap/issues/21
 (:name minimap
        :description "Minimap sidebar for Emacs"
-       :type elpa)
+       :type github
+       :pkgname "dengste/minimap")

@@ -1,6 +1,7 @@
 (:name lsp-mode
        :website "https://github.com/emacs-lsp/lsp-mode"
        :description "Emacs client/library for the Language Server Protocol"
-       :depends (dash f ht hydra spinner)
+       :depends (dash f ht hydra spinner markdown-mode)
        :type github
-       :pkgname "emacs-lsp/lsp-mode")
+       :pkgname "emacs-lsp/lsp-mode"
+       :load-path ("." "clients"))

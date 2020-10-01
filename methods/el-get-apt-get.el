@@ -41,7 +41,10 @@
 (defun el-get-dpkg-package-installed-p (package)
   "Return non-nil if PACKAGE is installed according to dpkg."
   (equal "install ok installed"
-         (car (process-lines "dpkg-query" "--show" "--showformat=${Status}\n" package))))
+         (condition-case nil
+             (car (process-lines
+                   "dpkg-query" "--show" "--showformat=${Status}\n" package))
+           (error ""))))
 
 ;;
 ;; those functions are meant as hooks at install and remove, and they will
@@ -141,9 +144,10 @@ The installation status is retrieved from the system, not el-get."
                       :buffer-name ,name
                       :process-filter ,(function el-get-sudo-password-process-filter)
                       :program ,(el-get-executable-find "sudo")
-                      :args ("-S" ,el-get-apt-get "install" ,pkgname)
+                      :args ("-S" ,el-get-apt-get "install" "-y" ,pkgname)
                       :message ,ok
-                      :error ,ko))
+                      :error ,ko
+                      :sync t))
      post-install-fun)))
 
 (defun el-get-apt-get-remove (package url post-remove-fun)
@@ -162,7 +166,8 @@ The installation status is retrieved from the system, not el-get."
                       :program ,(el-get-executable-find "sudo")
                       :args ("-S" ,el-get-apt-get "remove" "-y" ,pkgname)
                       :message ,ok
-                      :error ,ko))
+                      :error ,ko
+                      :sync t))
      post-remove-fun)))
 
 (add-hook 'el-get-apt-get-remove-hook 'el-get-dpkg-remove-symlink)

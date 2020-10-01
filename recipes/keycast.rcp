@@ -1,0 +1,4 @@
+(:name keycast
+       :description "Show current command and its key in the mode line."
+       :type github
+       :pkgname "tarsius/keycast")

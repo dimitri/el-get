@@ -1,0 +1,6 @@
+(:name dumb-jump
+       :description "an Emacs jump to definition package for 40+ languages"
+       :website "https://github.com/jacktasia/dumb-jump"
+       :type github
+       :depends (f s dash popup)
+       :pkgname "jacktasia/dumb-jump")
