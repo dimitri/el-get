@@ -1,0 +1,5 @@
+(:name go-add-tags
+       :description "Add field tags for Go's struct fields."
+       :type "github"
+       :pkgname "emacsorphanage/go-add-tags"
+       :depends (s cl-lib))
