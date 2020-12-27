@@ -1,0 +1,4 @@
+(:name add-node-modules-path
+       :description "Add node_modules to your exec-path"
+       :type github
+       :pkgname "codesuki/add-node-modules-path")
