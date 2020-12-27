@@ -1,0 +1,6 @@
+(:name lsp-java
+       :description "Java support for lsp-mode using the Eclipse JDT Language Server"
+       :website "https://github.com/emacs-lsp/lsp-java"
+       :type github
+       :pkgname "emacs-lsp/lsp-java"
+       :depends (dap-mode dash f ht lsp-mode markdown-mode request treemacs))

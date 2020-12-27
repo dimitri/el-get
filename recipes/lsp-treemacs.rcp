@@ -1,0 +1,6 @@
+(:name lsp-treemacs
+       :description "Integration between lsp-mode and treemacs"
+       :website "https://github.com/emacs-lsp/lsp-treemacs"
+       :type github
+       :pkgname "emacs-lsp/lsp-treemacs"
+       :depends (dash f ht lsp-mode treemacs))

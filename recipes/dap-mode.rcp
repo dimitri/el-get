@@ -1,0 +1,6 @@
+(:name dap-mode
+       :description "Debug Adapter Protocol mode"
+       :website "https://github.com/emacs-lsp/dap-mode"
+       :type github
+       :pkgname "emacs-lsp/dap-mode"
+       :depends (bui dash f lsp-mode lsp-treemacs posframe s))

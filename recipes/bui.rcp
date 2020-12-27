@@ -1,0 +1,5 @@
+(:name bui
+       :description "Buffer interface library"
+       :type github
+       :pkgname "alezost/bui.el"
+       :depends (dash))
