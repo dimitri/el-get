@@ -2,4 +2,4 @@
        :description "PyDoc with Helm interface."
        :type github
        :depends (helm)
-       :pkgname "syohex/emacs-helm-pydoc")
+       :pkgname "emacsorphanage/helm-pydoc")

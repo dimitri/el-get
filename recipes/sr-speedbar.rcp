@@ -1,4 +1,5 @@
 (:name sr-speedbar
-       :type emacswiki
+       :type github
+       :pkgname "emacsorphanage/sr-speedbar"
        :description "Same frame speedbar"
        :prepare (global-set-key (kbd "s-s") 'sr-speedbar-toggle))

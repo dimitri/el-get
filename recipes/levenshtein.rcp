@@ -1,4 +1,5 @@
 (:name levenshtein
        :description "Edit distance between two strings."
-       :type emacswiki
+       :type github
+       :pkgname "emacsorphanage/levenshtein"
        :features levenshtein)

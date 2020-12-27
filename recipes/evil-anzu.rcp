@@ -2,4 +2,4 @@
        :description "anzu for evil-mode"
        :type github
        :depends (evil anzu)
-       :pkgname "syohex/emacs-evil-anzu")
+       :pkgname "emacsorphanage/evil-anzu")

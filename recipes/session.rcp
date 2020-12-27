@@ -1,6 +1,4 @@
 (:name session
-       :description "When you start Emacs, package Session restores various variables (e.g., input histories) from your last session. It also provides a menu containing recently changed/visited files and restores the places (e.g., point) of such a file when you revisit it."
-       :type http-tar
-       :options ("xzf")
-       :url "http://downloads.sourceforge.net/project/emacs-session/session-2.4b.tar.gz"
-       )
+       :description "Session Management for Emacs"
+       :type github
+       :pkgname "emacsorphanage/session")

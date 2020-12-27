@@ -3,4 +3,4 @@
        :website "https://github.com/losingkeys/4clojure"
        :type github
        :depends (json request)
-       :pkgname "losingkeys/4clojure.el")
+       :pkgname "emacsorphanage/4clojure")

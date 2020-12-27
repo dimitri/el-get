@@ -1,4 +1,4 @@
 (:name direx
        :description "Directory Explorer"
        :type github
-       :pkgname "m2ym/direx-el")
+       :pkgname "emacsorphanage/direx")

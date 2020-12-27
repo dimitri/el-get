@@ -1,5 +1,5 @@
 (:name pkg-info
        :description "Provide information about Emacs packages."
        :type github
-       :pkgname "lunaryorn/pkg-info.el"
+       :pkgname "emacsorphanage/pkg-info"
        :depends (dash epl))

@@ -1,5 +1,5 @@
 (:name helm-robe
        :description "provides function for setting robe-completing-read-func"
        :type github
-       :pkgname "syohex/emacs-helm-robe"
+       :pkgname "emacsorphanage/helm-robe"
        :depends helm)

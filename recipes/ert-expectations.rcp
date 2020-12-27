@@ -1,3 +1,4 @@
 (:name ert-expectations
        :description "Minimalist unit testing framework"
-       :type emacswiki)
+       :type github
+       :pkgname "emacsorphanage/ert-expectations")

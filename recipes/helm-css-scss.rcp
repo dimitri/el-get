@@ -1,5 +1,5 @@
 (:name helm-css-scss
        :description "CSS/SCSS/LESS Selectors with helm interface."
        :type github
-       :pkgname "ShingoFukuyama/helm-css-scss"
-       :depends helm)
+       :pkgname "emacsorphanage/helm-css-scss"
+       :depends (helm))

@@ -1,8 +1,8 @@
 (:name puppet-mode
        :description "A simple mode for editing puppet manifests"
        :type github
-       :pkgname "lunaryorn/puppet-mode"
-       :website "https://github.com/lunaryorn/puppet-mode"
+       :pkgname "voxpupuli/puppet-mode"
+       :website "https://github.com/voxpupuli/puppet-mode"
        :prepare (progn
                   (autoload 'puppet-mode "puppet-mode" "Major mode for editing puppet manifests" t)
                   (add-to-list 'auto-mode-alist '("\\.pp$" . puppet-mode))))

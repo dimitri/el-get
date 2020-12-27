@@ -1,5 +1,5 @@
 (:name helm-ag
        :description "The silver search with helm interface."
        :type github
-       :pkgname "syohex/emacs-helm-ag"
+       :pkgname "emacsorphanage/helm-ag"
        :depends (helm))

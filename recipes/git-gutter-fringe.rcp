@@ -1,5 +1,5 @@
 (:name git-gutter-fringe
        :type github
-       :pkgname "syohex/emacs-git-gutter-fringe"
+       :pkgname "emacsorphanage/git-gutter-fringe"
        :description "Fringe version of git-gutter.el"
        :depends (git-gutter fringe-helper))

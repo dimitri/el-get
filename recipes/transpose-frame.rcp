@@ -1,8 +1,7 @@
 (:name transpose-frame
-       :website "https://code.launchpad.net/~irie/+junk/transpose-frame.el"
        :description "Transpose windows arrangement in a frame."
-       :type bzr
-       :url "http://bazaar.launchpad.net/~irie/+junk/transpose-frame.el"
+       :type github
+       :pkgname "emacsorphanage/transpose-frame"
        :prepare (progn
                   (autoload 'transpose-frame "transpose-frame" nil t)
                   (autoload 'flip-frame "transpose-frame" nil t)
