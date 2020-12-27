@@ -1,6 +1,0 @@
-(:name reflected-buffers
-       :description "Indirect buffers w/o shared font lock"
-       :type github
-       :pkgname "tkf/reflected-buffers"
-       :submodule nil
-       :features reflected-buffers)

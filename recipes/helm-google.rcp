@@ -1,5 +1,5 @@
 (:name helm-google
        :description "Emacs Helm Interface for quick Google searches"
        :type github
-       :pkgname "steckerhalter/helm-google"
+       :pkgname "emacsmirror/helm-google"
        :depends (helm google))

@@ -2,4 +2,4 @@
        :description "Run Edbi with database url."
        :depends (edbi)
        :type github
-       :pkgname "proofit404/edbi-database-url")
+       :pkgname "emacsattic/edbi-database-url")

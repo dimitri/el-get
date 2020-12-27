@@ -1,6 +1,0 @@
-(:name header-button
-       :website "https://github.com/tarsius/header-button"
-       :description "Clickable buttons in header lines"
-       :type github
-       :pkgname "tarsius/header-button"
-       :compile "header-button.el")

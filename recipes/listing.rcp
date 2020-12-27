@@ -1,7 +1,7 @@
 (:name listing
-       :website "https://github.com/tarsius/listing"
+       :website "https://github.com/emacsattic/listing"
        :description "Show columnized view of list elements"
        :type github
-       :pkgname "tarsius/listing"
+       :pkgname "emacsattic/listing"
        :depends (header-button map-progress)
        :compile "listing.el")

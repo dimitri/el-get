@@ -1,0 +1,7 @@
+(:name company-postframe
+       :description "Use child frame as company candidate menu."
+       :website "https://github.com/tumashu/company-posframe/"
+       :type github
+       :minimum-emacs-version "26"
+       :depends company-mode
+       :pkgname "tumashu/company-posframe")

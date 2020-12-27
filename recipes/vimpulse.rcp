@@ -1,6 +1,6 @@
 (:name vimpulse
-       :description "Vimpulse is an add-on for the Emacs text editor. Vimpulse makes Emacs emulate the Vim editor's most useful features, including Visual mode."
-       :type git
-       :url "https://git.gitorious.org/vimpulse/vimpulse.git"
+       :description "Vimpulse makes Emacs emulate the Vim editor's most useful features, including Visual mode."
+       :type github
+       :pkgname "emacsattic/vimpulse"
        :features vimpulse
        )

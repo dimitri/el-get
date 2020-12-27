@@ -1,4 +1,4 @@
 (:name pov-mode
        :description "Major mode for Povray scene files"
-       :type git
-       :url "https://git.gitorious.org/pov-mode/pov-mode.git")
+       :type github
+       :pkgname "emacsmirror/pov-mode")

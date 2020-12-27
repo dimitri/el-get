@@ -1,4 +1,4 @@
 (:name tempbuf-mode
        :description "Kill unused buffers in the background"
-       :url "https://git.gitorious.org/tempbuf-mode/tempbuf-mode.git"
-       :type git)
+       :pkgname "emacsattic/tempbuf"
+       :type github)

@@ -1,7 +1,7 @@
 (:name rt-liberation
        :description "An interface to the RT system."
-       :type git
-       :url "http://yrk.nfshost.com/repos/rt-liberation.git/"
+       :type github
+       :pkgname "emacsmirror/rt-liberation"
        :build `(("make" "-C" "doc")
                 (,el-get-emacs
                  "-Q" "--batch" "--eval"

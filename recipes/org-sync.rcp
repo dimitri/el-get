@@ -1,8 +1,8 @@
 (:name org-sync
        :website "http://orgmode.org/worg/org-contrib/gsoc2012/student-projects/org-sync/"
        :description "Synchronize Org documents with external services."
-       :type git
-       :url "git://orgmode.org/org-sync.git"
+       :type github
+       :pkgname "arbox/org-sync"
        :depends (org-mode json)
        :prepare (progn
                   (autoload 'os "os"

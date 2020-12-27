@@ -1,7 +1,7 @@
 (:name pythonbrew-mini
        :description "Emacs integration for pythonbrew"
-       :type github
+       :type git
        :features pythonbrew-mini
-       :pkgname "franckcuny/pythonbrew-mini.el"
+       :url "https://git.fcuny.net/fcuny/pythonbrew-mini.git"
        :compile "pythonbrew-mini.el"
        :post-init (pythonbrew-use-latest))
