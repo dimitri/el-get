@@ -1,9 +1,8 @@
 (:name emacs-w3m
        :description "A simple Emacs interface to w3m"
-       :type cvs
+       :type github
+       :pkgname "emacs-w3m/emacs-w3m"
        :website "http://emacs-w3m.namazu.org/"
-       :module "emacs-w3m"
-       :url ":pserver:anonymous@cvs.namazu.org:/storage/cvsroot"
        :build `(("autoconf") ("./configure" ,(format "--with-emacs=%s" el-get-emacs)) ("make"))
        :build/windows-nt (("sh" "./autogen.sh")
                           ("sh" "./configure")
