@@ -106,10 +106,10 @@
   "Remove from `el-get-autoload-file' any autoloads associated
 with the named PACKAGE"
   (when (file-exists-p el-get-autoload-file)
-    (let* ((files (mapcan (lambda (dir)
-                            (when (file-directory-p dir)
-                              (directory-files dir t el-get-autoload-regexp)))
-                          (el-get-load-path package)))
+    (let* ((files (cl-mapcan (lambda (dir)
+                               (when (file-directory-p dir)
+                                 (directory-files dir t el-get-autoload-regexp)))
+                             (el-get-load-path package)))
            (generated-autoload-file el-get-autoload-file)
            (load-names
             (mapcar
