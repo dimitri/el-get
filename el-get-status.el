@@ -19,7 +19,7 @@
 ;; miserably.
 ;;
 
-(require 'cl)
+(require 'cl-lib)
 (require 'pp)
 (require 'el-get-core)
 
@@ -76,8 +76,8 @@
            (lambda (p1 p2)
              (string< (el-get-as-string (car p1))
                       (el-get-as-string (car p2)))))))
-    (assert (listp recipe) nil
-            "Recipe must be a list")
+    (cl-assert (listp recipe) nil
+               "Recipe must be a list")
     (with-temp-file el-get-status-file
       (insert (el-get-print-to-string new-package-status-alist 'pretty)))
     ;; Update cache
@@ -105,18 +105,18 @@
   (with-temp-file (format "%s.old" el-get-status-file)
     (insert (el-get-print-to-string old-status-list)))
   ;; now convert to the new format, fetching recipes as we go
-  (loop for (p s) on old-status-list by 'cddr
-        for psym = (el-get-package-symbol p)
-        when psym
-        collect
-        (cons psym
-              (list 'status s
-                    'recipe (when (string= s "installed")
-                              (condition-case nil
-                                  (el-get-package-def psym)
-                                ;; If the recipe is not available any more,
-                                ;; just provide a placeholder no-op recipe.
-                                (error `(:name ,psym :type builtin))))))))
+  (cl-loop for (p s) on old-status-list by 'cddr
+           for psym = (el-get-package-symbol p)
+           when psym
+           collect
+           (cons psym
+                 (list 'status s
+                       'recipe (when (string= s "installed")
+                                 (condition-case nil
+                                     (el-get-package-def psym)
+                                   ;; If the recipe is not available any more,
+                                   ;; just provide a placeholder no-op recipe.
+                                   (error `(:name ,psym :type builtin))))))))
 
 (defun el-get-clear-status-cache ()
   "Clear in-memory cache for status file."
@@ -150,23 +150,23 @@
     ;;
     ;; a package with status "installed" and a missing directory is
     ;; automatically reset to "required" so that a proper install happens.
-    (loop for (p . prop) in p-s
-          if (and (string= (plist-get prop 'status) "installed")
-                  (not (file-directory-p (el-get-package-directory p))))
-          collect (cons p (plist-put prop 'status "required"))
-          else
-          collect (cons p prop))))
+    (cl-loop for (p . prop) in p-s
+             if (and (string= (plist-get prop 'status) "installed")
+                     (not (file-directory-p (el-get-package-directory p))))
+             collect (cons p (plist-put prop 'status "required"))
+             else
+             collect (cons p prop))))
 
 (defun el-get-package-status-alist ()
   "return an alist of (PACKAGE . STATUS)"
-  (loop for (p . prop) in (el-get-read-status-file)
-        collect (cons p (plist-get prop 'status))))
+  (cl-loop for (p . prop) in (el-get-read-status-file)
+           collect (cons p (plist-get prop 'status))))
 
 (defun el-get-package-status-recipes ()
   "return the list of recipes stored in the status file"
-  (loop for (p . prop) in (el-get-read-status-file)
-        when (string= (plist-get prop 'status) "installed")
-        collect (plist-get prop 'recipe)))
+  (cl-loop for (p . prop) in (el-get-read-status-file)
+           when (string= (plist-get prop 'status) "installed")
+           collect (plist-get prop 'recipe)))
 
 (defun el-get-read-package-status (package)
   "return current status for PACKAGE"
@@ -182,10 +182,10 @@
 
 (defun el-get-filter-package-alist-with-status (package-status-alist &rest statuses)
   "Return package names that are currently in given status"
-  (loop for (p . prop) in package-status-alist
-        for s = (plist-get prop 'status)
-        when (member s statuses)
-        collect (el-get-as-string p)))
+  (cl-loop for (p . prop) in package-status-alist
+           for s = (plist-get prop 'status)
+           when (member s statuses)
+           collect (el-get-as-string p)))
 
 (defun el-get-list-package-names-with-status (&rest statuses)
   "Return package names that are currently in given status"
@@ -204,7 +204,7 @@
 
 (defun el-get-count-packages-with-status (packages &rest statuses)
   "Return how many packages are currently in given status in PACKAGES"
-  (length (intersection
+  (length (cl-intersection
            (mapcar #'el-get-as-symbol (apply #'el-get-list-package-names-with-status statuses))
            (mapcar #'el-get-as-symbol packages))))
 
@@ -212,16 +212,16 @@
   "Return installed or required packages that are not in given package list"
   (let ((packages
          ;; &rest could contain both symbols and lists
-         (loop for p in packages
-               when (listp p) append (mapcar 'el-get-as-symbol p)
-               else collect (el-get-as-symbol p))))
+         (cl-loop for p in packages
+                  when (listp p) append (mapcar 'el-get-as-symbol p)
+                  else collect (el-get-as-symbol p))))
     (when packages
-      (loop for (p . prop) in (el-get-read-status-file)
-            for s = (plist-get prop 'status)
-            for x = (el-get-package-symbol p)
-            unless (member x packages)
-            unless (equal s "removed")
-            collect (list x s)))))
+      (cl-loop for (p . prop) in (el-get-read-status-file)
+               for s = (plist-get prop 'status)
+               for x = (el-get-package-symbol p)
+               unless (member x packages)
+               unless (equal s "removed")
+               collect (list x s)))))
 
 (defmacro el-get-with-status-sources (_ &rest body)
   "Evaluate BODY with `el-get-sources' according to the status file."
@@ -266,29 +266,29 @@ that recipe in the el-get status file.")
 Partition the properties of NEWPROPS whose value is different
 from SOURCE into 3 sublists, (INIT UPDATE REINSTALL), according
 to the operation required."
-  (loop with init and update and reinstall
-        with type = (let ((old-type (el-get-package-method source))
-                          (new-type (el-get-package-method newprops)))
-                      (if (eq old-type new-type) old-type nil))
-        for (k v) on newprops by 'cddr
-        if (equal v (plist-get source k)) do (ignore) ; Ignore non-changes.
-        else if
-        (or (memq k el-get-status-init-whitelist)
-            (if (eq k :builtin) ; `:builtin' safe if not crossing versions.
-                (eq (version<= emacs-version (el-get-as-string v))
-                    (version<= emacs-version (el-get-as-string
-                                              (plist-get source k))))))
-        do (setq init (plist-put init k v))
-        else if (or (memq k el-get-status-update-whitelist)
-                    ;; All `:build/*' props are update safe, like `:build'.
-                    (string-prefix-p ":build/" (symbol-name k))
-                    (if (eq k :url) ; `:http*' methods can handle `:url' changes.
-                        (memq type '(http http-tar http-zip
-                                          github-tar github-zip
-                                          builtin))))
-        do (setq update (plist-put update k v))
-        else do (setq reinstall (plist-put reinstall k v))
-        finally return (list init update reinstall)))
+  (cl-loop with init and update and reinstall
+           with type = (let ((old-type (el-get-package-method source))
+                             (new-type (el-get-package-method newprops)))
+                         (if (eq old-type new-type) old-type nil))
+           for (k v) on newprops by 'cddr
+           if (equal v (plist-get source k)) do (ignore) ; Ignore non-changes.
+           else if
+           (or (memq k el-get-status-init-whitelist)
+               (if (eq k :builtin) ; `:builtin' safe if not crossing versions.
+                   (eq (version<= emacs-version (el-get-as-string v))
+                       (version<= emacs-version (el-get-as-string
+                                                 (plist-get source k))))))
+           do (setq init (plist-put init k v))
+           else if (or (memq k el-get-status-update-whitelist)
+                       ;; All `:build/*' props are update safe, like `:build'.
+                       (string-prefix-p ":build/" (symbol-name k))
+                       (if (eq k :url) ; `:http*' methods can handle `:url' changes.
+                           (memq type '(http http-tar http-zip
+                                             github-tar github-zip
+                                             builtin))))
+           do (setq update (plist-put update k v))
+           else do (setq reinstall (plist-put reinstall k v))
+           finally return (list init update reinstall)))
 
 (defun el-get-diagnosis-properties (old-source new-source)
   "Diagnosis difference between OLD-SOURCE and NEW-SOURCE.
@@ -359,7 +359,7 @@ t', this error is suppressed (but nothing is updated).
           (el-get-read-cached-recipe package source)))
     (unless (el-get-package-is-installed package)
       (error "Package %s is not installed. Cannot update recipe." package))
-    (destructuring-bind (required-ops added removed)
+    (cl-destructuring-bind (required-ops added removed)
         (el-get-diagnosis-properties cached-recipe source)
       (if (and required-ops (not (memq operation required-ops)))
         ;; Emit a verbose message if `noerror' is t (but still quit

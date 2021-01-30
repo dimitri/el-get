@@ -21,6 +21,7 @@
 ;; and its methods.  See the methods directory for implementation of them.
 ;;
 
+(require 'cl-lib)
 (require 'el-get-core)
 
 (declare-function widget-editable-list-match "wid-edit" (widget value))
@@ -515,7 +516,7 @@ this is the name to fetch in that system"
                           )
                  ;; A sorted list of method names
                  (sort
-                  (reduce
+                  (cl-reduce
                    (lambda (r e)
                      (if (symbolp e)
                          (cons

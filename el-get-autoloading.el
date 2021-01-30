@@ -12,7 +12,7 @@
 ;; Install
 ;;     Please see the README.md file from the same distribution
 
-(require 'cl)
+(require 'cl-lib)
 (require 'el-get-core)
 (require 'el-get-custom)
 (require 'autoload)
@@ -80,8 +80,8 @@
 
       (when (el-get-package-is-installed package)
         (mapc 'update-directory-autoloads
-              (remove-if-not #'file-directory-p
-                             (el-get-load-path package)))
+              (cl-remove-if-not #'file-directory-p
+                                (el-get-load-path package)))
 
         (let ((visiting (find-buffer-visiting el-get-autoload-file)))
           ;; `update-directory-autoloads' leaves file open

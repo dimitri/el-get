@@ -11,6 +11,8 @@
 ;;
 ;; Install
 ;;     Please see the README.md file from the same distribution
+
+(require 'cl-lib)
 (require 'el-get-core)
 (unless (version< emacs-version "24.4")
   (require 'subr-x))
@@ -42,7 +44,7 @@ following are true:
 
 - PACKAGE definition has a non-empty :checksum"
   (unless el-get-allow-insecure
-    (assert (stringp url) nil "URL is nil, can't decide if it's safe to install package '%s'" package)
+    (cl-assert (stringp url) nil "URL is nil, can't decide if it's safe to install package '%s'" package)
     (let* ((checksum (plist-get (el-get-package-def package) :checksum))
            (checksum-empty (or (not (stringp checksum))
                                (if (fboundp 'string-blank-p)

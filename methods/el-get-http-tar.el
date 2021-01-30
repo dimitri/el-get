@@ -12,6 +12,7 @@
 ;; Install
 ;;     Please see the README.md file from the same distribution
 
+(require 'cl-lib)
 (require 'el-get-http)
 
 (defun el-get-http-unpack-cleanup-extract-hook (package)
@@ -26,13 +27,13 @@
     ;; if there's only one directory, move its content up and get rid of it
     (when (and (not (cdr files))
                (file-directory-p (expand-file-name dir pdir)))
-      (loop for fname in (directory-files
-                          (expand-file-name dir pdir) nil "[^.]$")
-            for fullname = (expand-file-name fname (expand-file-name dir pdir))
-            for newname  = (expand-file-name fname pdir)
-            do (progn
-                 (el-get-verbose-message "mv %S %S" fullname newname)
-                 (rename-file fullname newname)))
+      (cl-loop for fname in (directory-files
+                             (expand-file-name dir pdir) nil "[^.]$")
+               for fullname = (expand-file-name fname (expand-file-name dir pdir))
+               for newname  = (expand-file-name fname pdir)
+               do (progn
+                    (el-get-verbose-message "mv %S %S" fullname newname)
+                    (rename-file fullname newname)))
       (el-get-verbose-message "delete-directory: %s" (expand-file-name dir pdir))
       (delete-directory (expand-file-name dir pdir)))))
 
@@ -50,12 +51,12 @@
                   ;; Remove all files from previous install before
                   ;; extracting the tar file.
                   (let ((files-to-delete (remove ,tarfile (directory-files ,pdir nil "[^.]$"))))
-                    (loop for fname in files-to-delete
-                          for fullpath = (expand-file-name fname ,pdir)
-                          do (el-get-verbose-message "el-get-http-tar: Deleting old file %S" fname)
-                          do (if (file-directory-p fullpath)
-                                 (delete-directory fullpath 'recursive)
-                               (delete-file fullpath))))
+                    (cl-loop for fname in files-to-delete
+                             for fullpath = (expand-file-name fname ,pdir)
+                             do (el-get-verbose-message "el-get-http-tar: Deleting old file %S" fname)
+                             do (if (file-directory-p fullpath)
+                                    (delete-directory fullpath 'recursive)
+                                  (delete-file fullpath))))
                   ;; verify checksum before operating on untrusted data
                   (el-get-verify-checksum package)
                   ;; tar xzf `basename url`

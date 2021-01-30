@@ -23,6 +23,7 @@
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 'el-get-core)
 (require 'el-get-custom)
 (require 'el-get-byte-compile)
@@ -85,9 +86,9 @@ compiled version."
   "Return the elements of `el-get-recipe-path' that actually exist.
 
 Used to avoid errors when exploring the path for recipes"
-  (reduce (lambda (dir result)
-            (if (file-directory-p dir) (cons dir result) result))
-          el-get-recipe-path :from-end t :initial-value nil))
+  (cl-reduce (lambda (dir result)
+               (if (file-directory-p dir) (cons dir result) result))
+             el-get-recipe-path :from-end t :initial-value nil))
 
 ;; recipe files are elisp data, you can't byte-compile or eval them on their
 ;; own, but having elisp indenting and colors make sense
@@ -105,8 +106,8 @@ Used to avoid errors when exploring the path for recipes"
         (insert "(")
         ;; Standard Emacs pretty print functions don't put newlines after
         ;; prop val pairs of plists, so we have to do it ourselves.
-        (loop for (prop val) on source by #'cddr
-              do (insert (format "%S %S\n" prop val)))
+        (cl-loop for (prop val) on source by #'cddr
+                 do (insert (format "%S %S\n" prop val)))
         (delete-char -1)                ; delete last \n
         (insert ")\n")
         (goto-char point)
@@ -125,11 +126,11 @@ Used to avoid errors when exploring the path for recipes"
   "Return the name of the file that contains the recipe for PACKAGE, if any."
   (let ((package-el  (concat (el-get-as-string package) ".el"))
         (package-rcp (concat (el-get-as-string package) ".rcp")))
-    (loop for dir in el-get-recipe-path
-          for recipe-el  = (expand-file-name package-el dir)
-          for recipe-rcp = (expand-file-name package-rcp dir)
-          if (file-exists-p recipe-el)  return recipe-el
-          if (file-exists-p recipe-rcp) return recipe-rcp)))
+    (cl-loop for dir in el-get-recipe-path
+             for recipe-el  = (expand-file-name package-el dir)
+             for recipe-rcp = (expand-file-name package-rcp dir)
+             if (file-exists-p recipe-el)  return recipe-el
+             if (file-exists-p recipe-rcp) return recipe-rcp)))
 
 (defun el-get-read-recipe (package)
   "Return the source definition for PACKAGE, from the recipes."
@@ -142,9 +143,9 @@ Used to avoid errors when exploring the path for recipes"
   "Return the list of all file based recipe names.
 
 The result may have duplicates."
-  (loop for dir in (el-get-recipe-dirs)
-        nconc (mapcar #'file-name-base
-                      (directory-files dir nil "^[^.].*\.\\(rcp\\|el\\)$"))))
+  (cl-loop for dir in (el-get-recipe-dirs)
+           nconc (mapcar #'file-name-base
+                         (directory-files dir nil "^[^.].*\.\\(rcp\\|el\\)$"))))
 
 (defun el-get-read-all-recipe-files ()
   "Return the list of all file based recipes, formated like `el-get-sources'.
@@ -153,9 +154,9 @@ Only consider any given recipe only once even if present in
 multiple dirs from `el-get-recipe-path'. The first recipe found
 is the one considered."
   (let (packages)
-    (loop
+    (cl-loop
      for dir in (el-get-recipe-dirs)
-     nconc (loop
+     nconc (cl-loop
             for recipe in (directory-files dir nil "^[^.].*\.\\(rcp\\|el\\)$")
             for filename = (concat (file-name-as-directory dir) recipe)
             for pname = (file-name-sans-extension
@@ -190,17 +191,17 @@ If R2 has a `:type' it completely replaces R1, otherwise, R1
 fields are the default value and R2 may override them."
   (if (plist-get r2 :type)
       r2
-    (loop with merged
-          for (prop val) on (append r2 r1) by 'cddr
-          unless (plist-member merged prop)
-          nconc (list prop val) into merged
-          finally return merged)))
+    (cl-loop with merged
+             for (prop val) on (append r2 r1) by 'cddr
+             unless (plist-member merged prop)
+             nconc (list prop val) into merged
+             finally return merged)))
 
 (defun el-get-package-def (package)
   "Return a single `el-get-sources' entry for PACKAGE."
-  (let ((source (loop for src in el-get-sources
-                      when (string= package (el-get-source-name src))
-                      return src)))
+  (let ((source (cl-loop for src in el-get-sources
+                         when (string= package (el-get-source-name src))
+                         return src)))
 
     (cond ((or (null source) (symbolp source))
            ;; not in `el-get-sources', or only mentioned by name
@@ -239,15 +240,15 @@ Only consider packages whose status is `member' of STATUSES,
 which defaults to installed, required and removed.  Example:
 
   (el-get-package-types-alist \"installed\" 'http 'cvs)"
-  (loop for src in (apply 'el-get-list-package-names-with-status
-                          (cond ((stringp statuses) (list statuses))
-                                ((null statuses) '("installed" "required"
-                                                   "removed"))
-                                (t statuses)))
-        for name = (el-get-as-symbol src)
-        for type = (el-get-package-type name)
-        when (or (null types) (memq 'all types) (memq type types))
-        collect (cons name type)))
+  (cl-loop for src in (apply 'el-get-list-package-names-with-status
+                             (cond ((stringp statuses) (list statuses))
+                                   ((null statuses) '("installed" "required"
+                                                      "removed"))
+                                   (t statuses)))
+           for name = (el-get-as-symbol src)
+           for type = (el-get-package-type name)
+           when (or (null types) (memq 'all types) (memq type types))
+           collect (cons name type)))
 
 (defun el-get-package-required-emacs-version (package-or-source)
   (let* ((def (if (or (symbolp package-or-source) (stringp package-or-source))
@@ -293,7 +294,7 @@ of numbers, which will be returned unmodified."
     (list version))
    ;; List of numbers
    ((and (listp version)
-         (null (remove-if 'numberp version)))
+         (null (cl-remove-if 'numberp version)))
     version)
    (t (error "Unrecognized version specification: %S" version))))
 
@@ -320,8 +321,8 @@ Use this to modify environment variable such as $PATH or $PYTHONPATH."
   "Return \"HEAD:PATHS\" omitting duplicates in it."
   (let ((pplist (split-string (or paths "") path-separator 'omit-nulls)))
     (mapconcat 'identity
-               (remove-duplicates (cons head pplist)
-                                  :test #'string= :from-end t)
+               (cl-remove-duplicates (cons head pplist)
+                                     :test #'string= :from-end t)
                path-separator)))
 
 (provide 'el-get-recipes)
