@@ -1,0 +1,4 @@
+(:name cram-mode
+       :description "cram-mode.el' provides a major mode for the cram files. Mode adds syntax highlighting and interactive commands to run cram against buffer or region. cram-mode is automatically enabled for files with '.t' extension."
+       :type github
+       :pkgname "signalpillar/cram-mode")
