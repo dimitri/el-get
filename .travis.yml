@@ -6,6 +6,7 @@ env:
   - EMACS_VERSION=24.5
   - EMACS_VERSION=25.3
   - EMACS_VERSION=26.2
+  - EMACS_VERSION=27.1
 install:
   - env
   - source test/travis-ci.sh
