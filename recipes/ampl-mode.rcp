@@ -1,0 +1,5 @@
+(:name ampl-mode
+       :website "https://github.com/dpo/ampl-mode"
+       :description "Provides syntax highlighting and indentation for Ampl files"
+       :type http
+       :url "https://raw.githubusercontent.com/vmiheer/ampl-mode/patch-1/emacs/ampl-mode.el")
