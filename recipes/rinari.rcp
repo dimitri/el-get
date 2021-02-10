@@ -2,6 +2,7 @@
        :description "Rinari Is Not A Rails IDE"
        :type github
        :pkgname "eschulte/rinari"
+       :depends (ruby-mode inf-ruby ruby-compilation jump)
        :load-path ("." "util" "util/jump")
        :compile ("\\.el$" "util")
        :build (("bundle")
