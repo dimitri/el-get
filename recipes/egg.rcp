@@ -4,4 +4,6 @@
        :pkgname "byplayer/egg"
        :load-path (".")
        :compile nil ;; egg uses eval at places which breaks compilation
-       :features egg)
+       :autoloads nil ;; egg autoloads are too aggresive
+       :features egg
+       )
