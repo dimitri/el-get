@@ -1,5 +1,5 @@
 (:name undo-tree
        :description "Treat undo history as a tree"
-       :website "http://www.dr-qubit.org/emacs.php"
        :type git
-       :url "http://www.dr-qubit.org/git/undo-tree.git/")
+       :url "https://gitlab.com/tsc25/undo-tree.git"
+       :depends (queue))
