@@ -173,7 +173,7 @@
   (plist-get (cdr (assq (el-get-as-symbol package) (el-get-read-status-file)))
              'status))
 
-(define-obsolete-function-alias 'el-get-package-status 'el-get-read-package-status)
+(define-obsolete-function-alias 'el-get-package-status 'el-get-read-package-status "4.1")
 
 (defun el-get-read-package-status-recipe (package)
   "return current status recipe for PACKAGE"

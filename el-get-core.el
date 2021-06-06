@@ -499,9 +499,12 @@ makes it easier to conditionally splice a command into the list.
                         (funcall final-func package)))))
               ;; async case
               (el-get-verbose-message "Running commands asynchronously: %S" commands)
-              (let* ((startf (if shell #'start-process-shell-command #'start-process))
-                     (process-connection-type nil) ; pipe, don't pretend we're a pty
-                     (proc (apply startf cname cbuf program args)))
+              (let* ((process-connection-type nil) ; pipe, don't pretend we're a pty
+                     (proc (if shell
+                               (start-process-shell-command cname
+                                                            cbuf
+                                                            (string-join (cons program args) " "))
+                             (apply #'start-process cname cbuf program args))))
                 ;; add the properties to the process, then set the sentinel
                 (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
                 (process-put proc :el-get-sources el-get-sources)
