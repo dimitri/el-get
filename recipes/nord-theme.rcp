@@ -1,4 +1,4 @@
-(:name nord-emacs
+(:name nord-theme
        :type github
        :description "Nord theme for Emacs"
        :pkgname "arcticicestudio/nord-emacs"
