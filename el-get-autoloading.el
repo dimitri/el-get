@@ -111,8 +111,17 @@ with the named PACKAGE"
                               (directory-files dir t el-get-autoload-regexp)))
                           (el-get-load-path package)))
            (generated-autoload-file el-get-autoload-file)
-           (load-names (mapcar (lambda (f) (autoload-file-load-name f el-get-autoload-file))
-                               files))
+           (load-names
+            (mapcar
+             (lambda (f)
+               (apply #'autoload-file-load-name
+                      ;; Starting from Emacs 28 auto-file-load-name
+                      ;; needs two parameters, versions before 28 only
+                      ;; one.
+                      (if (> emacs-major-version 27)
+                          `(,f ,el-get-autoload-file)
+                        `(,f))))
+             files))
            (recentf-exclude (cons (regexp-quote el-get-autoload-file)
                                   (bound-and-true-p recentf-exclude)))
            (visited (find-buffer-visiting el-get-autoload-file)))
