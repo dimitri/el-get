@@ -503,7 +503,7 @@ makes it easier to conditionally splice a command into the list.
                      (proc (if shell
                                (start-process-shell-command cname
                                                             cbuf
-                                                            (string-join (cons program args) " "))
+                                                            (mapconcat #'identity (cons program args) " "))
                              (apply #'start-process cname cbuf program args))))
                 ;; add the properties to the process, then set the sentinel
                 (mapc (lambda (x) (process-put proc x (plist-get c x))) c)
