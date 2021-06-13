@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        emacs_version:
+        - 23.4
+        - 24.3
+        - 24.5
+        - 25.3
+        - 26.3
+        - 27.2
+        - snapshot
+    env:
+      EMACS_VERSION: ${{ matrix.emacs_version }}
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: purcell/setup-emacs@master
+      with:
+        version: ${{ matrix.emacs_version }}
+
+    - name: Print Emacs version and environemnt variables
+      run: |
+        env
+        emacs --version
+
+    - name: Install prereqs
+      run: |
+        source test/github-actions.sh
+        prereqs
+
+    - name: Compilation
+      run: |
+        source test/github-actions.sh
+        byte-compile pkg/*.el
+        byte-compile -Werror *.el methods/*.el
+
+    - name: Test
+      run: |
+        source test/github-actions.sh
+        ert-tests
+        check-recipes -Wno-features -Wno-github -Wno-autoloads recipes/
+        check-whitespace
+        check-filenames
