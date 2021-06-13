@@ -151,9 +151,9 @@ this with a prefix arg (noninteractively: set optional arg
       (message "%s %s" el-get-emacs args)
       (set-process-sentinel
        process
-       '(lambda (proc event)
-          (when (eq (process-status proc) 'exit)
-            (el-get-notify "el-get: EmacsWiki"
-                           "EmacsWiki local recipe list refreshed")))))))
+       #'(lambda (proc event)
+           (when (eq (process-status proc) 'exit)
+             (el-get-notify "el-get: EmacsWiki"
+                            "EmacsWiki local recipe list refreshed")))))))
 
 (provide 'el-get-emacswiki)
