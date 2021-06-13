@@ -24,6 +24,8 @@ jobs:
       EMACS_VERSION: ${{ matrix.emacs_version }}
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
 
     - uses: purcell/setup-emacs@master
       with:
