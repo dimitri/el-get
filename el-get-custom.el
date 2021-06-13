@@ -21,6 +21,7 @@
 ;; and its methods.  See the methods directory for implementation of them.
 ;;
 
+(require 'cl-lib)
 (require 'el-get-core)
 
 (declare-function widget-editable-list-match "wid-edit" (widget value))
@@ -120,7 +121,8 @@ this: `((\"make\" ,@el-get-parallel-make-args))"
   :type '(repeat string))
 
 (defcustom el-get-verbose nil
-  "Non-nil means print messages describing progress of el-get even for fast operations."
+  "Non-nil means print messages describing progress of el-get even for fast
+operations."
   :group 'el-get
   :type 'boolean)
 
@@ -515,7 +517,7 @@ this is the name to fetch in that system"
                           )
                  ;; A sorted list of method names
                  (sort
-                  (reduce
+                  (cl-reduce
                    (lambda (r e)
                      (if (symbolp e)
                          (cons

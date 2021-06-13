@@ -19,7 +19,7 @@
 ;;
 
 (require 'dired)
-(require 'cl)            ; needed for `remove-duplicates'
+(require 'cl-lib)
 (require 'simple)        ; needed for `apply-partially'
 (require 'bytecomp)
 (require 'autoload)
@@ -56,9 +56,9 @@ the original object."
   "Return a list of all keys in PLIST.
 
 Duplicates are removed."
-  (remove-duplicates
-   (loop for (k _) on plist by #'cddr
-         collect k)
+  (cl-remove-duplicates
+   (cl-loop for (k _) on plist by #'cddr
+            collect k)
    :test #'eq))
 
 (defsubst el-get-keyword-name (keyword)
@@ -89,32 +89,32 @@ call for doing the named package action in the given method.")
   "Returns t if NAME is a known el-get install method backend, nil otherwise."
   (and (el-get-method name :install) t))
 
-(defun* el-get-register-method (name &key install update remove
-                                     install-hook update-hook remove-hook
-                                     compute-checksum guess-website)
+(cl-defun el-get-register-method (name &key install update remove
+                                       install-hook update-hook remove-hook
+                                       compute-checksum guess-website)
   "Register the method for backend NAME, with given functions"
   (let (method-def)
-    (loop for required-arg in '(install update remove)
-          unless (symbol-value required-arg)
-          do (error "Missing required argument: :%s" required-arg)
-          do (setq method-def
-                   (plist-put method-def
-                              (intern (format ":%s" required-arg))
-                              (symbol-value required-arg))))
-    (loop for optional-arg in '(install-hook update-hook remove-hook
-                                             compute-checksum guess-website)
-          if (symbol-value optional-arg)
-          do (setq method-def
-                   (plist-put method-def
-                              (intern (format ":%s" optional-arg))
-                              (symbol-value optional-arg))))
+    (cl-loop for required-arg in '(install update remove)
+             unless (symbol-value required-arg)
+             do (error "Missing required argument: :%s" required-arg)
+             do (setq method-def
+                      (plist-put method-def
+                                 (intern (format ":%s" required-arg))
+                                 (symbol-value required-arg))))
+    (cl-loop for optional-arg in '(install-hook update-hook remove-hook
+                                                compute-checksum guess-website)
+             if (symbol-value optional-arg)
+             do (setq method-def
+                      (plist-put method-def
+                                 (intern (format ":%s" optional-arg))
+                                 (symbol-value optional-arg))))
     (setq el-get-methods (plist-put el-get-methods name method-def))))
 
 (put 'el-get-register-method 'lisp-indent-function
      (get 'prog1 'lisp-indent-function))
 
-(defun* el-get-register-derived-method (name derived-from-name
-                                             &rest keys &key &allow-other-keys)
+(cl-defun el-get-register-derived-method (name derived-from-name
+                                               &rest keys &key &allow-other-keys)
   "Register the method for backend NAME.
 
 Defaults for all optional arguments are taken from
@@ -241,11 +241,11 @@ entry."
 ;;
 (defun el-get-duplicates (list)
   "Return duplicates found in list."
-  (loop with dups and once
-        for elt in list
-        if (member elt once) collect elt into dups
-        else collect elt into once
-        finally return dups))
+  (cl-loop with dups and once
+           for elt in list
+           if (member elt once) collect elt into dups
+           else collect elt into once
+           finally return dups))
 
 (defun el-get-flatten (arg)
   "Return a version of ARG as a one-level list
@@ -276,8 +276,8 @@ given method."
   (let* ((method  (if (keywordp method-name) method-name
                     (intern (concat ":" (format "%s" method-name)))))
          (actions (plist-get el-get-methods method)))
-    (assert actions nil
-            "Unknown recipe type: %s" method)
+    (cl-assert actions nil
+               "Unknown recipe type: %s" method)
     (plist-get actions action)))
 
 (defun el-get-check-init ()
@@ -327,21 +327,21 @@ fail."
 ;;
 (defun el-get-package-files (pdir)
   "Return a list of files loaded from directory PDIR."
-  (loop with regexp = (format "^%s" (regexp-quote (file-name-as-directory (file-truename pdir))))
-        for (f . nil) in load-history
-        when (and (stringp f) (string-match-p regexp (file-truename f)))
-        collect (if (string-match-p "\\.elc?$" f)
-                    (file-name-sans-extension f)
-                  f)))
+  (cl-loop with regexp = (format "^%s" (regexp-quote (file-name-as-directory (file-truename pdir))))
+           for (f . nil) in load-history
+           when (and (stringp f) (string-match-p regexp (file-truename f)))
+           collect (if (string-match-p "\\.elc?$" f)
+                       (file-name-sans-extension f)
+                     f)))
 
 (defun el-get-package-features (pdir)
   "Return a list of features provided by files in PDIR."
-  (loop with regexp = (format "^%s" (regexp-quote (file-name-as-directory (expand-file-name pdir))))
-        for (f . l) in load-history
-        when (and (stringp f) (string-match-p regexp (file-truename f)))
-        nconc (loop for i in l
-                    when (and (consp i) (eq (car i) 'provide))
-                    collect (cdr i))))
+  (cl-loop with regexp = (format "^%s" (regexp-quote (file-name-as-directory (expand-file-name pdir))))
+           for (f . l) in load-history
+           when (and (stringp f) (string-match-p regexp (file-truename f)))
+           nconc (cl-loop for i in l
+                          when (and (consp i) (eq (car i) 'provide))
+                          collect (cdr i))))
 
 
 ;;

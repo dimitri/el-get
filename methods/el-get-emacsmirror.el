@@ -12,6 +12,7 @@
 ;; Install
 ;;     Please see the README.md file from the same distribution
 
+(require 'cl-lib)
 (require 'el-get-core)
 (require 'el-get-recipes)
 (require 'el-get-git)
@@ -19,8 +20,8 @@
 
 (defun el-get-emacsmirror-get-github-source (package)
   "Return a github-type source equivalent to emacsmirror PACKAGE."
-  (assert (equal (el-get-package-type package) 'emacsmirror) nil
-          "Need an emacsmirror package")
+  (cl-assert (equal (el-get-package-type package) 'emacsmirror) nil
+             "Need an emacsmirror package")
   (append `(:type github
                   :pkgname ,(format "emacsmirror/%s" package))
           (el-get-package-def package)))

@@ -12,6 +12,7 @@
 ;; Install
 ;;     Please see the README.md file from the same distribution
 
+(require 'cl-lib)
 (require 'el-get-recipes)
 (require 'el-get-notify)
 (require 'el-get-http)
@@ -73,7 +74,7 @@ filename.el ;;; filename.el --- description"
              (buffer-substring (point) (line-end-position))))
     (re-search-forward "^$" nil 'move)
     (forward-char)
-    (loop
+    (cl-loop
      with wiki-regexp =
      (concat "^\\([^[:space:]]+\\.el\\)" ; filename
              "\\(?:" ; optional separators
@@ -98,7 +99,7 @@ into a local recipe file set"
                         el-get-recipe-path-emacswiki))
         (coding-system-for-write 'utf-8))
     (unless (file-directory-p target-dir) (make-directory target-dir 'recursive))
-    (loop
+    (cl-loop
      with wiki-list = (el-get-emacswiki-retrieve-package-list)
      with progress = (make-progress-reporter "Generating Emacswiki recipes"
                                              0 (length wiki-list))
@@ -150,9 +151,9 @@ this with a prefix arg (noninteractively: set optional arg
       (message "%s %s" el-get-emacs args)
       (set-process-sentinel
        process
-       '(lambda (proc event)
-          (when (eq (process-status proc) 'exit)
-            (el-get-notify "el-get: EmacsWiki"
-                           "EmacsWiki local recipe list refreshed")))))))
+       #'(lambda (proc event)
+           (when (eq (process-status proc) 'exit)
+             (el-get-notify "el-get: EmacsWiki"
+                            "EmacsWiki local recipe list refreshed")))))))
 
 (provide 'el-get-emacswiki)

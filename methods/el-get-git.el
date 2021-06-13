@@ -12,6 +12,7 @@
 ;; Install
 ;;     Please see the README.md file from the same distribution
 
+(require 'cl-lib)
 (require 'el-get-core)
 (require 'el-get-recipes)
 
@@ -204,8 +205,8 @@ not return 'smart' headers despite supporting shallow clones"
     ;; type. Instead, we check for the existence of a ".git" directory
     ;; in the package directory. A better approach might be to call
     ;; "git status" and check that it returns success.
-    (assert (file-directory-p ".git") nil
-            "Package %s is not a git package" package)
+    (cl-assert (file-directory-p ".git") nil
+               "Package %s is not a git package" package)
     (with-temp-buffer
       (call-process (el-get-executable-find "git") nil '(t t) nil
                     "log" "--pretty=format:%H" "-n1")

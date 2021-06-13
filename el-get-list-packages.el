@@ -17,7 +17,7 @@
 ;; Description of packages.  (Code based on `describe-function').
 ;;
 (require 'el-get-core)
-(require 'cl)
+(require 'cl-lib)
 
 (declare-function el-get-install "el-get" (package))
 (declare-function el-get-remove "el-get" (package))
@@ -134,10 +134,10 @@ matching REGEX with TYPE and ARGS as parameter."
       (if (listp depends)
           (progn
             (princ "Dependencies: ")
-            (loop for i in depends
-                  do (el-get-describe-princ-button
-                      (format "`%s'" i) "`\\([^`']+\\)"
-                      'el-get-help-describe-package i)))
+            (cl-loop for i in depends
+                     do (el-get-describe-princ-button
+                         (format "`%s'" i) "`\\([^`']+\\)"
+                         'el-get-help-describe-package i)))
         (princ "Dependency: ")
         (el-get-describe-princ-button
          (format "`%s'" depends) "`\\([^`']+\\)"
@@ -361,7 +361,7 @@ in el-get package menu."
                           'font-lock-face face)))
     (when desc
       (indent-to (cdr (assoc "Description" el-get-package-list-column-alist)) 1)
-      (let ((eol (position ?\n desc)))
+      (let ((eol (cl-position ?\n desc)))
         (when eol (setq desc (substring desc 0 eol))))
       (insert (propertize desc 'font-lock-face face) "\n"))))
 

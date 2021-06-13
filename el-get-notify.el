@@ -16,12 +16,11 @@
 (require 'help-mode)     ; byte-compiling needs to know about xref-type buttons
 
 ;; we support notifications on darwin too, thanks to growlnotify
+(define-obsolete-variable-alias 'el-get-growl-notify 'el-get-growl-notify-path "4.0")
 (defcustom el-get-growl-notify-path "/usr/local/bin/growlnotify"
   "Absolute path of the growlnotify tool"
   :group 'el-get
   :type 'file)
-
-(define-obsolete-variable-alias 'el-get-growl-notify 'el-get-growl-notify-path "4.0")
 
 ;; notify user with emacs notifications API (new in 24)
 ;;

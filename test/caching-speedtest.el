@@ -1,6 +1,6 @@
 ;; Benchmark for caching the package status alist
 
-(require 'cl)
+(require 'cl-lib)
 
 (defmacro timeit (&rest body)
   "Run body and report real time taken to do so."
@@ -14,7 +14,7 @@
 
 (defmacro suppress-messages (&rest body)
   "Run body with `message' redefined as a no-op."
-  `(flet ((message (&rest ignored) nil))
+  `(cl-flet ((message (&rest ignored) nil))
      (progn ,@body)))
 (put 'suppress-messages 'lisp-indent-function
      (get 'progn 'lisp-indent-function))
@@ -37,7 +37,7 @@
 (message "Beginning benchmark")
 ;; Repeat benchmark 5 times to see consistency
 (let ((times
-       (loop
+       (cl-loop
         for rep from 1 upto 5
         collect
         (timeit
