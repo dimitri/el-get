@@ -235,6 +235,44 @@ entry."
 
 (defalias 'el-get-package-installed-p #'el-get-package-is-installed)
 
+(defun el-get-pkg-op-button-action (button)
+  (let ((package (button-get button 'el-get-package)))
+    (when (y-or-n-p
+           (format "Really %s `%s'? "
+                   (button-get button 'el-get-pkg-verb) package))
+      (apply (button-get button 'el-get-pkg-fun) package
+             (button-get button 'el-get-pkg-extra-args)))))
+
+(define-button-type 'el-get-pkg-op
+  'action #'el-get-pkg-op-button-action
+  'follow-link t)
+
+(defun el-get-define-pkg-op-button-type (operation verb)
+  (define-button-type operation :supertype 'el-get-pkg-op
+    'el-get-pkg-fun operation
+    'el-get-pkg-verb verb
+    'help-echo (format "mouse-2, RET: %s package" verb)))
+
+(el-get-define-pkg-op-button-type 'el-get-install "install")
+(el-get-define-pkg-op-button-type 'el-get-reinstall "reinstall")
+(el-get-define-pkg-op-button-type 'el-get-update "update")
+(el-get-define-pkg-op-button-type 'el-get-remove "remove")
+
+(define-button-type 'el-get-file-jump
+  'action (lambda (button) (find-file (button-get button 'el-get-file)))
+  'follow-link t)
+(define-button-type 'el-get-recipe-file-jump :supertype 'el-get-file-jump
+  :help-echo "mouse-2, RET: find package's recipe file")
+(define-button-type 'el-get-cd :supertype 'el-get-file-jump
+  :help-echo "mouse-2, RET: open directory")
+
+(defun el-get-fmt-button (fmt label &rest props)
+  "`format' + `make-text-button'."
+  (let ((button (copy-sequence label))) ; don't change original string
+    ;; In 24.3, `make-text-button' returns position, not string.
+    (apply #'make-text-button button nil props) ; adds props by side-effect
+    (format fmt button)))
+
 
 ;;
 ;; Some tools

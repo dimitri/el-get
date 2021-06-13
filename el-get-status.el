@@ -290,22 +290,30 @@ to the operation required."
         else do (setq reinstall (plist-put reinstall k v))
         finally return (list init update reinstall)))
 
-(defun el-get-diagnosis-properties (old-source new-source)
-  "Diagnosis difference between OLD-SOURCE and NEW-SOURCE.
+(defun el-get-compute-new-status (operation old new)
+  "Return an update of OLD with NEW.
 
-Return a list (REQUIRED-OPS ADDED REMOVED).  REQUIRED-OPS is list
-of one or more of `init', `update', or `reinstall' when
-OLD-SOURCE and NEW-SOURCE are different (nil otherwise).  It
-indicates which operations can perform the change.  ADDED and
-REMOVED are added and removed properties, respectively."
-  (let* ((added   (el-get-classify-new-properties old-source new-source))
-         (removed (el-get-classify-new-properties new-source old-source))
-         (min-op  (cond ((or (nth 2 added) (nth 2 removed)) 2)
-                        ((or (nth 1 added) (nth 1 removed)) 1)
-                        ((or (nth 0 added) (nth 0 removed)) 0))))
-    (list (and min-op (nthcdr min-op '(init update reinstall)))
-          (apply #'append (nthcdr (or min-op 0) added))
-          (apply #'append (nthcdr (or min-op 0) removed)))))
+Return a list (RESULT REQUIRED TO-ADD TO-REM), where RESULT is
+the updated recipe.  TO-ADD and TO-REM are the list properties
+that prevent a full update with the given OPERATION, REQUIRED is
+a list of operations that would allow a full update."
+  (let* ((ops       '(init update reinstall))
+         (op-rank   (1- (length (memq operation ops))))
+         (ops-given (butlast ops op-rank))
+         (rem-props (el-get-classify-new-properties new old))
+         (add-props (el-get-classify-new-properties old new))
+         (rem-allow (apply #'append (butlast rem-props op-rank)))
+         (add-allow (apply #'append (butlast add-props op-rank)))
+         (no-rem    (last rem-props op-rank))
+         (no-add    (last add-props op-rank)))
+    (list (nconc (loop for (key val) on old by #'cddr
+                       unless (plist-member rem-allow key)
+                       nconc (list key val))
+                 add-allow)
+          (loop for i from (1- (length ops)) downto (length ops-given)
+                when (or (nth i rem-props) (nth i add-props))
+                return (nthcdr i ops))
+          (apply #'append no-add) (apply #'append no-rem))))
 
 (defun el-get-package-or-source (package-or-source)
   "Given either a package name or a full source entry, return a
@@ -328,50 +336,55 @@ REMOVED are added and removed properties, respectively."
         (error "Package %s is nowhere to be found in el-get status file."
                package))))
 
-(defun el-get-merge-properties-into-status (package-or-source
-                                            operation
-                                            &rest keys)
-  "Merge updatable properties for package into package status alist (or status file).
+(el-get-define-pkg-op-button-type 'el-get-merge-properties-into-status
+                                  "force cached recipe update of")
 
-The first argument is either a package source or a package name,
-in which case the source will be read using
-`el-get-package-def'. The named package must already be
-installed.
+(defun el-get-merge-properties-into-status (package operation &rest keys)
+  "Merge updatable properties for package into status file.
 
-If the new source differs only in whitelisted properties (see
-`el-get-status-recipe-updatable-properties'), then the updated
-values for those properties will be written to the status
-file.
+PACKAGE is either a package source or name, in which case the
+source will be read using `el-get-package-def'.  The named
+package must already be installed.
 
-If any non-whitelisted properties differ from the cached values,
-then an error is raise. With optional keyword argument `:noerror
-t', this error is suppressed (but nothing is updated).
+Warn about any non-whitelisted for OPERATION properties differing
+from the cached values.
 
-\(fn PACKAGE-OR-SOURCE &key NOERROR)"
+Interactively, OPERATION is `update' with prefix arg, `reinstall'
+with double prefix arg, or `init' otherwise."
   (interactive
    (list (el-get-read-package-with-status "Update cached recipe" "installed")
-         'init
-         :noerror current-prefix-arg))
-  (let* ((noerror      (cadr (memq :noerror keys)))
-         (source       (el-get-package-or-source package-or-source))
-         (package      (el-get-as-symbol (el-get-source-name source)))
-         (cached-recipe
-          (el-get-read-cached-recipe package source)))
+         (cond ((equal '(16) current-prefix-arg) 'reinstall)
+               (current-prefix-arg 'update)
+               (t 'init))))
+  (let* ((source       (el-get-package-or-source package))
+         (package      (plist-get source :name))
+         (cached       (el-get-read-cached-recipe package source)))
     (unless (el-get-package-is-installed package)
       (error "Package %s is not installed. Cannot update recipe." package))
-    (destructuring-bind (required-ops added removed)
-        (el-get-diagnosis-properties cached-recipe source)
-      (if (and required-ops (not (memq operation required-ops)))
-        ;; Emit a verbose message if `noerror' is t (but still quit
-        ;; the function).
-        (funcall (if noerror 'el-get-verbose-message 'error)
-                 (concat "Must %s `%s' to modify its cached recipe\n"
-                         "  adding:   %s"
-                         "  removing: %s")
-                 (mapconcat #'symbol-name required-ops " or ") package
-                 (if   added (pp-to-string   added) "()\n")
-                 (if removed (pp-to-string removed) "()\n"))
+    (destructuring-bind (new-src required-ops no-add no-rem)
+        (el-get-compute-new-status operation cached source)
+      (el-get-save-package-status package "installed" new-src)
       (when required-ops
-        (el-get-save-package-status package "installed" source))))))
+        (lwarn '(el-get recipe-cache) :warning
+               (concat "Must %s `%s' to modify its cached recipe\n"
+                       "  adding:   %s"
+                       "  removing: %s"
+                       (el-get-fmt-button
+                        "  Or %s if you know these changes are safe.\n"
+                        "force update the cached recipe"
+                        :type 'el-get-merge-properties-into-status
+                        'el-get-package package 'el-get-pkg-extra-args '(reinstall)))
+               (mapconcat (lambda (op)
+                            (el-get-fmt-button
+                             "%s" op :type (intern (concat "el-get-" op))
+                             'el-get-package package))
+                          (mapcar #'symbol-name required-ops) " or ")
+               package
+               (if no-add (pp-to-string no-add) "()\n")
+               (if no-rem (pp-to-string no-rem) "()\n"))))))
+
+;; Using `declare' in `defun' only supported from Emacs 24.3.
+(set-advertised-calling-convention
+ 'el-get-merge-properties-into-status '(package operation) "May 2016")
 
 (provide 'el-get-status)
