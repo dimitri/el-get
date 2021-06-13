@@ -121,7 +121,8 @@ this: `((\"make\" ,@el-get-parallel-make-args))"
   :type '(repeat string))
 
 (defcustom el-get-verbose nil
-  "Non-nil means print messages describing progress of el-get even for fast operations."
+  "Non-nil means print messages describing progress of el-get even for fast
+operations."
   :group 'el-get
   :type 'boolean)
 
