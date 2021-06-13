@@ -12,6 +12,9 @@
 ;; Install
 ;;     Please see the README.md file from the same distribution
 
+(require 'el-get-custom)
+(require 'el-get-recipes)
+
 (defcustom el-get-go (executable-find "go")
   "The go executable."
   :group 'el-get
