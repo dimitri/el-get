@@ -24,10 +24,15 @@ jobs:
       EMACS_VERSION: ${{ matrix.emacs_version }}
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
 
     - uses: purcell/setup-emacs@master
       with:
         version: ${{ matrix.emacs_version }}
+
+    - name: Print GitHub event
+      run: cat "$GITHUB_EVENT_PATH"
 
     - name: Print Emacs version and environment variables
       run: |

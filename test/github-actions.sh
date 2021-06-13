@@ -22,8 +22,17 @@ prereqs() {
      fi)
 }
 
-git fetch origin master
-COMMIT_RANGE=origin/master...
+BASE=$(cat "$GITHUB_EVENT_PATH" | jq -r '.before')
+[ -n "$BASE" ] || {
+    BASE=$(cat "$GITHUB_EVENT_PATH" | jq -r '.pull_request.base.sha')
+}
+
+HEAD=$(cat "$GITHUB_EVENT_PATH" | jq -r '.after')
+[ -n "$HEAD" ] || {
+    HEAD=$(cat "$GITHUB_EVENT_PATH" | jq -r '.pull_request.head.sha')
+}
+
+COMMIT_RANGE="${BASE}..${HEAD}"
 
 if [ "$EMACS_VERSION" = '24.5' ]; then
     # check-recipes [-W<check>...] <path>
