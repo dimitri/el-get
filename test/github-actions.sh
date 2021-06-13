@@ -1,18 +1,13 @@
 # source me
-# Define the following functions here to keep .travis.yml nice and tidy
+# Define the following functions here to keep .github/workflows/test.yml nice and tidy
 #   - prereqs()
 #   - byte-compile()
 #   - check-recipes()
 #   - check-whitespace()
 #   - ert-tests()
 
-# Installs Emacs plus ert and package.el as needed.
+# Installs ert and package.el as needed.
 prereqs() {
-    curl -LO https://github.com/npostavs/emacs-travis/releases/download/bins/emacs-bin-${EMACS_VERSION}.tar.gz
-    tar -xaf emacs-bin-${EMACS_VERSION}.tar.gz -C /
-    # Configure $PATH: Emacs installed to /tmp/emacs
-    export PATH=/tmp/emacs/bin:${PATH}
-
     # Put external elisp into pkg/.
     (mkdir -p pkg && cd pkg
      if ! emacs -Q --batch --eval "(require 'ert)" ; then
@@ -27,17 +22,20 @@ prereqs() {
      fi)
 }
 
+git fetch origin master
+COMMIT_RANGE=origin/master...
+
 if [ "$EMACS_VERSION" = '24.5' ]; then
     # check-recipes [-W<check>...] <path>
     check-recipes() {
         emacs -Q -L . -batch -l el-get-check -f el-get-check-recipe-batch "$@"
     }
     check-whitespace() {
-        git --no-pager -c core.whitespace=tab-in-indent diff --check "$TRAVIS_COMMIT_RANGE"
+        git --no-pager -c core.whitespace=tab-in-indent diff --check "$COMMIT_RANGE"
     }
     # Adapted from Emacs' build-aux/git-hooks/pre-commit.
     check-filenames() {
-        git diff --name-only --diff-filter=A "$TRAVIS_COMMIT_RANGE" |
+        git diff --name-only --diff-filter=A "$COMMIT_RANGE" |
             grep -E '^-|/-|[^-+./_0-9A-Z_a-z]' |
             while IFS= read -r new_name; do
                 case $new_name in
@@ -53,7 +51,7 @@ if [ "$EMACS_VERSION" = '24.5' ]; then
 else
     # If we have only changes to recipe files, there is no need to run
     # with more than 1 emacs version.
-    git diff --name-only "$TRAVIS_COMMIT_RANGE" | grep -Fvq recipes/ ||
+    git diff --name-only "$COMMIT_RANGE" | grep -Fvq recipes/ ||
         { echo 'Recipe only diff, skipping tests' ; exit 0 ; }
 
     # Only need to run these for 1 version, so make them nops here
