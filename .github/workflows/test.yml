@@ -29,7 +29,7 @@ jobs:
       with:
         version: ${{ matrix.emacs_version }}
 
-    - name: Print Emacs version and environemnt variables
+    - name: Print Emacs version and environment variables
       run: |
         env
         emacs --version
