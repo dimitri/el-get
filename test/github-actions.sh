@@ -23,14 +23,14 @@ prereqs() {
 }
 
 BASE=$(cat "$GITHUB_EVENT_PATH" | jq -r '.before')
-[ -n "$BASE" ] || {
+if [ "$BASE" = 'null' ]; then
     BASE=$(cat "$GITHUB_EVENT_PATH" | jq -r '.pull_request.base.sha')
-}
+fi
 
 HEAD=$(cat "$GITHUB_EVENT_PATH" | jq -r '.after')
-[ -n "$HEAD" ] || {
+if [ "$HEAD" = 'null' ]; then
     HEAD=$(cat "$GITHUB_EVENT_PATH" | jq -r '.pull_request.head.sha')
-}
+fi
 
 COMMIT_RANGE="${BASE}..${HEAD}"
 
