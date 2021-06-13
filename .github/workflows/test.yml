@@ -29,6 +29,9 @@ jobs:
       with:
         version: ${{ matrix.emacs_version }}
 
+    - name: Print GitHub event
+      run: cat "$GITHUB_EVENT_PATH"
+
     - name: Print Emacs version and environment variables
       run: |
         env
