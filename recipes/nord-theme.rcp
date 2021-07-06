@@ -1,0 +1,6 @@
+(:name nord-theme
+       :type github
+       :description "Nord theme for Emacs"
+       :pkgname "arcticicestudio/nord-emacs"
+       :prepare (add-to-list 'custom-theme-load-path
+                             default-directory))
