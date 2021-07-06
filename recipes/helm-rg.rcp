@@ -1,0 +1,5 @@
+(:name helm-rg
+       :description "The ripgrep with helm interface."
+       :type github
+       :pkgname "cosmicexplorer/helm-rg"
+       :depends (helm dash cl-lib))
