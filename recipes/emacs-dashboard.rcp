@@ -1,0 +1,5 @@
+(:name emacs-dashboard
+       :website "https://github.com/emacs-dashboard/emacs-dashboard/"
+       :description "emacs-dashboard is a dashboard to show some interesting things like recent buffers"
+       :type github
+       :pkgname "emacs-dashboard/emacs-dashboard")

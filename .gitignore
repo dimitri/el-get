@@ -1,5 +1,6 @@
 *.elc
 *~
+.lock
 recipes/emacswiki/*
 recipes/elpa/*
 dir

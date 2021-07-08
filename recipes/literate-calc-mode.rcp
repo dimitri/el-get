@@ -1,0 +1,4 @@
+(:name literate-calc-mode
+       :description "Literate Calc mode"
+       :type github
+       :pkgname "sulami/literate-calc-mode.el")

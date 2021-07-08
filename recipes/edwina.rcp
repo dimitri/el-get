@@ -1,0 +1,5 @@
+(:name edwina
+       :description "Emacs Window Manager"
+       :website "https://github.com/ajgrf/edwina.git"
+       :pkgname "ajgrf/edwina"
+       :type github)

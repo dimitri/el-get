@@ -1,0 +1,4 @@
+(:name kubernetes-helm
+       :description "Utilities for Kubernetes Helm"
+       :type github
+       :pkgname "abrochard/kubernetes-helm")

@@ -12,3 +12,4 @@
                  "-L" ,(concat el-get-dir "/vterm")
                  ;; vterm has a predefined function to build the binary module
                  "--execute" "(progn (setq vterm-always-compile-module t) (require 'vterm) (vterm-module-compile))")))
+

@@ -1,0 +1,4 @@
+(:name kubernetes-el
+       :description "Emacs Porcelain for Kubernetes"
+       :type github
+       :pkgname "chrisbarrett/kubernetes-el")
