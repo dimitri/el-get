@@ -55,6 +55,9 @@ Technical differences also include the ability for El-Get to run OS commands
 found in the wild, allowing for automatic inclusion of *Info* pages for
 packages providing some.
 
+You can use `el-get-elpa-build-local-recipes` to install extensions provided by
+ELPA.
+
 # Installation
 
 El-Get is easy to install.  The only requirements to do so successfully are
