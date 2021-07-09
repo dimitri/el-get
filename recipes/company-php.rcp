@@ -1,0 +1,7 @@
+(:name company-php
+       :description "Company version of PHP auto completion source"
+       :type github
+       :pkgname "xcwen/ac-php"
+       :build (("rm" "-f" "ac-php.el")
+               ("sed" "-i" "s/\(require \\x27company\)/\(require \\x27company-mode\)/g" "company-php.el"))
+       :depends (php-mode company-mode s f popup dash xcscope))
