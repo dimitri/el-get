@@ -325,6 +325,10 @@ Use this to modify environment variable such as $PATH or $PYTHONPATH."
                                      :test #'string= :from-end t)
                path-separator)))
 
+(defun el-get-latest-tag ()
+  "Returns the latest tag of the git repository of the given package."
+  (replace-regexp-in-string "\n$" "" (shell-command-to-string "git describe --abbrev=0 --tags")))
+
 (provide 'el-get-recipes)
 
 ;;; el-get-recipes.el ends here
