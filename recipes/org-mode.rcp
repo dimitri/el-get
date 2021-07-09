@@ -3,6 +3,7 @@
        :description "Org-mode is for keeping notes, maintaining ToDo lists, doing project planning, and authoring with a fast and effective plain-text system."
        :type git
        :url "https://code.orgmode.org/bzg/org-mode.git"
+       :checkout "maint"
        :info "doc"
        :build/berkeley-unix `,(mapcar
                                (lambda (target)
