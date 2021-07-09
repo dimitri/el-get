@@ -1,0 +1,5 @@
+(:name ivy-phpunit
+       :description "Ivy integration for phpunit.el"
+       :type github
+       :pkgname "12pt/ivy-phpunit"
+       :depends (swiper phpunit))
