@@ -1,5 +1,5 @@
-(:name git-blame
+(:name git-blamed
        :description "Minor mode for incremental blame for Git"
        :type no-op
        :depends git-emacs
-       :features git-blame)
+       :features git-blamed)
