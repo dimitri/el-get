@@ -1,0 +1,4 @@
+(:name taskwarrior
+       :description "Task warrior integration"
+       :type github
+       :pkgname "greenrd/taskwarrior-mode")

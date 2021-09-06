@@ -1,0 +1,4 @@
+(:name cask
+       :description "Cask, a project management tool for Emacs"
+       :type github
+       :pkgname "cask/cask")
