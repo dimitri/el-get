@@ -1,0 +1,5 @@
+(:name qrencode
+       :description "QRCode encoder for Emacs in pure elisp"
+       :type github
+       :depends (cl-lib seq)
+       :pkgname "ruediger/qrencode-el")
