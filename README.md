@@ -321,7 +321,7 @@ tries to initialize the package.
 If a package with a local recipe definition has a recipe file, the
 definition overrides that in the recipe file.
 
-There are some syntactic sugars to specify a package name and a recipe source
+There is some syntactic sugar to specify a package name and a recipe source
 together.
 
 ```lisp
