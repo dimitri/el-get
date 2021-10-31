@@ -315,7 +315,7 @@ tries to initialize the package.
 
 ;; End of recipes, call `el-get' to make sure all packages (including
 ;; dependencies) are setup.
-(el-get- 'sync)
+(el-get 'sync)
 ```
 
 If a package with a local recipe definition has a recipe file, the
