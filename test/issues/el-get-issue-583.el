@@ -4,6 +4,8 @@
 ;;
 ;; Also related: https://github.com/dimitri/el-get/issues/576
 
+(require 'cl-lib)
+
 (setq el-get-default-process-sync t
       el-get-verbose t
       el-get-sources
@@ -23,5 +25,5 @@
 (el-get-remove 'a)
 ;; Try to install a again, this fails and only inits b and c.
 (el-get-install 'a)
-(assert (el-get-package-is-installed 'a) nil
-        "Package A should be installed but isn't.")
+(cl-assert (el-get-package-is-installed 'a) nil
+           "Package A should be installed but isn't.")

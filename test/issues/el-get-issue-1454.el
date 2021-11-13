@@ -2,6 +2,8 @@
 ;;
 ;; Bootstrapping package.el when installing it and then an ELPA recipe
 
+(require 'cl-lib)
+
 (setq debug-on-error t
       el-get-verbose t
       el-get-is-lazy t)
@@ -13,6 +15,6 @@
 
 (let ((elpa-requiring-pkg 'svg-clock))
   (el-get 'sync (list 'package elpa-requiring-pkg))
-  (assert (el-get-package-installed-p 'package))
-  (assert (featurep 'package))
-  (assert (el-get-package-installed-p elpa-requiring-pkg)))
+  (cl-assert (el-get-package-installed-p 'package))
+  (cl-assert (featurep 'package))
+  (cl-assert (el-get-package-installed-p elpa-requiring-pkg)))

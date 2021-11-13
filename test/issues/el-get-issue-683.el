@@ -2,18 +2,20 @@
 ;;
 ;; el-get-remove needs to be more flexible
 
+(require 'cl-lib)
+
 (setq el-get-sources (list '(:name a :type builtin))
       el-get-default-process-sync t)
 
 (defun assert-package-fully-removed (pkg)
-  (assert (null (el-get-read-package-status pkg))
-          nil
-          "Package %s should have status `nil', but actually has status \"%s\"."
-          pkg (el-get-read-package-status pkg))
-  (assert (not (or (file-exists-p (el-get-package-directory pkg))
-                   (file-symlink-p (el-get-package-directory pkg))))
-          nil
-          "Package directory for %s should not exist, but it does" pkg))
+  (cl-assert (null (el-get-read-package-status pkg))
+             nil
+             "Package %s should have status `nil', but actually has status \"%s\"."
+             pkg (el-get-read-package-status pkg))
+  (cl-assert (not (or (file-exists-p (el-get-package-directory pkg))
+                      (file-symlink-p (el-get-package-directory pkg))))
+             nil
+             "Package directory for %s should not exist, but it does" pkg))
 
 ;; Try to just install and remove
 (el-get-install 'a)
@@ -62,7 +64,7 @@
 
 ;; Install, then set the recipe to nil in the status file, then uninstall
 (el-get-install 'a)
-(flet ((el-get-package-def (&rest ignored) nil))
+(cl-flet ((el-get-package-def (&rest ignored) nil))
   (el-get-save-package-status 'a "installed"))
 (el-get-remove 'a)
 (assert-package-fully-removed 'a)

@@ -1,6 +1,8 @@
 ;;; https://github.com/dimitri/el-get/issues/446
 ;;; el-get-remove doesn't remove autoloads from .loaddefs
 
+(require 'cl-lib)
+
 (el-get-register-method-alias :test :builtin)
 
 (setq
@@ -28,6 +30,6 @@
 ;; reload current autoload file
 (el-get-eval-autoloads)
 
-(assert (not (fboundp 'a-utoloaded-func)) nil
-        "autoloads for `a' should have been removed from %s"
-        el-get-autoload-file)
+(cl-assert (not (fboundp 'a-utoloaded-func)) nil
+           "autoloads for `a' should have been removed from %s"
+           el-get-autoload-file)
