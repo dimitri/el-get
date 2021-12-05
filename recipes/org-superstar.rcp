@@ -1,0 +1,4 @@
+(:name org-superstar
+       :description "Make org-mode stars a little more super."
+       :type github
+       :pkgname "integral-dw/org-superstar-mode")
