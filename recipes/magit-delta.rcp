@@ -1,0 +1,5 @@
+(:name magit-delta
+       :description "Use dandavison/delta when viewing diffs in Magit "
+       :type github
+       :pkgname "dandavison/magit-delta"
+       :depends (magit xterm-color))
