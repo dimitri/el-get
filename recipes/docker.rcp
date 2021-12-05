@@ -2,4 +2,5 @@
        :description "Manage docker images & containers from Emacs"
        :type github
        :pkgname "Silex/docker.el"
-       :depends (magit s dash docker-tramp tablist json-mode))
+       :minimum-emacs-version "24.5"
+       :depends (magit s dash docker-tramp tablist transient json-mode))
