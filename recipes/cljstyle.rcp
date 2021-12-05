@@ -1,0 +1,4 @@
+(:name cljstyle
+       :description "Emacs integration with cljstyle for Clojure file formatting."
+       :type github
+       :pkgname "jstokes/cljstyle-mode")
