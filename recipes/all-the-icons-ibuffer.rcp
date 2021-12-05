@@ -1,0 +1,5 @@
+(:name all-the-icons-ibuffer
+       :description "Shows icons for each buffer in ibuffer."
+       :type github
+       :pkgname "seagle0128/all-the-icons-ibuffer"
+       :depends (all-the-icons))
