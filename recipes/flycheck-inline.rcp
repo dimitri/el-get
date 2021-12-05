@@ -1,0 +1,5 @@
+(:name flycheck-inline
+       :description "A minor-mode for displaying errors from Flycheck right below their reporting location, using overlays."
+       :type github
+       :pkgname "flycheck/flycheck-inline"
+       :depends (flycheck))
