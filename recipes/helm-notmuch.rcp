@@ -1,0 +1,5 @@
+(:name helm-notmuch
+       :description "Searches emails using notmuch-search, displays results using helm."
+       :type github
+       :pkgname "emacs-helm/helm-notmuch"
+       :depends (helm notmuch))
