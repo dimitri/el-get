@@ -1,0 +1,4 @@
+(:name zoxide.el
+       :description "Find file by zoxide"
+       :type github
+       :pkgname "emacsmirror/zoxide")
