@@ -1,0 +1,4 @@
+(:name fancy-battery
+       :description "Display battery in Emacs Mode line."
+       :type github
+       :pkgname "emacsorphanage/fancy-battery")
