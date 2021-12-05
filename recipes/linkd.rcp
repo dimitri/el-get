@@ -1,4 +1,5 @@
 (:name linkd
+       :website "https://www.emacswiki.org/emacs/download/linkd.el"
        :type github
        :description "Make hypertext with active links in any buffer"
        :pkgname "emacsorphanage/linkd")
