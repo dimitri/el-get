@@ -1,0 +1,6 @@
+(:name ansible
+       :description "Syntax highlighting for Ansible playbooks"
+       :minimum-emacs-version "25"
+       :type github
+       :pkgname "k1LoW/emacs-ansible"
+       :depends (s f))
