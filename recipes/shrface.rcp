@@ -1,0 +1,5 @@
+(:name shrface
+       :description "Extend shr/eww with org features and analysis capability."
+       :type github
+       :pkgname "chenyanming/shrface"
+       :depends (org-mode language-detection))
