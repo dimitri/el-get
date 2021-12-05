@@ -1,0 +1,5 @@
+(:name pinboard
+       :description "A pinboard.in client in Emacs"
+       :type github
+       :pkgname "davep/pinboard.el"
+       :depends (cl-lib))
