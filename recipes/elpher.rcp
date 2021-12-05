@@ -1,0 +1,5 @@
+(:name elpher
+       :description "A friendly gopher and gemini client"
+       :website "http://thelambdalab.xyz/elpher"
+       :type elpa
+       :repo ("melpa" . "http://melpa.org/packages/"))
