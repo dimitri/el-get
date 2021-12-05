@@ -1,0 +1,4 @@
+(:name move-text
+       :description "Move current line or region using M-up / M-down"
+       :type github
+       :pkgname "emacsfodder/move-text")
