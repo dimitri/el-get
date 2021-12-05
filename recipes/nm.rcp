@@ -1,0 +1,7 @@
+(:name nm
+       :description "NEVERMORE: an email interface for Notmuch"
+       :type github
+       :pkgname "emacsattic/nm"
+       :depends (notmuch peg company-mode)
+       :prepare (with-eval-after-load 'company
+                  (require 'nm-company)))
