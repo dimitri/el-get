@@ -333,7 +333,7 @@ which defaults to the first element in `el-get-recipe-path'."
       ;; don't forget to make some variables available
       (let* ((pdir (el-get-package-directory package))
              (default-directory pdir))
-        (eval form)))))
+        (eval form el-get-eval-lexical)))))
 
 (defun el-get-lazy-run-package-support (form fname package)
   "Like `el-get-run-package-support', but using `eval-after-load' to wait until PACKAGE is loaded."
