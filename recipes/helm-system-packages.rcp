@@ -1,0 +1,5 @@
+(:name helm-system-packages
+       :description "A Helm interface to the package manager of your operating system."
+       :type github
+       :pkgname "emacs-helm/helm-system-packages"
+       :depends (helm seq))
