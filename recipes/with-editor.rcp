@@ -1,4 +1,5 @@
 (:name with-editor
        :description "Use the Emacsclient as $EDITOR"
        :type github
-       :pkgname "magit/with-editor")
+       :pkgname "magit/with-editor"
+       :load-path ("lisp"))
