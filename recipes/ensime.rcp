@@ -1,7 +1,7 @@
 (:name ensime
        :description "ENhanced Scala Interaction Mode for Emacs"
        :type github
-       :pkgname "ensime/ensime-emacs"
+       :pkgname "emacsattic/ensime"
        :depends (s
                  dash
                  popup
