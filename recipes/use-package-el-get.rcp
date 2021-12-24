@@ -1,0 +1,8 @@
+(:name use-package-el-get
+       :description "el-get support for use-package"
+       :type github
+       :pkgname "edvorg/use-package-el-get"
+       :features use-package-el-get
+       :depends use-package
+       :post-init (use-package-el-get-setup)
+       )
