@@ -2,6 +2,8 @@
 ;;
 ;; Handle changing dependencies in `el-get-update'
 
+(require 'cl-lib)
+
 (setq el-get-default-process-sync t
       el-get-verbose t
       el-get-sources
@@ -19,8 +21,8 @@
 ;; Install a and some deps
 (el-get-install 'a)
 ;; Make sure deps got installed
-(assert (el-get-package-is-installed 'd) nil
-        "Package D should be installed after installing A.")
+(cl-assert (el-get-package-is-installed 'd) nil
+           "Package D should be installed after installing A.")
 ;; Add some more deps
 (setf (car el-get-sources)
       '(:name a
@@ -28,5 +30,5 @@
               :depends (b c d e f g)))
 ;; Run update with the new dependencies
 (el-get-update 'a)
-(assert (el-get-package-is-installed 'g) nil
-        "Package G should be installed after updating A.")
+(cl-assert (el-get-package-is-installed 'g) nil
+           "Package G should be installed after updating A.")

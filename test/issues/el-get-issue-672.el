@@ -2,6 +2,8 @@
 ;;
 ;; Status file migration fails with removed and unavailable recipe
 
+(require 'cl-lib)
+
 ;; Just install some package to make sure el-get creates the
 ;; appropriate directories
 (setq el-get-sources
@@ -28,4 +30,4 @@
 
 ;; Now the list of package status recipes should be nil because no
 ;; packages are installed.
-(assert (equal (el-get-package-status-recipes) nil) nil)
+(cl-assert (equal (el-get-package-status-recipes) nil) nil)

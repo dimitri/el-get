@@ -3,7 +3,7 @@
 
 ;;; Utility
 
-(defun* create-package-archive (path &key name desc version)
+(cl-defun create-package-archive (path &key name desc version)
   "Creates local archive at PATH that provides signle package
 with NAME, DESCRIPTION and VERSION specified according to
 values provided in arguments after corresponding keys."

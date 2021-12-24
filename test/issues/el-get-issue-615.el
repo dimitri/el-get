@@ -2,7 +2,9 @@
 ;;
 ;; Allow methods to provide default-website guesser
 
+(require 'cl-lib)
+
 (el-get-describe 'js2-mode)
 (with-current-buffer "*Help*"
-  (assert (string-match-p "Website:" (buffer-string)) nil
-          "Js2-mode should have a website"))
+  (cl-assert (string-match-p "Website:" (buffer-string)) nil
+             "Js2-mode should have a website"))

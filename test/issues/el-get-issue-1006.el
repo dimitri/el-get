@@ -7,12 +7,14 @@
 ;;; DO_NOT_CLEAN=t ./run-test.sh 1006
 ;;; DO_NOT_CLEAN=t ./run-test.sh 1006 # fails on second run
 
+(require 'cl-lib)
+
 (setq el-get-sources '((:name whole-line-or-region
-                              :after (whole-line-or-region-mode))))
+                              :after (whole-line-or-region-local-mode))))
 
 ;;; setting el-get-is-lazy makes it work
                                         ;(setq el-get-is-lazy t)
 
 (el-get 'sync 'whole-line-or-region)
 
-(assert (fboundp 'whole-line-or-region-mode))
+(cl-assert (fboundp 'whole-line-or-region-local-mode))

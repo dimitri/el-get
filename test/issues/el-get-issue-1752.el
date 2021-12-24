@@ -3,6 +3,6 @@
  '((:name el-get-install
           :type http
           :url "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
-          :checksum "b3a5ada02e27597894210fa1ae2c857579a457ae")))
+          :checksum "9495f609e1635dde17d70a89f021003fbc0372c8")))
 
 (el-get 'sync 'el-get-install)
