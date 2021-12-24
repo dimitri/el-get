@@ -31,8 +31,7 @@
                            "."))
                   "http://"))
                (archives '(("melpa" . "melpa.org/packages/")
-                           ("gnu" . "elpa.gnu.org/packages/")
-                           ("marmalade" . "marmalade-repo.org/packages/"))))
+                           ("gnu" . "elpa.gnu.org/packages/"))))
            (dolist (archive archives)
              (add-to-list 'package-archives
                           (cons (car archive) (concat protocol (cdr archive))))))))
