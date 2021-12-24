@@ -1,0 +1,10 @@
+(:name emacs-tree-sitter
+       :description "Emacs Lisp bindings for tree-sitter, an incremental parsing library."
+       :type github
+       :pkgname "vedang/emacs-tree-sitter"
+       :load-path ("core" "lisp" "langs")
+       :load ("lisp/tree-sitter.el"
+              "lisp/tree-sitter-hl.el"
+              "langs/tree-sitter-langs.el"
+              "lisp/tree-sitter-debug.el"
+              "lisp/tree-sitter-query.el"))

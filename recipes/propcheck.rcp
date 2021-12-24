@@ -1,0 +1,6 @@
+(:name propcheck
+       :description "quickcheck/hypothesis style testing for elisp"
+       :type github
+       :pkgname "Wilfred/propcheck"
+       :minimum-emacs-version "26.1"
+       :depends (dash))

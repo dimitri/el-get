@@ -1,0 +1,5 @@
+(:name eglot
+       :type github
+       :description "Client for Language Server Protocol (LSP) servers"
+       :pkgname "joaotavora/eglot"
+       :minimum-emacs-version "26.1")

@@ -1,5 +1,5 @@
 (:name org-brain
        :description "Org-mode wiki + concept-mapping."
        :type github
-       :depends (org-mode org-ql helm-org)
+       :depends (org-mode org-ql org-contrib helm-org)
        :pkgname "Kungsgeten/org-brain")

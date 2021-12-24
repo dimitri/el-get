@@ -1,0 +1,5 @@
+(:name parinfer-rust-mode
+       :description "An interface for the parinfer-rust library"
+       :type github
+       :pkgname "justinbarclay/parinfer-rust-mode"
+       :minimum-emacs-version (26 1))

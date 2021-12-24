@@ -1,0 +1,5 @@
+(:name deadgrep
+       :description "Deadgrep is the fast, beautiful text search that your Emacs deserves."
+       :type github
+       :pkgname "Wilfred/deadgrep"
+       :depends (dash s spinner))

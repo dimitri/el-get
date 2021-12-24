@@ -1,0 +1,4 @@
+(:name language-detection
+       :description "Automatic programming language detection of code snippets, in Emacs Lisp."
+       :type github
+       :pkgname "andreasjansson/language-detection.el")

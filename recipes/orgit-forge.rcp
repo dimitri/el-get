@@ -1,0 +1,5 @@
+(:name orgit-forge
+       :description "Org links to Forge issue buffers"
+       :type github
+       :depends (org-mode org-contrib magit forge orgit)
+       :pkgname "magit/orgit-forge")

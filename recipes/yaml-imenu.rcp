@@ -1,0 +1,5 @@
+(:name yaml-imenu
+       :type github
+       :pkgname "knu/yaml-imenu.el"
+       :description "IMenu support for yaml-mode"
+       :depends (yaml-mode))

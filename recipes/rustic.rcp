@@ -1,0 +1,6 @@
+(:name rustic
+       :description "Rust development environment for Emacs"
+       :type github
+       :pkgname "brotzeit/rustic"
+       :minimum-emacs-version "26.1"
+       :depends (rust-mode dash f let-alist markdown-mode project s seq spinner xterm-color))

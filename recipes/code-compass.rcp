@@ -1,0 +1,6 @@
+(:name code-compass
+       :type github
+       :description "A set of code analyses that assist you in tackling software complexity."
+       :pkgname "ag91/code-compass"
+       :depends (emacs-async dash f s simple-httpd)
+       :minimum-emacs-version (26 1))

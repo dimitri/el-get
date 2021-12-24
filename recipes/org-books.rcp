@@ -1,0 +1,5 @@
+(:name org-books
+       :description "Reading list management with org mode."
+       :type github
+       :depends (org-mode org-contrib s dash helm helm-org enlive)
+       :pkgname "lepisma/org-books")

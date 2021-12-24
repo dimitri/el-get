@@ -1,0 +1,4 @@
+(:name saveplace-pdf-view
+       :description "Extend the built-in save-place mode to support pdf-tools and doc-view."
+       :type github
+       :pkgname "nicolaisingh/saveplace-pdf-view")
