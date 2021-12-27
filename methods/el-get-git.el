@@ -33,6 +33,12 @@ explicit checks for these"
   :group 'el-get
   :type 'list)
 
+;; The following variables are declared here to silence the byte
+;; compiler "reference to variable" warning. The package "url-http"
+;; provides these variables.
+(defvar url-http-content-type)
+(defvar url-http-response-status)
+
 (defun el-get-git-executable ()
   "Return git executable to use, or signal an error when not
 found."
