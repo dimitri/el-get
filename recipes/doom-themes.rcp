@@ -2,6 +2,7 @@
        :website "https://github.com/hlissner/emacs-doom-themes"
        :description "DOOM Themes is an opinionated UI plugin and pack of themes extracted from my emacs.d, inspired by some of my favorite color themes."
        :depends (all-the-icons cl-lib)
+       :load-path ("." "extensions")
        :type github
        :pkgname "hlissner/emacs-doom-themes"
        :features doom-themes)
