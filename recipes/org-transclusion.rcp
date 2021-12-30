@@ -1,0 +1,8 @@
+(:name org-transclusion
+       :description "Emacs package to enable transclusion with Org Mode."
+       :type github
+       :pkgname "nobiot/org-transclusion"
+       :minimum-emacs-version "27.1"
+       ;; Requires Org Mode 9.4 as the minimum, hence adding an
+       ;; explicit dependency to fetch the latest version.
+       :depends (org-mode))
