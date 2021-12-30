@@ -5,6 +5,8 @@
        :pkgname "magit/magit"
        :branch "master"
        :minimum-emacs-version "25.1"
+       ;; Note: `git-commit' is shipped with `magit' code itself.
+       ;; Note: `magit-section' is shipped with `magit' code itself.
        :depends (dash transient with-editor)
        :info "Documentation"
        :load-path "lisp/"

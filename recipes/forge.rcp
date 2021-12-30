@@ -7,11 +7,13 @@
        :minimum-emacs-version "25.1"
        ;; The package.el dependency is on `emacsql-sqlite', but el-get
        ;; provides that via `emacsql'.
-       :depends (closql dash emacsql ghub let-alist magit markdown-mode transient yaml)
+       :depends (closql dash emacsql ghub let-alist magit markdown-mode
+                        transient yaml)
        :info "docs"
        :load-path "lisp/"
        :compile "lisp/"
        ;; Use the Makefile to produce the info manual, el-get can
        ;; handle compilation and autoloads on its own.
        :build `(("make" ,(format "EMACSBIN=%s" el-get-emacs) "info"))
-       :build/berkeley-unix `(("gmake" ,(format "EMACSBIN=%s" el-get-emacs) "info")))
+       :build/berkeley-unix `(("gmake" ,(format "EMACSBIN=%s" el-get-emacs)
+                               "info")))
