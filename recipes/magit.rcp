@@ -8,7 +8,7 @@
        ;; Note: `git-commit' is shipped with `magit' code itself.
        ;; Note: `magit-section' is shipped with `magit' code itself.
        :depends (dash transient with-editor)
-       :info "Documentation"
+       :info "docs"
        :load-path "lisp/"
        :compile "lisp/"
        ;; Use the Makefile to produce the info manual, el-get can
