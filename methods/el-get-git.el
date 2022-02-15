@@ -102,7 +102,9 @@ not return 'smart' headers despite supporting shallow clones"
          ;; nosubmodule is true only if :submodules  is explicitly set to nil.
          (explicit-nosubmodule (and (plist-member source :submodule)
                                     (not submodule-prop)))
-         (checkout (or (plist-get source :checkout)
+         (checkout (or (and (equalp 'function (car (plist-get source :checkout)))
+                            (funcall (cadr (plist-get source :checkout))))
+                       (plist-get source :checkout)
                        (plist-get source :checksum)))
          (shallow (when (el-get-git-shallow-clone-supported-p url)
                     (el-get-plist-get-with-default source :shallow
