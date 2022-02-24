@@ -1,0 +1,4 @@
+(:name zoutline
+       :description "Emacs library for outlines."
+       :type github
+       :pkgname "abo-abo/zoutline")
