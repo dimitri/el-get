@@ -1,4 +1,4 @@
 (:name peg
-       :type emacswiki
+       :type elpa
        :description "Parsing Expression Grammars in Emacs Lisp"
-       :website "http://www.emacswiki.org/emacs/download/peg.el")
+       :website "https://elpa.gnu.org/packages/peg.html")
