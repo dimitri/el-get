@@ -1,10 +1,28 @@
 (:name swiper
        :description "Gives you an overview as you search for a regex."
        :type github
-       :depends (cl-lib avy)
+       :depends (cl-lib avy hydra wgrep)
        :pkgname "abo-abo/swiper"
-       :build `(("make" ,(format "emacs=%s -L %s" el-get-emacs (concat (file-name-as-directory el-get-dir) "avy")) "compile")
-               ("makeinfo" "-o" "doc/ivy.info" "doc/ivy.texi"))
-       :build/berkeley-unix `(("gmake" ,(format "emacs=%s -L %s" el-get-emacs (concat (file-name-as-directory el-get-dir) "avy")) "compile")
-                             ("gmakeinfo" "-o" "doc/ivy.info" "doc/ivy.texi"))
+       :build
+       `(("make" ,(let ((make-path
+                         (lambda (dir)
+                           (concat (file-name-as-directory el-get-dir) dir))))
+                   (format "emacs=%s -L %s -L %s -L %s"
+                           el-get-emacs
+                           (funcall make-path "avy")
+                           (funcall make-path "hydra")
+                           (funcall make-path "wgrep")))
+          "compile")
+         ("makeinfo" "-o" "doc/ivy.info" "doc/ivy.texi"))
+       :build/berkeley-unix
+       `(("gmake" ,(let ((make-path
+                          (lambda (dir)
+                            (concat (file-name-as-directory el-get-dir) dir))))
+                     (format "emacs=%s -L %s -L %s -L %s"
+                             el-get-emacs
+                             (funcall make-path "avy")
+                             (funcall make-path "hydra")
+                             (funcall make-path "wgrep")))
+          "compile")
+         ("gmakeinfo" "-o" "doc/ivy.info" "doc/ivy.texi"))
        :info "doc/ivy.info")
