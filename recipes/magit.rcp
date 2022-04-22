@@ -6,7 +6,7 @@
        :branch "master"
        :minimum-emacs-version "25.1"
        :depends (dash transient with-editor)
-       :info "Documentation"
+       :info nil
        :load-path "lisp/"
        :compile "lisp/"
        ;; Use the Makefile to produce the info manual, el-get can
