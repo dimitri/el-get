@@ -1,0 +1,6 @@
+(:name org-hyperscheduler
+       :description "A package that helps you organize your day"
+       :type github
+       :minimum-emacs-version "26"
+       :depends (websocket)
+       :pkgname "dmitrym0/org-hyperscheduler")

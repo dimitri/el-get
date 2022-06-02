@@ -1,0 +1,6 @@
+(:name org-menu
+       :description "A discoverable menu for org-mode using transient"
+       :type github
+       :pkgname "sheijk/org-menu"
+       :minimum-emacs-version "26.1"
+       :depends (transient))

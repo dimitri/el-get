@@ -2,4 +2,4 @@
        :description "Clojure parser for Emacs Lisp"
        :type github
        :pkgname "clojure-emacs/parseclj"
-       :depends (a))
+       :checkout "main")

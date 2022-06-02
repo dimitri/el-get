@@ -1,0 +1,5 @@
+(:name org-remark
+       :description "Highlight & annotate any text files"
+       :type github
+       :pkgname "nobiot/org-remark"
+       :minimum-emacs-version "27.1")
