@@ -1,6 +1,7 @@
 (:name fsharp-mode
        :description "Major mode for editing fsharp code."
        :type github
-       :pkgname "rneatherway/emacs-fsharp-mode-bin"
-       :website "https://github.com/fsharp/fsharpbinding"
-       :depends (auto-complete popup pos-tip s dash))
+       :pkgname "fsharp/emacs-fsharp-mode"
+       :load-path (".")
+       :depends (eglot jsonrpc)
+       :website "https://github.com/fsharp/emacs-fsharp-mode")
