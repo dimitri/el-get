@@ -13,5 +13,5 @@
        :build `(("./autogen.sh")
                 ("make"))
        :load-path "mu4e"
-       :info "mu4e/mu4e.info"
+       :info "build/mu4e/mu4e.info"
        )
