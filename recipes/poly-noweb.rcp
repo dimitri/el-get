@@ -1,0 +1,6 @@
+(:name poly-noweb
+       :description "Polymode for noweb"
+       :type github
+       :pkgname "polymode/poly-noweb"
+       :load-path (".")
+       :depends (polymode))

@@ -1,0 +1,6 @@
+(:name poly-R
+       :description "Polymodes for the R language"
+       :type github
+       :pkgname "polymode/poly-R"
+       :load-path (".")
+       :depends (polymode poly-noweb poly-markdown ess))
