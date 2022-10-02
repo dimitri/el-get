@@ -2,4 +2,4 @@
        :description "A carefully crafted Org exporter back-end for Hugo https://ox-hugo.scripter.co"
        :type github
        :pkgname "kaushalmodi/ox-hugo"
-       :depends (org-mode))
+       :depends (org-mode tomelr))
