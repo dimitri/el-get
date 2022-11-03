@@ -1,0 +1,6 @@
+(:name emacs-humanoid-themes
+       :description "Light and Dark humanoid themes for Emacs GUI and terminal"
+       :type github
+       :minimum-emacs-version "24.3"
+       :pkgname "humanoid-colors/emacs-humanoid-themes"
+       :load ("humanoid-themes.el"))
