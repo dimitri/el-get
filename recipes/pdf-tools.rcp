@@ -1,18 +1,10 @@
 (:name pdf-tools
        :description "pdf tools"
        :type github
-       :minimum-emacs-version "24.3"
-       ;; On Debian, "libpoppler-glib-dev" "libpoppler-dev"
-       ;; "libpoppler-private-dev" are needed to build c code in this package.
+       :minimum-emacs-version "26.3"
        :pkgname "vedang/pdf-tools"
        :depends (let-alist tablist)
-
-       ;; pdf-tools' code written to find "epdfinfo" executable in the lisp
-       ;; directory. we preset following variable to avoid that.
-       :prepare (setq pdf-info-epdfinfo-program
-                      (concat (el-get-package-directory "pdf-tools")
-                              "server/epdfinfo"))
        :build (("make" "autobuild"))
        :build/berkeley-unix (("gmake" "autobuild"))
-       :load-path (("lisp"))
+       :load-path ("lisp")
        :compile ("lisp/"))

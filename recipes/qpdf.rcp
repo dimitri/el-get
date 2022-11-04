@@ -1,0 +1,6 @@
+(:name qpdf
+       :description "A transient wrapper for qpdf/qpdf."
+       :type github
+       :pkgname "orgtre/qpdf.el"
+       :minimum-emacs-version "26.3"
+       :depends (transient))
