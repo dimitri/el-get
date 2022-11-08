@@ -1,0 +1,6 @@
+(:name tsi.el
+       :description "tree-sitter indentation minor mode for Emacs"
+       :type github
+       :minimum-emacs-version "24.3"
+       :depends (elisp-tree-sitter)
+       :pkgname "orzechowskid/tsi.el")
