@@ -344,6 +344,15 @@ together.
 Please refer to the *Info* documentation provided with El-Get for the
 complete syntax of `el-get-bundle` and recipe definitions.
 
+# Troubleshooting
+
+In some [hard to understand cases](https://github.com/dimitri/el-get/issues/2747)
+installed packages may fail to produce correct autoloads.
+In this case a package will be present at your file system but Emacs will not "see" it.
+
+If you have this problem you can try reinstalling a package
+or add explicit `(require 'package-name)` to your Emacs config.
+
 # Conclusion
 
 Enjoy El-get, enjoy Emacs, have fun with Emacs Lisp, and simplify your Emacs
