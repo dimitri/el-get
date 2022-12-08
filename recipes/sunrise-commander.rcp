@@ -1,4 +1,4 @@
 (:name sunrise-commander
        :description "Two-pane file manager for Emacs based on Dired and inspired by MC"
        :type github
-       :pkgname "escherdragon/sunrise-commander")
+       :pkgname "sunrise-commander/sunrise-commander")
