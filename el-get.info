@@ -384,7 +384,7 @@ File: el-get.info,  Node: Basic Setup,  Next: The el-get function,  Up: Setup
 You can then arrange to have El-Get part of your setup, so that at next
 emacs startup the installed packages are initialized.
 
-     (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+     (add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-directory))
 
      (unless (require 'el-get nil t)
        (with-current-buffer
@@ -459,7 +459,7 @@ documentation is usable as-is. It is recommended that you not store the
 El-Get tree in git, however; to prevent this, so you can add a pattern
 `/el-get' to `.emacs.d/.gitignore'.
 
-     (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+     (add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-directory))
      (require 'el-get)
 
      ;; local sources
@@ -506,7 +506,7 @@ directory, and still enjoy a truly portable emacs configuration.
 specify a local source to install.  With this macro, nothing other than
 specified packages is installed.
 
-     (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+     (add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-directory))
      (require 'el-get)
 
      ;; packages from recipe files
