@@ -137,7 +137,7 @@
                      (read-from-string (buffer-string))))
             ;; If it doesn't exist, make sure the directory is there
             ;; so we can create it.
-            (make-directory el-get-dir t)))
+            (progn (make-directory el-get-dir t) nil)))
          (p-s
           (cond
            ((null ps) ;; nothing installed, we should install el-get
