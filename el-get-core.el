@@ -22,7 +22,6 @@
 (require 'cl-lib)
 (require 'simple)        ; needed for `apply-partially'
 (require 'bytecomp)
-(require 'autoload)
 
 (declare-function el-get-package-def "el-get-recipes" (package))
 (declare-function el-get-installation-failed "el-get" (package signal-data))

@@ -15,7 +15,9 @@
 (require 'cl-lib)
 (require 'el-get-core)
 (require 'el-get-custom)
-(require 'autoload)
+(eval-and-compile
+    (or (require 'loaddefs-gen nil 'noerror)
+        (require 'autoload)))
 
 (declare-function el-get-package-is-installed "el-get" (package))
 (declare-function el-get-byte-compile-file "el-get-byte-compile" (el))
@@ -49,6 +51,21 @@
 
 (defvar recentf-exclude)
 
+(defun el-get-update-directory-autoloads (dir)
+  "A wrapper function to update autoload definitions of DIR.
+
+We need this wrapper because
+Emacs 28.1 replaces `update-directory-autoloads' with
+`make-directory-autoloads', and Emacs 29 with
+`loaddefs-generate'."
+  (cond
+   ((fboundp 'loaddefs-generate)
+    (loaddefs-generate dir generated-autoload-file))
+   ((fboundp 'make-directory-autoloads)
+    (make-directory-autoloads dir generated-autoload-file))
+   ((fboundp 'update-directory-autoloads)
+    (update-directory-autoloads dir))))
+
 (defun el-get-update-autoloads (package)
   "Regenerate, compile, and load any outdated packages' autoloads."
   (when (el-get-want-autoloads-p package)
@@ -79,7 +96,7 @@
       (el-get-ensure-byte-compilable-autoload-file generated-autoload-file)
 
       (when (el-get-package-is-installed package)
-        (mapc 'update-directory-autoloads
+        (mapc 'el-get-update-directory-autoloads
               (cl-remove-if-not #'file-directory-p
                                 (el-get-load-path package)))
 
