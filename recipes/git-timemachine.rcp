@@ -1,5 +1,5 @@
 (:name git-timemachine
        :description "Step through historic versions of git controlled file using everyone's favourite editor"
        :type git
-       :url "https://gitlab.com/pidu/git-timemachine"
+       :url "https://codeberg.org/pidu/git-timemachine"
        :minimum-emacs-version "24")
