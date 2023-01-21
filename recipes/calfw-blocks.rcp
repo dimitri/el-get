@@ -1,0 +1,6 @@
+(:name calfw-blocks
+       :description "Visual enhancements for the Emacs Calendar Framework"
+       :type github
+       :pkgname "ml729/calfw-blocks"
+       :depends (calfw)
+       :minimum-emacs-version "26.3")
