@@ -1,0 +1,6 @@
+(:name emacs-oauth2-auto
+       :description "Automatically stored and configured OAuth2 for Emacs"
+       :type github
+       :pkgname "telotortium/emacs-oauth2-auto"
+       :depends (emacs-aio alert dash)
+       :minimum-emacs-version "26.1")
