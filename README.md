@@ -147,7 +147,7 @@ manual.
 Here is the basic setup to add to your `user-init-file` (`.emacs`):
 
 ```lisp
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+(add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-directory))
 
 (unless (require 'el-get nil 'noerror)
   (with-current-buffer
@@ -163,7 +163,7 @@ Here is the basic setup to add to your `user-init-file` (`.emacs`):
 ### Alternative Basic Setup with Installation via MELPA
 
 ```elisp
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+(add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-directory))
 
 (unless (require 'el-get nil 'noerror)
   (require 'package)
@@ -291,7 +291,7 @@ tries to initialize the package.
 ```lisp
 ;; Basic setup
 
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+(add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-directory))
 
 (unless (require 'el-get nil 'noerror)
   (with-current-buffer
