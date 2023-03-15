@@ -3,7 +3,7 @@
        :description "Transient commands used by magit."
        :type github
        :pkgname "magit/transient"
-       :branch "master"
+       :branch "main"
        :minimum-emacs-version "25.1"
        :info "docs"
        :load-path "lisp/"
