@@ -3,7 +3,7 @@
        :description "Work with Git forges from the comfort of Magit."
        :type github
        :pkgname "magit/forge"
-       :branch "master"
+       :branch "main"
        :minimum-emacs-version "25.1"
        ;; The package.el dependency is on `emacsql-sqlite', but el-get
        ;; provides that via `emacsql'.
