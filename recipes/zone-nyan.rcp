@@ -1,0 +1,7 @@
+(:name zone-nyan
+       :website "https://depp.brause.cc/zone-nyan/"
+       :description "A zone program displaying the infamous nyan cat animation."
+       :type git
+       :url "https://depp.brause.cc/zone-nyan.git"
+       :load-path (".")
+       :depends (esxml))

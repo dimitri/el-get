@@ -1,0 +1,5 @@
+(:name json-to-org-table
+       :description "Converts json string to linked org table"
+       :type github
+       :pkgname "noonker/json-to-org-table"
+       :minimum-emacs-version "27.1")
