@@ -1,0 +1,6 @@
+(:name denote
+       :description "Simple notes with an efficient file-naming scheme"
+       :type git
+       :url "https://git.sr.ht/~protesilaos/denote"
+       :load-path (".")
+       :minimum-emacs-version "28.1")
