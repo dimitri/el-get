@@ -1,6 +1,5 @@
 # source me
 # Define the following functions here to keep .github/workflows/test.yml nice and tidy
-#   - prereqs()
 #   - byte-compile()
 #   - check-recipes()
 #   - check-whitespace()
@@ -72,4 +71,4 @@ byte-compile() {
 shopt -s nullglob
 
 # show definitions for log
-declare -f prereqs byte-compile ert-tests check-recipes check-whitespace
+declare -f byte-compile ert-tests check-recipes check-whitespace
