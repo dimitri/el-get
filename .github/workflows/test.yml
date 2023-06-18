@@ -39,15 +39,9 @@ jobs:
         env
         emacs --version
 
-    - name: Install prereqs
-      run: |
-        source test/github-actions.sh
-        prereqs
-
     - name: Compilation
       run: |
         source test/github-actions.sh
-        byte-compile pkg/*.el
         byte-compile -Werror *.el methods/*.el
 
     - name: Test
