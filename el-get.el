@@ -203,7 +203,8 @@
   "List of packages to install next, used when dealing with dependencies.")
 
 (defun el-get-installation-failed (package signal-data)
-  "Run all the failure hooks for PACKAGE and `signal' the car and cdr of SIGNAL-DATA."
+  "Run all the failure hooks for PACKAGE and `signal' the car and
+cdr of SIGNAL-DATA."
   (run-hook-with-args 'el-get-post-error-hooks package signal-data)
   (signal (car signal-data) (cdr signal-data)))
 
@@ -336,7 +337,8 @@ which defaults to the first element in `el-get-recipe-path'."
         (eval form el-get-eval-lexical)))))
 
 (defun el-get-lazy-run-package-support (form fname package)
-  "Like `el-get-run-package-support', but using `eval-after-load' to wait until PACKAGE is loaded."
+  "Like `el-get-run-package-support', but using `eval-after-load'
+to wait until PACKAGE is loaded."
   (el-get-eval-after-load package
     `(el-get-run-package-support ',form ',fname ',package)))
 

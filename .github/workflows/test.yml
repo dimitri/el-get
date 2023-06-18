@@ -18,6 +18,7 @@ jobs:
         - 25.3
         - 26.3
         - 27.2
+        - 28.2
         - snapshot
     env:
       EMACS_VERSION: ${{ matrix.emacs_version }}
