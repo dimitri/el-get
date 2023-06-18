@@ -331,7 +331,8 @@ REMOVED are added and removed properties, respectively."
 (defun el-get-merge-properties-into-status (package-or-source
                                             operation
                                             &rest keys)
-  "Merge updatable properties for package into package status alist (or status file).
+  "Merge updatable properties for package into package status
+alist (or status file).
 
 The first argument is either a package source or a package name,
 in which case the source will be read using

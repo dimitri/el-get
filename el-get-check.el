@@ -65,7 +65,8 @@ Current possibe elements are:
              1))))
 
 (defun el-get-check-recipe-batch ()
-  "emacs -Q -batch -f el-get-check-recipe-batch [-W<:level>] [-Wno-<warning>...] *.rcp
+  "emacs -Q -batch -f el-get-check-recipe-batch [-W<:level>]
+[-Wno-<warning>...] *.rcp
 
 <:level> can be any valid warning level, see `warning-levels'.
 See `el-get-check-suppressed-warnings' for possible <warning> values."
