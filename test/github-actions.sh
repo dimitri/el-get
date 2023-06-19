@@ -1,26 +1,9 @@
 # source me
 # Define the following functions here to keep .github/workflows/test.yml nice and tidy
-#   - prereqs()
 #   - byte-compile()
 #   - check-recipes()
 #   - check-whitespace()
 #   - ert-tests()
-
-# Installs ert and package.el as needed.
-prereqs() {
-    # Put external elisp into pkg/.
-    (mkdir -p pkg && cd pkg
-     if ! emacs -Q --batch --eval "(require 'ert)" ; then
-         ert_compat=https://raw.githubusercontent.com/ohler/ert/c619b56c5bc6a866e33787489545b87d79973205
-         curl -LO $ert_compat/lisp/emacs-lisp/ert.el \
-              -O  $ert_compat/lisp/emacs-lisp/ert-x.el
-     fi
-     if ! emacs -Q --batch --eval "(require 'package)" ; then
-         pkg_compat23=https://raw.githubusercontent.com/mirrors/emacs/ba08b24186711eaeb3748f3d1f23e2c2d9ed0d09
-         curl -LO $pkg_compat23/lisp/emacs-lisp/package.el \
-              -O  $pkg_compat23/lisp/emacs-lisp/package-x.el
-     fi)
-}
 
 BASE=$(cat "$GITHUB_EVENT_PATH" | jq -r '.pull_request.base.sha')
 if [ "$BASE" = 'null' ]; then
@@ -70,7 +53,7 @@ else
 fi
 
 ert-tests() {
-    emacs -batch -Q $EMACS_OPT -L pkg/ -L . -l test/el-get-tests.el -f ert-run-tests-batch-and-exit
+    emacs -batch -Q $EMACS_OPT -L . -l test/el-get-tests.el -f ert-run-tests-batch-and-exit
 }
 
 # byte-compile [-Werror] <files>...
@@ -80,7 +63,7 @@ byte-compile() {
         error_on_warning=t
         shift
     fi
-    emacs -Q -L pkg/ -L . -L methods/ -batch \
+    emacs -Q -L . -L methods/ -batch \
           --eval "(setq byte-compile-error-on-warn $error_on_warning)" \
           -f batch-byte-compile "$@"
 }
@@ -88,4 +71,4 @@ byte-compile() {
 shopt -s nullglob
 
 # show definitions for log
-declare -f prereqs byte-compile ert-tests check-recipes check-whitespace
+declare -f byte-compile ert-tests check-recipes check-whitespace
