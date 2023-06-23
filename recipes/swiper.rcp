@@ -1,10 +1,20 @@
 (:name swiper
        :description "Gives you an overview as you search for a regex."
        :type github
-       :depends (cl-lib avy)
+       :depends (cl-lib avy hydra)
        :pkgname "abo-abo/swiper"
-       :build `(("make" ,(format "emacs=%s -L %s" el-get-emacs (concat (file-name-as-directory el-get-dir) "avy")) "compile")
-               ("makeinfo" "-o" "doc/ivy.info" "doc/ivy.texi"))
-       :build/berkeley-unix `(("gmake" ,(format "emacs=%s -L %s" el-get-emacs (concat (file-name-as-directory el-get-dir) "avy")) "compile")
-                             ("gmakeinfo" "-o" "doc/ivy.info" "doc/ivy.texi"))
+       :build `(("make"
+                 ,(format "emacs=%s -L %s -L %s"
+                          el-get-emacs
+                          (concat (file-name-as-directory el-get-dir) "avy")
+                          (concat (file-name-as-directory el-get-dir) "hydra"))
+                 "compile")
+                ("makeinfo" "-o" "doc/ivy.info" "doc/ivy.texi"))
+       :build/berkeley-unix `(("gmake"
+                               ,(format "emacs=%s -L %s -L %s"
+                                        el-get-emacs
+                                        (concat (file-name-as-directory el-get-dir) "avy")
+                                        (concat (file-name-as-directory el-get-dir) "hydra"))
+                               "compile")
+                              ("gmakeinfo" "-o" "doc/ivy.info" "doc/ivy.texi"))
        :info "doc/ivy.info")
