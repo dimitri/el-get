@@ -1,4 +1,4 @@
-(:name company-postframe
+(:name company-posframe
        :description "Use child frame as company candidate menu."
        :website "https://github.com/tumashu/company-posframe/"
        :type github
