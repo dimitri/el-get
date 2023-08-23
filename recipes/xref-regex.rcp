@@ -1,0 +1,5 @@
+(:name xref-regex
+       :website "https://github.com/813gan/xref-regex"
+       :description "Simple xref backend that use user-defined regular expressions."
+       :type github
+       :pkgname "813gan/xref-regex")
