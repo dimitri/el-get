@@ -1,0 +1,6 @@
+(:name emacs-dashboard
+       :description "A startup screen extracted from Spacemacs"
+       :type github
+       :pkgname "emacs-dashboard/emacs-dashboard"
+       :load-path (".")
+       :minimum-emacs-version "26.1")
