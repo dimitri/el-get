@@ -1,0 +1,7 @@
+(:name cider-storm
+       :description "Cider front-end for the FlowStorm debugger"
+       :type github
+       :pkgname "flow-storm/cider-storm"
+       :load-path (".")
+       :depends (cider)
+       :minimum-emacs-version "26")
