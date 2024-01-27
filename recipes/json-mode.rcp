@@ -1,6 +1,6 @@
 (:name json-mode
-       :description "Major mode for editing JSON files, extends the builtin js-mode to add better syntax highlighting for JSON."
+       :description "Major mode for editing JSON files with Emacs"
        :type github
-       :pkgname "joshwnj/json-mode"
+       :pkgname "json-emacs/json-mode"
        :depends (json-snatcher)
        :minimum-emacs-version "24.4")
