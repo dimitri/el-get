@@ -2,5 +2,4 @@
        :description "Drive gnuplot from within emacs"
        :type github
        :pkgname "bruceravel/gnuplot-mode"
-       :build `(("make" ,(concat "EMACS=" el-get-emacs)))
-       :info "gnuplot.info")
+       :build `(("make" ,(concat "EMACS=" el-get-emacs))))
