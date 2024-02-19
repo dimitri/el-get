@@ -1,0 +1,6 @@
+(:name fontaine
+       :description "Set font configurations using presets"
+       :type github
+       :branch "main"
+       :minimum-emacs-version "27.1"
+       :pkgname "protesilaos/fontaine")
