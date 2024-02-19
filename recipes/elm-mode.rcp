@@ -1,6 +1,6 @@
 (:name elm-mode
        :website "https://github.com/jcollard/elm-mode#readme"
        :description "Major mode for Elm"
-       :depends (f let-alist s reformatter)
+       :depends (f seq let-alist s reformatter)
        :type github
        :pkgname "jcollard/elm-mode")

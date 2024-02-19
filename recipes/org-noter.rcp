@@ -2,4 +2,4 @@
        :description "Emacs document annotator, using org-mode."
        :type github
        :depends (org-mode cl-lib)
-       :pkgname "weirdNox/org-noter")
+       :pkgname "org-noter/org-noter")

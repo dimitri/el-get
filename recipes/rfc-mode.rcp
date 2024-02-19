@@ -1,0 +1,5 @@
+(:name rfc-mode
+       :description "An Emacs major mode to read and browse RFC documents."
+       :type github
+       :pkgname "galdor/rfc-mode"
+       :minimum-emacs-version "25.1")

@@ -1,0 +1,6 @@
+(:name ef-themes
+       :description "Colorful and legible themes for GNU Emacs"
+       :type github
+       :branch "main"
+       :minimum-emacs-version "27.1"
+       :pkgname "protesilaos/ef-themes")

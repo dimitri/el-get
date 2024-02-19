@@ -1,0 +1,6 @@
+(:name jupyter
+       :description "An interface to communicate with Jupyter kernels."
+       :type github
+       :pkgname "emacs-jupyter/jupyter"
+       :minimum-emacs-version "26"
+       :depends (cl-lib org-mode zmq simple-httpd websocket))

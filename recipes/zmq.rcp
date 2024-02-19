@@ -1,0 +1,6 @@
+(:name zmq
+       :description "ZMQ bindings in elisp"
+       :type github
+       :pkgname "nnicandro/emacs-zmq"
+       :minimum-emacs-version "26"
+       :depends (cl-lib))
