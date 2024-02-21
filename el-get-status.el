@@ -140,7 +140,7 @@
             (make-directory el-get-dir t)))
          (p-s
           (cond
-           ((null ps) ;; nothing installed, we should install el-get
+           ((not (consp ps)) ;; nothing installed, we should install el-get
             (list (list 'el-get 'status "required")))
            ;; ps is an alist, no conversion needed
            ((consp (car ps)) ps)
