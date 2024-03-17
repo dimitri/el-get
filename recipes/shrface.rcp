@@ -2,4 +2,5 @@
        :description "Extend shr/eww with org features and analysis capability."
        :type github
        :pkgname "chenyanming/shrface"
+       :minimum-emacs-version "25.1"
        :depends (org-mode language-detection))
