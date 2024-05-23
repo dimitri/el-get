@@ -2,4 +2,4 @@
        :description "Shell commands with DWIM behaviour"
        :type github
        :pkgname "xenodium/dwim-shell-command"
-       :minimum-emacs-version "27.1")
+       :minimum-emacs-version "28.1")
