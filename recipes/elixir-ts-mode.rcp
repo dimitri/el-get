@@ -1,0 +1,6 @@
+(:name elixir-ts-mode
+       :type github
+       :pkgname "wkirschbaum/elixir-ts-mode"
+       :description "Major mode for Elixir with tree-sitter support"
+       :depends (heex-ts-mode)
+       :minimum-emacs-version "29.1")
