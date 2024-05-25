@@ -1,0 +1,5 @@
+(:name heex-ts-mode
+       :type github
+       :pkgname "wkirschbaum/heex-ts-mode"
+       :description "Major mode for Heex with tree-sitter support"
+       :minimum-emacs-version "29.1")
