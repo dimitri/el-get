@@ -1,0 +1,6 @@
+(:name separedit
+       :type github
+       :pkgname "twlz0ne/separedit.el"
+       :minimum-emacs-version "25.1"
+       :depends (dash edit-indirect)
+       :description "Edit comment/string/docstring/code block in separate buffer")
