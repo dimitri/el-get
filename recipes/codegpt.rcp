@@ -1,0 +1,7 @@
+(:name codegpt
+       :website "https://github.com/emacs-openai/codegpt"
+       :description "This extension allows you to use the official OpenAI API."
+       :type github
+       :pkgname "emacs-openai/codegpt"
+       :minimum-emacs-version "27.1"
+       :depends (openai spinner markdown-mode))
