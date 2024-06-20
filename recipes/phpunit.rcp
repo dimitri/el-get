@@ -1,0 +1,5 @@
+(:name phpunit
+       :description "Emacs mode to phpunit and test command line tool"
+       :type github
+       :pkgname "nlamirault/phpunit.el"
+       :depends (php-mode))
