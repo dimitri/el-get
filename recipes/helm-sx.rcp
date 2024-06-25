@@ -1,0 +1,5 @@
+(:name helm-sx
+       :description "Helm interface for sx.el - Stack Exchange client"
+       :type github
+       :pkgname "813gan/helm-sx.el"
+       :depends (sx helm))
