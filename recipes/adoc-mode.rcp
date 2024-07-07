@@ -1,6 +1,6 @@
 (:name adoc-mode
-       :website "https://github.com/sensorflo/adoc-mode/wiki"
+       :website "https://github.com/bbatsov/adoc-mode/wiki"
        :description "A major-mode for editing AsciiDoc files in Emacs."
        :type github
-       :pkgname "sensorflo/adoc-mode"
+       :pkgname "bbatsov/adoc-mode"
        :depends markup-faces)
