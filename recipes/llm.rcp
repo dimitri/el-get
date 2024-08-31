@@ -1,0 +1,6 @@
+(:name llm
+       :description "Interface to pluggable llm backends"
+       :minimum-emacs-version "28.1"
+       :type github
+       :pkgname "ahyatt/llm"
+       :depends (plz))
