@@ -1,0 +1,7 @@
+(:name kubed
+       :description "A python refactoring library"
+       :type github
+       :pkgname "eshelyaron/kubed"
+       :minimum-emacs-version "29.1"
+       :website "https://eshelyaron.com/kubed.html"
+       )
