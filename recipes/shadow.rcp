@@ -1,6 +1,7 @@
 (:name shadow
        :description "That's not the file. That's shadow."
-       :type git :url "https://github.com/mooz/shadow.el.git"
+       :type github
+       :pkgname "mooz/shadow.el"
        :features shadow
        :post-init (progn
                     (add-hook 'find-file-hooks 'shadow-on-find-file)

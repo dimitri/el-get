@@ -1,4 +1,6 @@
 (:name ac-R
        :description "Auto-completion-mode support for R"
-       :type git
-       :url "https://github.com/mlf176f2/ac-R")
+       :type github
+       :pkgname "mlf176f2/ac-R"
+       :depends (ess)
+       )

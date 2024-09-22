@@ -1,7 +1,7 @@
 (:name mew
        :description "Mew is a mail reader for Emacs"
-       :type git
-       :url "https://github.com/kazu-yamamoto/Mew.git"
+       :type github
+       :pkgname "kazu-yamamoto/Mew"
        ;;; To use Mew S/MIME support, manual configuration of
        ;;; pinentry-program entry on ~/.gnupg/gpg-agent.conf is required.
        ;;; pinentry-program for mew is (concat el-get-dir "mew/bin/mew-pinentry")
