@@ -1,0 +1,6 @@
+(:name difftastic
+       :description "Integrates difftastic - a structural diff tool into Emacs"
+       :type github
+       :pkgname "pkryger/difftastic.el"
+       :minimum-emacs-version "28.1"
+       :depends (magit compat))
