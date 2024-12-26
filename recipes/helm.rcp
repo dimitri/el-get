@@ -5,7 +5,8 @@
        :autoloads "helm-autoloads"
        :build `(("make"
                  ,(concat "ASYNC_ELPA_DIR=" (el-get-package-directory 'emacs-async))))
-       :depends (emacs-async)
+       :depends (emacs-async wfnames)
+       :minimum-emacs-version "25.1"
        :build/darwin `(("make"
                         ,(concat "ASYNC_ELPA_DIR=" (el-get-package-directory 'emacs-async))
                         ,(format "EMACS_COMMAND=%s" el-get-emacs)))

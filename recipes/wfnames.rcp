@@ -1,0 +1,5 @@
+(:name wfnames
+       :type github
+       :pkgname "thierryvolpiatto/wfnames"
+       :minimum-emacs-version "24.4"
+       :description "Edit filenames like Wdired")
