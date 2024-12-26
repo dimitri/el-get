@@ -14,6 +14,6 @@
        :compile "lisp/"
        ;; Use the Makefile to produce the info manual, el-get can
        ;; handle compilation and autoloads on its own.
-       :build `(("make" ,(format "EMACSBIN=%s" el-get-emacs) "info"))
-       :build/berkeley-unix `(("gmake" ,(format "EMACSBIN=%s" el-get-emacs)
+       :build `(("make" ,(format "EMACS=%s" el-get-emacs) "info"))
+       :build/berkeley-unix `(("gmake" ,(format "EMACS=%s" el-get-emacs)
                                "info")))
