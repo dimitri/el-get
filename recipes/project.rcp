@@ -1,0 +1,4 @@
+(:name project
+       :website "https://elpa.gnu.org/packages/project.html"
+       :description "Generic infrastructure for dealing with projects"
+       :type elpa)
