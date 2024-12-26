@@ -15,9 +15,9 @@
        ;; handle compilation and autoloads on its own.  Create an
        ;; empty autoloads file because magit.el explicitly checks for
        ;; a file of that name.
-       :build `(("make" ,(format "EMACSBIN=%s" el-get-emacs) "info")
+       :build `(("make" ,(format "EMACS=%s" el-get-emacs) "info")
                 ("touch" "lisp/magit-autoloads.el"))
-       :build/berkeley-unix `(("gmake" ,(format "EMACSBIN=%s" el-get-emacs) "docs")
+       :build/berkeley-unix `(("gmake" ,(format "EMACS=%s" el-get-emacs) "docs")
                               ("touch" "lisp/magit-autoloads.el"))
        ;; assume windows lacks make and makeinfo
        :build/windows-nt (with-temp-file "lisp/magit-autoloads.el" nil))
