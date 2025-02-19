@@ -55,6 +55,7 @@ fallback."
   "Notify the user using either the dbus based API or the `growl' one"
   (when (not (eq el-get-notify-type 'message))
     (unless (and (fboundp 'dbus-register-signal)
+                 (boundp 'dbus-compiled-version)
                  ;; avoid a bug in Emacs 24.0 under darwin
                  (ignore-errors (require 'notifications nil t)))
       ;; else try notify.el, there's a recipe for it
@@ -67,12 +68,13 @@ fallback."
          ;; Message only
          ((equal el-get-notify-type 'message) (error "Use `message' instead"))
          ;; Graphical notification
-         ((fboundp 'notifications-notify) (notifications-notify :title title
-                                                                :app-name "el-get"
-                                                                :app-icon (concat
-                                                                           (el-get-package-directory "el-get")
-                                                                           "/logo/el-get.png")
-                                                                :body message))
+         ((and (fboundp 'notifications-notify) (boundp 'dbus-compiled-version))
+          (notifications-notify :title title
+                                :app-name "el-get"
+                                :app-icon (concat
+                                           (el-get-package-directory "el-get")
+                                           "/logo/el-get.png")
+                                :body message))
          ((fboundp 'notify)               (notify title message))
          ((fboundp 'el-get-growl)         (el-get-growl title message))
          ;; Fallback
