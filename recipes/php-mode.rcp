@@ -1,5 +1,7 @@
 (:name php-mode
        :description "A PHP mode for GNU Emacs "
        :type github
-       :pkgname  "ejmr/php-mode"
-       :website "https://github.com/ejmr/php-mode")
+       :pkgname  "emacs-php/php-mode"
+       :load-path "lisp/"
+       :compile "lisp/"
+       :website "https://github.com/emacs-php/php-mode")
