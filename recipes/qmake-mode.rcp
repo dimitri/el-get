@@ -1,7 +1,7 @@
 (:name qmake-mode
        :description "Qmake mode for Emacs"
-       :type hg
-       :url "https://qmake-mode.googlecode.com/hg/"
+       :type github
+       :pkgname "jobor/qmake-mode"
        :prepare (progn
                   (autoload 'qmake-mode "qmake"
                     "Major mode for qmake files." t)
