@@ -1,0 +1,4 @@
+(:name cond-let
+       :description "Additional and improved binding conditionals"
+       :type github
+       :pkgname "tarsius/cond-let")
