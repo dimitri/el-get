@@ -7,7 +7,7 @@
        :minimum-emacs-version "25.1"
        ;; Note: `git-commit' is shipped with `magit' code itself.
        ;; Note: `magit-section' is shipped with `magit' code itself.
-       :depends (dash transient with-editor compat llama)
+       :depends (dash transient with-editor compat llama cond-let)
        :info "docs"
        :load-path "lisp/"
        :compile "lisp/"
