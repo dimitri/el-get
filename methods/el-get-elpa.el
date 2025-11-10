@@ -57,7 +57,7 @@ ALIST-ELEM should be an element from `package-alist' or
     (let* ((descs (cdr (assq pkg package-archive-contents))))
       (cond
        ((consp descs) (car descs))
-       ((null descs) (error "Couln't find package `%s'" pkg))
+       ((null descs) (error "Couldn't find package `%s'" pkg))
        (t pkg))))
 
   (defun el-get-elpa-package-archive-base (pkg)
