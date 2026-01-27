@@ -5,26 +5,9 @@
        :module "auctex"
        :url "git://git.savannah.gnu.org/auctex.git"
        :depends s
-       :build `(("./autogen.sh")
-                ("./configure"
-                 "--without-texmf-dir"
-                 ;; The values of these args only matter at make
-                 ;; install time (which we don't do), we just give
-                 ;; some value so ./configure doesn't fail.
-                 "--with-packagelispdir=$(pwd)"
-                 "--with-packagedatadir=$(pwd)"
-                 "--with-lispdir=$(pwd)"
-                 ,(concat "--with-emacs=" el-get-emacs))
-                ("make"))
-       :build/berkeley-unix `(("sed" "-i" "" "-e" "s/MAKE=make/MAKE=gmake/g" "autogen.sh")
-                              ("./autogen.sh")
-                              ("./configure"
-                               "--without-texmf-dir"
-                               "--with-packagelispdir=$(pwd)"
-                               "--with-packagedatadir=$(pwd)"
-                               ,(concat "--with-emacs=" el-get-emacs)
-                               "MAKE=gmake")
-                              ("gmake"))
+       :build `(("make"))
+       :build/berkeley-unix `(("gmake"))
        :load-path (".")
-       :load  ("tex-site.el" "preview-latex.el")
+       :autoloads nil
+       :load  ("tex-site.el" "preview.el")
        :info "doc")
