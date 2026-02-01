@@ -75,7 +75,7 @@ Emacs 28.1 replaces `update-directory-autoloads' with
     (update-directory-autoloads dir))))
 
 
-(defun el-get-autoload-file-load-name (file outfile)
+(defun el-get-autoload-file-load-name (file &optional outfile)
   "A wrapper function to compute the name that will be used to load FILE.
 
 OUTFILE should be the name of the global loaddefs.el file."
