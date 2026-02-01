@@ -1,4 +1,4 @@
-;;; el-get-bundle.el --- An el-get wrapper
+;;; el-get-bundle.el --- An el-get wrapper -*- lexical-binding: t; -*-
 
 ;; Author: INA Lintaro <tarao.gnn at gmail.com>
 ;; URL: https://github.com/tarao/bundle-el/tree/el-get
