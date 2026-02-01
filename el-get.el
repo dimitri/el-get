@@ -584,11 +584,11 @@ PACKAGE may be either a string or the corresponding symbol."
 
 (defun el-get-reload (package &optional package-status-alist)
   "Reload PACKAGE."
+  (declare (advertised-calling-convention (package) "Feb 2015"))
   (interactive
    (progn
      (el-get-clear-status-cache)
      (list (el-get-read-package-with-status "Reload" "installed"))))
-  (declare (advertised-calling-convention (package) "Feb 2015"))
   (el-get-verbose-message "el-get-reload: %s" package)
   (el-get-with-status-sources ()
     (let* ((all-features features)
@@ -844,11 +844,11 @@ result of an actual problem."
 (defun el-get-cleanup (packages)
   "Clean up packages installed with el-get.
 
-In particular, keep all of the packages listed in the 'packages
+In particular, keep all of the packages listed in the \\='packages
 argument list, and also keep all of the packages that the listed
 packages depend on.  Get rid of everything else.  Note that
 el-get-cleanup will not remove el-get itself, regardless of
-whether or not el-get is listed in the 'packages argument list.
+whether or not el-get is listed in the \\='packages argument list.
 
 This is useful, for example, when we want to remove all packages not
 explicitly declared in the user-init-file (.emacs)."
@@ -974,24 +974,24 @@ considered \"required\"."
 (defun el-get (&optional sync &rest packages)
   "Ensure that packages have been downloaded once and init them as needed.
 
-This will not update the sources by using `apt-get install' or
-`git pull', but it will ensure that:
+This will not update the sources by using `apt-get install\\=' or
+`git pull\\=', but it will ensure that:
 
 * the packages have been installed
 * load-path is set so their elisp files can be found
 * Info-directory-list is set so their info files can be found
 * Autoloads have been prepared and evaluated for each package
-* Any post-installation setup (e.g. `(require 'feature)') happens
+* Any post-installation setup (e.g. `(require \\='feature)\\=') happens
 
 When SYNC is nil (the default), all installations run
 concurrently, in the background.
 
-When SYNC is 'sync, each package will be installed synchronously,
+When SYNC is \\='sync, each package will be installed synchronously,
 and any error will stop it all.
 
-Please note that the `el-get-init' part of `el-get' is always
-done synchronously. There's `byte-compile' support though, and
-the packages you use are welcome to use `autoload' too.
+Please note that the `el-get-init\\=' part of `el-get\\=' is always
+done synchronously. There\\='s `byte-compile\\=' support though, and
+the packages you use are welcome to use `autoload\\=' too.
 
 PACKAGES is expected to be a list of packages you want to install
 or init.  When PACKAGES is omited (the default), the list of

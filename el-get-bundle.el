@@ -24,12 +24,12 @@
   :group 'el-get-bundle)
 
 (defcustom el-get-bundle-sync t
-  "t means to run el-get with the argument 'sync.
+  "t means to run el-get with the argument \\='sync.
 The default can be overriden on a per-package basis by adding one of
-`:bundle-async [t|nil]'
-`:bundle-sync [t|nil]
+`:bundle-async [t|nil]\\='
+`:bundle-sync [t|nil]\\='
 to the list of keywords that follow
-`el-get-bundle PACKAGE|el-get-bundle FEATURE in PACKAGE'."
+`el-get-bundle PACKAGE|el-get-bundle FEATURE in PACKAGE\\='."
   :type 'boolean
   :group 'el-get-bundle)
 

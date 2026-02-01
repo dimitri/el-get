@@ -15,7 +15,7 @@
 (require 'el-get-core)
 
 (defcustom el-get-builtin-install-hook nil
-  "Hook run after 'installing' a builtin package."
+  "Hook run after \\='installing\\=' a builtin package."
   :group 'el-get
   :type 'hook)
 

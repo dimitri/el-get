@@ -71,12 +71,12 @@ the git repository, this function is intended to be used only with http(s)
 urls. The function uses the approach described here
 [http://stackoverflow.com/questions/9270488/]
 
-Basically it makes a HEAD request and checks the Content-Type for 'smart' MIME
-type. This approach does not work for some domains like `bitbucket', which do
-not return 'smart' headers despite supporting shallow clones.
+Basically it makes a HEAD request and checks the Content-Type for \\='smart\\=' MIME
+type. This approach does not work for some domains like `bitbucket\\=', which do
+not return \\='smart\\=' headers despite supporting shallow clones.
 
-Other domains like `github' return 405 for HEAD and only respond to GET. In this
-case, if HEAD doesn't respond with 200 or 304, GET is tried as well."
+Other domains like `github\\=' return 405 for HEAD and only respond to GET. In this
+case, if HEAD doesn\\='t respond with 200 or 304, GET is tried as well."
   (let ((url-request-method "HEAD")
         (req-url (format "%s%s/info/refs\?service\=git-upload-pack"
                          giturl

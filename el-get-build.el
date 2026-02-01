@@ -187,9 +187,9 @@ recursion.
                            infodir-rel))
 
 (defun el-get-install-or-init-info (package build-or-init)
-  "Call `el-get-install-info' to create the necessary \"dir\"
-  file when build-or-init is 'build, or `el-get-set-info-path'
-  when build-or-init is 'init "
+  "Calls el-get-install-info to create the necessary \"dir\"
+  file when build-or-init is \\='build, or el-get-set-info-path
+  when build-or-init is \\='init "
   (let* ((source   (el-get-package-def package))
          (method   (el-get-package-method source))
          (infodir  (plist-get source :info))

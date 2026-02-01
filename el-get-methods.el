@@ -29,18 +29,18 @@
 (defun el-get-insecure-check (package url)
   "Raise an error if it's not safe to install PACKAGE from URL.
 
-When `el-get-allow-insecure' is non-nil, check if any of the
+When `el-get-allow-insecure\\=' is non-nil, check if any of the
 following are true:
 
-- URL's protocol is in `el-get-secure-protocols'
+- URL\\='s protocol is in `el-get-secure-protocols\\='
 
-- URL starts with 'file:///' (without hostname), so it points to the
+- URL starts with \\='file:///\\=' (without hostname), so it points to the
   local file
 
-- URL starts with username, i.e. 'username@example.com', also known as
+- URL starts with username, i.e. \\='username@example.com\\=', also known as
   SCP-like syntax
 
-- URL satisfies `file-name-absolute-p'
+- URL satisfies `file-name-absolute-p\\='
 
 - PACKAGE definition has a non-empty :checksum"
   (unless el-get-allow-insecure

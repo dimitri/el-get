@@ -47,7 +47,7 @@
   "List of directories in which to look for el-get recipes.
 
 Directories that contain automatically-generated recipes, such as
-`el-get-recipe-path-emacswiki' and `el-get-recipe-path-elpa',
+`el-get-recipe-path-emacswiki\\=' and `el-get-recipe-path-elpa\\=',
 should be placed last in this list.
 
 This variable is not customizable, as it needs to be set before
@@ -55,7 +55,7 @@ el-get is loaded, while customizations should be loaded after
 el-get, so that they can affect pacakages loaded by el-get.
 It is recommended to add new directories using code like:
 
-  (add-to-list 'el-get-recipe-path \"~/.emacs.d/el-get-user/recipes/\")")
+  (add-to-list \\='el-get-recipe-path \"~/.emacs.d/el-get-user/recipes/\")")
 
 (defcustom el-get-user-package-directory nil
   "Define where to look for init-pkgname.el configurations.  Disabled if nil."
@@ -64,7 +64,7 @@ It is recommended to add new directories using code like:
 
 (defun el-get-load-package-user-init-file (package)
   "Load the user init file for PACKAGE, called init-package.el
-and to be found in `el-get-user-package-directory'.  Do nothing
+and to be found in `el-get-user-package-directory\\='.  Do nothing
 when this custom is nil.
 
 Will automatically compile the init file as needed and load the
@@ -218,7 +218,7 @@ fields are the default value and R2 may override them."
   "Return the :type property (called method) of PACKAGE-OR-SOURCE.
 
 If the package is built in to the current major version of Emacs,
-return 'builtin."
+return \\='builtin."
   (let* ((def (if (or (symbolp package-or-source) (stringp package-or-source))
                   (el-get-package-def package-or-source)
                 package-or-source))
@@ -236,10 +236,10 @@ return 'builtin."
 (defun el-get-package-types-alist (statuses &rest types)
   "Return an alist of package names that are of given TYPES.
 
-Only consider packages whose status is `member' of STATUSES,
+Only consider packages whose status is `member\\=' of STATUSES,
 which defaults to installed, required and removed.  Example:
 
-  (el-get-package-types-alist \"installed\" 'http 'cvs)"
+  (el-get-package-types-alist \"installed\" \\='http \\='cvs)"
   (cl-loop for src in (apply 'el-get-list-package-names-with-status
                              (cond ((stringp statuses) (list statuses))
                                    ((null statuses) '("installed" "required"

@@ -249,8 +249,8 @@ entry."
 (defun el-get-flatten (arg)
   "Return a version of ARG as a one-level list
 
- (el-get-flatten 'x) => '(x)
- (el-get-flatten '(a (b c (d)) e)) => '(a b c d e)"
+ (el-get-flatten \\='x) => \\='(x)
+ (el-get-flatten \\='(a (b c (d)) e)) => \\='(a b c d e)"
   (if (listp arg)
       (apply 'append (mapcar 'el-get-flatten arg))
     (list arg)))
@@ -492,7 +492,7 @@ makes it easier to conditionally splice a command into the list.
                         ;; lists. This allows
                         ;; `el-get-start-process-list' (but not other
                         ;; functions) to recurse indefinitely.
-                        (let ((max-specpdl-size (+ 100 max-specpdl-size)))
+                        (let ((max-lisp-eval-depth (+ 100 max-lisp-eval-depth)))
                           (el-get-start-process-list package next final-func))
                       (when (functionp final-func)
                         (funcall final-func package)))))

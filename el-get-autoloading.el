@@ -27,6 +27,14 @@
 (defvar el-get-outdated-autoloads nil
   "List of package names whose autoloads are outdated")
 
+(defun el-get-autoload-rubric (file &optional type feature compile)
+  "A wrapper function emulating autoload-rubric."
+  (cond
+   ((fboundp 'loaddefs-generate--rubric)
+    (loaddefs-generate--rubric file type feature compile))
+   ((fboundp 'autoload-rubric)
+    (autoload-rubric file type feature compile))))
+
 (defun el-get-ensure-byte-compilable-autoload-file (file)
   "If FILE doesn't already exist, create it as a byte-compilable
   autoload file (the default created by autoload.el has a local
@@ -36,7 +44,7 @@
   (unless (file-exists-p file)
     (write-region
      (replace-regexp-in-string ";; no-byte-compile: t\n" ""
-                               (autoload-rubric file)) nil file)))
+                               (el-get-autoload-rubric file)) nil file)))
 
 (defun el-get-load-fast (file)
   "Load the compiled version of FILE if it exists; else load FILE verbatim"
@@ -65,6 +73,17 @@ Emacs 28.1 replaces `update-directory-autoloads' with
     (make-directory-autoloads dir generated-autoload-file))
    ((fboundp 'update-directory-autoloads)
     (update-directory-autoloads dir))))
+
+
+(defun el-get-autoload-file-load-name (file outfile)
+  "A wrapper function to compute the name that will be used to load FILE.
+
+OUTFILE should be the name of the global loaddefs.el file."
+  (cond
+   ((fboundp 'loaddefs-generate--file-load-name)
+    (loaddefs-generate--file-load-name file outfile))
+   ((fboundp 'autoload-file-load-name)
+    (autoload-file-load-name file outfile))))
 
 (defun el-get-update-autoloads (package)
   "Regenerate, compile, and load any outdated packages' autoloads."
@@ -131,7 +150,7 @@ with the named PACKAGE"
            (load-names
             (mapcar
              (lambda (f)
-               (apply #'autoload-file-load-name
+               (apply #'el-get-autoload-file-load-name
                       ;; Starting from Emacs 28 auto-file-load-name
                       ;; needs two parameters, versions before 28 only
                       ;; one.
@@ -142,12 +161,15 @@ with the named PACKAGE"
            (recentf-exclude (cons (regexp-quote el-get-autoload-file)
                                   (bound-and-true-p recentf-exclude)))
            (visited (find-buffer-visiting el-get-autoload-file)))
-      (with-current-buffer (or visited (find-file-noselect el-get-autoload-file))
-        (widen) (goto-char (point-min))
-        (while (search-forward generate-autoload-section-header nil t)
-          (when (member (nth 2 (autoload-read-section-header)) load-names)
-            ;; We found a matching section, remove it.
-            (autoload-remove-section (match-beginning 0)))))
+      (when (and (boundp 'generate-autoload-section-header)
+                 (fboundp 'autoload-remove-section)
+                 (fboundp 'autoload-read-section-header))
+        (with-current-buffer (or visited (find-file-noselect el-get-autoload-file))
+          (widen) (goto-char (point-min))
+          (while (search-forward generate-autoload-section-header nil t)
+            (when (member (nth 2 (autoload-read-section-header)) load-names)
+              ;; We found a matching section, remove it.
+              (autoload-remove-section (match-beginning 0))))))
       (el-get-update-autoloads package)
       (let ((visiting (find-buffer-visiting el-get-autoload-file)))
         (when visiting
