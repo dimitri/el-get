@@ -33,7 +33,7 @@
    ((fboundp 'loaddefs-generate--rubric)
     (loaddefs-generate--rubric file type feature compile))
    ((fboundp 'autoload-rubric)
-    (autoload-rubric file type feature compile))))
+    (autoload-rubric file type feature))))
 
 (defun el-get-ensure-byte-compilable-autoload-file (file)
   "If FILE doesn't already exist, create it as a byte-compilable
