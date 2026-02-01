@@ -83,7 +83,10 @@ OUTFILE should be the name of the global loaddefs.el file."
    ((fboundp 'loaddefs-generate--file-load-name)
     (loaddefs-generate--file-load-name file outfile))
    ((fboundp 'autoload-file-load-name)
-    (autoload-file-load-name file))))
+    (apply #'autoload-file-load-name
+           (if (> emacs-major-version 27)
+               `(,file ,outfile)
+             `(,file))))))
 
 (defun el-get-update-autoloads (package)
   "Regenerate, compile, and load any outdated packages' autoloads."
