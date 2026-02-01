@@ -13,12 +13,12 @@ jobs:
       fail-fast: false
       matrix:
         emacs_version:
-        - 24.3
-        - 24.5
         - 25.3
         - 26.3
         - 27.2
         - 28.2
+        - 29.4
+        - 30.2
         - snapshot
     env:
       EMACS_VERSION: ${{ matrix.emacs_version }}
