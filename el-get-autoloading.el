@@ -83,7 +83,7 @@ OUTFILE should be the name of the global loaddefs.el file."
    ((fboundp 'loaddefs-generate--file-load-name)
     (loaddefs-generate--file-load-name file outfile))
    ((fboundp 'autoload-file-load-name)
-    (autoload-file-load-name file outfile))))
+    (autoload-file-load-name file))))
 
 (defun el-get-update-autoloads (package)
   "Regenerate, compile, and load any outdated packages' autoloads."
