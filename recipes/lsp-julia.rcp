@@ -1,0 +1,5 @@
+(:name lsp-julia
+       :description "Julia support for the lsp-mode package using the LanguageServer.jl package"
+       :type github
+       :pkgname "non-Jedi/lsp-julia"
+       :depends (julia-mode lsp-mode))
