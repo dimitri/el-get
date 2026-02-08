@@ -1,0 +1,8 @@
+(:name elisp-refs
+       :description "an intelligent code search for Emacs lisp"
+       :type github
+       :pkgname "Wilfred/elisp-refs"
+       :features elisp-refs
+       :depends (dash s)
+       )
+
