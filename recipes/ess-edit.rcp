@@ -1,0 +1,4 @@
+(:name ess-edit
+       :type emacswiki
+       :description "Edit helpers for ESS."
+       :website "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/ess-edit.el")
