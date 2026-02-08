@@ -1,0 +1,3 @@
+(:name chef-mode
+       :type github
+       :pkgname "mpasternacki/chef-mode" )
