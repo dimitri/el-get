@@ -1,4 +1,4 @@
 (:name codeium
-       :desription "Free, ultrafast, extensible AI code completion tool for Emacs"
+       :description "Free, ultrafast, extensible AI code completion tool for Emacs"
        :type github
        :pkgname "Exafunction/codeium.el")
