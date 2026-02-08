@@ -1,0 +1,7 @@
+(:name org-roam
+       :desription "plain-text knowledge management system. It brings some of Roam's more powerful features into the Org-mode ecosystem."
+       :type github
+       :pkgname "org-roam/org-roam"
+       ;; not depending on org-mode since version comes with newer emacses
+       :depends (dash f s emacsql emacsql-sqlite3)
+       :post-init (add-hook 'after-init-hook 'org-roam-mode))
