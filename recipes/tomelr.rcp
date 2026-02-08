@@ -1,0 +1,6 @@
+(:name tomelr
+       :description "Convert S-expressions to TOML"
+       :type github
+       :pkgname "kaushalmodi/tomelr"
+       :minimum-emacs-version "26.3"
+       :depends (map seq))

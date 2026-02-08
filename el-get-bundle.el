@@ -11,7 +11,7 @@
 ;;; Code:
 
 (require 'el-get)
-(eval-when-compile (require 'cl))
+(eval-when-compile (require 'cl-lib))
 
 ;; customization
 
@@ -279,7 +279,7 @@ version is used if `el-get-bundle-byte-compile' is non-nil."
       (setq form (nthcdr 2 form) require t))
     ;; parse keywords
     (while (keywordp (nth 0 form))
-      (case (nth 0 form)
+      (cl-case (nth 0 form)
         (:bundle-sync (setq sync (nth 1 form)))
         (:bundle-async (setq sync (not (nth 1 form))))
         (t (setq src (plist-put src (nth 0 form) (nth 1 form)))))
@@ -312,7 +312,7 @@ required."
       `(el-get-bundle ,package ,@args)
     (let* ((package (or (and (listp package) (nth 1 package)) package))
            (name (plist-get (el-get-bundle-parse-name package) :name)))
-      `(el-get-bundle ,name ,@(list* 'in package args)))))
+      `(el-get-bundle ,name ,@(cl-list* 'in package args)))))
 
 (provide 'el-get-bundle)
 ;;; el-get-bundle.el ends here

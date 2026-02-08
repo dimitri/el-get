@@ -3,16 +3,15 @@
        :description "Transient commands used by magit."
        :type github
        :pkgname "magit/transient"
-       :branch "master"
+       :branch "main"
        :minimum-emacs-version "25.1"
-       :depends (dash)
        :info "docs"
        :load-path "lisp/"
        :compile "lisp/"
        ;; Use the Makefile to produce the info manual, el-get can
        ;; handle compilation and autoloads on its own.
-       :build `(("make" ,(format "EMACSBIN=%s" el-get-emacs) "info"))
-       :build/berkeley-unix `(("gmake" ,(format "EMACSBIN=%s" el-get-emacs)
+       :build `(("make" ,(format "EMACS=%s" el-get-emacs) "info"))
+       :build/berkeley-unix `(("gmake" ,(format "EMACS=%s" el-get-emacs)
                                "info"))
        ;; Assume windows lacks a build environment.
        :build/windows-nt (with-temp-file "lisp/transient-autoloads.el" nil))

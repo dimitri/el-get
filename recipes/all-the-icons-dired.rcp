@@ -1,0 +1,5 @@
+(:name all-the-icons-dired
+       :description "Shows icons for each file in dired mode."
+       :type github
+       :pkgname "jtbm37/all-the-icons-dired"
+       :depends (all-the-icons))

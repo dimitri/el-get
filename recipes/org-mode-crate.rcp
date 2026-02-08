@@ -1,0 +1,5 @@
+(:name org-mode-crate
+       :description "A pre-defined org environment for the consummate gtd'er"
+       :type github
+       :depends (org-mode org-board)
+       :pkgname "vedang/org-mode-crate")

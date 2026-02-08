@@ -1,0 +1,5 @@
+(:name "dash-docs"
+       :description "This package provides an elisp interface to query and show documenation using Dash docsets."
+       :type github
+       :pkgname "dash-docs-el/dash-docs"
+       :depends (emacs-async esqlite))

@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/dimitri/el-get.svg?branch=master)](https://travis-ci.org/dimitri/el-get)
+[![Build Status](https://github.com/dimitri/el-get/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/dimitri/el-get/actions)
 
 ![Color El-Get logo](https://raw.github.com/dimitri/el-get/master/logo/el-get.png)
 El-Get allows you to install and manage `elisp` code for Emacs. It supports
@@ -55,10 +55,13 @@ Technical differences also include the ability for El-Get to run OS commands
 found in the wild, allowing for automatic inclusion of *Info* pages for
 packages providing some.
 
+You can use `el-get-elpa-build-local-recipes` to install extensions provided by
+ELPA.
+
 # Installation
 
 El-Get is easy to install.  The only requirements to do so successfully are
-Emacs (23.4 and above), `git` and a connection to the internet that allows you to `git clone`
+Emacs (24.3 and above), `git` and a connection to the internet that allows you to `git clone`
 repositories.
 
 If you do not already have `git` on your system, you can install it through
@@ -144,7 +147,7 @@ manual.
 Here is the basic setup to add to your `user-init-file` (`.emacs`):
 
 ```lisp
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+(add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-directory))
 
 (unless (require 'el-get nil 'noerror)
   (with-current-buffer
@@ -160,7 +163,7 @@ Here is the basic setup to add to your `user-init-file` (`.emacs`):
 ### Alternative Basic Setup with Installation via MELPA
 
 ```elisp
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+(add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-directory))
 
 (unless (require 'el-get nil 'noerror)
   (require 'package)
@@ -288,7 +291,7 @@ tries to initialize the package.
 ```lisp
 ;; Basic setup
 
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+(add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-directory))
 
 (unless (require 'el-get nil 'noerror)
   (with-current-buffer
@@ -315,13 +318,13 @@ tries to initialize the package.
 
 ;; End of recipes, call `el-get' to make sure all packages (including
 ;; dependencies) are setup.
-(el-get- 'sync)
+(el-get 'sync)
 ```
 
 If a package with a local recipe definition has a recipe file, the
 definition overrides that in the recipe file.
 
-There are some syntactic sugars to specify a package name and a recipe source
+There is some syntactic sugar to specify a package name and a recipe source
 together.
 
 ```lisp
@@ -340,6 +343,15 @@ together.
 
 Please refer to the *Info* documentation provided with El-Get for the
 complete syntax of `el-get-bundle` and recipe definitions.
+
+# Troubleshooting
+
+In some [hard to understand cases](https://github.com/dimitri/el-get/issues/2747)
+installed packages may fail to produce correct autoloads.
+In this case a package will be present at your file system but Emacs will not "see" it.
+
+If you have this problem you can try reinstalling a package
+or add explicit `(require 'package-name)` to your Emacs config.
 
 # Conclusion
 

@@ -12,7 +12,7 @@
 ;; Install
 ;;     Please see the README.md file from the same distribution
 
-(require 'cl)
+(require 'cl-lib)
 (require 'el-get-core)
 (require 'el-get-recipes)
 
@@ -28,7 +28,7 @@ attention to case differences."
                                     string start-pos nil ignore-case)))))))
 (defun el-get-dependencies (packages)
   "Return the list of packages to install in order."
-  (multiple-value-bind (plist all-sorted-p non-sorted)
+  (cl-multiple-value-bind (plist all-sorted-p non-sorted)
       (topological-sort
        (apply 'append (mapcar 'el-get-dependencies-graph (el-get-as-list packages))))
     (if all-sorted-p
@@ -48,13 +48,13 @@ attention to case differences."
               (cons 'package pdeps)
             pdeps)))
     (append (list (append (list package) alldeps))
-            (loop for p in pdeps append (el-get-dependencies-graph p)))))
+            (cl-loop for p in pdeps append (el-get-dependencies-graph p)))))
 
 ;;
 ;; topological sort, see
 ;; http://rosettacode.org/wiki/Topological_sort#Common_Lisp
 ;;
-(defun* topological-sort (graph &key (test 'eql))
+(cl-defun topological-sort (graph &key (test 'eql))
   "Returns a list of packages to install in order.
 
   Graph is an association list whose keys are objects and whose
@@ -74,35 +74,35 @@ in the topological ordering (i.e., the first value)."
                       (puthash v (cons 0 '()) entries)))))
     ;; populate entries initially
     (dolist (gvertex graph)
-      (destructuring-bind (vertex &rest dependencies) gvertex
+      (cl-destructuring-bind (vertex &rest dependencies) gvertex
         (let ((ventry (funcall entry vertex)))
           (dolist (dependency dependencies)
             (let ((dentry (funcall entry dependency)))
               (unless (funcall test dependency vertex)
-                (incf (car ventry))
+                (cl-incf (car ventry))
                 (push vertex (cdr dentry))))))))
     ;; L is the list of sorted elements, and S the set of vertices
     ;; with no outstanding dependencies.
     (let ((L '())
-          (S (loop for entry being each hash-value of entries
-                   using (hash-key vertex)
-                   when (zerop (car entry)) collect vertex)))
+          (S (cl-loop for entry being each hash-value of entries
+                      using (hash-key vertex)
+                      when (zerop (car entry)) collect vertex)))
       ;; Until there are no vertices with no outstanding dependencies,
       ;; process vertices from S, adding them to L.
-      (do* () ((endp S))
+      (cl-do* () ((cl-endp S))
         (let* ((v (pop S)) (ventry (funcall entry v)))
           (remhash v entries)
           (dolist (dependant (cdr ventry) (push v L))
-            (when (zerop (decf (car (funcall entry dependant))))
+            (when (zerop (cl-decf (car (funcall entry dependant))))
               (push dependant S)))))
       ;; return (1) the list of sorted items, (2) whether all items
       ;; were sorted, and (3) if there were unsorted vertices, the
       ;; hash table mapping these vertices to their dependants
       (let ((all-sorted-p (zerop (hash-table-count entries))))
-        (values (nreverse L)
-                all-sorted-p
-                (unless all-sorted-p
-                  entries))))))
+        (cl-values (nreverse L)
+                   all-sorted-p
+                   (unless all-sorted-p
+                     entries))))))
 
 (defun el-get-auto-dependencies (package &optional interactive)
   "Return a plist with `:depends' based on the `Package-Requires'
@@ -114,36 +114,36 @@ A `:minimum-emacs-version' property may also be present."
     (error "Tried to get Package-Requires of non-installed package, `%s'!" package))
   (eval-and-compile
     (require 'lisp-mnt))                ; `lm-header'
-  (loop with deps and min-emacs and sub-pkgs
-        for pdir in (el-get-load-path package)
-        do (dolist (file (directory-files pdir t "\\.el\\'" t))
-             (if (string-suffix-p "-pkg.el" file)
-                 (let ((def-pkg (el-get-read-from-file file)))
-                   (push (intern (nth 1 def-pkg)) sub-pkgs)
-                   (setq deps (nconc (el-get-unquote (nth 4 def-pkg)) deps)))
-               (with-temp-buffer
-                 (insert-file-contents file)
-                 (let ((pkg-reqs (lm-header "package-requires")))
-                   (when pkg-reqs
-                     (push (intern (file-name-base file)) sub-pkgs)
-                     (setq deps (nconc (car (read-from-string pkg-reqs)) deps)))))))
-        finally do
-        (setq min-emacs (car (cdr (assq 'emacs deps)))
-              deps (set-difference (remq 'emacs (delete-dups (mapcar #'car deps)))
-                                   sub-pkgs))
-        (let ((non-el-get-pkgs (remove-if #'el-get-package-def deps)))
-          (when non-el-get-pkgs
-            (error "Found non el-get package(s): %s" non-el-get-pkgs)))
-        finally return
-        (if interactive
-            (let ((props-str
-                   (apply #'concat ":depends " (prin1-to-string deps) "\n"
-                          (when min-emacs
-                            (list ":minimum-emacs-version " (prin1-to-string min-emacs) "\n")))))
-              (message "%s" props-str)
-              (kill-new props-str))
-          (nconc (if min-emacs (list :minimum-emacs-version min-emacs))
-                 (list :depends deps)))))
+  (cl-loop with deps and min-emacs and sub-pkgs
+           for pdir in (el-get-load-path package)
+           do (dolist (file (directory-files pdir t "\\.el\\'" t))
+                (if (string-suffix-p "-pkg.el" file)
+                    (let ((def-pkg (el-get-read-from-file file)))
+                      (push (intern (nth 1 def-pkg)) sub-pkgs)
+                      (setq deps (nconc (el-get-unquote (nth 4 def-pkg)) deps)))
+                  (with-temp-buffer
+                    (insert-file-contents file)
+                    (let ((pkg-reqs (lm-header "package-requires")))
+                      (when pkg-reqs
+                        (push (intern (file-name-base file)) sub-pkgs)
+                        (setq deps (nconc (car (read-from-string pkg-reqs)) deps)))))))
+           finally do
+           (setq min-emacs (car (cdr (assq 'emacs deps)))
+                 deps (cl-set-difference (remq 'emacs (delete-dups (mapcar #'car deps)))
+                                      sub-pkgs))
+           (let ((non-el-get-pkgs (cl-remove-if #'el-get-package-def deps)))
+             (when non-el-get-pkgs
+               (error "Found non el-get package(s): %s" non-el-get-pkgs)))
+           finally return
+           (if interactive
+               (let ((props-str
+                      (apply #'concat ":depends " (prin1-to-string deps) "\n"
+                             (when min-emacs
+                               (list ":minimum-emacs-version " (prin1-to-string min-emacs) "\n")))))
+                 (message "%s" props-str)
+                 (kill-new props-str))
+             (nconc (if min-emacs (list :minimum-emacs-version min-emacs))
+                    (list :depends deps)))))
 
 (defun el-get-auto-update-dependencies (package buffer &optional interactive)
   "Update the dependencies of PACKAGE according to its source headers.
@@ -161,25 +161,25 @@ corresponding recipe file."
    (let* ((new-props (el-get-auto-dependencies package))
           (recipe (save-excursion (goto-char (point-min))
                                   (read (current-buffer)))))
-     (loop with auto-updated = nil
-           for (prop newval) on new-props by #'cddr
-           for prop-name = (symbol-name prop)
-           unless (equal newval (plist-get recipe prop))
-           do (save-excursion
-                (goto-char (point-min))
-                (let ((have-prop (search-forward prop-name nil t)))
-                  (if have-prop (let ((opoint (point)))
-                                  (forward-sexp)
-                                  (delete-region opoint (point)))
-                    (insert prop-name))
-                 (insert " ")
-                 (prin1 newval (current-buffer))
-                 (unless (looking-at-p " ; auto updated")
-                   (insert " ; auto updated"))
-                 (unless have-prop (insert "\n"))
-                 (setq auto-updated t)))
-           finally (when interactive
-                     (message "Dependencies of %s %s updated." package
-                              (if auto-updated "have been" "didn't need to be")))))))
+     (cl-loop with auto-updated = nil
+              for (prop newval) on new-props by #'cddr
+              for prop-name = (symbol-name prop)
+              unless (equal newval (plist-get recipe prop))
+              do (save-excursion
+                   (goto-char (point-min))
+                   (let ((have-prop (search-forward prop-name nil t)))
+                     (if have-prop (let ((opoint (point)))
+                                     (forward-sexp)
+                                     (delete-region opoint (point)))
+                       (insert prop-name))
+                     (insert " ")
+                     (prin1 newval (current-buffer))
+                     (unless (looking-at-p " ; auto updated")
+                       (insert " ; auto updated"))
+                     (unless have-prop (insert "\n"))
+                     (setq auto-updated t)))
+              finally (when interactive
+                        (message "Dependencies of %s %s updated." package
+                                 (if auto-updated "have been" "didn't need to be")))))))
 
 (provide 'el-get-dependencies)

@@ -19,6 +19,7 @@
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 'el-get-recipes)
 (require 'el-get-build)
 
@@ -64,27 +65,28 @@ Current possibe elements are:
              1))))
 
 (defun el-get-check-recipe-batch ()
-  "emacs -Q -batch -f el-get-check-recipe-batch [-W<:level>] [-Wno-<warning>...] *.rcp
+  "emacs -Q -batch -f el-get-check-recipe-batch [-W<:level>]
+[-Wno-<warning>...] *.rcp
 
 <:level> can be any valid warning level, see `warning-levels'.
 See `el-get-check-suppressed-warnings' for possible <warning> values."
-  (assert noninteractive nil
+  (cl-assert noninteractive nil
           "`el-get-check-recipe-batch' should only be used with -batch")
   (setq vc-handled-backends nil) ; avoid loading VC during batch mode
-  (loop for arg in command-line-args-left
-        if (string-match "\\`-Wno-\\(.*\\)" arg)
-        do (push (intern (match-string 1 arg)) el-get-check-suppressed-warnings)
-        else if (string-match "\\`-W\\(:[-a-z]*\\)" arg)
-        do (setq warning-minimum-log-level
-                 (setq warning-minimum-level (intern (match-string 1 arg))))
-        else summing
-        (if (file-directory-p arg)
-            (reduce #'+ (directory-files arg t "\\.rcp$" t)
-                    :key #'el-get-check-recipe-batch-1 :initial-value 0)
-          (el-get-check-recipe-batch-1 arg))
-        into errors
-        finally (progn (message "%d warning/error(s) total." errors)
-                       (kill-emacs (if (zerop errors) 0 1)))))
+  (cl-loop for arg in command-line-args-left
+           if (string-match "\\`-Wno-\\(.*\\)" arg)
+           do (push (intern (match-string 1 arg)) el-get-check-suppressed-warnings)
+           else if (string-match "\\`-W\\(:[-a-z]*\\)" arg)
+           do (setq warning-minimum-log-level
+                    (setq warning-minimum-level (intern (match-string 1 arg))))
+           else summing
+           (if (file-directory-p arg)
+               (cl-reduce #'+ (directory-files arg t "\\.rcp$" t)
+                          :key #'el-get-check-recipe-batch-1 :initial-value 0)
+             (el-get-check-recipe-batch-1 arg))
+           into errors
+           finally (progn (message "%d warning/error(s) total." errors)
+                          (kill-emacs (if (zerop errors) 0 1)))))
 
 ;;;###autoload
 (defun el-get-check-recipe (file-or-buffer)
@@ -123,7 +125,7 @@ FILENAME defaults to `buffer-file-name'."
                    level el-get-check-warning-buffer)
   (when (>= (warning-numeric-level level)
             (warning-numeric-level warning-minimum-level))
-    (incf el-get-check-error-count)))
+    (cl-incf el-get-check-error-count)))
 
 (defun el-get-check-recipe-in-current-buffer (recipe-file-name)
   (let ((inhibit-read-only t)
@@ -153,20 +155,20 @@ FILENAME defaults to `buffer-file-name'."
         (el-get-check-warning :error
           "File name should match recipe name."))
       ;; Check if userspace property is used.
-      (loop for key in '(:before :after)
-            for alt in '(:prepare :post-init)
-            when (plist-get recipe key)
-            do (el-get-check-warning :warning
-                 "Property %S is for user.  Use %S instead."
-                 key alt))
+      (cl-loop for key in '(:before :after)
+               for alt in '(:prepare :post-init)
+               when (plist-get recipe key)
+               do (el-get-check-warning :warning
+                                        "Property %S is for user.  Use %S instead."
+                                        key alt))
       ;; Check for misformatted plists
-      (loop for key in recipe by #'cddr
-            unless (keywordp key)
-            do (el-get-check-warning :warning
-                 "Property %S is not a keyword!"
-                 key))
-      (destructuring-bind (&key type url autoloads feats builtin
-                                &allow-other-keys)
+      (cl-loop for key in recipe by #'cddr
+               unless (keywordp key)
+               do (el-get-check-warning :warning
+                                        "Property %S is not a keyword!"
+                                        key))
+      (cl-destructuring-bind (&key type url autoloads feats builtin
+                                   &allow-other-keys)
           recipe
         ;; let-binding `features' causes `provide' to throw error
         (setq feats (plist-get recipe :features))
@@ -204,17 +206,17 @@ FILENAME defaults to `buffer-file-name'."
                               expand-file-name shell-quote-argument)))
         (dolist (sys '("" "/darwin" "/berkeley-unix" "/windows-nt"))
           (let ((unsafe (catch 'unsafe-build
-                          (when (some #'stringp (el-get-build-commands pkg-name 'safe-eval sys))
+                          (when (cl-some #'stringp (el-get-build-commands pkg-name 'safe-eval sys))
                             (el-get-check-warning :warning
                               ":build%s should be a *list* of string lists." sys))
                           nil)))
             (when unsafe
               (el-get-check-warning :debug ":build%s is unsafep: %s" sys unsafe)))))
       ;; Check for required properties.
-      (loop for key in '(:description :name)
-            unless (plist-get recipe key)
-            do (el-get-check-warning :error
-                 "Required property %S is not defined." key))
+      (cl-loop for key in '(:description :name)
+               unless (plist-get recipe key)
+               do (el-get-check-warning
+                   :error "Required property %S is not defined." key))
       (with-current-buffer el-get-check-warning-buffer
         (insert (format "\n%s: %s error(s) found." recipe-file-name el-get-check-error-count))))
     el-get-check-error-count))

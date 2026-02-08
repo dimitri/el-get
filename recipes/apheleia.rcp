@@ -1,0 +1,5 @@
+(:name apheleia
+       :description "Run code formatter on buffer contents without moving point"
+       :type github
+       :minimum-emacs-version "26"
+       :pkgname "radian-software/apheleia")

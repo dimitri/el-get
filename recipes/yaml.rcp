@@ -1,0 +1,5 @@
+(:name yaml
+       :type github
+       :description "yaml.el is a YAML parser written in Emacs List without any external dependencies."
+       :pkgname "zkry/yaml.el"
+       :minimum-emacs-version (25 1))

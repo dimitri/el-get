@@ -1,0 +1,5 @@
+(:name org-fc
+       :description "A spaced-repetition system for Emacs org-mode"
+       :type github
+       :minimum-emacs-version "26.3"
+       :pkgname "l3kn/org-fc")

@@ -12,6 +12,7 @@
 ;; Install
 ;;     Please see the README.md file from the same distribution
 
+(require 'cl-lib)
 (require 'el-get-http)
 (require 'el-get-http-tar)
 
@@ -29,12 +30,12 @@
                   ;; Remove all files from previous install before
                   ;; extracting the tar file.
                   (let ((files-to-delete (remove ,zipfile (directory-files ,pdir nil "[^.]$"))))
-                    (loop for fname in files-to-delete
-                          for fullpath = (expand-file-name fname ,pdir)
-                          do (el-get-verbose-message "el-get-http-tar: Deleting old file %S" fname)
-                          do (if (file-directory-p fullpath)
-                                 (delete-directory fullpath 'recursive)
-                               (delete-file fullpath))))
+                    (cl-loop for fname in files-to-delete
+                             for fullpath = (expand-file-name fname ,pdir)
+                             do (el-get-verbose-message "el-get-http-tar: Deleting old file %S" fname)
+                             do (if (file-directory-p fullpath)
+                                    (delete-directory fullpath 'recursive)
+                                  (delete-file fullpath))))
                   ;; verify checksum before operating on untrusted data
                   (el-get-verify-checksum package)
                   ;; unzip `basename url`

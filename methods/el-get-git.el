@@ -12,8 +12,10 @@
 ;; Install
 ;;     Please see the README.md file from the same distribution
 
+(require 'cl-lib)
 (require 'el-get-core)
 (require 'el-get-recipes)
+(require 'url-http)
 
 (defcustom el-get-git-clone-hook nil
   "Hook run after git clone."
@@ -25,11 +27,17 @@
   :group 'el-get
   :type 'boolean)
 
-(defcustom el-get-git-known-smart-domains '("www.github.com" "www.bitbucket.org" "repo.or.cz" "code.orgmode.org")
+(defcustom el-get-git-known-smart-domains '("www.github.com" "www.bitbucket.org" "repo.or.cz" "git.sr.ht")
   "List of domains which are known to support shallow clone, el-get will not make
 explicit checks for these"
   :group 'el-get
   :type 'list)
+
+;; The following variables are declared here to silence the byte
+;; compiler "reference to variable" warning. The package "url-http"
+;; provides these variables.
+(defvar url-http-content-type)
+(defvar url-http-response-status)
 
 (defun el-get-git-executable ()
   "Return git executable to use, or signal an error when not
@@ -60,11 +68,15 @@ though they do not indicate this in their response headers see
 (defun el-get-git-is-host-smart-http-p (giturl)
   "Detect if the host supports shallow clones using http(s). GITURL is url to
 the git repository, this function is intended to be used only with http(s)
-urls. The function uses the approach described here [http://stackoverflow.com/questions/9270488/]
+urls. The function uses the approach described here
+[http://stackoverflow.com/questions/9270488/]
 
 Basically it makes a HEAD request and checks the Content-Type for 'smart' MIME
 type. This approach does not work for some domains like `bitbucket', which do
-not return 'smart' headers despite supporting shallow clones"
+not return 'smart' headers despite supporting shallow clones.
+
+Other domains like `github' return 405 for HEAD and only respond to GET. In this
+case, if HEAD doesn't respond with 200 or 304, GET is tried as well."
   (let ((url-request-method "HEAD")
         (req-url (format "%s%s/info/refs\?service\=git-upload-pack"
                          giturl
@@ -73,11 +85,32 @@ not return 'smart' headers despite supporting shallow clones"
                          (if (string-match "\\.git\\'" giturl)
                              ""
                            ".git")))
-        (smart-content-type "Content-Type: application/x-git-upload-pack-advertisement"))
+        (smart-content-type "application/x-git-upload-pack-advertisement")
+        ;; according to https://www.git-scm.com/docs/http-protocol,
+        ;; 200 and 304 are valid
+        (valid-response-status-p
+         (lambda (status) (or (= status 200) (= status 304))))
+        (retry-with-get-p nil)
+        (smart-p nil))
 
     (with-current-buffer (url-retrieve-synchronously req-url)
-      (goto-char (point-min))
-      (numberp (ignore-errors (search-forward-regexp smart-content-type))))))
+      (let ((valid-status-p
+             (funcall valid-response-status-p url-http-response-status)))
+        (setq retry-with-get-p (not valid-status-p))
+        (setq smart-p (string= url-http-content-type smart-content-type))))
+
+    (when retry-with-get-p
+      (setq url-request-method "GET")
+      (with-current-buffer (url-retrieve-synchronously req-url)
+        (let ((valid-status-p
+               (funcall valid-response-status-p url-http-response-status)))
+          (unless valid-status-p
+            (error "Unable to detect if %s is a smart HTTP host" giturl))
+          (setq smart-p
+                (and valid-status-p
+                     (string= url-http-content-type smart-content-type))))))
+
+    smart-p))
 
 (defun el-get-git-shallow-clone-supported-p (url)
   "Check if shallow clone is supported for given URL"
@@ -204,8 +237,8 @@ not return 'smart' headers despite supporting shallow clones"
     ;; type. Instead, we check for the existence of a ".git" directory
     ;; in the package directory. A better approach might be to call
     ;; "git status" and check that it returns success.
-    (assert (file-directory-p ".git") nil
-            "Package %s is not a git package" package)
+    (cl-assert (file-directory-p ".git") nil
+               "Package %s is not a git package" package)
     (with-temp-buffer
       (call-process (el-get-executable-find "git") nil '(t t) nil
                     "log" "--pretty=format:%H" "-n1")

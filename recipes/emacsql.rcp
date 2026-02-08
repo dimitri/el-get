@@ -1,5 +1,6 @@
 (:name emacsql
        :description "High-level SQL database front-end."
        :type github
+       :branch "main"
        :pkgname "skeeto/emacsql"
        :minimum-emacs-version "25.1")

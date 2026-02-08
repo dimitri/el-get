@@ -2,4 +2,12 @@
        :type github
        :description "Minuscule client for the Github API"
        :pkgname "magit/ghub"
-       :depends (treepy))
+       :depends (let-alist treepy)
+       :info "docs"
+       :load-path "lisp/"
+       :compile "lisp/"
+       ;; Use the Makefile to produce the info manual, el-get can
+       ;; handle compilation and autoloads on its own.
+       :build `(("make" ,(format "EMACS=%s" el-get-emacs) "info"))
+       :build/berkeley-unix `(("gmake" ,(format "EMACS=%s" el-get-emacs)
+                               "info")))

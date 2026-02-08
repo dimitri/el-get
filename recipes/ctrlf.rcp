@@ -1,0 +1,5 @@
+(:name ctrlf
+       :description "Emacs finally learns how to ctrl+F"
+       :type github
+       :minimum-emacs-version "25.1"
+       :pkgname "radian-software/ctrlf")

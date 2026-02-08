@@ -6,6 +6,7 @@
        :load-path ("./lisp")
        ;; if using vm, add `--with-vm-dir=DIR' after ./configure
        :build `(("./autogen.sh") ("./configure") ("make"))
+       :build/windows-nt (("sh" "autogen.sh") ("sh" "configure") ("make"))
        :features bbdb-loaddefs
        :autoloads nil
        :info "doc")

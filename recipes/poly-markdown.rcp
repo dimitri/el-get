@@ -1,0 +1,6 @@
+(:name poly-markdown
+       :description "Polymode for markdown"
+       :type github
+       :pkgname "polymode/poly-markdown"
+       :load-path (".")
+       :depends (polymode markdown-mode))

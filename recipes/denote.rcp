@@ -1,0 +1,6 @@
+(:name denote
+       :description "Simple notes with an efficient file-naming scheme"
+       :type github
+       :branch "main"
+       :minimum-emacs-version "28.1"
+       :pkgname "protesilaos/denote")

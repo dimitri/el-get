@@ -1,0 +1,6 @@
+(:name flycheck-eglot
+       :type github
+       :pkgname "flycheck/flycheck-eglot"
+       :minimum-emacs-version "28.1"
+       :depends (eglot flycheck)
+       :description "Flycheck support for eglot")

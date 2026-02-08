@@ -1,0 +1,5 @@
+(:name org-web-tools
+       :description "View, capture, and archive Web pages in Org-mode."
+       :type github
+       :pkgname "alphapapa/org-web-tools"
+       :depends (org-mode dash esxml s request))

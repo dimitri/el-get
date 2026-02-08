@@ -1,0 +1,6 @@
+(:name org-pomodoro-third-time
+       :description "Adapt org-pomodoro to implement the Third Time system"
+       :type github
+       :minimum-emacs-version "24.4"
+       :depends (org-pomodoro)
+       :pkgname "telotortium/org-pomodoro-third-time")

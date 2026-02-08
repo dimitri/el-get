@@ -1,4 +1,7 @@
 (:name keycast
        :description "Show current command and its key in the mode line."
        :type github
+       :branch "main"
+       :depends (compat)
+       :minimum-emacs-version "25.3"
        :pkgname "tarsius/keycast")

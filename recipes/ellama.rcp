@@ -1,0 +1,6 @@
+(:name ellama
+       :description "Tool for interacting with LLMs"
+       :minimum-emacs-version "28.1"
+       :type github
+       :pkgname "s-kostyaev/ellama"
+       :depends (llm spinner compat))

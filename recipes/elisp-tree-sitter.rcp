@@ -1,0 +1,13 @@
+(:name elisp-tree-sitter
+       :description "Tree-sitter bindings for Emacs Lisp."
+       :type github
+       :minimum-emacs-version "25.1"
+       :pkgname "emacs-tree-sitter/elisp-tree-sitter"
+       :load-path ("core" "lisp" "langs")
+       ;; Recipe based on instructions from:
+       ;; https://emacs-tree-sitter.github.io/installation/
+       :load ("lisp/tree-sitter.el"
+              "lisp/tree-sitter-hl.el"
+              "langs/tree-sitter-langs.el"
+              "lisp/tree-sitter-debug.el"
+              "lisp/tree-sitter-query.el"))

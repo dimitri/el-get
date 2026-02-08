@@ -2,8 +2,9 @@
        :website "http://orgmode.org/"
        :description "Org-mode is for keeping notes, maintaining ToDo lists, doing project planning, and authoring with a fast and effective plain-text system."
        :type git
-       :url "https://code.orgmode.org/bzg/org-mode.git"
+       :url "https://git.savannah.gnu.org/git/emacs/org-mode.git"
        :info "doc"
+       :checkout "main"
        :build/berkeley-unix `,(mapcar
                                (lambda (target)
                                  (list "gmake" target (concat "EMACS=" (shell-quote-argument el-get-emacs))))
@@ -12,5 +13,5 @@
                  (lambda (target)
                    (list "make" target (concat "EMACS=" (shell-quote-argument el-get-emacs))))
                  '("oldorg"))
-       :load-path ("." "contrib/lisp" "lisp")
+       :load-path ("." "lisp")
        :load ("lisp/org-loaddefs.el"))

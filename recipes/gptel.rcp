@@ -1,0 +1,6 @@
+(:name gptel
+       :description "A simple ChatGPT client"
+       :type github
+       :pkgname "karthink/gptel"
+       :minimum-emacs-version "27.1"
+       :depends (transient))

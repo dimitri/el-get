@@ -12,6 +12,7 @@
 ;; Install
 ;;     Please see the README.md file from the same distribution
 
+(require 'cl-lib)
 (require 'el-get-core)
 (require 'el-get-custom)
 
@@ -131,10 +132,10 @@ checkout of the repository using this command."
              ;; Fix multi-line comment output to be a single string
              (replace-regexp-in-string "\n +" " " (buffer-string))
              "\n" t)))
-      (assert (= error 0) nil
-              "Package %s is not a fossil package" package)
-      (loop for x in fossil-info
-            collect (split-string x ": +")))))
+      (cl-assert (= error 0) nil
+                 "Package %s is not a fossil package" package)
+      (cl-loop for x in fossil-info
+               collect (split-string x ": +")))))
 
 (defun el-get-fossil-compute-checksum (package)
   "Return the hash of the checked-out revision of PACKAGE."

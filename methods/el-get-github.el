@@ -12,6 +12,7 @@
 ;; Install
 ;;     Please see the README.md file from the same distribution
 
+(require 'cl-lib)
 (require 'el-get-core)
 (require 'el-get-git)
 
@@ -51,10 +52,10 @@ FROM is a literal string, not a regexp."
               (error ":pkgname \"username/reponame\" is mandatory for github recipe '%s"
                      package)))
          (user-and-repo (split-string user-slash-repo "/" 'omit-nulls)))
-    (assert (= (length user-and-repo) 2) nil
-            "Github pkgname %s must be of the form username/reponame"
-            user-slash-repo)
-    (cons (first user-and-repo) (second user-and-repo))))
+    (cl-assert (= (length user-and-repo) 2) nil
+               "Github pkgname %s must be of the form username/reponame"
+               user-slash-repo)
+    (cons (cl-first user-and-repo) (cl-second user-and-repo))))
 
 (defun el-get-github-url-private (url-type username reponame)
   "Return the url of a particular github project.

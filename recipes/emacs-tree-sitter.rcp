@@ -1,0 +1,14 @@
+;; NOTE: This recipe has been deprecated in favor of elisp-tree-sitter.rcp. Please install that instead.
+(:name emacs-tree-sitter
+       :description "NOTE: This recipe has been deprecated in favor of elisp-tree-sitter. Please install that instead."
+       :type github
+       :minimum-emacs-version "25.1"
+       :pkgname "vedang/emacs-tree-sitter"
+       :load-path ("core" "lisp" "langs")
+       ;; Recipe based on instructions from:
+       ;; https://emacs-tree-sitter.github.io/installation/
+       :load ("lisp/tree-sitter.el"
+              "lisp/tree-sitter-hl.el"
+              "langs/tree-sitter-langs.el"
+              "lisp/tree-sitter-debug.el"
+              "lisp/tree-sitter-query.el"))

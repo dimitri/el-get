@@ -1,0 +1,5 @@
+(:name nov.el
+       :description "Featureful EPUB reader mode."
+       :type git
+       :url "https://depp.brause.cc/nov.el.git"
+       :depends (dash esxml))

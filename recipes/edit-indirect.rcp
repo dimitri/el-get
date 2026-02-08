@@ -1,4 +1,5 @@
 (:name edit-indirect
        :description "Edit regions in separate buffers"
        :type github
-       :pkgname "Fanael/edit-indirect")
+       :pkgname "Fanael/edit-indirect"
+       :minimum-emacs-version "24.3")

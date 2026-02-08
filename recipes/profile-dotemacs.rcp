@@ -1,4 +1,4 @@
 (:name profile-dotemacs
-       :type http
-       :url "http://www.randomsample.de/profile-dotemacs.el"
+       :type github
+       :pkgname "raxod502/profile-dotemacs"
        :description "profiles your .emacs")

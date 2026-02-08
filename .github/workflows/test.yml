@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        emacs_version:
+        - 24.3
+        - 24.5
+        - 25.3
+        - 26.3
+        - 27.2
+        - 28.2
+        - snapshot
+    env:
+      EMACS_VERSION: ${{ matrix.emacs_version }}
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - uses: purcell/setup-emacs@master
+      with:
+        version: ${{ matrix.emacs_version }}
+
+    - name: Print GitHub event
+      run: cat "$GITHUB_EVENT_PATH"
+
+    - name: Print Emacs version and environment variables
+      run: |
+        env
+        emacs --version
+
+    - name: Compilation
+      run: |
+        source test/github-actions.sh
+        byte-compile -Werror *.el methods/*.el
+
+    - name: Test
+      run: |
+        source test/github-actions.sh
+        ert-tests
+        check-recipes -Wno-features -Wno-github -Wno-autoloads recipes/
+        check-whitespace
+        check-filenames

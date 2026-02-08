@@ -1,0 +1,6 @@
+(:name chatgpt-shell
+       :description "Interaction mode for ChatGPT"
+       :type github
+       :pkgname "xenodium/chatgpt-shell"
+       :minimum-emacs-version "27.1"
+       :compile ("chatgpt-shell.el" "dall-e-shell.el"))

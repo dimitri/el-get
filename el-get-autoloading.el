@@ -12,7 +12,7 @@
 ;; Install
 ;;     Please see the README.md file from the same distribution
 
-(require 'cl)
+(require 'cl-lib)
 (require 'el-get-core)
 (require 'el-get-custom)
 (require 'autoload)
@@ -80,8 +80,8 @@
 
       (when (el-get-package-is-installed package)
         (mapc 'update-directory-autoloads
-              (remove-if-not #'file-directory-p
-                             (el-get-load-path package)))
+              (cl-remove-if-not #'file-directory-p
+                                (el-get-load-path package)))
 
         (let ((visiting (find-buffer-visiting el-get-autoload-file)))
           ;; `update-directory-autoloads' leaves file open
@@ -106,12 +106,22 @@
   "Remove from `el-get-autoload-file' any autoloads associated
 with the named PACKAGE"
   (when (file-exists-p el-get-autoload-file)
-    (let* ((files (mapcan (lambda (dir)
-                            (when (file-directory-p dir)
-                              (directory-files dir t el-get-autoload-regexp)))
-                          (el-get-load-path package)))
+    (let* ((files (cl-mapcan (lambda (dir)
+                               (when (file-directory-p dir)
+                                 (directory-files dir t el-get-autoload-regexp)))
+                             (el-get-load-path package)))
            (generated-autoload-file el-get-autoload-file)
-           (load-names (mapcar #'autoload-file-load-name files))
+           (load-names
+            (mapcar
+             (lambda (f)
+               (apply #'autoload-file-load-name
+                      ;; Starting from Emacs 28 auto-file-load-name
+                      ;; needs two parameters, versions before 28 only
+                      ;; one.
+                      (if (> emacs-major-version 27)
+                          `(,f ,el-get-autoload-file)
+                        `(,f))))
+             files))
            (recentf-exclude (cons (regexp-quote el-get-autoload-file)
                                   (bound-and-true-p recentf-exclude)))
            (visited (find-buffer-visiting el-get-autoload-file)))

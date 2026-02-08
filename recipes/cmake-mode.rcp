@@ -1,5 +1,6 @@
 (:name cmake-mode
-       :website "http://www.itk.org/Wiki/CMake/Editors/Emacs"
+       :website "https://gitlab.kitware.com/cmake/community/-/wikis/doc/editors/Emacs"
        :description "Provides syntax highlighting and indentation for CMakeLists.txt and *.cmake source files."
        :type http
-       :url "http://cmake.org/gitweb?p=cmake.git;a=blob_plain;hb=master;f=Auxiliary/cmake-mode.el")
+       :url "https://gitlab.kitware.com/cmake/cmake/-/raw/master/Auxiliary/cmake-mode.el?inline=false"
+       :localname "cmake-mode.el")

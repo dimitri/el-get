@@ -1,0 +1,5 @@
+(:name kibit-helper
+       :description "Conveniently use the Kibit Leiningen plugin from Emacs"
+       :type github
+       :depends (s)
+       :pkgname "brunchboy/kibit-helper")

@@ -3,5 +3,6 @@
        :post-init
        ;; Add to PYTHONPATH directly as it is used in ropemacs and traad
        (el-get-envpath-prepend "PYTHONPATH" default-directory)
-       :type git
-       :url "https://github.com/python-rope/rope.git")
+       :type github
+       :pkgname "python-rope/rope"
+       )

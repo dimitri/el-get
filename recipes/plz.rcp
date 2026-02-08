@@ -1,0 +1,6 @@
+(:name plz
+       :description "An HTTP library that uses curl as a backend"
+       :minimum-emacs-version "27.1"
+       :type github
+       :pkgname "alphapapa/plz.el"
+       :depends ())

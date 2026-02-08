@@ -1,0 +1,6 @@
+(:name theme-buffet
+       :description "Automatically change themes during specific times of the day or at fixed intervals"
+       :type git
+       :url "https://git.sr.ht/~bboal/theme-buffet"
+       :branch "main"
+       :minimum-emacs-version "29.1")

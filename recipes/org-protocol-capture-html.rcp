@@ -1,0 +1,5 @@
+(:name org-protocol-capture-html
+       :description "Capture HTML from the browser selection into Emacs as org-mode content."
+       :type github
+       :pkgname "alphapapa/org-protocol-capture-html"
+       :depends (org-mode s))

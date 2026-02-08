@@ -1,0 +1,5 @@
+(:name lsp-pyright
+       :description "lsp-mode client leveraging Pyright language server"
+       :depends (dash lsp-mode ht)
+       :type github
+       :pkgname "emacs-lsp/lsp-pyright")

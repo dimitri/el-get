@@ -385,7 +385,7 @@ You can then arrange to have El-Get part of your setup, so that at
 next emacs startup the installed packages are initialized.
 
 @example
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+(add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-directory))
 
 (unless (require 'el-get nil t)
   (with-current-buffer
@@ -458,7 +458,7 @@ however; to prevent this, so you can add a pattern @code{/el-get} to
 @code{.emacs.d/.gitignore}.
 
 @example
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+(add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-directory))
 (require 'el-get)
 
 ;; local sources
@@ -510,7 +510,7 @@ specify a local source to install.  With this macro, nothing other
 than specified packages is installed.
 
 @example
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+(add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-directory))
 (require 'el-get)
 
 ;; packages from recipe files

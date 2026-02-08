@@ -12,6 +12,7 @@
 ;; Install
 ;;     Please see the README.md file from the same distribution
 
+(require 'cl-lib)
 (require 'el-get-core)
 (require 'el-get-byte-compile)
 (require 'el-get-recipes)
@@ -65,10 +66,10 @@ Otherwise, use `:build/SYSTEM-TYPE' or `:build'."
 
     ;; Verify that each build command is a string or a list of strings
     (let ((invalid-cmds
-           (remove-if (lambda (cmd)
-                        (or (stringp cmd)
-                            (el-get-list-of-strings-p cmd)))
-                      flat-build-commands)))
+           (cl-remove-if (lambda (cmd)
+                           (or (stringp cmd)
+                               (el-get-list-of-strings-p cmd)))
+                         flat-build-commands)))
       (when invalid-cmds
         (error "Package %s has invalid build commands: %S" package invalid-cmds)))
     flat-build-commands))

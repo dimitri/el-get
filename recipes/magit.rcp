@@ -3,19 +3,21 @@
        :description "It's Magit! An Emacs mode for Git."
        :type github
        :pkgname "magit/magit"
-       :branch "master"
+       :branch "main"
        :minimum-emacs-version "25.1"
-       :depends (dash transient with-editor)
-       :info "Documentation"
+       ;; Note: `git-commit' is shipped with `magit' code itself.
+       ;; Note: `magit-section' is shipped with `magit' code itself.
+       :depends (dash transient with-editor compat llama cond-let)
+       :info "docs"
        :load-path "lisp/"
        :compile "lisp/"
        ;; Use the Makefile to produce the info manual, el-get can
        ;; handle compilation and autoloads on its own.  Create an
        ;; empty autoloads file because magit.el explicitly checks for
        ;; a file of that name.
-       :build `(("make" ,(format "EMACSBIN=%s" el-get-emacs) "docs")
+       :build `(("make" ,(format "EMACS=%s" el-get-emacs) "info")
                 ("touch" "lisp/magit-autoloads.el"))
-       :build/berkeley-unix `(("gmake" ,(format "EMACSBIN=%s" el-get-emacs) "docs")
+       :build/berkeley-unix `(("gmake" ,(format "EMACS=%s" el-get-emacs) "docs")
                               ("touch" "lisp/magit-autoloads.el"))
        ;; assume windows lacks make and makeinfo
        :build/windows-nt (with-temp-file "lisp/magit-autoloads.el" nil))

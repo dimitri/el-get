@@ -2,6 +2,8 @@
 ;;
 ;; Reinstall on type change
 
+(require 'cl-lib)
+
 (setq debug-on-error t
       el-get-verbose t
       el-get-default-process-sync t)
@@ -11,10 +13,10 @@
        (list `(:name pkg
                      :type builtin))))
   (el-get 'sync 'pkg))
-(assert (eq 'builtin
-            (el-get-package-method (el-get-read-package-status-recipe 'pkg)))
-        t
-        "Package type should be 'builtin.")
+(cl-assert (eq 'builtin
+               (el-get-package-method (el-get-read-package-status-recipe 'pkg)))
+           t
+           "Package type should be 'builtin.")
 ;; Even though "no-op" is an alias for the same behavior as
 ;; "builtin", they are still considered different types. Thus, this
 ;; should trigger a reinstall.
@@ -22,7 +24,7 @@
        (list `(:name pkg
                      :type no-op))))
   (el-get-update 'pkg))
-(assert (eq 'no-op
-            (el-get-package-method (el-get-read-package-status-recipe 'pkg)))
-        t
-        "Package type should now be 'no-op, not 'builtin.")
+(cl-assert (eq 'no-op
+               (el-get-package-method (el-get-read-package-status-recipe 'pkg)))
+           t
+           "Package type should now be 'no-op, not 'builtin.")

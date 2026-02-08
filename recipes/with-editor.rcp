@@ -1,4 +1,12 @@
 (:name with-editor
        :description "Use the Emacsclient as $EDITOR"
        :type github
-       :pkgname "magit/with-editor")
+       :pkgname "magit/with-editor"
+       :info "docs"
+       :load-path "lisp/"
+       :compile "lisp/"
+       ;; Use the Makefile to produce the info manual, el-get can
+       ;; handle compilation and autoloads on its own.
+       :build `(("make" ,(format "EMACS=%s" el-get-emacs) "info"))
+       :build/berkeley-unix `(("gmake" ,(format "EMACS=%s" el-get-emacs)
+                               "info")))

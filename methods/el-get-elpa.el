@@ -12,6 +12,7 @@
 ;; Install
 ;;     Please see the README.md file from the same distribution
 
+(require 'cl-lib)
 (require 'el-get-core)
 (require 'el-get-recipes)
 (require 'package nil t)
@@ -56,7 +57,7 @@ ALIST-ELEM should be an element from `package-alist' or
     (let* ((descs (cdr (assq pkg package-archive-contents))))
       (cond
        ((consp descs) (car descs))
-       ((null descs) (error "Couln't find package `%s'" pkg))
+       ((null descs) (error "Couldn't find package `%s'" pkg))
        (t pkg))))
 
   (defun el-get-elpa-package-archive-base (pkg)
@@ -92,15 +93,15 @@ PACKAGE isn't currently installed by ELPA."
          (pregex (concat "\\`" (regexp-quote pname) "-"))
          (version-offset (+ (length pname) 1)))
     (catch 'dir
-     (loop for pkg-base-dir in (cons package-user-dir
-                                     (when (boundp 'package-directory-list)
-                                       package-directory-list))
-           when (file-directory-p pkg-base-dir)
-           do
-           (loop for pkg-dir in (directory-files pkg-base-dir nil pregex)
-                 if (ignore-errors
-                      (version-to-list (substring pkg-dir version-offset)))
-                 do (throw 'dir (expand-file-name pkg-dir pkg-base-dir))))
+     (cl-loop for pkg-base-dir in (cons package-user-dir
+                                        (when (boundp 'package-directory-list)
+                                          package-directory-list))
+              when (file-directory-p pkg-base-dir)
+              do
+              (cl-loop for pkg-dir in (directory-files pkg-base-dir nil pregex)
+                       if (ignore-errors
+                            (version-to-list (substring pkg-dir version-offset)))
+                       do (throw 'dir (expand-file-name pkg-dir pkg-base-dir))))
      nil)))
 
 (defun el-get-elpa-package-repo (package)
@@ -206,8 +207,8 @@ the recipe, then return nil."
 
 (defun el-get-elpa-update-available-p (package)
   "Returns t if PACKAGE has an update available in ELPA."
-  (assert (el-get-package-is-installed package) nil
-          (format "Cannot update non-installed ELPA package %s" package))
+  (cl-assert (el-get-package-is-installed package) nil
+             (format "Cannot update non-installed ELPA package %s" package))
   (let* ((installed-version
           (package-desc-version (car (el-get-elpa-descs (assq package package-alist)))))
          (available-packages
@@ -215,10 +216,10 @@ the recipe, then return nil."
     ;; Emacs 24.4 keeps lists of available packages. `package-alist'
     ;; is sorted by version, but `package-archive-contents' is not, so
     ;; we should loop through it.
-    (some (lambda (pkg)
-            (version-list-< installed-version
-                            (package-desc-version pkg)))
-          available-packages)))
+    (cl-some (lambda (pkg)
+               (version-list-< installed-version
+                               (package-desc-version pkg)))
+             available-packages)))
 
 (defvar el-get-elpa-do-refresh t
   "Whether to call `package-refresh-contents' during `el-get-elpa-update'.
