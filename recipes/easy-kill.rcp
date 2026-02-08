@@ -1,6 +1,5 @@
 (:name easy-kill
-       :desription "Provide commands easy-kill and easy-mark to let users kill or mark things easily."
+       :description "Provide commands easy-kill and easy-mark to let users kill or mark things easily."
        :type github
        :pkgname "leoliu/easy-kill"
-       :depends cl-lib
-       )
+       :depends (cl-lib))
