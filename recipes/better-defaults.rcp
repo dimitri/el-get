@@ -1,3 +1,4 @@
 (:name better-defaults
-       :type emacsmirror
+       :type git
+       :url "https://git.sr.ht/~technomancy/better-defaults"
        :description "Fixing weird quirks and poor defaults.")
