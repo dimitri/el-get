@@ -1,0 +1,8 @@
+(:name emacsql-sqlite3
+       :description "This is yet another EmacSQL backend for
+       SQLite, which use official sqlite3 executable to access
+       SQL database."
+       :type github
+       :pkgname "cireu/emacsql-sqlite3"
+       :depends emacsql
+       )
