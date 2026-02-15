@@ -1,0 +1,5 @@
+(:name helm-flx
+       :type github
+       :pkgname "PythonNut/helm-flx"
+       :description "This package implements intelligent helm fuzzy sorting, provided by flx"
+       :depends (helm flx))
