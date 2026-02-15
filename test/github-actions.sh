@@ -17,7 +17,7 @@ fi
 
 COMMIT_RANGE="${BASE}..${HEAD}"
 
-if [ "$EMACS_VERSION" = '24.5' ]; then
+if [ "$EMACS_VERSION" = '26.3' ]; then
     # check-recipes [-W<check>...] <path>
     check-recipes() {
         emacs -Q -L . -batch -l el-get-check -f el-get-check-recipe-batch "$@"
