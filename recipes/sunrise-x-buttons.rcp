@@ -1,4 +1,4 @@
 (:name sunrise-x-buttons
        :description "Mouse-clickable shortcut buttons for the Sunrise Commander File Manager"
        :type elpa
-       :depends sunrise-commander)
+       :depends (sunrise-commander))

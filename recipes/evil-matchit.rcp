@@ -2,4 +2,4 @@
        :type github
        :description "Vim matchit ported to Evil"
        :pkgname "redguardtoo/evil-matchit"
-       :depends evil)
+       :depends (evil))

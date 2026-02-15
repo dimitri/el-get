@@ -2,5 +2,4 @@
        :description "Make file details hide-able in dired."
        :website "https://github.com/misohena/dired-details-s"
        :type github
-       :depends nil
        :pkgname "misohena/dired-details-s")

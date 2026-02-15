@@ -2,4 +2,4 @@
        :description "Control Firefox from Emacs"
        :type github
        :pkgname "RenWenshan/emacs-moz-controller"
-       :depends moz-repl)
+       :depends (moz-repl))

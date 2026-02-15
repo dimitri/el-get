@@ -2,7 +2,7 @@
        :description "Two pleasant medium-contrast Emacs color themes in light and dark flavours"
        :type github
        :pkgname "purcell/color-theme-sanityinc-tomorrow"
-       :depends color-theme
+       :depends (color-theme)
        :prepare (progn
                   (autoload 'color-theme-sanityinc-tomorrow-day "color-theme-sanityinc-tomorrow"
                     "color-theme: sanityinc-tomorrow-day" t)

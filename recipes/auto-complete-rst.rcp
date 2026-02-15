@@ -2,6 +2,6 @@
        :description "Auto-complete extension for ReST and Sphinx"
        :type github
        :pkgname "tkf/auto-complete-rst"
-       :depends auto-complete
+       :depends (auto-complete)
        :prepare (progn
                   (autoload 'auto-complete-rst-init "auto-complete-rst")))

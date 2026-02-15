@@ -1,5 +1,5 @@
 (:name git-blamed
        :description "Minor mode for incremental blame for Git"
        :type no-op
-       :depends git-emacs
+       :depends (git-emacs)
        :features git-blamed)

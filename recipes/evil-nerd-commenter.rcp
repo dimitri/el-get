@@ -3,4 +3,4 @@
        :description "Comment/uncomment lines efficiently. Like Nerd Commenter in Vim"
        :type github
        :pkgname "redguardtoo/evil-nerd-commenter"
-       :depends evil)
+       :depends (evil))

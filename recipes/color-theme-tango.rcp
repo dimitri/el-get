@@ -1,6 +1,6 @@
 (:name color-theme-tango
        :description "Color theme based on Tango Palette. Created by danranx@gmail.com"
        :type emacswiki
-       :depends color-theme
+       :depends (color-theme)
        :prepare (autoload 'color-theme-tango "color-theme-tango"
                   "color-theme: tango" t))

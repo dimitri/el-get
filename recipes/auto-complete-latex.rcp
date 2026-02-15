@@ -3,4 +3,4 @@
        :website "https://bitbucket.org/tequilasunset/auto-complete-latex"
        :url "https://bitbucket.org/tequilasunset/auto-complete-latex"
        :type hg
-       :depends auto-complete)
+       :depends (auto-complete))

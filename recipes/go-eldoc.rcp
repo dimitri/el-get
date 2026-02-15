@@ -2,5 +2,5 @@
        :description "eldoc plugin for Go"
        :type github
        :pkgname "emacsorphanage/go-eldoc"
-       :depends go-mode
+       :depends (go-mode)
        :post-init (add-hook 'go-mode-hook 'go-eldoc-setup))

@@ -2,5 +2,4 @@
        :description " Show dired details on the right side of filenames."
        :website "https://github.com/misohena/dired-details-r/"
        :type github
-       :depends nil
        :pkgname "misohena/dired-details-r")

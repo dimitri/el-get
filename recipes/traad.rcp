@@ -9,4 +9,4 @@
          (el-get-envpath-prepend "PYTHONPATH" default-directory)
          (setq traad-server-program '("python" "-m" "traad.server"))
          (autoload 'traad-open "traad" nil t))
-       :depends rope)
+       :depends (rope))

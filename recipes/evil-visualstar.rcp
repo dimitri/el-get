@@ -2,4 +2,4 @@
        :type github
        :description "Start a * or # search from the visual selection"
        :pkgname "bling/evil-visualstar"
-       :depends evil)
+       :depends (evil))

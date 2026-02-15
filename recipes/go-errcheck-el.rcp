@@ -1,5 +1,5 @@
 (:name go-errcheck-el
        :description "Provides an easy way to invoke errcheck from within Emacs"
        :type github
-       :depends go-errcheck
+       :depends (go-errcheck)
        :pkgname "dominikh/go-errcheck.el")

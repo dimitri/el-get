@@ -3,4 +3,4 @@
        :type github
        :pkgname "emacsattic/lisppaste"
        :features lisppaste
-       :depends xml-rpc-el)
+       :depends (xml-rpc-el))

@@ -8,4 +8,4 @@ Use M-p to generate an HTML version of the current buffer and print it with Text
        :post-init (progn
                     (mac-print-mode 1)
                     (global-set-key (kbd "M-p") 'mac-print-buffer))
-       :depends htmlize)
+       :depends (htmlize))

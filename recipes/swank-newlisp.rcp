@@ -3,7 +3,7 @@
        :description "Swank server for newLISP"
        :type github
        :pkgname "kosh04/swank-newlisp"
-       :depends slime
+       :depends (slime)
        :post-init (progn
                     (defun swank-newlisp-init (port-filename coding-system)
                       (format "%S\n" `(swank:start-server ,port-filename)))

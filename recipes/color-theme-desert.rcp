@@ -2,6 +2,6 @@
        :description "A port of VIM's desert color theme to Emacs."
        :type github
        :pkgname "superbobry/color-theme-desert"
-       :depends color-theme
+       :depends (color-theme)
        :prepare (autoload 'color-theme-desert "color-theme-desert"
                   "color-theme: desert" t))

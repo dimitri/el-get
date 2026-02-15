@@ -2,6 +2,6 @@
        :description "IR Black Color Theme for Emacs."
        :type github
        :pkgname "burke/color-theme-ir-black"
-       :depends color-theme
+       :depends (color-theme)
        :prepare (autoload 'color-theme-ir-black "color-theme-ir-black"
                   "color-theme: ir-black" t))

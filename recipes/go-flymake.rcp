@@ -2,7 +2,7 @@
        :description "Flymake for the Go programming language"
        :type go
        :pkgname "github.com/dougm/goflymake"
-       :depends go-mode
+       :depends (go-mode)
        :load-path "src/github.com/dougm/goflymake"
        :post-init (progn
                     (add-to-list 'exec-path (concat default-directory "bin"))

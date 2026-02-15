@@ -3,5 +3,5 @@
        :pkgname "r0man/ruby-test-mode"
        :description "Emacs minor mode for Behaviour and Test Driven Development in Ruby"
        :load "ruby-test-mode.el"
-       :depends pcre2el
+       :depends (pcre2el)
        :compile ("ruby-test-mode.el"))

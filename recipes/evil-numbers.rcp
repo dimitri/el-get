@@ -12,4 +12,4 @@
        :type github
        :pkgname "cofi/evil-numbers"
        :features evil-numbers
-       :depends evil)
+       :depends (evil))

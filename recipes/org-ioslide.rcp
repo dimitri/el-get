@@ -2,5 +2,5 @@
        :description "Export org-mode to Google I/O HTML5 slide."
        :type github
        :pkgname "coldnew/org-ioslide"
-       :depends org-mode
+       :depends (org-mode)
        :features ox-ioslide)

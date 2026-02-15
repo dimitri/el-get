@@ -4,4 +4,4 @@
        :type emacswiki
        :prepare (autoload 'anything-ack "anything-ack"
                   "Run ack in `anything' buffer to narrow results." t)
-       :depends anything)
+       :depends (anything))

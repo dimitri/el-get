@@ -2,5 +2,5 @@
        :website "https://github.com/emacsorphanage/helm-themes"
        :description "Emacs themes selection with helm interface."
        :type github
-       :depends helm
+       :depends (helm)
        :pkgname "emacsorphanage/helm-themes")

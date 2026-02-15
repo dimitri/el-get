@@ -2,4 +2,4 @@
        :description "helm for [git grep], an incremental git-grep"
        :type github
        :pkgname "yasuyk/helm-git-grep"
-       :depends helm)
+       :depends (helm))

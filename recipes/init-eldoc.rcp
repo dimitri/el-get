@@ -2,4 +2,4 @@
        :type emacswiki
        :description "Eldoc configuration"
        :features init-eldoc
-       :depends eldoc-extension)
+       :depends (eldoc-extension))

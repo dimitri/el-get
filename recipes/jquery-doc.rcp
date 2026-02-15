@@ -4,4 +4,4 @@
        :type github
        :pkgname "ananthakumaran/jquery-doc.el"
        :features "jquery-doc"
-       :depends auto-complete)
+       :depends (auto-complete))

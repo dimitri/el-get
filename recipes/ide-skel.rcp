@@ -2,4 +2,4 @@
        :website "https://www.emacswiki.org/emacs/IdeSkel"
        :description "A skeleton (or framework) of IDE for Emacs users. Like Eclipse, it can be used as is with some predefined plugins on board, but is designed to extend by Emacs Lisp programmers to suite their own needs."
        :type emacswiki
-       :depends tabbar)
+       :depends (tabbar))

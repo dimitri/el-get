@@ -1,5 +1,5 @@
 (:name magit-identities
-       :depends magit
+       :depends (magit)
        :type github
        :description "Use several identities in magit."
        :pkgname "renard/magit-identities")

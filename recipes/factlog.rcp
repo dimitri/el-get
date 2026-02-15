@@ -3,4 +3,4 @@
        :type github
        :pkgname "tkf/factlog"
        :load-path ("lisp")
-       :depends deferred)
+       :depends (deferred))

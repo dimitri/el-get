@@ -4,7 +4,7 @@
        :type git
        :module "auctex"
        :url "git://git.savannah.gnu.org/auctex.git"
-       :depends s
+       :depends (s)
        :build `(("make"))
        :build/berkeley-unix `(("gmake"))
        :load-path (".")

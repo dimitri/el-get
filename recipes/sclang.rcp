@@ -4,7 +4,7 @@
        :type github
        :pkgname "supercollider/supercollider"
        :load-path "/editors/scel/el"
-       :depends emacs-w3m
+       :depends (emacs-w3m)
        :prepare (progn
                   (autoload 'sclang-mode "sclang-mode" nil t)
                   (add-to-list 'auto-mode-alist '("\\.\\(sc\\|scd\\)$" . sclang-mode))

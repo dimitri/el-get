@@ -1,6 +1,6 @@
 (:name flim
        :description "A library to provide basic features about message representation or encoding"
-       :depends apel
+       :depends (apel)
        :type github
        :branch "flim-1_14-wl"
        :pkgname "wanderlust/flim"
