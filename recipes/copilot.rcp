@@ -1,0 +1,6 @@
+(:name copilot
+       :description "plugin for GitHub Copilot."
+       :type github
+       :pkgname "zerolfx/copilot.el"
+       :depends (dash s editorconfig f)
+       :post-init (add-hook 'prog-mode-hook 'copilot-mode))
