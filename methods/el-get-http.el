@@ -1,4 +1,4 @@
-;;; el-get --- Manage the external elisp bits and pieces you depend upon
+;;; el-get --- Manage the external elisp bits and pieces you depend upon -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2010-2011 Dimitri Fontaine
 ;;
@@ -28,7 +28,7 @@ Test url: http://repo.or.cz/w/ShellArchive.git?a=blob_plain;hb=HEAD;f=ack.el"
   (replace-regexp-in-string "[^a-zA-Z0-9-_\.\+]" "_"
                             (file-name-nondirectory url)))
 
-(defun el-get-http-retrieve-callback (status package url post-install-fun &optional dest sources)
+(defun el-get-http-retrieve-callback (status package url post-install-fun &optional dest _sources)
   "Callback function for `url-retrieve', store the emacs lisp file for the package."
   (let ((err (plist-get status :error)))
     (when err (error (format "could not fetch URL %s: error %s %s"

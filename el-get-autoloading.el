@@ -1,4 +1,4 @@
-;;; el-get.el --- Manage the external elisp bits and pieces you depend upon
+;;; el-get.el --- Manage the external elisp bits and pieces you depend upon -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2010-2011 Dimitri Fontaine
 ;;
@@ -15,7 +15,9 @@
 (require 'cl-lib)
 (require 'el-get-core)
 (require 'el-get-custom)
-(require 'autoload)
+(eval-and-compile
+    (or (require 'loaddefs-gen nil 'noerror)
+        (require 'autoload)))
 
 (declare-function el-get-package-is-installed "el-get" (package))
 (declare-function el-get-byte-compile-file "el-get-byte-compile" (el))
@@ -24,6 +26,14 @@
 
 (defvar el-get-outdated-autoloads nil
   "List of package names whose autoloads are outdated")
+
+(defun el-get-autoload-rubric (file &optional type feature compile)
+  "A wrapper function emulating autoload-rubric."
+  (cond
+   ((fboundp 'loaddefs-generate--rubric)
+    (loaddefs-generate--rubric file type feature compile))
+   ((fboundp 'autoload-rubric)
+    (autoload-rubric file type feature))))
 
 (defun el-get-ensure-byte-compilable-autoload-file (file)
   "If FILE doesn't already exist, create it as a byte-compilable
@@ -34,7 +44,7 @@
   (unless (file-exists-p file)
     (write-region
      (replace-regexp-in-string ";; no-byte-compile: t\n" ""
-                               (autoload-rubric file)) nil file)))
+                               (el-get-autoload-rubric file)) nil file)))
 
 (defun el-get-load-fast (file)
   "Load the compiled version of FILE if it exists; else load FILE verbatim"
@@ -49,15 +59,44 @@
 
 (defvar recentf-exclude)
 
+(defun el-get-update-directory-autoloads (dir)
+  "A wrapper function to update autoload definitions of DIR.
+
+We need this wrapper because
+Emacs 28.1 replaces `update-directory-autoloads' with
+`make-directory-autoloads', and Emacs 29 with
+`loaddefs-generate'."
+  (cond
+   ((fboundp 'loaddefs-generate)
+    (loaddefs-generate dir generated-autoload-file))
+   ((fboundp 'make-directory-autoloads)
+    (make-directory-autoloads dir generated-autoload-file))
+   ((fboundp 'update-directory-autoloads)
+    (update-directory-autoloads dir))))
+
+
+(defun el-get-autoload-file-load-name (file &optional outfile)
+  "A wrapper function to compute the name that will be used to load FILE.
+
+OUTFILE should be the name of the global loaddefs.el file."
+  (cond
+   ((fboundp 'loaddefs-generate--file-load-name)
+    (loaddefs-generate--file-load-name file outfile))
+   ((fboundp 'autoload-file-load-name)
+    (apply #'autoload-file-load-name
+           (if (> emacs-major-version 27)
+               `(,file ,outfile)
+             `(,file))))))
+
 (defun el-get-update-autoloads (package)
   "Regenerate, compile, and load any outdated packages' autoloads."
   (when (el-get-want-autoloads-p package)
     (message "el-get: updating autoloads for %s" package)
 
     (let ( ;; Generating autoloads runs theses hooks; disable then
-          fundamental-mode-hook
-          prog-mode-hook
-          emacs-lisp-mode-hook
+          (fundamental-mode-hook nil)
+          (prog-mode-hook nil)
+          (emacs-lisp-mode-hook nil)
           ;; use dynamic scoping to set up our loaddefs file for
           ;; update-directory-autoloads
           (generated-autoload-file el-get-autoload-file)
@@ -68,6 +107,9 @@
           (find-file-visit-truename nil)
           (recentf-exclude (cons (regexp-quote el-get-autoload-file)
                                  (bound-and-true-p recentf-exclude))))
+      ;; Suppress byte-compiler warnings about unused bindings
+      ;; These are intentionally bound to nil to disable hooks
+      (ignore fundamental-mode-hook prog-mode-hook emacs-lisp-mode-hook)
 
       (unless (or (not visited)
                   (equal generated-autoload-file (buffer-file-name visited)))
@@ -79,7 +121,7 @@
       (el-get-ensure-byte-compilable-autoload-file generated-autoload-file)
 
       (when (el-get-package-is-installed package)
-        (mapc 'update-directory-autoloads
+        (mapc 'el-get-update-directory-autoloads
               (cl-remove-if-not #'file-directory-p
                                 (el-get-load-path package)))
 
@@ -114,7 +156,7 @@ with the named PACKAGE"
            (load-names
             (mapcar
              (lambda (f)
-               (apply #'autoload-file-load-name
+               (apply #'el-get-autoload-file-load-name
                       ;; Starting from Emacs 28 auto-file-load-name
                       ;; needs two parameters, versions before 28 only
                       ;; one.
@@ -125,12 +167,15 @@ with the named PACKAGE"
            (recentf-exclude (cons (regexp-quote el-get-autoload-file)
                                   (bound-and-true-p recentf-exclude)))
            (visited (find-buffer-visiting el-get-autoload-file)))
-      (with-current-buffer (or visited (find-file-noselect el-get-autoload-file))
-        (widen) (goto-char (point-min))
-        (while (search-forward generate-autoload-section-header nil t)
-          (when (member (nth 2 (autoload-read-section-header)) load-names)
-            ;; We found a matching section, remove it.
-            (autoload-remove-section (match-beginning 0)))))
+      (when (and (boundp 'generate-autoload-section-header)
+                 (fboundp 'autoload-remove-section)
+                 (fboundp 'autoload-read-section-header))
+        (with-current-buffer (or visited (find-file-noselect el-get-autoload-file))
+          (widen) (goto-char (point-min))
+          (while (search-forward generate-autoload-section-header nil t)
+            (when (member (nth 2 (autoload-read-section-header)) load-names)
+              ;; We found a matching section, remove it.
+              (autoload-remove-section (match-beginning 0))))))
       (el-get-update-autoloads package)
       (let ((visiting (find-buffer-visiting el-get-autoload-file)))
         (when visiting

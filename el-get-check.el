@@ -1,4 +1,4 @@
-;;; el-get-recipes.el --- Manage the external elisp bits and pieces you depend upon
+;;; el-get-recipes.el --- Manage the external elisp bits and pieces you depend upon -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2010-2011 Dimitri Fontaine
 ;;
@@ -197,7 +197,7 @@ FILENAME defaults to `buffer-file-name'."
             "Usage of integers for :builtin is obsolete.
   Use a version string like \"24.3\" instead.")))
       ;; Check for shell interpolated :build commands
-      (let ((safe-functions '(backquote-list*
+      (let ((_safe-functions '(backquote-list*
                               el-get-load-path el-get-package-exists-p
                               el-get-package-directory el-get-print-to-string
                               el-get-verbose-message

@@ -1,4 +1,4 @@
-;;; el-get --- Manage the external elisp bits and pieces you depend upon
+;;; el-get --- Manage the external elisp bits and pieces you depend upon -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2010-2011 Dimitri Fontaine
 ;;
@@ -175,6 +175,7 @@ the recipe, then return nil."
          ;; Prepend elpa-repo to `package-archives' for new package.el
          (package-archives (append (when elpa-repo (list elpa-repo))
                                    (when (boundp 'package-archives) package-archives))))
+    (ignore package-archive-base)  ; Bound for old package.el compatibility
 
     (unless (and elpa-dir (file-directory-p elpa-dir))
       ;; package-install does these only for interactive calls
@@ -197,7 +198,11 @@ the recipe, then return nil."
 
       ;; TODO: should we refresh and retry once if package-install fails?
       ;; package-install generates autoloads, byte compiles
-      (let (emacs-lisp-mode-hook fundamental-mode-hook prog-mode-hook)
+      (let ((emacs-lisp-mode-hook nil)
+            (fundamental-mode-hook nil)
+            (prog-mode-hook nil))
+        ;; Suppress compiler warnings - these are bound to disable hooks
+        (ignore emacs-lisp-mode-hook fundamental-mode-hook prog-mode-hook)
         (el-get-elpa-install-package (el-get-as-symbol package) have-deps-p)))
     ;; we symlink even when the package already is installed because it's
     ;; not an error to have installed ELPA packages before using el-get, and
@@ -316,7 +321,7 @@ DO-NOT-UPDATE will not update the package archive contents before running this."
     (setq pkgs package-archive-contents)
 
     (with-temp-buffer
-      (dotimes-with-progress-reporter (_ (length package-archive-contents))
+      (dotimes-with-progress-reporter (i (length package-archive-contents))
           "Generating recipes from package.el descriptors..."
         (let* ((pkg         (pop pkgs))
                (package     (format "%s" (car pkg)))

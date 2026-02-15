@@ -1,4 +1,4 @@
-;;; el-get --- Manage the external elisp bits and pieces you depend upon
+;;; el-get --- Manage the external elisp bits and pieces you depend upon -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2010-2011 Dimitri Fontaine
 ;;
@@ -79,10 +79,10 @@ newer, then compilation is skipped."
           (let ((fullpath (expand-file-name path pdir)))
             (if (file-exists-p fullpath)
                 ;; path is a file/dir, so add it literally
-                (add-to-list 'files fullpath)
+                (push fullpath files)
               ;; path is a regexp, so add matching file names in package dir
-              (mapc (apply-partially 'add-to-list 'files)
-                    (directory-files pdir nil path))))))
+              (dolist (file (directory-files pdir t path))
+                (push file files))))))
 
        ;; If package has (:compile nil), or package has its own build
        ;; instructions, or package is already pre-compiled by the
@@ -94,7 +94,8 @@ newer, then compilation is skipped."
 
        ;; Default: compile the package's entire load-path
        (t
-        (mapc (apply-partially 'add-to-list 'files) el-path)))
+        (dolist (path el-path)
+          (push path files))))
       files)))
 
 (defun el-get-clean-stale-compiled-files (dir &optional recursive)
@@ -172,17 +173,17 @@ whose value is a directory to be cleared of stale elc files."
             "-l" ,(file-name-sans-extension
                    (symbol-file subprocess-function 'defun))
             "-f" ,(symbol-name subprocess-function))))
-    `(:command-name "byte-compile"
-                    :buffer-name ,buffer
-                    :default-directory ,working-dir
-                    :shell t
-                    :stdin ,input-data
-                    :sync ,sync
-                    :program ,(car bytecomp-command)
-                    :args ,(cdr bytecomp-command)
-                    :message ,(format "el-get-build %s: byte-compile ok." package)
-                    :error ,(format
-                             "el-get could not byte-compile %s" package))))
+    (list :command-name "byte-compile"
+          :buffer-name buffer
+          :default-directory working-dir
+          :shell t
+          :stdin input-data
+          :sync sync
+          :program (car bytecomp-command)
+          :args (cdr bytecomp-command)
+          :message (format "el-get-build %s: byte-compile ok." package)
+          :error (format
+                  "el-get could not byte-compile %s" package))))
 
 (defun el-get-byte-compile (package)
   "byte compile files for given package"

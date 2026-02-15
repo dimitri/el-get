@@ -1,4 +1,4 @@
-;;; el-get --- Manage the external elisp bits and pieces you depend upon
+;;; el-get --- Manage the external elisp bits and pieces you depend upon -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2010-2011 Dimitri Fontaine
 ;;
@@ -15,11 +15,11 @@
 (require 'el-get-core)
 
 (defcustom el-get-builtin-install-hook nil
-  "Hook run after 'installing' a builtin package."
+  "Hook run after \\='installing\\=' a builtin package."
   :group 'el-get
   :type 'hook)
 
-(defun el-get-builtin-install (package url post-install-fun)
+(defun el-get-builtin-install (package _url post-install-fun)
   (let ((pdir (el-get-package-directory package)))
     (unless (file-directory-p pdir)
       (make-directory pdir))

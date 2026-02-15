@@ -1,4 +1,4 @@
-;;; el-get --- Manage the external elisp bits and pieces you depend upon
+;;; el-get --- Manage the external elisp bits and pieces you depend upon -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2010-2011 Dimitri Fontaine
 ;;
@@ -164,7 +164,7 @@
 
 (defun el-get-package-status-recipes ()
   "return the list of recipes stored in the status file"
-  (cl-loop for (p . prop) in (el-get-read-status-file)
+  (cl-loop for (_p . prop) in (el-get-read-status-file)
            when (string= (plist-get prop 'status) "installed")
            collect (plist-get prop 'recipe)))
 

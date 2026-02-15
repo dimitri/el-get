@@ -1,4 +1,4 @@
-;;; el-get --- Manage the external elisp bits and pieces you depend upon
+;;; el-get --- Manage the external elisp bits and pieces you depend upon -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2010-2011 Dimitri Fontaine
 ;;
@@ -21,7 +21,7 @@
 
 (add-hook 'el-get-pacman-install-hook 'el-get-dpkg-symlink)
 
-(defun el-get-pacman-install (package url post-install-fun)
+(defun el-get-pacman-install (package _url post-install-fun)
   "echo $pass | sudo -S pacman install PACKAGE"
   (let* ((source  (el-get-package-def package))
          (pkgname (or (plist-get source :pkgname) (el-get-as-string package)))
@@ -41,7 +41,7 @@
                       :sync t))
      post-install-fun)))
 
-(defun el-get-pacman-remove (package url post-remove-fun)
+(defun el-get-pacman-remove (package _url post-remove-fun)
   "pacman remove PACKAGE, URL is there for API compliance"
   (let* ((source  (el-get-package-def package))
          (pkgname (or (plist-get source :pkgname) (el-get-as-string package)))

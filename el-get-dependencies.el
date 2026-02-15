@@ -1,4 +1,4 @@
-;;; el-get --- Manage the external elisp bits and pieces you depend upon
+;;; el-get --- Manage the external elisp bits and pieces you depend upon -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2010-2011 Dimitri Fontaine
 ;;
@@ -28,7 +28,7 @@ attention to case differences."
                                     string start-pos nil ignore-case)))))))
 (defun el-get-dependencies (packages)
   "Return the list of packages to install in order."
-  (cl-multiple-value-bind (plist all-sorted-p non-sorted)
+  (cl-multiple-value-bind (plist all-sorted-p _non-sorted)
       (topological-sort
        (apply 'append (mapcar 'el-get-dependencies-graph (el-get-as-list packages))))
     (if all-sorted-p

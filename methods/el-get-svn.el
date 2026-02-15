@@ -1,4 +1,4 @@
-;;; el-get --- Manage the external elisp bits and pieces you depend upon
+;;; el-get --- Manage the external elisp bits and pieces you depend upon -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2010-2011 Dimitri Fontaine
 ;;
@@ -31,7 +31,7 @@
 (defun el-get-svn-checkout (package url post-install-fun)
   "svn checkout the package."
   (let* ((svn-executable (el-get-executable-find "svn"))
-         (source  (el-get-package-def package))
+         (_source  (el-get-package-def package))
          (pname   (el-get-as-string package))
          (name    (format "*svn checkout %s*" package))
          (ok      (format "Checked out package %s." package))

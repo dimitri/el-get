@@ -1,4 +1,4 @@
-;;; el-get-core.el --- Manage the external elisp bits and pieces you depend upon
+;;; el-get-core.el --- Manage the external elisp bits and pieces you depend upon -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2010-2011 Dimitri Fontaine
 ;;
@@ -22,10 +22,11 @@
 (require 'cl-lib)
 (require 'simple)        ; needed for `apply-partially'
 (require 'bytecomp)
-(require 'autoload)
 
 (declare-function el-get-package-def "el-get-recipes" (package))
 (declare-function el-get-installation-failed "el-get" (package signal-data))
+(defvar el-get-allow-insecure)
+(defvar el-get-secure-protocols)
 
 (defun el-get-print-to-string (object &optional pretty)
   "Return string representation of lisp object.
@@ -94,20 +95,25 @@ call for doing the named package action in the given method.")
                                        compute-checksum guess-website)
   "Register the method for backend NAME, with given functions"
   (let (method-def)
-    (cl-loop for required-arg in '(install update remove)
-             unless (symbol-value required-arg)
-             do (error "Missing required argument: :%s" required-arg)
+    (cl-loop for (arg-name . arg-value) in `((install . ,install)
+                                               (update . ,update)
+                                               (remove . ,remove))
+             unless arg-value
+             do (error "Missing required argument: :%s" arg-name)
              do (setq method-def
                       (plist-put method-def
-                                 (intern (format ":%s" required-arg))
-                                 (symbol-value required-arg))))
-    (cl-loop for optional-arg in '(install-hook update-hook remove-hook
-                                                compute-checksum guess-website)
-             if (symbol-value optional-arg)
+                                 (intern (format ":%s" arg-name))
+                                 arg-value)))
+    (cl-loop for (arg-name . arg-value) in `((install-hook . ,install-hook)
+                                               (update-hook . ,update-hook)
+                                               (remove-hook . ,remove-hook)
+                                               (compute-checksum . ,compute-checksum)
+                                               (guess-website . ,guess-website))
+             if arg-value
              do (setq method-def
                       (plist-put method-def
-                                 (intern (format ":%s" optional-arg))
-                                 (symbol-value optional-arg))))
+                                 (intern (format ":%s" arg-name))
+                                 arg-value)))
     (setq el-get-methods (plist-put el-get-methods name method-def))))
 
 (put 'el-get-register-method 'lisp-indent-function
@@ -129,6 +135,45 @@ already-defined method DERIVED-FROM-NAME."
 (defun el-get-register-method-alias (name old-name)
   "Register NAME as an alias for install method OLD-NAME."
   (el-get-register-derived-method name old-name))
+
+(defun el-get-insecure-check (package url)
+  "Raise an error if it's not safe to install PACKAGE from URL.
+
+When `el-get-allow-insecure\\=' is non-nil, check if any of the
+following are true:
+
+- URL\\='s protocol is in `el-get-secure-protocols\\='
+
+- URL starts with \\='file:///\\=' (without hostname), so it points to the
+  local file
+
+- URL starts with username, i.e. \\='username@example.com\\=', also known as
+  SCP-like syntax
+
+- URL satisfies `file-name-absolute-p\\='
+
+- PACKAGE definition has a non-empty :checksum"
+  (unless el-get-allow-insecure
+    (cl-assert (stringp url) nil "URL is nil, can't decide if it's safe to install package '%s'" package)
+    (let* ((checksum (plist-get (el-get-package-def package) :checksum))
+           (checksum-empty (or (not (stringp checksum))
+                               (if (fboundp 'string-blank-p)
+                                   (string-blank-p checksum)
+                                 (string-match-p "\\`[ \t\n\r]*\\'" checksum)))))
+      (unless (or (string-match "\\`file:///" url)
+                  (file-name-absolute-p url)
+                  (car (member 0 (mapcar (lambda (secure-proto)
+                                           (let ((proto-rx (concat "\\`" (regexp-quote secure-proto) "://")))
+                                             (string-match-p proto-rx url))) el-get-secure-protocols)))
+                  (string-match "\\`[-_\.A-Za-z0-9]+@" url))
+        ;; With not empty :checksum, we can rely on `el-get-post-install' calling
+        ;; `el-get-verify-checksum' for security.
+        (unless (not checksum-empty)
+          (error (concat "Attempting to install PACKAGE "
+                         (el-get-as-string package)
+                         " from insecure URL " url
+                         " without `el-get-allow-insecure'.")))))))
+
 
 
 ;;
@@ -178,7 +223,7 @@ entry."
 ;;
 ;; Common support bits
 ;;
-(defun el-get-rmdir (package url post-remove-fun)
+(defun el-get-rmdir (package _url post-remove-fun)
   "Just rm -rf the package directory. If it is a symlink, delete it."
   (let* ((edir (expand-file-name el-get-dir))
          (pdir (expand-file-name "." (el-get-package-directory package))))
@@ -209,7 +254,7 @@ entry."
         ;; quoted. Use the short 8.3 name instead of quoting. See
         ;; http://debbugs.gnu.org/cgi/bugreport.cgi?bug=18745 for
         ;; details.
-        (let (exe (executable-find program-name))
+        (let ((exe (executable-find program-name)))
           (when exe (w32-short-file-name exe))))
       (shell-quote-argument program-name)))
 
@@ -241,17 +286,17 @@ entry."
 ;;
 (defun el-get-duplicates (list)
   "Return duplicates found in list."
-  (cl-loop with dups and once
+  (cl-loop with dups = nil and once = nil
            for elt in list
-           if (member elt once) collect elt into dups
-           else collect elt into once
+           if (member elt once) do (push elt dups)
+           else do (push elt once)
            finally return dups))
 
 (defun el-get-flatten (arg)
   "Return a version of ARG as a one-level list
 
- (el-get-flatten 'x) => '(x)
- (el-get-flatten '(a (b c (d)) e)) => '(a b c d e)"
+ (el-get-flatten \\='x) => \\='(x)
+ (el-get-flatten \\='(a (b c (d)) e)) => \\='(a b c d e)"
   (if (listp arg)
       (apply 'append (mapcar 'el-get-flatten arg))
     (list arg)))
@@ -347,7 +392,7 @@ fail."
 ;;
 ;; call-process-list utility
 ;;
-(defun el-get-start-process-list-sentinel (proc change)
+(defun el-get-start-process-list-sentinel (proc _change)
   "When proc has exited and was successful, chain next command."
   (when (eq (process-status proc) 'exit)
     (condition-case err
@@ -451,7 +496,7 @@ makes it easier to conditionally splice a command into the list.
                  (cdir    (plist-get c :default-directory))
                  (cname   (plist-get c :command-name))
                  (cbuf    (plist-get c :buffer-name))
-                 (killed  (when (get-buffer cbuf) (kill-buffer cbuf)))
+                 (_killed  (when (get-buffer cbuf) (kill-buffer cbuf)))
                  (filter  (plist-get c :process-filter))
                  (shell   (plist-get c :shell))
                  (program (if shell
@@ -473,10 +518,10 @@ makes it easier to conditionally splice a command into the list.
                   (el-get-verbose-message "Running commands synchronously: %S" commands)
                   (let* ((startf (if shell #'call-process-shell-command #'call-process))
                          (infile (when stdin (make-temp-file "el-get")))
-                         (dummy  (when infile
+                         (_dummy  (when infile
                                    (with-temp-file infile
                                      (insert (el-get-print-to-string stdin)))))
-                         (dummy  (message "el-get is waiting for %S to complete" cname))
+                         (_dummy  (message "el-get is waiting for %S to complete" cname))
                          (status (apply startf program infile cbuf t args))
                          (message (plist-get c :message))
                          (errorm  (plist-get c :error)))
@@ -493,7 +538,7 @@ makes it easier to conditionally splice a command into the list.
                         ;; lists. This allows
                         ;; `el-get-start-process-list' (but not other
                         ;; functions) to recurse indefinitely.
-                        (let ((max-specpdl-size (+ 100 max-specpdl-size)))
+                        (let ((max-lisp-eval-depth (+ 100 max-lisp-eval-depth)))
                           (el-get-start-process-list package next final-func))
                       (when (functionp final-func)
                         (funcall final-func package)))))
