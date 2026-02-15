@@ -1,0 +1,7 @@
+(:name helpful
+       :description "an alternative to the built-in Emacs help that provides much more contextual information"
+       :type github
+       :pkgname "Wilfred/helpful"
+       :features helpful
+       :depends (elisp-refs dash s f)
+       )
