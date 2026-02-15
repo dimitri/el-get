@@ -1,0 +1,4 @@
+(:name linum+
+       :type emacswiki
+       :description "Enhanced line number display for Emacs."
+       :website "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/linum+.el")
