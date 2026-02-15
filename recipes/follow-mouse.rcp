@@ -1,0 +1,4 @@
+(:name follow-mouse
+       :type emacswiki
+       :description "Move point to mouse location."
+       :website "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/follow-mouse.el")
