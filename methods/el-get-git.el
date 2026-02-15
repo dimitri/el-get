@@ -31,7 +31,7 @@
   "List of domains which are known to support shallow clone, el-get will not make
 explicit checks for these"
   :group 'el-get
-  :type 'list)
+  :type '(repeat string))
 
 ;; The following variables are declared here to silence the byte
 ;; compiler "reference to variable" warning. The package "url-http"
