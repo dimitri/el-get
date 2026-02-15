@@ -2,7 +2,7 @@
        :description "Major mode for Django web framework."
        :type github
        :pkgname "myfreeweb/django-mode"
-       :depends yasnippet
+       :depends (yasnippet)
        :prepare (progn
                   (autoload 'django-mode "django-mode" "Major mode for Django web framework." t)
                   (add-to-list 'auto-mode-alist '("\.djhtml$" . django-html-mode)))

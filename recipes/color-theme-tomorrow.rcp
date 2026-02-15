@@ -2,7 +2,7 @@
        :description "Emacs highlighting using Chris Charles's Tomorrow color scheme"
        :type github
        :pkgname "ccharles/Tomorrow-Theme"
-       :depends color-theme
+       :depends (color-theme)
        :prepare (progn
                   (autoload 'color-theme-tomorrow "GNU Emacs/color-theme-tomorrow"
                     "color-theme: tomorrow" t)

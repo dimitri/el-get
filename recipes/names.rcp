@@ -2,5 +2,5 @@
        :description "A Namespace implementation for Emacs-Lisp"
        :website "https://github.com/Bruce-Connor/names"
        :type github
-       :depends cl-lib
+       :depends (cl-lib)
        :pkgname "Bruce-Connor/names")

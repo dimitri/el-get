@@ -3,5 +3,5 @@
        :website "https://github.com/tumashu/posframe"
        :type github
        :minimum-emacs-version "26"
-       :depends cl-lib
+       :depends (cl-lib)
        :pkgname "tumashu/posframe")

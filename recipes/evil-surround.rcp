@@ -6,4 +6,4 @@
        :pkgname "timcharper/evil-surround"
        :features evil-surround
        :post-init (global-evil-surround-mode 1)
-       :depends evil)
+       :depends (evil))

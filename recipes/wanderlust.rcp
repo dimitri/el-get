@@ -1,6 +1,6 @@
 (:name wanderlust
        :description "Wanderlust bootstrap."
-       :depends semi
+       :depends (semi)
        :type github
        :pkgname "wanderlust/wanderlust"
        :build (mapcar

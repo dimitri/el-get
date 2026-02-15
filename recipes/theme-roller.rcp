@@ -3,5 +3,5 @@
        :type github
        :features theme-roller
        :pkgname "senny/theme-roller.el"
-       :depends color-theme
+       :depends (color-theme)
        :post-init (theme-roller-activate))

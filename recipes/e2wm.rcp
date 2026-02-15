@@ -3,5 +3,5 @@
        :website "https://github.com/kiwanami/emacs-window-manager"
        :type github
        :pkgname "kiwanami/emacs-window-manager"
-       :depends window-layout
+       :depends (window-layout)
        :features "e2wm")

@@ -2,4 +2,4 @@
        :description "Discover key bindings and their meaning for the current Emacs major mode"
        :type git
        :url "https://framagit.org/steckerhalter/discover-my-major"
-       :depends makey)
+       :depends (makey))

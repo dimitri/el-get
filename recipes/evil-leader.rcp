@@ -5,4 +5,4 @@
        :type github
        :pkgname "cofi/evil-leader"
        :features evil-leader
-       :depends evil)
+       :depends (evil))

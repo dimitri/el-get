@@ -4,6 +4,6 @@
        :minimum-emacs-version "24"
        :type github
        :pkgname "bbatsov/solarized-emacs"
-       :depends dash
+       :depends (dash)
        :prepare (add-to-list 'custom-theme-load-path
                              default-directory))

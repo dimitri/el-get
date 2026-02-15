@@ -2,4 +2,4 @@
        :type github
        :description "evil textobjects based on indentation"
        :pkgname "cofi/evil-indent-textobject"
-       :depends evil)
+       :depends (evil))

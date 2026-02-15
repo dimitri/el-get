@@ -1,4 +1,4 @@
 (:name sunrise-x-tree
        :description "Tree View for the Sunrise Commander File Manager"
        :type elpa
-       :depends sunrise-commander)
+       :depends (sunrise-commander))

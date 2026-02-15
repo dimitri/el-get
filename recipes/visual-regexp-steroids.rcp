@@ -2,5 +2,5 @@
        :description "An extension to visual-regexp-steroids which enables
 the use of modern regexp engines"
        :type github
-       :depends visual-regexp
+       :depends (visual-regexp)
        :pkgname "benma/visual-regexp-steroids.el")

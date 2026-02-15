@@ -1,4 +1,4 @@
 (:name erlware-mode
        :description "Major modes for editing and running Erlang"
        :type builtin
-       :depends erlang-mode)
+       :depends (erlang-mode))

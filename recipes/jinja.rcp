@@ -3,7 +3,7 @@
        :url "https://raw.github.com/mitsuhiko/jinja2/master/ext/jinja.el"
        :type http
        :description "Mostly ripped off django-mode by Lennart Borgman."
-       :depends nxhtml  ; for mumamo
+       :depends (nxhtml)  ; for mumamo
        ;; fails with "(void-variable jinja-html-mumamo)" if compiled
        :compile nil
        :features "jinja")

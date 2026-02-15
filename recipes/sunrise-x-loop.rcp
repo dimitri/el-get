@@ -1,4 +1,4 @@
 (:name sunrise-x-loop
        :description "Asynchronous execution of filesystem operations for the Sunrise Commander File Manager"
        :type elpa
-       :depends sunrise-commander)
+       :depends (sunrise-commander))

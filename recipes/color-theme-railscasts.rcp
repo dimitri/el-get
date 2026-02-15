@@ -2,6 +2,6 @@
        :description "Railscasts color theme for Emacs."
        :type github
        :pkgname "olegshaldybin/color-theme-railscasts"
-       :depends color-theme
+       :depends (color-theme)
        :prepare (autoload 'color-theme-railscasts "color-theme-railscasts"
                   "color-theme: railscasts" t))

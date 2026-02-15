@@ -3,4 +3,4 @@
        :type github
        :pkgname "emacsmirror/auto-pair-plus"
        :autoloads nil
-       :depends autopair)
+       :depends (autopair))

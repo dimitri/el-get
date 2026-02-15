@@ -3,7 +3,7 @@
        :description "Perl code editing commands for Emacs"
        :type github
        :pkgname "jrockway/cperl-mode"
-       :depends mode-compile
+       :depends (mode-compile)
        :compile "cperl-mode.el"
        :provide cperl-mode
        :post-init (defalias 'perl-mode 'cperl-mode))

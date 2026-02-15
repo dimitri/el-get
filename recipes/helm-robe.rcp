@@ -2,4 +2,4 @@
        :description "provides function for setting robe-completing-read-func"
        :type github
        :pkgname "emacsorphanage/helm-robe"
-       :depends helm)
+       :depends (helm))

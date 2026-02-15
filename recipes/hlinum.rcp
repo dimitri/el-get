@@ -2,4 +2,4 @@
        :description "Extension for linum.el to highlight current line number"
        :type github
        :pkgname "tom-tan/hlinum-mode"
-       :depends linum-ex)
+       :depends (linum-ex))

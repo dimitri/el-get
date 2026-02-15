@@ -1,5 +1,5 @@
 (:name git-modeline
        :description "Mode line decoration support, part of git-emacs."
        :type no-op
-       :depends git-emacs
+       :depends (git-emacs)
        :features git-modeline)

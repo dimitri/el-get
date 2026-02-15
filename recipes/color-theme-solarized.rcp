@@ -4,7 +4,7 @@
        :pkgname "sellout/emacs-color-theme-solarized"
        ;; This recipe works with both color-theme and custom-theme.
        ;; We depend on `color-theme' always, for simplicity.
-       :depends color-theme
+       :depends (color-theme)
        :prepare (progn
                   ;; prepare for `custom-theme'
                   (add-to-list 'custom-theme-load-path default-directory)

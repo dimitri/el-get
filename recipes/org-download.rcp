@@ -2,4 +2,4 @@
        :type github
        :description "Drag and drop images to Emacs org-mode"
        :pkgname "abo-abo/org-download"
-       :depends emacs-async)
+       :depends (emacs-async))

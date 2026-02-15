@@ -4,7 +4,7 @@
        :type github
        :pkgname "Golevka/emacs-clang-complete-async"
        :build '(("make"))
-       :depends auto-complete
+       :depends (auto-complete)
        :features auto-complete-clang-async
        :prepare (setq ac-clang-complete-executable
                       (expand-file-name

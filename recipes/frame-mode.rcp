@@ -2,4 +2,4 @@
        :description "Use frames instead of windows whenever display-buffer is called"
        :type github
        :pkgname "IvanMalison/frame-mode"
-       :depends  (s))
+       :depends (s))

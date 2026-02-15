@@ -3,4 +3,4 @@
        :description "A major-mode for editing AsciiDoc files in Emacs."
        :type github
        :pkgname "bbatsov/adoc-mode"
-       :depends markup-faces)
+       :depends (markup-faces))

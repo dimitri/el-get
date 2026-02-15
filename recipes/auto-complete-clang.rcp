@@ -3,4 +3,4 @@
        :description "Auto-complete sources for Clang. Combine the power of AC, Clang and Yasnippet."
        :type github
        :pkgname "brianjcj/auto-complete-clang"
-       :depends auto-complete)
+       :depends (auto-complete))

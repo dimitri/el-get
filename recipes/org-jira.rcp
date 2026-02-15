@@ -2,4 +2,4 @@
        :description "Use Jira in Emacs org-mode."
        :type github
        :pkgname "baohaojun/org-jira"
-       :depends soap-client)
+       :depends (soap-client))

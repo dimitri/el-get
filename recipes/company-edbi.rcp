@@ -1,5 +1,5 @@
 (:name company-edbi
        :description "Edbi backend for company-mode."
-       :depends edbi
+       :depends (edbi)
        :type github
        :pkgname "emacsattic/company-edbi")

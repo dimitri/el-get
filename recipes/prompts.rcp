@@ -3,4 +3,4 @@
        :type github
        :pkgname "GuiltyDolphin/prompts.el"
        :branch "master"
-       :depends dash)
+       :depends (dash))

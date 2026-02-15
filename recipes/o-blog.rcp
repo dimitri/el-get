@@ -3,4 +3,4 @@
        :description "Stand alone org-mode blog exporter."
        :load-path ("lisp")
        :pkgname "renard/o-blog"
-       :depends htmlize)
+       :depends (htmlize))

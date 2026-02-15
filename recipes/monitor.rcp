@@ -5,4 +5,4 @@
        :build `(("make" "-C" "doc" "monitor.info"))
        :info "doc"
        :branch "master"
-       :depends dash)
+       :depends (dash))

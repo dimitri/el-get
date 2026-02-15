@@ -2,6 +2,6 @@
        :description "A color theme based on Tango Palette."
        :type github
        :pkgname "wfarr/color-theme-tango-2"
-       :depends color-theme
+       :depends (color-theme)
        :prepare (autoload 'color-theme-tango-2 "color-theme-tango-2"
                   "color-theme: tango-2" t))

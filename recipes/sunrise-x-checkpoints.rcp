@@ -1,4 +1,4 @@
 (:name sunrise-x-checkpoints
        :description "Checkpoint bookmarks for the Sunrise Commander File Manager"
        :type elpa
-       :depends sunrise-commander)
+       :depends (sunrise-commander))
