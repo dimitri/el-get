@@ -34,7 +34,7 @@
   :group 'el-get
   :type 'hook)
 
-(defun el-get-fink-install (package url post-install-fun)
+(defun el-get-fink-install (package _url post-install-fun)
   "sudo -S fink install PACKAGE"
   (let* ((name (format "*fink install %s*" package))
          (source  (el-get-package-def package))
@@ -55,7 +55,7 @@
 
 (add-hook 'el-get-fink-install-hook 'el-get-dpkg-symlink)
 
-(defun el-get-fink-remove (package url post-remove-fun)
+(defun el-get-fink-remove (package _url post-remove-fun)
   "apt-get remove PACKAGE. URL is there for API compliance."
   (let* ((name (format "*fink remove %s*" package))
          (source  (el-get-package-def package))

@@ -94,9 +94,9 @@ OUTFILE should be the name of the global loaddefs.el file."
     (message "el-get: updating autoloads for %s" package)
 
     (let ( ;; Generating autoloads runs theses hooks; disable then
-          fundamental-mode-hook
-          prog-mode-hook
-          emacs-lisp-mode-hook
+          (fundamental-mode-hook nil)
+          (prog-mode-hook nil)
+          (emacs-lisp-mode-hook nil)
           ;; use dynamic scoping to set up our loaddefs file for
           ;; update-directory-autoloads
           (generated-autoload-file el-get-autoload-file)
@@ -107,6 +107,9 @@ OUTFILE should be the name of the global loaddefs.el file."
           (find-file-visit-truename nil)
           (recentf-exclude (cons (regexp-quote el-get-autoload-file)
                                  (bound-and-true-p recentf-exclude))))
+      ;; Suppress byte-compiler warnings about unused bindings
+      ;; These are intentionally bound to nil to disable hooks
+      (ignore fundamental-mode-hook prog-mode-hook emacs-lisp-mode-hook)
 
       (unless (or (not visited)
                   (equal generated-autoload-file (buffer-file-name visited)))

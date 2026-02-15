@@ -25,7 +25,7 @@
   :group 'el-get
   :type 'hook)
 
-(defun el-get-go-install (package url post-install-fun)
+(defun el-get-go-install (package _url post-install-fun)
   "go install PACKAGE"
   (let* ((gopath (getenv "GOPATH"))
          (source (el-get-package-def package))

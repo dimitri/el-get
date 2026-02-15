@@ -19,7 +19,7 @@
   :group 'el-get
   :type 'hook)
 
-(defun el-get-builtin-install (package url post-install-fun)
+(defun el-get-builtin-install (package _url post-install-fun)
   (let ((pdir (el-get-package-directory package)))
     (unless (file-directory-p pdir)
       (make-directory pdir))

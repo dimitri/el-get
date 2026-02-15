@@ -31,7 +31,7 @@
 (defun el-get-svn-checkout (package url post-install-fun)
   "svn checkout the package."
   (let* ((svn-executable (el-get-executable-find "svn"))
-         (source  (el-get-package-def package))
+         (_source  (el-get-package-def package))
          (pname   (el-get-as-string package))
          (name    (format "*svn checkout %s*" package))
          (ok      (format "Checked out package %s." package))

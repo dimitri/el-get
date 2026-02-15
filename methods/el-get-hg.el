@@ -22,11 +22,11 @@
 (defun el-get-hg-clone (package url post-install-fun)
   "Clone the given package following the URL."
   (let* ((hg-executable (el-get-executable-find "hg"))
-         (pdir  (el-get-package-directory package))
+         (_pdir  (el-get-package-directory package))
          (pname (el-get-as-string package))
          (name  (format "*hg clone %s*" package))
          (source (el-get-package-def package))
-         (branch   (plist-get source :branch))
+         (_branch   (plist-get source :branch))
          (checkout (or (plist-get source :checkout)
                        (plist-get source :checksum)
                        (plist-get source :branch)))

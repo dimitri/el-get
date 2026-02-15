@@ -130,7 +130,7 @@ The installation status is retrieved from the system, not el-get."
                                                (el-get-as-string package)))
     (el-get-apt-get-install package url post-install-fun)))
 
-(defun el-get-apt-get-install (package url post-install-fun)
+(defun el-get-apt-get-install (package _url post-install-fun)
   "echo $pass | sudo -S apt-get install PACKAGE"
   (let* ((source  (el-get-package-def package))
          (pkgname (or (plist-get source :pkgname) (el-get-as-string package)))
@@ -150,7 +150,7 @@ The installation status is retrieved from the system, not el-get."
                       :sync t))
      post-install-fun)))
 
-(defun el-get-apt-get-remove (package url post-remove-fun)
+(defun el-get-apt-get-remove (package _url post-remove-fun)
   "apt-get remove PACKAGE, URL is there for API compliance"
   (let* ((source  (el-get-package-def package))
          (pkgname (or (plist-get source :pkgname) (el-get-as-string package)))

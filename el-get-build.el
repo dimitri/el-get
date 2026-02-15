@@ -145,24 +145,29 @@ recursion.
                   commands))
          ;; Do byte-compilation after building, if needed
          (byte-compile-then-post-build-fun
-          `(lambda (package)
-             (let ((bytecomp-files
-                    (when el-get-byte-compile
-                      (el-get-assemble-files-for-byte-compilation package))))
-               ;; The byte-compilation command needs to run even if
-               ;; `bytecomp-files' is empty, because it also cleans up
-               ;; stale compiled files if it finds any.
-               (el-get-start-process-list
-                package
-                (list (el-get-byte-compile-process package ,buf ,wdir ,sync bytecomp-files))
-                #',post-build-fun))))
+          (let ((buf-val buf)
+                (wdir-val wdir)
+                (sync-val sync)
+                (post-build-fun-val post-build-fun))
+            (lambda (package)
+              (let ((bytecomp-files
+                     (when el-get-byte-compile
+                       (el-get-assemble-files-for-byte-compilation package))))
+                ;; The byte-compilation command needs to run even if
+                ;; `bytecomp-files' is empty, because it also cleans up
+                ;; stale compiled files if it finds any.
+                (el-get-start-process-list
+                 package
+                 (list (el-get-byte-compile-process package buf-val wdir-val sync-val bytecomp-files))
+                 post-build-fun-val)))))
          ;; unless installing-info, post-build-fun should take care of
          ;; building info too
          (build-info-then-post-build-fun
           (if installing-info byte-compile-then-post-build-fun
-            `(lambda (package)
-               (el-get-install-or-init-info package 'build)
-               (funcall ,byte-compile-then-post-build-fun package)))))
+            (let ((byte-compile-fun byte-compile-then-post-build-fun))
+              (lambda (package)
+                (el-get-install-or-init-info package 'build)
+                (funcall byte-compile-fun package))))))
     (el-get-start-process-list
      package process-list build-info-then-post-build-fun)))
 

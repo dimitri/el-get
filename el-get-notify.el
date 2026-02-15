@@ -125,7 +125,7 @@ fallback."
   (el-get-verbose-message "el-get removed package %s" package))
 (add-hook 'el-get-post-remove-hooks 'el-get-post-remove-message)
 
-(defun el-get-post-error-message (package info)
+(defun el-get-post-error-message (package _info)
   "After PACKAGE fails to install, just message about it"
   (el-get-verbose-message "el-get failed to initialize package %s" package))
 (add-hook 'el-get-post-error-hooks 'el-get-post-error-message)

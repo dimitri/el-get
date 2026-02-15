@@ -175,7 +175,7 @@ updated when the package itself is."
 
 
 ;;; "Fuzzy" data structure customization widgets
-(defun el-get-repeat-value-to-internal (widget element-or-list)
+(defun el-get-repeat-value-to-internal (_widget element-or-list)
   (el-get-as-list element-or-list))
 
 (defun el-get-repeat-match (widget value)
@@ -186,7 +186,7 @@ updated when the package itself is."
   :value-to-internal 'el-get-repeat-value-to-internal
   :match 'el-get-repeat-match)
 
-(defun el-get-symbol-match (widget value)
+(defun el-get-symbol-match (_widget value)
   (or (symbolp value) (stringp value)))
 
 (define-widget 'el-get-symbol 'symbol

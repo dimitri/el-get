@@ -33,7 +33,7 @@
   "Clone the given package from Github following the URL."
   ;; The recipe must have a `:url' property for
   ;; `el-get-http-zip-install' to work.
-  (let* ((old-pdef (el-get-package-def package))
+  (let* ((_old-pdef (el-get-package-def package))
          (url (or url (el-get-github-zip-url package)))
          (new-pdef (append `(:url ,url)
                            (el-get-package-def package)))

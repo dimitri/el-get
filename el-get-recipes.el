@@ -74,7 +74,7 @@ compiled version."
            (package-init-file
             (expand-file-name init-file-name el-get-user-package-directory))
            (file-name-no-extension (file-name-sans-extension package-init-file))
-           (compiled-init-file (concat file-name-no-extension ".elc"))
+           (_compiled-init-file (concat file-name-no-extension ".elc"))
            (default-directory (el-get-package-directory package)))
       (when (file-exists-p package-init-file)
         (when el-get-byte-compile
@@ -191,11 +191,11 @@ If R2 has a `:type' it completely replaces R1, otherwise, R1
 fields are the default value and R2 may override them."
   (if (plist-get r2 :type)
       r2
-    (cl-loop with merged
-             for (prop val) on (append r2 r1) by 'cddr
-             unless (plist-member merged prop)
-             nconc (list prop val) into merged
-             finally return merged)))
+    (let ((result nil))
+      (cl-loop for (prop val) on (append r2 r1) by 'cddr
+               unless (plist-member result prop)
+               do (setq result (nconc result (list prop val))))
+      result)))
 
 (defun el-get-package-def (package)
   "Return a single `el-get-sources' entry for PACKAGE."

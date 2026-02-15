@@ -357,7 +357,7 @@ to wait until PACKAGE is loaded."
     (el-get-verbose-message "el-get-init: " init-deps)
     (cl-loop for p in init-deps do (el-get-do-init p) collect p)))
 
-(defun el-get-do-init (package &optional package-status-alist)
+(defun el-get-do-init (package &optional _package-status-alist)
   "Make the named PACKAGE available for use.
 
 Add PACKAGE's directory (or `:load-path' if specified) to the
@@ -393,7 +393,7 @@ prevent package.el from loading it."  package package)))
              (before   (plist-get source :before))
              (postinit (plist-get source :post-init))
              (after    (plist-get source :after))
-             (pkgname  (plist-get source :pkgname))
+             (_pkgname  (plist-get source :pkgname))
              (pdir     (el-get-package-directory package)))
 
         (el-get-error-unless-required-emacs-version source)
@@ -490,7 +490,7 @@ PACKAGE may be either a string or the corresponding symbol."
   ;; Start the chain of dependency installation
   (el-get-install-next-packages))
 
-(defun el-get-install-next-packages (&rest ignored)
+(defun el-get-install-next-packages (&rest _ignored)
   "Run as part of `el-get-post-init-hooks' when dealing with dependencies."
   (let ((package (pop el-get-next-packages)))
     (el-get-verbose-message "el-get-install-next-packages: %s" package)
@@ -582,7 +582,7 @@ PACKAGE may be either a string or the corresponding symbol."
       (funcall install package url 'el-get-post-install)
       (message "el-get install %s" package))))
 
-(defun el-get-reload (package &optional package-status-alist)
+(defun el-get-reload (package &optional _package-status-alist)
   "Reload PACKAGE."
   (declare (advertised-calling-convention (package) "Feb 2015"))
   (interactive
@@ -854,7 +854,7 @@ This is useful, for example, when we want to remove all packages not
 explicitly declared in the user-init-file (.emacs)."
   (let* ((packages-to-keep (el-get-dependencies
                             (mapcar 'el-get-as-symbol
-                                    (add-to-list 'packages 'el-get))))
+                                    (cons 'el-get packages))))
          (packages-to-remove (cl-set-difference
                               (mapcar 'el-get-as-symbol
                                       (el-get-list-package-names-with-status
@@ -951,8 +951,7 @@ considered \"required\"."
                                    unless (member p init-deps)
                                    collect p)
                         (mapcar 'el-get-as-symbol required)))
-         (install-deps (el-get-dependencies to-install))
-         done)
+         (install-deps (el-get-dependencies to-install)))
     (when req-inits       ; we can't init a pkg unless it's installed!
       (setq install-deps (append req-inits install-deps))
       (setq init-deps (cl-set-difference init-deps req-inits)))
@@ -960,15 +959,15 @@ considered \"required\"."
     (el-get-verbose-message "el-get-init-and-install: install %S" install-deps)
     (el-get-verbose-message "el-get-init-and-install: init %S" init-deps)
 
-    (cl-loop for p in install-deps
-             when (el-get-with-errors-as-warnings (format "while installing %s: " p)
-                    (el-get-do-install p))
-             collect p into done)
-    (cl-loop for p in init-deps
-             when (el-get-with-errors-as-warnings (format "while initializing %s: " p)
-                    (el-get-do-init p))
-             collect p into done)
-    done))
+    (append
+     (cl-loop for p in install-deps
+              when (el-get-with-errors-as-warnings (format "while installing %s: " p)
+                     (el-get-do-install p))
+              collect p)
+     (cl-loop for p in init-deps
+              when (el-get-with-errors-as-warnings (format "while initializing %s: " p)
+                     (el-get-do-init p))
+              collect p))))
 
 ;;;###autoload
 (defun el-get (&optional sync &rest packages)
