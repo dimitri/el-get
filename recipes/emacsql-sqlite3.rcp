@@ -4,5 +4,5 @@
        SQL database."
        :type github
        :pkgname "cireu/emacsql-sqlite3"
-       :depends emacsql
+       :depends (emacsql)
        )
