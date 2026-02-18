@@ -1,0 +1,7 @@
+(:name act
+       :description "Academic Tools for Emacs"
+       :website "https://github.com/GuiltyDolphin/act.el"
+       :type github
+       :pkgname "GuiltyDolphin/act.el"
+       :branch "master"
+       :depends (dash))
