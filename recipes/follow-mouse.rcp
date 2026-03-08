@@ -1,4 +1,8 @@
 (:name follow-mouse
        :type emacswiki
        :description "Move point to mouse location."
-       :website "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/follow-mouse.el")
+       :website "https://raw.githubusercontent.com/emacsmirror/emacswiki.org/master/follow-mouse.el"
+       ;; Patch out obsolete `unibyte: t` file-local variable that
+       ;; triggers a warning on Emacs 28+.
+       :build (("sh" "-c"
+                "sed -e 's/-\\*-unibyte: t; coding:/-*- coding:/' -ix follow-mouse.el && rm follow-mouse.elx")))
