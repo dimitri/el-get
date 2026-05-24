@@ -309,10 +309,13 @@ entry."
 
 (defun el-get-fmt-button (fmt label &rest props)
   "`format' + `make-text-button'."
-  (let ((button (copy-sequence label))) ; don't change original string
-    ;; In 24.3, `make-text-button' returns position, not string.
-    (apply #'make-text-button button nil props) ; adds props by side-effect
-    (format fmt button)))
+  (if (version<= "28.1" emacs-version)
+      ;; As of 28.1, `make-text-button' doesn't modify its argument.
+      (format fmt (apply #'make-text-button label nil props))
+    (let ((button (copy-sequence label))) ; don't change original string
+      ;; In 24.3, `make-text-button' returns position, not string.
+      (apply #'make-text-button button nil props) ; adds props by side-effect
+      (format fmt button))))
 
 
 ;;
