@@ -349,7 +349,7 @@ a list of operations that would allow a full update."
 (el-get-define-pkg-op-button-type 'el-get-merge-properties-into-status
                                   "force cached recipe update of")
 
-(defun el-get-merge-properties-into-status (package operation &rest keys)
+(defun el-get-merge-properties-into-status (package operation &rest _keys)
   "Merge updatable properties for package into status file.
 
 PACKAGE is either a package source or name, in which case the
@@ -361,6 +361,9 @@ from the cached values.
 
 Interactively, OPERATION is `update' with prefix arg, `reinstall'
 with double prefix arg, or `init' otherwise."
+  ;; We used to accept :noerror to just warn on unsafe changes, but
+  ;; now we always give only a warning for that.
+  (declare (advertised-calling-convention (package operation) "May 2016"))
   (interactive
    (list (el-get-read-package-with-status "Update cached recipe" "installed")
          (cond ((equal '(16) current-prefix-arg) 'reinstall)
@@ -393,8 +396,5 @@ with double prefix arg, or `init' otherwise."
                (if no-add (pp-to-string no-add) "()\n")
                (if no-rem (pp-to-string no-rem) "()\n"))))))
 
-;; Using `declare' in `defun' only supported from Emacs 24.3.
-(set-advertised-calling-convention
- 'el-get-merge-properties-into-status '(package operation) "May 2016")
 
 (provide 'el-get-status)
