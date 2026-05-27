@@ -2,23 +2,14 @@ set_default () {
   eval ": \${$1:=$2}"
 }
 
-# http://www.linuxjournal.com/content/use-bash-trap-statement-cleanup-temporary-files
+rm_on_exit_items=()
 on_exit()
 {
-    for i in "${on_exit_items[@]}"
-    do
-        eval $i
-    done
-}
-
-add_on_exit()
-{
-    local n=${#on_exit_items[*]}
-    on_exit_items[$n]="$*"
-    if [[ $n -eq 0 ]]; then
-        trap on_exit EXIT
+    if [ ${#rm_on_exit_items[*]} -gt 0 ] ; then
+        rm -rf "${#rm_on_exit_items[@]}"
     fi
 }
+trap on_exit EXIT
 
 get_file () {
   # <name> <fmts>...
@@ -37,24 +28,24 @@ get_file () {
 
 emacs_with_test_home() {
   mode=$1
-  testfile=$2
-  shift 2
+  shift 1
 
   if [ -n "$DO_NOT_CLEAN" ]; then
-    echo "Running test without removing $TEST_HOME first";
+      echo "Running test with persistent $TEST_HOME first"
   else
-    add_on_exit "rm -rf $TEST_HOME"
-    rm -rf "$TEST_HOME"
+      echo "Running test with clean $TEST_HOME"
+      rm_on_exit_items+=("$TEST_HOME")
+      rm -rf "$TEST_HOME"
   fi
   mkdir -p "$TEST_HOME"/.emacs.d/el-get/
   TMPDIR="$TEST_HOME"
 
-  [ "$mode" = batch ] && args=(-Q -batch) || args=(-Q)
+  args=()
+  [ "$mode" = batch ] && args+=(-batch)
+  args+=(-L "$EL_GET_LIB_DIR" -l "$EL_GET_LIB_DIR/test/test-setup.el"
+         --eval '(setq enable-local-variables :safe)')
 
-  HOME="$TEST_HOME" "$EMACS" "${args[@]}" -L "$EL_GET_LIB_DIR" \
-      -l "$EL_GET_LIB_DIR/el-get.el" -l "$EL_GET_LIB_DIR/test/test-setup.el" \
-      --eval '(setq enable-local-variables :safe)' \
-      -l "$testfile" "$@"
+  HOME="$TEST_HOME" "$EMACS" "${args[@]}" "$@"
   return $?
 }
 
@@ -64,32 +55,8 @@ test_recipe () {
   mode=$1
   recipe_file=$(get_file "$2" "%s" "$RECIPE_DIR/%s" \
       "$RECIPE_DIR/%s.rcp" "$RECIPE_DIR/%s.el") || return 1
-
-  lisp_temp_file=`mktemp`
-  add_on_exit "rm -f $lisp_temp_file"
-  cat >"$lisp_temp_file" <<EOF
-
-(progn
-  (setq debug-on-error (not noninteractive)
-        el-get-default-process-sync t
-        pdef (el-get-read-from-file "$recipe_file")
-        pname (plist-get pdef :name)
-        el-get-sources (cons pdef (bound-and-true-p el-get-sources)))
-  (el-get (quote sync) pname)
-  (message "*** Initial install successful ***")
-  (el-get-update pname)
-  (message "*** Update successful ***")
-  (el-get-remove pname)
-  (message "*** Removal successful ***")
-  (el-get-install pname)
-  (message "*** Second install successful ***")
-  (assert (el-get-package-is-installed pname) nil
-          "Package %s should be installed right now but isn't" pname))
-
-EOF
-
   echo "*** Testing el-get recipe $recipe_file ***"
-  emacs_with_test_home "$mode" "$lisp_temp_file"
+  emacs_with_test_home "$mode" -f el-get-test-rcp-life-cycle "$recipe_file"
   return $?
 }
 
@@ -101,7 +68,7 @@ run_test () {
       "$TEST_DIR/%s.el" "$TEST_DIR/el-get-issue-%s.el") || return 1
 
   echo "*** Running el-get test $testfile ***"
-  emacs_with_test_home "$mode" "$testfile"
+  emacs_with_test_home "$mode" -l "$testfile"
   return $?
 }
 
