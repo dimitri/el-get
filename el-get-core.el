@@ -282,7 +282,10 @@ entry."
            (format "Really %s `%s'? "
                    (button-get button 'el-get-pkg-verb) package))
       (apply (button-get button 'el-get-pkg-fun) package
-             (button-get button 'el-get-pkg-extra-args)))))
+             (button-get button 'el-get-pkg-extra-args))
+      ;; Mark that we've done this action.
+      (let ((inhibit-read-only t))
+        (button-put button 'face 'link-visited)))))
 
 (define-button-type 'el-get-pkg-op
   'action #'el-get-pkg-op-button-action
