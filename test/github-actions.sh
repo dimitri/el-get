@@ -13,20 +13,6 @@ check-recipes() {
     "$EMACS" -Q -L . -batch -l el-get-check -f el-get-check-recipe-batch "$@"
 }
 
-if [ -r "$GITHUB_EVENT_PATH" ] ; then
-   BASE=$(cat "$GITHUB_EVENT_PATH" | jq -r '.pull_request.base.sha')
-   if [ "$BASE" = 'null' ]; then
-       BASE=$(cat "$GITHUB_EVENT_PATH" | jq -r '.before')
-   fi
-
-   HEAD=$(cat "$GITHUB_EVENT_PATH" | jq -r '.pull_request.head.sha')
-   if [ "$HEAD" = 'null' ]; then
-       HEAD=$(cat "$GITHUB_EVENT_PATH" | jq -r '.after')
-   fi
-
-   COMMIT_RANGE="${BASE}..${HEAD}"
-fi
-
 if [ -n "$COMMIT_RANGE" ] ; then
    check-whitespace() {
        git --no-pager -c core.whitespace=tab-in-indent diff --check "$COMMIT_RANGE"

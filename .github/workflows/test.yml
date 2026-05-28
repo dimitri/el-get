@@ -31,6 +31,15 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Determine commit range
+      id: range
+      run: |
+        if [ "${{ github.event_name }}" = "pull_request" ]; then
+          echo "COMMIT_RANGE=${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
+        else
+          echo "COMMIT_RANGE=${{ github.event.before }}..${{ github.sha }}"
+        fi >> $GITHUB_ENV
+
     - name: Cache Emacs - get
       id: cache-emacs
       uses: actions/cache@v5
@@ -59,9 +68,6 @@ jobs:
         emacs_store=$(find /nix/store -name "*-emacs-*")
         test -x $emacs_store/bin/emacs
         echo "$emacs_store/bin" >> $GITHUB_PATH
-
-    - name: Print GitHub event
-      run: cat "$GITHUB_EVENT_PATH"
 
     - name: Print Emacs version and environment variables
       run: |
