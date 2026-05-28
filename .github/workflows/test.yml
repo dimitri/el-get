@@ -17,6 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         emacs_version:
+        - 24.5
         - 25.3
         - 26.3
         - 27.2
@@ -24,6 +25,7 @@ jobs:
         - 29.4
         - 30.2
         - snapshot
+        - release-snapshot
     env:
       EMACS_VERSION: ${{ matrix.emacs_version }}
     steps:
@@ -40,12 +42,17 @@ jobs:
           echo "COMMIT_RANGE=${{ github.event.before }}..${{ github.sha }}"
         fi >> $GITHUB_ENV
 
+    - name: Compute snapshot cache epoch
+      if: matrix.emacs_version == 'snapshot' || matrix.emacs_version == 'release-snapshot'
+      run: |
+        echo "SNAPSHOT_EPOCH=$(date +%Y-%U)" >> $GITHUB_ENV
+
     - name: Cache Emacs - get
       id: cache-emacs
       uses: actions/cache@v5
       with:
         path: /home/runner/.local/nix/store-emacs
-        key: ${{ runner.os }}${{ runner.arch }}-Emacs-${{ matrix.emacs_version }}
+        key: ${{ runner.os }}${{ runner.arch }}-Emacs-${{ matrix.emacs_version }}${{ env.SNAPSHOT_EPOCH }}
 
     - name: Install Emacs (no cache)
       uses: purcell/setup-emacs@master
