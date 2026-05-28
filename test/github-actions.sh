@@ -1,8 +1,9 @@
 # source me
 # Define the following functions here to keep .github/workflows/test.yml nice and tidy
-#   - byte-compile()
 #   - check-recipes()
-#   - check-whitespace()
+#   - check-whitespace() // requires $COMMIT_RANGE
+#   - check-filename()   // requires $COMMIT_RANGE
+#   - byte-compile()
 #   - ert-tests()
 
 : ${EMACS:=emacs}
@@ -24,37 +25,27 @@ if [ -r "$GITHUB_EVENT_PATH" ] ; then
    fi
 
    COMMIT_RANGE="${BASE}..${HEAD}"
+fi
 
-   if [ "$EMACS_VERSION" = '26.3' ]; then
-       check-whitespace() {
-           git --no-pager -c core.whitespace=tab-in-indent diff --check "$COMMIT_RANGE"
-       }
-       # Adapted from Emacs' build-aux/git-hooks/pre-commit.
-       check-filenames() {
-           git diff --name-only --diff-filter=A "$COMMIT_RANGE" |
-               grep -E '^-|/-|[^-+./_0-9A-Z_a-z]' |
-               while IFS= read -r new_name; do
-                   case $new_name in
-                       -* | */-*)
-                           echo "$new_name: File name component begins with '-'."
-                           return 1;;
-                       *)
-                           echo "$new_name: File name does not consist of -+./_ or ASCII letters or digits."
-                           return 1;;
-                   esac
-               done
-       }
-   else
-       # If we have only changes to recipe files, there is no need to run
-       # with more than 1 emacs version.
-       git diff --name-only "$COMMIT_RANGE" | grep -Fvq recipes/ ||
-           { echo 'Recipe only diff, skipping tests' ; exit 0 ; }
-
-       # Only need to run these for 1 version, so make them nops here
-       check-recipes() { :; }
-       check-whitespace() { :; }
-       check-filenames() { :; }
-   fi
+if [ -n "$COMMIT_RANGE" ] ; then
+   check-whitespace() {
+       git --no-pager -c core.whitespace=tab-in-indent diff --check "$COMMIT_RANGE"
+   }
+   # Adapted from Emacs' build-aux/git-hooks/pre-commit.
+   check-filenames() {
+       git diff --name-only --diff-filter=A "$COMMIT_RANGE" |
+           grep -E '^-|/-|[^-+./_0-9A-Z_a-z]' |
+           while IFS= read -r new_name; do
+               case $new_name in
+                   -* | */-*)
+                       echo "$new_name: File name component begins with '-'."
+                       return 1;;
+                   *)
+                       echo "$new_name: File name does not consist of -+./_ or ASCII letters or digits."
+                       return 1;;
+               esac
+           done
+   }
 fi
 
 ert-tests() {
