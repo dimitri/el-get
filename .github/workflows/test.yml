@@ -6,6 +6,10 @@ on:
     - master
   pull_request:
 
+# Caching adapted from
+# https://shawnhoover.dev/notes/caching-emacs-binaries-in-github-workflows.html
+# (I extended to multiple versions, hopefully still works...)
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,13 +27,38 @@ jobs:
     env:
       EMACS_VERSION: ${{ matrix.emacs_version }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 0
 
-    - uses: purcell/setup-emacs@master
+    - name: Cache Emacs - get
+      id: cache-emacs
+      uses: actions/cache@v5
+      with:
+        path: /home/runner/.local/nix/store-emacs
+        key: ${{ runner.os }}${{ runner.arch }}-Emacs-${{ matrix.emacs_version }}
+
+    - name: Install Emacs (no cache)
+      uses: purcell/setup-emacs@master
+      if: steps.cache-emacs.outputs.cache-hit != 'true'
       with:
         version: ${{ matrix.emacs_version }}
+
+    - name: Cache emacs - Miss - Put
+      if: steps.cache-emacs.outputs.cache-hit != 'true'
+      run: |
+        emacs --version
+        mkdir -p $HOME/.local/nix/store-emacs
+        nix-store --query --requisites "$(readlink -f $(which emacs))" | xargs -I {} rsync -av {} $HOME/.local/nix/store-emacs
+
+    - name: Cache emacs - Hit
+      if: steps.cache-emacs.outputs.cache-hit == 'true'
+      run: |
+        sudo mkdir -p /nix/store
+        sudo ln -s $HOME/.local/nix/store-emacs/* /nix/store/
+        emacs_store=$(find /nix/store -name "*-emacs-*")
+        test -x $emacs_store/bin/emacs
+        echo "$emacs_store/bin" >> $GITHUB_PATH
 
     - name: Print GitHub event
       run: cat "$GITHUB_EVENT_PATH"
@@ -42,7 +71,7 @@ jobs:
     - name: Compilation
       run: |
         source test/github-actions.sh
-        byte-compile -Werror *.el methods/*.el
+        byte-compile -Werror
 
     - name: Test
       run: |
