@@ -5,6 +5,13 @@ on:
     branches:
     - master
   pull_request:
+    paths-ignore:
+    - '**.png'
+    - '**.svg'
+    - '**.texi'
+    - '**.info'
+    - '.dir-locals.el'
+    - '.gitignore'
 
 # Caching adapted from
 # https://shawnhoover.dev/notes/caching-emacs-binaries-in-github-workflows.html
