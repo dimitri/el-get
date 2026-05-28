@@ -5,6 +5,17 @@ on:
     branches:
     - master
   pull_request:
+    paths-ignore:
+    - '**.png'
+    - '**.svg'
+    - '**.texi'
+    - '**.info'
+    - '.dir-locals.el'
+    - '.gitignore'
+
+# Caching adapted from
+# https://shawnhoover.dev/notes/caching-emacs-binaries-in-github-workflows.html
+# (I extended to multiple versions, hopefully still works...)
 
 jobs:
   build:
@@ -13,6 +24,7 @@ jobs:
       fail-fast: false
       matrix:
         emacs_version:
+        - 24.5
         - 25.3
         - 26.3
         - 27.2
@@ -20,34 +32,81 @@ jobs:
         - 29.4
         - 30.2
         - snapshot
+        - release-snapshot
     env:
       EMACS_VERSION: ${{ matrix.emacs_version }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 0
 
-    - uses: purcell/setup-emacs@master
+    - name: Compute snapshot cache epoch
+      if: contains(matrix.emacs_version, 'snapshot')
+      run: |
+        # %U is week number, so we will update cache key for snapshots
+        # every week.
+        echo "SNAPSHOT_EPOCH=$(date +%Y-%U)" >> $GITHUB_ENV
+
+    - name: Cache Emacs - get
+      id: cache-emacs
+      uses: actions/cache@v5
+      with:
+        path: /home/runner/.local/nix/store-emacs
+        key: ${{ runner.os }}${{ runner.arch }}-Emacs-${{ matrix.emacs_version }}${{ env.SNAPSHOT_EPOCH }}
+
+    - name: Install Emacs (no cache)
+      uses: purcell/setup-emacs@master
+      if: steps.cache-emacs.outputs.cache-hit != 'true'
       with:
         version: ${{ matrix.emacs_version }}
 
-    - name: Print GitHub event
-      run: cat "$GITHUB_EVENT_PATH"
+    - name: Cache emacs - Miss - Put
+      if: steps.cache-emacs.outputs.cache-hit != 'true'
+      run: |
+        mkdir -p $HOME/.local/nix/store-emacs
+        nix-store --query --requisites "$(readlink -f $(which emacs))" | xargs -I {} rsync -av {} $HOME/.local/nix/store-emacs
+
+    - name: Cache emacs - Hit
+      if: steps.cache-emacs.outputs.cache-hit == 'true'
+      run: |
+        sudo mkdir -p /nix/store
+        sudo ln -s $HOME/.local/nix/store-emacs/* /nix/store/
+        test -x /nix/store/*-emacs-*/bin/emacs
+        echo /nix/store/*-emacs-*/bin >> $GITHUB_PATH
 
     - name: Print Emacs version and environment variables
       run: |
-        env
         emacs --version
+        env
+
+    - uses: dorny/paths-filter@v4
+      id: src-changes
+      with:
+        filters: |
+          src:
+            - '**/*.el'
+            - '**/*.sh'
+            - '.github/workflows/*.yml'
 
     - name: Compilation
+      if: steps.src-changes.outputs.src == 'true'
       run: |
-        source test/github-actions.sh
-        byte-compile -Werror *.el methods/*.el
+        ./test/github-actions.sh byte-compile -Werror
+
+    # Only needed once, skip for all but 1 version
+    - name: Simple Checks
+      if: matrix.emacs_version == '29.4'
+      run: |
+        if [ '${{ github.event_name }}' = "pull_request" ]; then
+          COMMIT_RANGE='${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}'
+        else
+          COMMIT_RANGE='${{ github.event.before }}..${{ github.sha }}'
+        fi ; export COMMIT_RANGE
+        ./test/github-actions.sh check-recipes -Wno-features -Wno-github -Wno-autoloads recipes/
+        ./test/github-actions.sh check-whitespace
+        ./test/github-actions.sh check-filenames
 
     - name: Test
+      if: steps.src-changes.outputs.src == 'true'
       run: |
-        source test/github-actions.sh
-        ert-tests
-        check-recipes -Wno-features -Wno-github -Wno-autoloads recipes/
-        check-whitespace
-        check-filenames
+        ./test/github-actions.sh ert-tests

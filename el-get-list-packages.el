@@ -16,8 +16,9 @@
 ;;
 ;; Description of packages.  (Code based on `describe-function').
 ;;
-(require 'el-get-core)
 (require 'cl-lib)
+(require 'el-get-core)
+(require 'el-get-recipes)
 
 (declare-function el-get-install "el-get" (package))
 (declare-function el-get-remove "el-get" (package))

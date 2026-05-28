@@ -19,7 +19,7 @@
     (or (require 'loaddefs-gen nil 'noerror)
         (require 'autoload)))
 
-(declare-function el-get-package-is-installed "el-get" (package))
+(declare-function el-get-package-is-installed "el-get-status" (package))
 (declare-function el-get-byte-compile-file "el-get-byte-compile" (el))
 (declare-function el-get-package-def "el-get-recipes" (package))
 (declare-function el-get-list-package-names-with-status "el-get-status" (&rest statuses))
@@ -94,7 +94,6 @@ OUTFILE should be the name of the global loaddefs.el file."
     (message "el-get: updating autoloads for %s" package)
 
     (let ( ;; Generating autoloads runs theses hooks; disable then
-          (fundamental-mode-hook nil)
           (prog-mode-hook nil)
           (emacs-lisp-mode-hook nil)
           ;; use dynamic scoping to set up our loaddefs file for
@@ -107,10 +106,6 @@ OUTFILE should be the name of the global loaddefs.el file."
           (find-file-visit-truename nil)
           (recentf-exclude (cons (regexp-quote el-get-autoload-file)
                                  (bound-and-true-p recentf-exclude))))
-      ;; Suppress byte-compiler warnings about unused bindings
-      ;; These are intentionally bound to nil to disable hooks
-      (ignore fundamental-mode-hook prog-mode-hook emacs-lisp-mode-hook)
-
       (unless (or (not visited)
                   (equal generated-autoload-file (buffer-file-name visited)))
         ;; Kill .loaddefs.el buffer if it has a different name.

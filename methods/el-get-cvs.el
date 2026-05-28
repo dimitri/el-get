@@ -15,6 +15,8 @@
 (require 'el-get-core)
 (require 'el-get-recipes)
 
+(declare-function el-get-sudo-password-process-filter "el-get-apt-get")
+
 (defcustom el-get-cvs-checkout-hook nil
   "Hook run after cvs checkout."
   :group 'el-get

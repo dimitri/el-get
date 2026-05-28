@@ -28,6 +28,10 @@
 (defvar el-get-allow-insecure)
 (defvar el-get-secure-protocols)
 
+(defvar el-get-verbose)
+(defvar el-get-dir)
+(defvar el-get-sources)
+
 (defun el-get-print-to-string (object &optional pretty)
   "Return string representation of lisp object.
 
@@ -271,14 +275,6 @@ entry."
         (read (current-buffer)))
     ((debug error)
      (error "Error reading file %s: %S" filename err))))
-
-(defun el-get-package-is-installed (package)
-  "Return true if PACKAGE is installed"
-  (and (file-directory-p (el-get-package-directory package))
-       (string= "installed"
-                (el-get-read-package-status package))))
-
-(defalias 'el-get-package-installed-p #'el-get-package-is-installed)
 
 
 ;;

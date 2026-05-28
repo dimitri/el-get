@@ -17,7 +17,7 @@
 (require 'el-get-recipes)
 (require 'package nil t)
 
-(declare-function el-get-package-is-installed "el-get" (package))
+(declare-function el-get-package-is-installed "el-get-status" (package))
 
 ;;; package.el compat functions
 (eval-and-compile
@@ -199,10 +199,7 @@ the recipe, then return nil."
       ;; TODO: should we refresh and retry once if package-install fails?
       ;; package-install generates autoloads, byte compiles
       (let ((emacs-lisp-mode-hook nil)
-            (fundamental-mode-hook nil)
             (prog-mode-hook nil))
-        ;; Suppress compiler warnings - these are bound to disable hooks
-        (ignore emacs-lisp-mode-hook fundamental-mode-hook prog-mode-hook)
         (el-get-elpa-install-package (el-get-as-symbol package) have-deps-p)))
     ;; we symlink even when the package already is installed because it's
     ;; not an error to have installed ELPA packages before using el-get, and

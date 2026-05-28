@@ -26,7 +26,10 @@
 (require 'cl-lib)
 (require 'el-get-core)
 (require 'el-get-custom)
-(require 'el-get-byte-compile)
+
+(declare-function el-get-byte-compile-file "el-get-byte-compile")
+(declare-function el-get-github-parse-user-and-repo "el-get-github")
+
 
 (defcustom el-get-recipe-path-emacswiki
   (expand-file-name "el-get/recipes/emacswiki/" el-get-dir)

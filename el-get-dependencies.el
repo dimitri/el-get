@@ -15,6 +15,7 @@
 (require 'cl-lib)
 (require 'el-get-core)
 (require 'el-get-recipes)
+(require 'el-get-status)
 
 (eval-and-compile
   (unless (fboundp 'string-suffix-p) ; introduced in 24.4
