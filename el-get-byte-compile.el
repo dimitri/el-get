@@ -14,11 +14,23 @@
 
 (require 'cl-lib)                       ; yes I like loop
 (require 'bytecomp)
-(require 'el-get-core)
-(require 'el-get-recipes)
 
+;; Note: When called in batch mode with
+;; `el-get-byte-compile-from-stdin', the `load-path' is not set up
+;; until read from stdin, so don't require any non-Emacs things here!
+
+;; Forward decls instead.
+(defvar el-get-byte-compile)
+(defvar el-get-emacs)
+
+(declare-function el-get-as-list "el-get-core")
+(declare-function el-get-package-directory "el-get-core")
+(declare-function el-get-load-path "el-get-core")
+(declare-function el-get-start-process-list "el-get-core")
 (declare-function el-get-build-commands "el-get-build" (package))
 (declare-function el-get-read-package-with-status "el-get-status" (action &rest statuses))
+(declare-function el-get-package-def "el-get-recipes")
+(declare-function el-get-package-method "el-get-recipes")
 
 ;; byte-recompile-file:
 ;;
