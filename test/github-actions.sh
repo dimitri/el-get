@@ -61,16 +61,22 @@ ert-tests() {
     "$EMACS" -batch -Q $EMACS_OPT -L . -l test/el-get-tests.el -f ert-run-tests-batch-and-exit
 }
 
-# byte-compile [-Werror] <files>...
+# byte-compile [-Werror] [files]...
 byte-compile() {
     error_on_warning=nil
     if [ "$1" = "-Werror" ] ; then
         error_on_warning=t
         shift
     fi
-    "$EMACS" -Q -L . -L methods/ -batch \
-          --eval "(setq byte-compile-error-on-warn $error_on_warning)" \
-          -f batch-byte-compile "$@"
+    if [ "$#" -eq 0 ] ; then
+        set -- *.el methods/*.el
+    fi
+    args=(-Q -L . -L methods/ -batch
+          --eval "(setq byte-compile-error-on-warn $error_on_warning)")
+    for el in "$@" ; do
+        printf 'ELC %s\n' "$el"
+        "$EMACS" "${args[@]}" -f batch-byte-compile "$el"
+    done
 }
 
 shopt -s nullglob

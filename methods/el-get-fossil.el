@@ -15,6 +15,7 @@
 (require 'cl-lib)
 (require 'el-get-core)
 (require 'el-get-custom)
+(require 'el-get-recipes)
 
 (defcustom el-get-fossil-clone-hook nil
   "Hook run after fossil clone"

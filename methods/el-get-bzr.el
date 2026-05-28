@@ -14,6 +14,8 @@
 
 (require 'el-get-core)
 
+(defvar el-get-dir)
+
 (defcustom el-get-bzr-branch-hook nil
   "Hook run after bzr branch."
   :group 'el-get

@@ -17,7 +17,7 @@
 (require 'el-get-recipes)
 (require 'package nil t)
 
-(declare-function el-get-package-is-installed "el-get" (package))
+(declare-function el-get-package-is-installed "el-get-status" (package))
 
 ;;; package.el compat functions
 (eval-and-compile

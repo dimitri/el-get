@@ -22,10 +22,12 @@
 (require 'cl-lib)
 (require 'pp)
 (require 'el-get-core)
+(require 'el-get-recipes)
 
 (declare-function el-get-install "el-get" (package))
-(declare-function el-get-package-is-installed "el-get" (package))
 (declare-function el-get-print-package "el-get-list-packages" (package-name status &optional desc))
+(defvar el-get-status-file)
+(defvar el-get-dir)
 
 (defun el-get-package-name (package-symbol)
   "Returns a package name as a string."
@@ -172,6 +174,14 @@
   "return current status for PACKAGE"
   (plist-get (cdr (assq (el-get-as-symbol package) (el-get-read-status-file)))
              'status))
+
+(defun el-get-package-is-installed (package)
+  "Return true if PACKAGE is installed"
+  (and (file-directory-p (el-get-package-directory package))
+       (string= "installed"
+                (el-get-read-package-status package))))
+
+(defalias 'el-get-package-installed-p #'el-get-package-is-installed)
 
 (define-obsolete-function-alias 'el-get-package-status 'el-get-read-package-status "4.1")
 
