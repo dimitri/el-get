@@ -40,18 +40,11 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Determine commit range
-      id: range
-      run: |
-        if [ "${{ github.event_name }}" = "pull_request" ]; then
-          echo "COMMIT_RANGE=${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
-        else
-          echo "COMMIT_RANGE=${{ github.event.before }}..${{ github.sha }}"
-        fi >> $GITHUB_ENV
-
     - name: Compute snapshot cache epoch
-      if: matrix.emacs_version == 'snapshot' || matrix.emacs_version == 'release-snapshot'
+      if: contains(matrix.emacs_version, 'snapshot')
       run: |
+        # %U is week number, so we will update cache key for snapshots
+        # every week.
         echo "SNAPSHOT_EPOCH=$(date +%Y-%U)" >> $GITHUB_ENV
 
     - name: Cache Emacs - get
@@ -70,7 +63,6 @@ jobs:
     - name: Cache emacs - Miss - Put
       if: steps.cache-emacs.outputs.cache-hit != 'true'
       run: |
-        emacs --version
         mkdir -p $HOME/.local/nix/store-emacs
         nix-store --query --requisites "$(readlink -f $(which emacs))" | xargs -I {} rsync -av {} $HOME/.local/nix/store-emacs
 
@@ -79,14 +71,13 @@ jobs:
       run: |
         sudo mkdir -p /nix/store
         sudo ln -s $HOME/.local/nix/store-emacs/* /nix/store/
-        emacs_store=$(find /nix/store -name "*-emacs-*")
-        test -x $emacs_store/bin/emacs
-        echo "$emacs_store/bin" >> $GITHUB_PATH
+        test -x /nix/store/*-emacs-*/bin/emacs
+        echo /nix/store/*-emacs-*/bin >> $GITHUB_PATH
 
     - name: Print Emacs version and environment variables
       run: |
-        env
         emacs --version
+        env
 
     - uses: dorny/paths-filter@v4
       id: src-changes
@@ -106,6 +97,11 @@ jobs:
     - name: Simple Checks
       if: matrix.emacs_version == '29.4'
       run: |
+        if [ '${{ github.event_name }}' = "pull_request" ]; then
+          COMMIT_RANGE='${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}'
+        else
+          COMMIT_RANGE='${{ github.event.before }}..${{ github.sha }}'
+        fi ; export COMMIT_RANGE
         ./test/github-actions.sh check-recipes -Wno-features -Wno-github -Wno-autoloads recipes/
         ./test/github-actions.sh check-whitespace
         ./test/github-actions.sh check-filenames
