@@ -86,20 +86,17 @@ jobs:
     - name: Compilation
       if: steps.src-changes.outputs.src == 'true'
       run: |
-        source test/github-actions.sh
-        byte-compile -Werror
+        ./test/github-actions.sh byte-compile -Werror
 
     # Only needed once, skip for all but 1 version
     - name: Simple Checks
       if: matrix.emacs_version == '29.4'
       run: |
-        source test/github-actions.sh
-        check-recipes -Wno-features -Wno-github -Wno-autoloads recipes/
-        check-whitespace
-        check-filenames
+        ./test/github-actions.sh check-recipes -Wno-features -Wno-github -Wno-autoloads recipes/
+        ./test/github-actions.sh check-whitespace
+        ./test/github-actions.sh check-filenames
 
     - name: Test
       if: steps.src-changes.outputs.src == 'true'
       run: |
-        source test/github-actions.sh
-        ert-tests
+        ./test/github-actions.sh ert-tests

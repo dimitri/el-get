@@ -1,10 +1,14 @@
-# source me
+#!/bin/bash
 # Define the following functions here to keep .github/workflows/test.yml nice and tidy
 #   - check-recipes()
 #   - check-whitespace() // requires $COMMIT_RANGE
-#   - check-filename()   // requires $COMMIT_RANGE
+#   - check-filenames()   // requires $COMMIT_RANGE
 #   - byte-compile()
 #   - ert-tests()
+Usage() {
+    echo 'Usage: <check-whitespace|check-filenames|check-recipes|byte-compile|ert-tests> [args...]' >&2
+    exit 1
+}
 
 : ${EMACS:=emacs}
 
@@ -58,5 +62,14 @@ byte-compile() {
 
 shopt -s nullglob
 
-# show definitions for log
-declare -f byte-compile ert-tests check-recipes check-whitespace
+[ "$#" -eq 0 ] && Usage
+fun=$1
+shift 1
+
+case $fun in
+    (check-whitespace|check-filenames|check-recipes|byte-compile|ert-tests)
+        # show definition for log
+        declare -f $fun
+        "$fun" "$@";;
+    (*) Usage;;
+esac
