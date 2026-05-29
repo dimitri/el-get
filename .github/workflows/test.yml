@@ -4,8 +4,7 @@ on:
   push:
     branches:
     - master
-  pull_request:
-    paths-ignore:
+    paths-ignore: &doc-files
     - '**.png'
     - '**.svg'
     - '**.md'
@@ -13,6 +12,8 @@ on:
     - '**.info'
     - '.dir-locals.el'
     - '.gitignore'
+  pull_request:
+    paths-ignore: *doc-files
 
 # Caching adapted from
 # https://shawnhoover.dev/notes/caching-emacs-binaries-in-github-workflows.html
