@@ -89,27 +89,25 @@ to the list of keywords that follow
    (t 'elpa)))
 
 (defun el-get-bundle-parse-name (sym)
-  (let ((spec (split-string (format "%s" sym) ":")) s)
+  (let ((spec (split-string (format "%s" sym) ":")))
     (when (string= (or (nth 0 spec) "") "github") (setq spec (cdr spec)))
-    (setq s (car spec))
     (cond
      ((and (> (length spec) 2) (string= (car spec) "gist"))
       ;; gist:12345:name
       (let* ((id (nth 1 spec))
              (name (intern (or (nth 2 spec) id)))
              (type 'git) (url (el-get-bundle-gist-url id)))
-        (plist-put (plist-put (plist-put s :name name) :type type) :url url)))
+        (list :name name :type type :url url)))
      ((> (length spec) 1)
       ;; type:name
       (let ((name (intern (nth 1 spec))) (type (intern (nth 0 spec))))
-      (plist-put (plist-put s :name name) :type type)))
+        (list :name name :type type)))
      ((= (length (split-string (or (nth 0 spec) "") "/")) 2)
       ;; user/repository
       (let ((name (intern (replace-regexp-in-string "^.*/" "" (nth 0 spec))))
             (type 'github) (pkgname (nth 0 spec)))
-        (plist-put (plist-put (plist-put s :name name) :type type)
-                   :pkgname pkgname)))
-     (t (plist-put s :name sym)))))
+        (list :name name :type type :pkgname pkgname)))
+     (t (list :name sym)))))
 
 (defun el-get-bundle-init-id (callsite)
   (let ((pair (assoc callsite el-get-bundle-init-count-alist)))
