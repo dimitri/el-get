@@ -73,7 +73,7 @@ your package manager if you are using Linux or by downloading it from the
 Installing El-Get depends on a working `install-info` command, please make
 sure you have one in your `PATH`. In `debian`, it's available in the
 [install-info debian package](http://packages.debian.org/squeeze/install-info). The
-[MacOSX install-info](http://developer.apple.com/library/mac/#DOCUMENTATION/Darwin/Reference/ManPages/man1/install-info.1.html)
+[MacOSX brew install-info](https://formulae.brew.sh/formula/texinfo)
 version works fine with El-Get.
 
 When using the *windows* operating system, take into account that the way
