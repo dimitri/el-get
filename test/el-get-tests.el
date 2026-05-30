@@ -9,6 +9,16 @@
     (cl-defmacro ert-deftest (name () &body docstring-keys-and-body)
       (message "Skipping tests, ERT is not available"))))
 
+(defun el-get-plist-equal (plist1 plist2)
+  (let ((keys (el-get-plist-keys plist1)))
+    (and (equal (sort keys #'string<)
+                (sort (el-get-plist-keys plist2) #'string<))
+         (cl-loop for key in keys
+                  unless (equal (plist-get plist1 key)
+                                (plist-get plist2 key))
+                  return nil
+                  finally return t))))
+
 (defvar el-get-test-output-buffer nil)
 (when noninteractive
   (defadvice message (around el-get-test-catch-output activate)
@@ -161,7 +171,6 @@ Following variables are bound to temporal values:
 
 (ert-deftest el-get-update-rcp-file-load-path ()
   "Check the `load-path' is updated."
-  :expected-result :failed
   (el-get-with-temp-home
    (let* ((rcpdir (expand-file-name "~/.emacs.d/el-get-user-recipes/"))
           (el-get-recipe-path (cons rcpdir el-get-recipe-path))
@@ -305,11 +314,117 @@ John.Doe-123_@example.com"))
 (ert-deftest el-get-bundle-parse-name ()
   "Test parsing of different el-get-bundle name formats"
   (require 'el-get-bundle)
-  (should (equal (el-get-bundle-parse-name 'el-get)
-                 '(:name el-get)))
-  (should (equal (el-get-bundle-parse-name 'owner/el-get)
-                 '(:name el-get :type github :pkgname "owner/el-get")))
-  (should (equal (el-get-bundle-parse-name 'gist:the-gist-id:el-get)
-                 '(:name el-get :type git :url "https://gist.github.com/the-gist-id.git")))
-  (should (equal (el-get-bundle-parse-name 'elpa:el-get)
-                 '(:name el-get :type elpa))))
+  (should (el-get-plist-equal
+           (el-get-bundle-parse-name 'el-get)
+           '(:name el-get)))
+  (should (el-get-plist-equal
+           (el-get-bundle-parse-name 'owner/el-get)
+           '(:name el-get :type github :pkgname "owner/el-get")))
+  (should (el-get-plist-equal
+           (el-get-bundle-parse-name 'gist:the-gist-id:el-get)
+           '(:name el-get :type git :url "https://gist.github.com/the-gist-id.git")))
+  (should (el-get-plist-equal
+           (el-get-bundle-parse-name 'elpa:el-get)
+           '(:name el-get :type elpa))))
+
+(defun el-get-test-compute-new-status-equal (status1 status2)
+  "Check equality for `el-get-compute-new-status' results."
+  (and (el-get-plist-equal (nth 0 status1) (nth 0 status2))
+       (equal (nth 1 status1) (nth 1 status2))
+       (el-get-plist-equal (nth 2 status1) (nth 2 status2))
+       (el-get-plist-equal (nth 3 status1) (nth 3 status2))))
+
+(ert-deftest el-get-test-compute-new-status ()
+  "Test `el-get-compute-new-status'."
+  (let* ((old '(:name a
+                      :type git
+                      :load-path "load-old"
+                      :depends (depends old)
+                      :build (("build" "old"))
+                      :build/gnu-linux (("build/gnu-linux" "old"))
+                      :url "http://example.com/url/old"))
+         (new '(:name a
+                      :type git
+                      :load-path "load-new"
+                      :depends (depends new)
+                      :build (("build" "new"))
+                      :build/gnu-linux (("build/gnu-linux" "new"))
+                      :url "http://example.com/url/new"))
+         (expected '((:name a
+                            :type git
+                            :load-path "load-new"
+                            :depends (depends old)
+                            :build (("build" "old"))
+                            :build/gnu-linux (("build/gnu-linux" "old"))
+                            :url "http://example.com/url/old")
+                     (reinstall)
+                     (:depends (depends new)
+                               :build (("build" "new"))
+                               :build/gnu-linux (("build/gnu-linux" "new"))
+                               :url "http://example.com/url/new")
+                     (:depends (depends old)
+                               :build (("build" "old"))
+                               :build/gnu-linux (("build/gnu-linux" "old"))
+                               :url "http://example.com/url/old")))
+         (update-expected '((:name a
+                                   :type git
+                                   :load-path "load-new"
+                                   :depends (depends new)
+                                   :build (("build" "new"))
+                                   :build/gnu-linux (("build/gnu-linux" "new"))
+                                   :url "http://example.com/url/old")
+                            (reinstall)
+                            (:url "http://example.com/url/new")
+                            (:url "http://example.com/url/old"))))
+    (should (el-get-test-compute-new-status-equal
+             (el-get-compute-new-status 'init old new)
+             expected))
+    (should (el-get-test-compute-new-status-equal
+             (el-get-compute-new-status 'update old new)
+             update-expected))
+    (should (el-get-test-compute-new-status-equal
+             (el-get-compute-new-status 'reinstall old new)
+             (list new nil nil nil)))))
+
+(ert-deftest el-get-test-compute-new-status-2 ()
+  "Test `el-get-compute-new-status'."
+  (let* ((old '(:name a
+                      :type git
+                      :load-path "load-old"
+                      :depends (depends old)
+                      :build (("build" "old"))
+                      :build/gnu-linux (("build/gnu-linux" "old"))
+                      :url "http://example.com/url/old"))
+         (new '(:name a
+                      :type git
+                      :load-path "load-new"
+                      :depends (depends new)
+                      :build (("build" "new"))
+                      :build/gnu-linux (("build/gnu-linux" "new"))
+                      :url "http://example.com/url/old"))
+         (init-result (el-get-compute-new-status 'init old new))
+         (init-expected '((:name a
+                                 :type git
+                                 :load-path "load-new"
+                                 :depends (depends old)
+                                 :build (("build" "old"))
+                                 :build/gnu-linux (("build/gnu-linux" "old"))
+                                 :url "http://example.com/url/old")
+                          (update reinstall)
+                          (:depends (depends new)
+                                    :build (("build" "new"))
+                                    :build/gnu-linux (("build/gnu-linux" "new")))
+                          (:depends (depends old)
+                                    :build (("build" "old"))
+                                    :build/gnu-linux (("build/gnu-linux" "old")))))
+         (update-result (el-get-compute-new-status 'update old new))
+         (update-expected '((:name a
+                                   :type git
+                                   :load-path "load-new"
+                                   :depends (depends new)
+                                   :build (("build" "new"))
+                                   :build/gnu-linux (("build/gnu-linux" "new"))
+                                   :url "http://example.com/url/old")
+                            nil nil nil)))
+    (should (el-get-test-compute-new-status-equal init-result init-expected))
+    (should (el-get-test-compute-new-status-equal update-result update-expected))))

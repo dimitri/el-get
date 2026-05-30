@@ -276,6 +276,50 @@ entry."
     ((debug error)
      (error "Error reading file %s: %S" filename err))))
 
+(defun el-get-pkg-op-button-action (button)
+  (let ((package (button-get button 'el-get-package)))
+    (when (y-or-n-p
+           (format "Really %s `%s'? "
+                   (button-get button 'el-get-pkg-verb) package))
+      (apply (button-get button 'el-get-pkg-fun) package
+             (button-get button 'el-get-pkg-extra-args))
+      ;; Mark that we've done this action.
+      (let ((inhibit-read-only t))
+        (button-put button 'face 'link-visited)))))
+
+(define-button-type 'el-get-pkg-op
+  'action #'el-get-pkg-op-button-action
+  'follow-link t)
+
+(defun el-get-define-pkg-op-button-type (operation verb)
+  (define-button-type operation :supertype 'el-get-pkg-op
+    'el-get-pkg-fun operation
+    'el-get-pkg-verb verb
+    'help-echo (format "mouse-2, RET: %s package" verb)))
+
+(el-get-define-pkg-op-button-type 'el-get-install "install")
+(el-get-define-pkg-op-button-type 'el-get-reinstall "reinstall")
+(el-get-define-pkg-op-button-type 'el-get-update "update")
+(el-get-define-pkg-op-button-type 'el-get-remove "remove")
+
+(define-button-type 'el-get-file-jump
+  'action (lambda (button) (find-file (button-get button 'el-get-file)))
+  'follow-link t)
+(define-button-type 'el-get-recipe-file-jump :supertype 'el-get-file-jump
+  :help-echo "mouse-2, RET: find package's recipe file")
+(define-button-type 'el-get-cd :supertype 'el-get-file-jump
+  :help-echo "mouse-2, RET: open directory")
+
+(defun el-get-fmt-button (fmt label &rest props)
+  "`format' + `make-text-button'."
+  (if (version<= "28.1" emacs-version)
+      ;; As of 28.1, `make-text-button' doesn't modify its argument.
+      (format fmt (apply #'make-text-button label nil props))
+    (let ((button (copy-sequence label))) ; don't change original string
+      ;; In 24.3, `make-text-button' returns position, not string.
+      (apply #'make-text-button button nil props) ; adds props by side-effect
+      (format fmt button))))
+
 
 ;;
 ;; Some tools
