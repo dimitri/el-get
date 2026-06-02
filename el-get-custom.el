@@ -299,7 +299,9 @@ definition provided by `el-get\\=' recipes locally.
 :build/system-type
 
     Your specific build recipe for a given `system-type\\=' gets
-    there and looks like :build.
+    there and looks like :build.  Note that if this property is
+    nil, el-get will fallback to the plain :build value.
+    Use (progn nil) for a nop build step.
 
 :load-path
 

@@ -1017,7 +1017,9 @@ be interpreted as individual shell arguments, appropriately quoted.
 
 @item :build/system-type
 Your specific build recipe for a given @var{system-type} gets there
-and looks like @code{:build}.
+and looks like @code{:build}.  Note that if this property is
+@code{nil}, el-get will fallback to the plain @code{:build} value.
+Use @code{(progn nil)} for a nop build step.
 
 @item :load-path
 A directory or a list of directories you want El-Get to add to your
