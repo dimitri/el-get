@@ -859,12 +859,14 @@ it. After that the recipe content is saved in the status file and
 cached, so that you can still start Emacs even if you remove the
 recipe file.
 
-The variable @code{el-get-recipe-path} is a list of directory paths
-to search for recipe files, in order. The recipe for a package
-@code{example} must be named @code{example.rcp}. The first file named
-that way in the @code{el-get-recipe-path} variable is used as the
-recipe. If you need to change it, you should do so immediately before
-running @code{el-get}; see the example in @xref{Basic Setup}.
+The variable @code{el-get-recipe-path} is a list of directory paths to
+search for recipe files, in order (see function
+@code{el-get-recipe-filename}).  The recipe for a package
+@code{example} must be named @file{example.el} or @file{example.rcp}.
+The first file named that way in the @code{el-get-recipe-path}
+variable is used as the recipe.  If you need to change it, you should
+do so immediately before running @code{el-get}; see the example in
+@xref{Basic Setup}.
 
 To check which recipe is used for a given package, use either the
 @code{M-x el-get-describe} or @code{M-x el-get-find-recipe-file}
@@ -899,7 +901,9 @@ code. See @xref{User Init}.
 
 The command @code{el-get-elpa-build-local-recipes} downloads the list
 of Emacs Lisp Packages from the ELPA archives you have setup, and make
-them automatically available for El-Get.
+them automatically available for El-Get (they are written into
+@file{~/.emacs.d/el-get/el-get/recipes/elpa} by default, this is
+controlled by the variable @code{el-get-rcipe-path-elpa}).
 
 @node Overriding package files
 @section Overriding package files
@@ -968,11 +972,6 @@ Emacs 24 but needs an external recipe for previous major versions.
 Unlike the builtin @code{:type} no @code{:build} or @code{:info}
 properties are executed if this matches.
 
-@item :pkgname
-The name of the package for the underlying package management system
-(apt-get, fink or pacman, also supported by github and emacsmirror),
-which can be different from the Emacs package name.
-
 @item :type
 The type of the package, currently el-get offers support for apt-get,
 elpa, git, github, emacsmirror, git-svn, bzr svn, cvs, darcs, fink,
@@ -987,14 +986,16 @@ installer in el-get-install.
 @item :url
 Where to fetch the package, only meaningful for git and http types.
 
-@item :username, :pkgname
-For the github type, these specify the user name and repo name to
-clone from Github. For example, for el-get, the user name would be
-@code{"dimitri"} , and the repo name would be @code{"el-get"} . As
-described above, the @code{:pkgname} property is only required if the
-repo name on Github differs from the Emacs package name. Note that the
-emacsmirror type is just like the github type with @code{:username}
-set to @code{"emacsmirror"} .
+@item :pkgname
+The name of the package for the underlying package management system
+(apt-get, fink or pacman, also supported by github and emacsmirror),
+which can be different from the Emacs package name.
+
+For the github type, this specifies the user name and repo name to
+clone from Github. For example, for el-get, the package name would be
+@code{"dimitri/el-get"}.  Note that the @code{emacsmirror} type is just like
+the github type with the prefix @code{"emacsmirror"} automatically
+supplied.
 
 @item :build
 
@@ -1013,7 +1014,9 @@ be interpreted as individual shell arguments, appropriately quoted.
 
 @item :build/system-type
 Your specific build recipe for a given @var{system-type} gets there
-and looks like @code{:build}.
+and looks like @code{:build}.  Note that if this property is
+@code{nil}, el-get will fallback to the plain @code{:build} value.
+Use @code{(progn nil)} for a nop build step.
 
 @item :load-path
 A directory or a list of directories you want El-Get to add to your
@@ -1040,7 +1043,7 @@ entry.
 
 @item :load
 List of files to load, or a single file to load after having installed
-the source but before `require'ing its features.
+the source but before @code{require}ing its features.
 
 @item :features
 List of features el-get will @code{require} for you.
@@ -1122,7 +1125,7 @@ package url has the following scheme:
    "http://www.example.com/show-as-text?file=path/package.el"
 
 @item :website
-The website of the project.  
+The website of the project.
 
 @item :description
 A short description of the project.
@@ -1140,21 +1143,37 @@ on.
 Checksum calculation is currently supported by these methods with the
 following meaning:
 
-http, ftp and emacswiki with the SHA1 of the downloaded file
+@code{http}, @code{ftp} and @code{emacswiki} with the SHA1 of the
+downloaded file.
 
-git in which it is an alias for @code{:checkout} (see below)
+@code{git} and @code{hg} in which it is an alias for @code{:checkout}
+(see below).
+
+In the @code{git} and @code{hg} recipe types, note that while
+@code{:checkout} will accept other things like branches, tags, and so
+forth,@code{:checksum} must only be given a commit hash.  This will
+effectively lock the repository at a particular revision.  Note also
+that @code{:checksum} must be set to the full hash, not just the first
+6 or 8 characters (this restriction may be removed in the future).
 
 @item :checkout
-A git refspec (branch, tag, commit hash) that should be checked out
-after cloning the git repository. If provided, this overrides any
-value for the @code{:branch} property. Unlike the @code{:branch}
-property, this can be any valid argument to git checkout, including a
-tag name or a commit hash. The intended use of this property is to
-"lock" a repository at a particular revision, regardless of what
-happens to the repo upstream.
 
-Currently this property only has meaning for git type recipes. Other
-VCS-based methods may implement support in the future.
+For @code{git} or @code{hg} recipes, a branch name, tag, or other
+valid argument to @code{git checkout}/@code{hg update}.  If provided,
+this overrides any value for the @code{:branch} property.  Unlike the
+@code{:branch} property, this can be any valid argument to
+@code{checkout}, including a tag name or a commit hash.
+
+When given a commit hash or tag, this will lock the repo at
+that specific revision.  When given a branch name, this will
+always update the repo to the latest version of that branch,
+regardless of any changes made locally (in contrast to simply
+using the @code{:branch} property, which will cause el-get-to try
+to merge your local changes).
+
+Currently this property only has meaning for @code{git} and @code{hg}
+type recipes.  Other VCS-based methods may implement support in the
+future.
 
 @item :shallow
 If set to t in a git recipe, @code{git-clone} will be run with

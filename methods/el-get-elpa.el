@@ -298,9 +298,9 @@ first time.")
 
 ;;;###autoload
 (defun el-get-elpa-build-local-recipes (&optional target-dir do-not-update)
-  "retrieves list of ELPA packages and turn them to local recipe set.
-TARGET-DIR is the target directory
-DO-NOT-UPDATE will not update the package archive contents before running this."
+  "Retrieves list of ELPA packages and turn them to local recipe set.
+TARGET-DIR is the target directory (or `el-get-recipe-path-elpa' if nil).
+Calls `package-refresh-contents' unless DO-NOT-UPDATE is non-nil."
   (interactive)
   (let ((target-dir (or target-dir
                         (car command-line-args-left)
