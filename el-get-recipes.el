@@ -126,7 +126,9 @@ Used to avoid errors when exploring the path for recipes"
         (kill-buffer temp-buffer)))))
 
 (defun el-get-recipe-filename (package)
-  "Return the name of the file that contains the recipe for PACKAGE, if any."
+  "Return the name of the file that contains the recipe for PACKAGE, if any.
+Searches in `el-get-recipe-path' for files with suffix `.el' or
+`.rcp' (in that order)."
   (let ((package-el  (concat (el-get-as-string package) ".el"))
         (package-rcp (concat (el-get-as-string package) ".rcp")))
     (cl-loop for dir in el-get-recipe-path

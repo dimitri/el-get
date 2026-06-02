@@ -859,12 +859,14 @@ it. After that the recipe content is saved in the status file and
 cached, so that you can still start Emacs even if you remove the
 recipe file.
 
-The variable @code{el-get-recipe-path} is a list of directory paths
-to search for recipe files, in order. The recipe for a package
-@code{example} must be named @code{example.rcp}. The first file named
-that way in the @code{el-get-recipe-path} variable is used as the
-recipe. If you need to change it, you should do so immediately before
-running @code{el-get}; see the example in @xref{Basic Setup}.
+The variable @code{el-get-recipe-path} is a list of directory paths to
+search for recipe files, in order (see function
+@code{el-get-recipe-filename}).  The recipe for a package
+@code{example} must be named @file{example.el} or @file{example.rcp}.
+The first file named that way in the @code{el-get-recipe-path}
+variable is used as the recipe.  If you need to change it, you should
+do so immediately before running @code{el-get}; see the example in
+@xref{Basic Setup}.
 
 To check which recipe is used for a given package, use either the
 @code{M-x el-get-describe} or @code{M-x el-get-find-recipe-file}
