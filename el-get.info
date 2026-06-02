@@ -1,14 +1,10 @@
-This is el-get.info, produced by makeinfo version 4.13 from el-get.texi.
+This is el-get.info, produced by makeinfo version 7.1.1 from
+el-get.texi.
 
-INFO-DIR-SECTION Emacs
-START-INFO-DIR-ENTRY
-* El-Get: (el-get).        Using el-get to manage your Emacs Extensions.
-END-INFO-DIR-ENTRY
+Copyright © 2010, 2011, 2012, 2013 Dimitri Fontaine.
 
-   Copyright (C) 2010, 2011, 2012, 2013 Dimitri Fontaine.
-
-                 DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
-             Version 2, December 2004
+     DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE Version 2, December
+     2004
 
      Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
 
@@ -16,10 +12,14 @@ END-INFO-DIR-ENTRY
      copies of this license document, and changing it is allowed as long
      as the name is changed.
 
-     DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE    TERMS AND
-     CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+     DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE TERMS AND CONDITIONS
+     FOR COPYING, DISTRIBUTION AND MODIFICATION
 
-     0. You just DO WHAT THE FUCK YOU WANT TO.
+     0.  You just DO WHAT THE FUCK YOU WANT TO.
+INFO-DIR-SECTION Emacs
+START-INFO-DIR-ENTRY
+* El-Get: (el-get).        Using el-get to manage your Emacs Extensions.
+END-INFO-DIR-ENTRY
 
 
 File: el-get.info,  Node: Top,  Next: Introduction,  Up: (dir)
@@ -28,7 +28,7 @@ El-Get User Manual
 ******************
 
 El-Get is an Emacs Extension manager that allows you to install, update
-and remove external Emacs Lisp extensions. More importantly, El-Get
+and remove external Emacs Lisp extensions.  More importantly, El-Get
 will care about initializing installed extensions for you at Emacs
 Startup.
 
@@ -50,17 +50,17 @@ File: el-get.info,  Node: Introduction,  Next: Acknowledgments,  Prev: Top,  Up:
 1 Introduction
 **************
 
-El-Get allows you to install and manage Emacs Lisp code for Emacs. It
+El-Get allows you to install and manage Emacs Lisp code for Emacs.  It
 supports lots of differents types of sources and is able to install
 them, update them and remove them, and more importantly it will init
 them for you.
 
-   That means it will `require' the `features' you need, `load' the
-necessary files, set the `Info' paths so that `C-h i' shows the new
-documentation you now depend on, and finally call your own `post-init'
-function for you to setup the extension. Or call it a package.
+   That means it will ‘require’ the ‘features’ you need, ‘load’ the
+necessary files, set the ‘Info’ paths so that ‘C-h i’ shows the new
+documentation you now depend on, and finally call your own ‘post-init’
+function for you to setup the extension.  Or call it a package.
 
-   El-Get Version String (`M-x el-get-version') are now inspired by how
+   El-Get Version String (‘M-x el-get-version’) are now inspired by how
 Emacs itself numbers its versions.  First is the major version number,
 then a dot, then the minor version number.  The minor version number is
 0 when still developing the next major version.  So 3.0 is a developer
@@ -70,7 +70,7 @@ release while 3.1 is a stable release.
 1.2~dev, so 1.0 was a "stable" release in fact.  Ah, history.
 
    El-Get is considered to now have reached a very stable state where it
-only receives bug fixes, code refactoring, and new recipes. The current
+only receives bug fixes, code refactoring, and new recipes.  The current
 version is now 5.1, which is stable, and maintained in the "master" git
 branch.
 
@@ -88,15 +88,16 @@ first beta tester of the idea, before we really knew how much to
 achieve.
 
    Ryan C. Thompson joined and commented some issues, began contributing
-and quickly became top-level and most active contributor to the
-project, getting a commit bit and some management duties. He manages
-tests and issues on github as much as he can spares time to El-Get.
+and quickly became top-level and most active contributor to the project,
+getting a commit bit and some management duties.  He manages tests and
+issues on github as much as he can spares time to El-Get.
 
    Dave Abrahams contributed lots of code and efforts to make things
-right™. He's still using El-Get, but decided to retire from the project.
+right™.  He's still using El-Get, but decided to retire from the
+project.
 
    Lots of people (more than we can list here) did contribute to El-Get
-either recipes, bug fixes or ideas to implement, often with code. That
+either recipes, bug fixes or ideas to implement, often with code.  That
 builds up an awesome community, thanks guys!
 
      ~/dev/emacs/el-get git --no-pager shortlog -n -s | wc -l
@@ -129,9 +130,9 @@ Autoload
 
 Build
      Action that happens at *Note Glossary - Install::, and *Note
-     Glossary - Update::. Packages might skip any `build' step
-     entirely. When given, the build step allows to run system level
-     tools (think `make'), often to produce to derivative files.
+     Glossary - Update::.  Packages might skip any ‘build’ step
+     entirely.  When given, the build step allows to run system level
+     tools (think ‘make’), often to produce to derivative files.
 
 Byte-Compile
      Action to compile Emacs Lisp files so that loading them is faster.
@@ -140,19 +141,19 @@ Byte-Compile
      Init::.
 
 Dependency
-     Any El-Get package can depend on some others. At install time,
+     Any El-Get package can depend on some others.  At install time,
      El-Get will make sure all dependant packages are installed first.
-     At init time, same thing will happen. Dependency management is
-     solved with a topological sort so that if you install a package
-     `a' that depends on a package `b' that depends on a package `c',
-     El-Get will install `c' then `b' then `a'.
+     At init time, same thing will happen.  Dependency management is
+     solved with a topological sort so that if you install a package ‘a’
+     that depends on a package ‘b’ that depends on a package ‘c’, El-Get
+     will install ‘c’ then ‘b’ then ‘a’.
 
 Init
      When you start Emacs you want your packages to get setup and ready
-     to serve whatever usage you have of this advanced Operating
-     System. El-Get calls this setup step the `init' and will care
-     about initializing your packages automatically given a *Note
-     Glossary - Recipe::.
+     to serve whatever usage you have of this advanced Operating System.
+     El-Get calls this setup step the ‘init’ and will care about
+     initializing your packages automatically given a *Note Glossary -
+     Recipe::.
 
 Install
      El-Get install a package by fetching its sources as described in
@@ -161,47 +162,46 @@ Install
 
 Method
      An El-Get method is a backend code providing facilities to fetch,
-     install, update and remove external code. El-Get currently
-     implements methods that targets `apt-get', `brew', `builtin',
-     `bzr', `cvs', `darcs', `elpa', `emacsmirror', `emacswiki', `fink',
-     `fossil', `git' and `git-svn', `github' `github-tar' and
-     `github-zip', `go', `hg', `http' `http-tar' and `http-zip',
-     `pacman' and `svn'.
+     install, update and remove external code.  El-Get currently
+     implements methods that targets ‘apt-get’, ‘brew’, ‘builtin’,
+     ‘bzr’, ‘cvs’, ‘darcs’, ‘elpa’, ‘emacsmirror’, ‘emacswiki’, ‘fink’,
+     ‘fossil’, ‘git’ and ‘git-svn’, ‘github’ ‘github-tar’ and
+     ‘github-zip’, ‘go’, ‘hg’, ‘http’ ‘http-tar’ and ‘http-zip’,
+     ‘pacman’ and ‘svn’.
 
 Notification
      El-Get notifies its user when a package is done installing,
-     updating or removing. It knows how to use several system level
-     notification facilities, such as `DBUS' or `growl'.
+     updating or removing.  It knows how to use several system level
+     notification facilities, such as ‘DBUS’ or ‘growl’.
 
 Package
-     A package is what El-Get manages for you. It's a set of Emacs Lisp
+     A package is what El-Get manages for you.  It's a set of Emacs Lisp
      files (possible a set of a single file, possibly with some Info
      documentation and build scripts, etc) that El-Get knows how to
      fetch and install, update and remove, and init at Emacs Startup.
 
 Recipe
      An El-Get recipe describes a package in terms that allow El-Get to
-     provide its features against that package. It's easy enough to
+     provide its features against that package.  It's easy enough to
      write recipes, and fun to share them!
 
 Remove
      El-Get removes a package by simple removing the directory where the
-     package is installed. If you want the features of the package to
+     package is installed.  If you want the features of the package to
      get unloaded, most often the easier way to do that is to restart
      Emacs.
 
 Status
-     One of `available', `installed', `required' or `removed'. When
+     One of ‘available’, ‘installed’, ‘required’ or ‘removed’.  When
      El-Get is asked to install a package, the status is set to
-     `required' before to fetch and build it, so that in case of error
+     ‘required’ before to fetch and build it, so that in case of error
      the system knows to try installing again.
 
 Update
      El-Get updates a package in different ways, depending on the
-     package type and the associated method. In some cases it's not
-     possible to update a package, like when it switched from `svn' to
-     `git' for example.
-
+     package type and the associated method.  In some cases it's not
+     possible to update a package, like when it switched from ‘svn’ to
+     ‘git’ for example.
 
 
 File: el-get.info,  Node: Installing,  Next: Usage,  Prev: Glossary,  Up: Top
@@ -209,10 +209,10 @@ File: el-get.info,  Node: Installing,  Next: Usage,  Prev: Glossary,  Up: Top
 4 Installing
 ************
 
-El-Get comes with a `*scratch*'-installer. Ideally you would install
+El-Get comes with a ‘*scratch*’-installer.  Ideally you would install
 El-Get with El-Get itself, but I couldn't figure out how to do that, so
 instead you have to copy and paste the following code into your
-`*scratch*' buffer and evaluate it:
+‘*scratch*’ buffer and evaluate it:
 
      ;; So the idea is that you copy/paste this code into your *scratch* buffer,
      ;; hit C-j, and you have a working el-get.
@@ -223,7 +223,7 @@ instead you have to copy and paste the following code into your
         (eval-print-last-sexp)))
 
    To evaluate that code, you place the point at the end of the text
-block (just after the last closing paren) and you type `C-j'.
+block (just after the last closing paren) and you type ‘C-j’.
 
 * Menu:
 
@@ -237,10 +237,9 @@ File: el-get.info,  Node: Install the developer version,  Next: Skip Emacswiki r
 4.1 Developer version
 =====================
 
-The lazy installer uses the default `el-get-install.el' file which
-targets the `stable' branch.  To install El-Get directly on the
-`master' branch, summon the `el-get-master-branch' variable into
-existence:
+The lazy installer uses the default ‘el-get-install.el’ file which
+targets the ‘stable’ branch.  To install El-Get directly on the ‘master’
+branch, summon the ‘el-get-master-branch’ variable into existence:
 
      ;; So the idea is that you copy/paste this code into your *scratch* buffer,
      ;; hit C-j, and you have a working developer edition of el-get.
@@ -258,7 +257,7 @@ File: el-get.info,  Node: Skip Emacswiki recipes when installing,  Next: Shallow
 ==========================================
 
 The installer will fetch from emacswiki all the recipe available there
-and install a local copy of those in your system automatically. Should
+and install a local copy of those in your system automatically.  Should
 you want to disable that feature, the following snippet is showing how
 to:
 
@@ -278,9 +277,9 @@ File: el-get.info,  Node: Shallow clone when installing,  Prev: Skip Emacswiki r
 4.3 Shallow clone when installing
 =================================
 
-`--depth 1'
+‘--depth 1’
 
-   Should you want to run `git-clone' with `--depth 1' when installing
+   Should you want to run ‘git-clone’ with ‘--depth 1’ when installing
 El-Get itself, the following snippet is showing how to:
 
      (url-retrieve
@@ -296,54 +295,54 @@ File: el-get.info,  Node: Usage,  Next: Setup,  Prev: Installing,  Up: Top
 5 Usage
 *******
 
-Now that El-Get is installed, simply use `M-x el-get-install' and pick
+Now that El-Get is installed, simply use ‘M-x el-get-install’ and pick
 whatever package you need.
 
    Here's a list of commands provided by El-Get:
 
-`el-get-list-packages'
+‘el-get-list-packages’
      List all available packages with their names, *Note Glossary -
-     Status::, and description. Name and description are taken from the
+     Status::, and description.  Name and description are taken from the
      recipe file of the package.
 
      You can find which recipe file is used for a given package using
-     `el-get-find-recipe-file' or `el-get-describe'.
+     ‘el-get-find-recipe-file’ or ‘el-get-describe’.
 
-`el-get-describe'
+‘el-get-describe’
      Offers a full text description of a package with buttons to
      install, remove and update, and with the recipe content.
 
-`el-get-find-recipe-file'
+‘el-get-find-recipe-file’
      Find the recipe file for given recipe, prompted.
 
-`el-get-install'
+‘el-get-install’
      Install given package, as prompted.
 
-`el-get-init'
-     Initialize given package, as prompted. If some user code is setup
-     to be run at initialisation, it will get run by this command. See
+‘el-get-init’
+     Initialize given package, as prompted.  If some user code is setup
+     to be run at initialisation, it will get run by this command.  See
      *Note User Init::.
 
-`el-get-update'
-     Update a given package, as prompted. In some cases a straight
+‘el-get-update’
+     Update a given package, as prompted.  In some cases a straight
      update is not possible (recipe switched from CVS to git is a common
-     reason). El-Get will try and detect such cases and do
-     `el-get-remove' then `el-get-install' if necessary.
+     reason).  El-Get will try and detect such cases and do
+     ‘el-get-remove’ then ‘el-get-install’ if necessary.
 
      Please realise that updating packages might break your current
      package setup and that you will have to revisit your setup
      accordingly.
 
-`el-get-remove'
+‘el-get-remove’
      Remove given package, as prompted.
 
-`el-get-self-update'
-     Update El-Get itself, and force that update to be synchronous. That
-     allows to make sure you're not updating El-Get code while trying to
-     update or install some other package at the same time.
+‘el-get-self-update’
+     Update El-Get itself, and force that update to be synchronous.
+     That allows to make sure you're not updating El-Get code while
+     trying to update or install some other package at the same time.
 
-`el-get-update-all'
-     Will update all packages that have the `installed' status in your
+‘el-get-update-all’
+     Will update all packages that have the ‘installed’ status in your
      status file.  Before the update you will be prompted for
      confirmation that you wish to proceed.
 
@@ -352,10 +351,10 @@ whatever package you need.
      adjustments to your setup.  Updating all of them at once will
      require reviewing almost all your setup.
 
-`el-get-reload'
+‘el-get-reload’
+
      Reload the given package files.  Happens automatically at update
      time too.
-
 
 
 File: el-get.info,  Node: Setup,  Next: User Init,  Prev: Usage,  Up: Top
@@ -363,9 +362,9 @@ File: el-get.info,  Node: Setup,  Next: User Init,  Prev: Usage,  Up: Top
 6 Setup
 *******
 
-El-Get setup can be very simple or arbitrarily complex. This chapter
-explains how to do the very basic setup, which allow for using `M-x
-el-get-install' and friends, then how to get a more involved setup.
+El-Get setup can be very simple or arbitrarily complex.  This chapter
+explains how to do the very basic setup, which allow for using ‘M-x
+el-get-install’ and friends, then how to get a more involved setup.
 
 * Menu:
 
@@ -396,17 +395,17 @@ emacs startup the installed packages are initialized.
      (add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
      (el-get 'sync)
 
-   The `el-get' command will check that each and every package is
-installed on your system (in `el-get-dir' and if that's not the case,
-it will actually install it. Then, it will init the packages: that
-means caring about the `load-path', the `Info-directory-list' (and dir
-texinfo menu building) the loading of the emacs-lisp files, and finally
-it will require the features or eval the package `autoloads'.
+   The ‘el-get’ command will check that each and every package is
+installed on your system (in ‘el-get-dir’ and if that's not the case, it
+will actually install it.  Then, it will init the packages: that means
+caring about the ‘load-path’, the ‘Info-directory-list’ (and dir texinfo
+menu building) the loading of the emacs-lisp files, and finally it will
+require the features or eval the package ‘autoloads’.
 
    This usage is pretty simple to setup and use, but fails to cater with
-more complex setups involving multiple deployments (home and work
-laptop would be a classic example). El-Get fully supports that
-distributed setup, though, and this chapter explain how.
+more complex setups involving multiple deployments (home and work laptop
+would be a classic example).  El-Get fully supports that distributed
+setup, though, and this chapter explain how.
 
 
 File: el-get.info,  Node: The el-get function,  Next: Distributed Setup,  Prev: Basic Setup,  Up: Setup
@@ -416,33 +415,28 @@ File: el-get.info,  Node: The el-get function,  Next: Distributed Setup,  Prev: 
 
 Ensure that packages have been downloaded once and init them as needed.
 
-   This will not update the sources by using `apt-get install' or `git
-pull', but it will ensure that:
+   This will not update the sources by using ‘apt-get install’ or ‘git
+pull’, but it will ensure that:
 
-   * the packages have been installed
+   • the packages have been installed
+   • load-path is set so their elisp files can be found
+   • Info-directory-list is set so their info files can be found
+   • Autoloads have been prepared and evaluated for each package
+   • Any post-installation setup (e.g.  '(require 'feature)') happens
 
-   * load-path is set so their elisp files can be found
+   When SYNC is ‘nil’ (the default), all installations run concurrently,
+in the background.
 
-   * Info-directory-list is set so their info files can be found
-
-   * Autoloads have been prepared and evaluated for each package
-
-   * Any post-installation setup (e.g. `(require 'feature)') happens
-
-
-   When SYNC is `nil' (the default), all installations run
-concurrently, in the background.
-
-   When SYNC is `sync', each package will be installed synchronously,
+   When SYNC is ‘sync’, each package will be installed synchronously,
 and any error will stop it all.
 
-   Please note that the `el-get-init' part of `el-get' is always done
-synchronously. There's `byte-compile' support though, and the packages
-you use are welcome to use `autoload' too. You can also force your
-setup to be loaded lazily with the `el-get-is-lazy' variable.
+   Please note that the ‘el-get-init’ part of ‘el-get’ is always done
+synchronously.  There's ‘byte-compile’ support though, and the packages
+you use are welcome to use ‘autoload’ too.  You can also force your
+setup to be loaded lazily with the ‘el-get-is-lazy’ variable.
 
-   `PACKAGES' is expected to be a list of packages you want to install
-or init.  When `PACKAGES' is omited (the default), the list of already
+   ‘PACKAGES’ is expected to be a list of packages you want to install
+or init.  When ‘PACKAGES’ is omited (the default), the list of already
 installed packages is considered.
 
 
@@ -451,13 +445,13 @@ File: el-get.info,  Node: Distributed Setup,  Next: The el-get-bundle macro,  Pr
 6.3 Distributed Setup
 =====================
 
-When you are sharing your emacs setup between several machines (work
-and home destops, laptop, etc); it's usual to manage your `.emacs.d'
-setup in a distributed repository (such as `git'). El-Get then provides
-an easy canonical list of packages you depend on to run emacs, and this
-documentation is usable as-is. It is recommended that you not store the
+When you are sharing your emacs setup between several machines (work and
+home destops, laptop, etc); it's usual to manage your ‘.emacs.d’ setup
+in a distributed repository (such as ‘git’).  El-Get then provides an
+easy canonical list of packages you depend on to run emacs, and this
+documentation is usable as-is.  It is recommended that you not store the
 El-Get tree in git, however; to prevent this, so you can add a pattern
-`/el-get' to `.emacs.d/.gitignore'.
+‘/el-get’ to ‘.emacs.d/.gitignore’.
 
      (add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-directory))
      (require 'el-get)
@@ -488,13 +482,13 @@ El-Get tree in git, however; to prevent this, so you can add a pattern
 
      (el-get 'sync my-packages)
 
-   Please note that when you unreference a package from `my-packages',
+   Please note that when you unreference a package from ‘my-packages’,
 it remains locally installed.
 
    Going one step further with the idea of a canonical list, el-get
-provides the command `el-get-cleanup', which will remove all packages
-absent from `my-packages'. This allows, in effect, to put under version
-control only the user init file, instead of the whole `.emacs.d'
+provides the command ‘el-get-cleanup’, which will remove all packages
+absent from ‘my-packages’.  This allows, in effect, to put under version
+control only the user init file, instead of the whole ‘.emacs.d’
 directory, and still enjoy a truly portable emacs configuration.
 
    In the code example above, replace the last line with the following:
@@ -502,7 +496,7 @@ directory, and still enjoy a truly portable emacs configuration.
      (el-get-cleanup my-packages)
      (el-get 'sync my-packages)
 
-   You can also use `el-get-bundle' macro as a syntactic sugar to
+   You can also use ‘el-get-bundle’ macro as a syntactic sugar to
 specify a local source to install.  With this macro, nothing other than
 specified packages is installed.
 
@@ -532,10 +526,10 @@ File: el-get.info,  Node: The el-get-bundle macro,  Next: Setup Customization,  
 6.4 The el-get-bundle macro
 ===========================
 
-The macro `el-get-bundle' is a syntactic sugar which allows you to tell
+The macro ‘el-get-bundle’ is a syntactic sugar which allows you to tell
 El-Get to install some package with a local source definition and
 initialization code for the package.  It is called in a form
-`(el-get-bundle PACKAGE PROPERTIES CODE)', where PACKAGE specifies a
+‘(el-get-bundle PACKAGE PROPERTIES CODE)’, where PACKAGE specifies a
 package name, PROPERTIES specifies a local recipe definition and CODE
 specifies initialization code.
 
@@ -543,7 +537,7 @@ specifies initialization code.
 -------------------------------
 
 To install a package whose source is already defined in a recipe file,
-use `el-get-bundle' macro with the package name.
+use ‘el-get-bundle’ macro with the package name.
 
      (el-get-bundle color-moccur)
 
@@ -554,17 +548,17 @@ use `el-get-bundle' macro with the package name.
 6.4.2 Install some package with requiring it
 --------------------------------------------
 
-If you also want to `require' the package, use `el-get-bundle!' macro.
+If you also want to ‘require’ the package, use ‘el-get-bundle!’ macro.
 
      (el-get-bundle! color-moccur)
 
    When the name of the feature you require is different from the
-package name (the recipe name), use `FEATURE in PACKAGE' form.
+package name (the recipe name), use ‘FEATURE in PACKAGE’ form.
 
      (el-get-bundle! yaicomplete in github:tarao/elisp)
 
-   If you wish to `require' more than one feature, then put them in a
-`:features' property.
+   If you wish to ‘require’ more than one feature, then put them in a
+‘:features’ property.
 
      (el-get-bundle github:tarao/elisp
        :features (yaicomplete mode-line-color))
@@ -578,19 +572,19 @@ You can write initalization code after the package name.
        (global-set-key (kbd "C-x b") #'anything-for-files))
 
    You can provide multiple initialization code for a single package by
-writing `el-get-bundle' macro call may times.  Each initialization code
-is evaluated when the corresponding `el-get-bundle' macro call is
+writing ‘el-get-bundle’ macro call may times.  Each initialization code
+is evaluated when the corresponding ‘el-get-bundle’ macro call is
 evaluated.
 
    Initialization code is automatically compiled when they are evaluated
 for the first time (after you modified the file enclosing the code) if
-`el-get-bundle-byte-compile' is non-nil.  The initialization code is
-saved to a file in `el-get-bundle-init-directory' together with a
+‘el-get-bundle-byte-compile’ is non-nil.  The initialization code is
+saved to a file in ‘el-get-bundle-init-directory’ together with a
 compiled version.
 
    Note that you should not call functions or refer to variables defined
 in the package if the package is going to be autoloaded.  In such case,
-you should use `with-eval-after-load' macro.
+you should use ‘with-eval-after-load’ macro.
 
      (el-get-bundle anything
        (global-set-key (kbd "C-x b") #'anything-for-files))
@@ -599,9 +593,9 @@ you should use `with-eval-after-load' macro.
        (define-key anything-map (kbd "M-n") #'anything-next-source)
        (define-key anything-map (kbd "M-p") #'anything-previous-source))
 
-   If you want the form passed to `with-eval-after-load' to be compiled
+   If you want the form passed to ‘with-eval-after-load’ to be compiled
 together with the initialization code, you can use tarao's
-`with-eval-after-load-feature'
+‘with-eval-after-load-feature’
 (https://github.com/tarao/with-eval-after-load-feature-el) instead or
 you will get "reference to free variable" warnings during the
 compilation.
@@ -621,9 +615,9 @@ If you want to override a package source definition in a recipe file or
 define a new definition, you can pass a property list after the package
 name.
 
-   For example, if you want to install `zenburn-theme' but want to use
+   For example, if you want to install ‘zenburn-theme’ but want to use
 other version than El-Get's default recipe, you can reuse the default
-recipe with overriding `:url' option.
+recipe with overriding ‘:url’ option.
 
      (el-get-bundle zenburn-theme
        :url "http://raw.github.com/bbatsov/zenburn-emacs/master/zenburn-theme.el"
@@ -636,10 +630,10 @@ recipe with overriding `:url' option.
        :description "Provides zsh like completion for minibuffer in Emacs"
        :website "http://d.hatena.ne.jp/mooz/20101003/p1")
 
-   The property `:type' is required if the package source is already
+   The property ‘:type’ is required if the package source is already
 defined but you don't reuse it.  Otherwise, if the package source is not
-defined yet, you can omit `:type' property as long as it can be guessed
-from `:url'.
+defined yet, you can omit ‘:type’ property as long as it can be guessed
+from ‘:url’.
 
      (el-get-bundle! zlc :url "http://github.com/mooz/emacs-zlc.git")
      ;; equivalent to
@@ -652,15 +646,15 @@ from `:url'.
 --------------------------------------------------
 
 There are some ways to specify package source options by package name
-modifiers.  With these modifiers, you can omit `:type' property.
+modifiers.  With these modifiers, you can omit ‘:type’ property.
 
-`OWNER/'
+‘OWNER/’
      Specifies a github owner name.
 
-`gist:ID'
+‘gist:ID’
      Specifies a gist ID.
 
-`TYPE:'
+‘TYPE:’
      Specifies a type for the package.
 
      (el-get-bundle tarao/tab-group)
@@ -678,14 +672,14 @@ modifiers.  With these modifiers, you can omit `:type' property.
 6.4.6 Customization
 -------------------
 
-`el-get-bundle-init-dir'
+‘el-get-bundle-init-dir’
      Directory where a copy of initialization code specified in a
-     `el-get-bundle' macro call and its byte-compiled version are
-     saved.  Defaults to `~/.emacs.d/el-get/bundle-init/'.
+     ‘el-get-bundle’ macro call and its byte-compiled version are saved.
+     Defaults to ‘~/.emacs.d/el-get/bundle-init/’.
 
-`el-get-bundle-byte-compile'
-     Whether to compile initialization code in a `el-get-bundle' macro
-     call.  Defaults to `t'.
+‘el-get-bundle-byte-compile’
+     Whether to compile initialization code in a ‘el-get-bundle’ macro
+     call.  Defaults to ‘t’.
 
 
 File: el-get.info,  Node: Setup Customization,  Prev: The el-get-bundle macro,  Up: Setup
@@ -697,37 +691,38 @@ Even though the defaults that are provided by El-Get provide all that
 you need to get it working, there may be a reason to manually define
 certain settings, particularly for portability.
 
-`el-get-dir'
-     Path where packages are installed. Defaults to
-     `~/.emacs.d/el-get/'.
+‘el-get-dir’
+     Path where packages are installed.  Defaults to
+     ‘~/.emacs.d/el-get/’.
 
-`el-get-install-dir'
-     Path for the `el-get' package. Defaults to
-     `~/.emacs.d/el-get/el-get'.
+‘el-get-install-dir’
+     Path for the ‘el-get’ package.  Defaults to
+     ‘~/.emacs.d/el-get/el-get’.
 
-`el-get-install-branch'
-     If this is set, El-Get will be installed using the target
-     `branch'.  This takes precedence over setting
-     `el-get-master-branch' in the installation settings, see *Note
-     Installing::.
+‘el-get-install-branch’
+     If this is set, El-Get will be installed using the target ‘branch’.
+     This takes precedence over setting ‘el-get-master-branch’ in the
+     installation settings, see *Note Installing::.
 
-`el-get-git-install-url'
+‘el-get-git-install-url’
      Use this to specify your own fork of El-Get for installation.
 
-`el-get-recipe-path-elpa'
+‘el-get-recipe-path-elpa’
      This directory stores a local list of ELPA recipes.
-     `~/.emacs.d/el-get/el-get/recipes/elpa'
+     ‘~/.emacs.d/el-get/el-get/recipes/elpa’
 
-`el-get-recipe-path-emacswiki'
+‘el-get-recipe-path-emacswiki’
+
      As above for ELPA, this directory stores a local list of emacswiki
-     recipes. Defaults to `~/.emacs.d/el-get/el-get/recipes/emacswiki/'.
+     recipes.  Defaults to
+     ‘~/.emacs.d/el-get/el-get/recipes/emacswiki/’.
 
-`el-get-allow-insecure'
+‘el-get-allow-insecure’
+
      This determines whether or not El-Get will attempt to install
-     packages over insecure connections; setting it to nil
-     (recommended) will cause it to abort upon any install or update
-     operation which uses an unencrypted URL.
-
+     packages over insecure connections; setting it to nil (recommended)
+     will cause it to abort upon any install or update operation which
+     uses an unencrypted URL.
 
 
 File: el-get.info,  Node: User Init,  Next: Recipes,  Prev: Setup,  Up: Top
@@ -736,12 +731,12 @@ File: el-get.info,  Node: User Init,  Next: Recipes,  Prev: Setup,  Up: Top
 ***********
 
 The main task performed by El-Get is package initialization at Emacs
-startup. It will care about all of them, their dependencies, and call
-code provided by the recipe author. You can add your own setup code and
+startup.  It will care about all of them, their dependencies, and call
+code provided by the recipe author.  You can add your own setup code and
 register it in a way that El-Get will evaluate it at the right time.
 
-   The package setup can either go into the `:after' property, or in a
-file named `init-package.el' in `el-get-user-package-directory'.  Any
+   The package setup can either go into the ‘:after’ property, or in a
+file named ‘init-package.el’ in ‘el-get-user-package-directory’.  Any
 such named file will get automatically loaded by El-Get at package init
 time, if it exists.
 
@@ -756,26 +751,25 @@ File: el-get.info,  Node: Before and After properties,  Next: Initialization fil
 7.1 Before and After properties
 ===============================
 
-The `:before' and `:after' properties are evaluated by El-Get in the
+The ‘:before’ and ‘:after’ properties are evaluated by El-Get in the
 package initialization sequence.
 
-`:before'
+‘:before’
      This should be a lisp form to evaluate after both the
-     `Info-directory-list' and the `load-path' variables have been
-     taken care of, but before loading the package or any further
-     action from `el-get-init'.  It will be run with the variable
-     `default-directory' set to the package directory.
+     ‘Info-directory-list’ and the ‘load-path’ variables have been taken
+     care of, but before loading the package or any further action from
+     ‘el-get-init’.  It will be run with the variable
+     ‘default-directory’ set to the package directory.
 
-`:after'
+‘:after’
      This should be a lisp form to evaluate after loading the package.
-     This function is registered for `eval-after-load' against the
-     recipe library by `el-get-init' once the `:load' and `:features'
-     have been setup. It will be run with the variable
-     `default-directory' set to the package directory.
-
+     This function is registered for ‘eval-after-load’ against the
+     recipe library by ‘el-get-init’ once the ‘:load’ and ‘:features’
+     have been setup.  It will be run with the variable
+     ‘default-directory’ set to the package directory.
 
    Here's a couple of examples of package recipes that are using
-`:before' and `:after' properties:
+‘:before’ and ‘:after’ properties:
 
        (:name asciidoc
         :type elpa
@@ -797,12 +791,12 @@ File: el-get.info,  Node: Initialization files,  Prev: Before and After properti
 7.2 Initialization files
 ========================
 
-El-Get will see if a file named `init-package.el' exists in the
-directory pointed at by the `el-get-user-package-directory' variable.
+El-Get will see if a file named ‘init-package.el’ exists in the
+directory pointed at by the ‘el-get-user-package-directory’ variable.
 When this variable is not nil and if such a file does exist in the
 directory, then El-Get will load the user init file for PACKAGE.
 
-   The initialization file is loaded at the same time as the `:after'
+   The initialization file is loaded at the same time as the ‘:after’
 property would have be run, and just before it if you provide both.
 
    El-Get automatically byte compiles the init file as needed and load
@@ -815,7 +809,7 @@ File: el-get.info,  Node: Recipes,  Next: Authoring Recipes,  Prev: User Init,  
 *********
 
 All of El-Get behavior is controled with recipes that you can share,
-download, update and author. This chapter explain how to manage your
+download, update and author.  This chapter explain how to manage your
 recipes and how to author them and ship them.
 
    Recipes are a list of properties, which are documented in the
@@ -834,19 +828,20 @@ File: el-get.info,  Node: Organizing recipes,  Next: Getting more recipes,  Up: 
 ======================
 
 El-Get needs to find a package recipe to be able to install or update
-it. After that the recipe content is saved in the status file and
+it.  After that the recipe content is saved in the status file and
 cached, so that you can still start Emacs even if you remove the recipe
 file.
 
-   The variable `el-get-recipe-path' is a list of directory paths to
-search for recipe files, in order. The recipe for a package `example'
-must be named `example.rcp'. The first file named that way in the
-`el-get-recipe-path' variable is used as the recipe. If you need to
-change it, you should do so immediately before running `el-get'; see
-the example in *Note Basic Setup::.
+   The variable ‘el-get-recipe-path’ is a list of directory paths to
+search for recipe files, in order (see function
+‘el-get-recipe-filename’).  The recipe for a package ‘example’ must be
+named ‘example.el’ or ‘example.rcp’.  The first file named that way in
+the ‘el-get-recipe-path’ variable is used as the recipe.  If you need to
+change it, you should do so immediately before running ‘el-get’; see the
+example in *Note Basic Setup::.
 
    To check which recipe is used for a given package, use either the
-`M-x el-get-describe' or `M-x el-get-find-recipe-file' command.
+‘M-x el-get-describe’ or ‘M-x el-get-find-recipe-file’ command.
 
    This organisation with several path allow you to setup El-Get to use
 its own recipes, recipes automatically created from online resources
@@ -856,11 +851,11 @@ its own recipes, recipes automatically created from online resources
 than it uses its own recipes, it allows you to share them very easily.
 Send the file to a friend and have it store it at the right place.
 
-   It's also possible to setup `el-get-sources' with recipe
-information. As long as the `type' property is not filled in
-`el-get-sources', El-Get will first find the recipe as usual and then
-merge the recipe content with the recipe skeleton provided by the
-matching `el-get-sources' stanza.
+   It's also possible to setup ‘el-get-sources’ with recipe information.
+As long as the ‘type’ property is not filled in ‘el-get-sources’, El-Get
+will first find the recipe as usual and then merge the recipe content
+with the recipe skeleton provided by the matching ‘el-get-sources’
+stanza.
 
    El-Get also supports full User Init files, see *Note User Init::.
 
@@ -870,15 +865,17 @@ File: el-get.info,  Node: Getting more recipes,  Next: Overriding package files,
 8.2 Getting more recipes
 ========================
 
-The command `M-x el-get-emacswiki-refresh' downloads the list of Emacs
-Lisp files available at EmacsWiki. El-Get is able to automatically
-install any such file at the right place in `el-get-dir'. The
+The command ‘M-x el-get-emacswiki-refresh’ downloads the list of Emacs
+Lisp files available at EmacsWiki.  El-Get is able to automatically
+install any such file at the right place in ‘el-get-dir’.  The
 integration of an automatically generated recipe is often not enough,
-you often have to add some initialisation code. See *Note User Init::.
+you often have to add some initialisation code.  See *Note User Init::.
 
-   The command `el-get-elpa-build-local-recipes' downloads the list of
-Emacs Lisp Packages from the ELPA archives you have setup, and make
-them automatically available for El-Get.
+   The command ‘el-get-elpa-build-local-recipes’ downloads the list of
+Emacs Lisp Packages from the ELPA archives you have setup, and make them
+automatically available for El-Get (they are written into
+‘~/.emacs.d/el-get/el-get/recipes/elpa’ by default, this is controlled
+by the variable ‘el-get-rcipe-path-elpa’).
 
 
 File: el-get.info,  Node: Overriding package files,  Prev: Getting more recipes,  Up: Recipes
@@ -886,10 +883,10 @@ File: el-get.info,  Node: Overriding package files,  Prev: Getting more recipes,
 8.3 Overriding package files
 ============================
 
-El-Get manages the files associated with a package. You can browse
-those files using the `el-get-cd' function. It's possible to hack on
-those files, be aware that doing so might break your setup capability
-to handle upgrades.
+El-Get manages the files associated with a package.  You can browse
+those files using the ‘el-get-cd’ function.  It's possible to hack on
+those files, be aware that doing so might break your setup capability to
+handle upgrades.
 
 
 File: el-get.info,  Node: Authoring Recipes,  Prev: Recipes,  Up: Top
@@ -897,9 +894,9 @@ File: el-get.info,  Node: Authoring Recipes,  Prev: Recipes,  Up: Top
 9 Authoring Recipes
 *******************
 
-Authoring recipes is often very easy. El-Get goal is to adapt to any
+Authoring recipes is often very easy.  El-Get goal is to adapt to any
 Emacs Lisp code and distribution you can find out there in the wild, so
-the list of features supported is quite large. Simple cases are very
+the list of features supported is quite large.  Simple cases are very
 simple, though.
 
    If you want to submit recipes as pull request, please make sure to
@@ -921,70 +918,68 @@ File: el-get.info,  Node: Recipe format,  Next: Dependencies,  Up: Authoring Rec
 9.1 Recipe format
 =================
 
-The recipe for the hypothetical package named `el-get-example' must be
-provided in a file named `el-get-example.rcp'. This file will be
-searched for as described in *Note Organizing recipes::. The variable
-`el-get-sources' is also considered as a recipe source, as detailed in
+The recipe for the hypothetical package named ‘el-get-example’ must be
+provided in a file named ‘el-get-example.rcp’.  This file will be
+searched for as described in *Note Organizing recipes::.  The variable
+‘el-get-sources’ is also considered as a recipe source, as detailed in
 *Note Organizing recipes::.
 
-   A recipe file contains a lisp property list. Accepted properties are
-described in the documentation for the variable `el-get-sources', and
+   A recipe file contains a lisp property list.  Accepted properties are
+described in the documentation for the variable ‘el-get-sources’, and
 their possible values are described at the same place.
 
-   If your property list is missing the `:type' property, then it's
+   If your property list is missing the ‘:type’ property, then it's
 merged with the recipe one, so that you can override any definition
-provided by `el-get' recipes locally.
+provided by ‘el-get’ recipes locally.
 
-`:name'
-     The name of the package. It can be different from the name of the
-     directory where the package is stored (after a `git clone' for
+‘:name’
+     The name of the package.  It can be different from the name of the
+     directory where the package is stored (after a ‘git clone’ for
      example), in which case a symlink will be created.
 
-`:depends'
+‘:depends’
      A single package name, or a list of package names, on which the
      package depends.  All of a packages dependencies will be installed
      before the package is installed.
 
-`:builtin'
+‘:builtin’
      A string containing the Emacs version (see EMACS-MAJOR-VERSION
      variable) from which Emacs includes the recipe as a builtin.  For
-     example, `package.el' (the implementation of ELPA) is part of
-     Emacs 24 but needs an external recipe for previous major versions.
+     example, ‘package.el’ (the implementation of ELPA) is part of Emacs
+     24 but needs an external recipe for previous major versions.
 
-     Unlike the builtin `:type' no `:build' or `:info' properties are
+     Unlike the builtin ‘:type’ no ‘:build’ or ‘:info’ properties are
      executed if this matches.
 
-`:pkgname'
-     The name of the package for the underlying package management
-     system (apt-get, fink or pacman, also supported by github and
-     emacsmirror), which can be different from the Emacs package name.
-
-`:type'
+‘:type’
      The type of the package, currently el-get offers support for
      apt-get, elpa, git, github, emacsmirror, git-svn, bzr svn, cvs,
-     darcs, fink, ftp, emacswiki, http-tar, pacman, hg and http. You
+     darcs, fink, ftp, emacswiki, http-tar, pacman, hg and http.  You
      can easily support your own types here, see EL-GET-METHODS.
 
-`:branch'
+‘:branch’
      Which branch to fetch when using git (and by extension, github and
      emacsmirror, which are derived from git).  Also supported in the
      installer in el-get-install.
 
-`:url'
+‘:url’
      Where to fetch the package, only meaningful for git and http types.
 
-`:username, :pkgname'
-     For the github type, these specify the user name and repo name to
-     clone from Github. For example, for el-get, the user name would be
-     `"dimitri"' , and the repo name would be `"el-get"' . As described
-     above, the `:pkgname' property is only required if the repo name
-     on Github differs from the Emacs package name. Note that the
-     emacsmirror type is just like the github type with `:username' set
-     to `"emacsmirror"' .
+‘:pkgname’
+     The name of the package for the underlying package management
+     system (apt-get, fink or pacman, also supported by github and
+     emacsmirror), which can be different from the Emacs package name.
 
-`:build'
-     Your build recipe, a list.  A build command C whose `car' is a
-     symbol  (see `symbolp') will be replaced by (eval C).
+     For the github type, this specifies the user name and repo name to
+     clone from Github.  For example, for el-get, the package name would
+     be ‘"dimitri/el-get"’.  Note that the ‘emacsmirror’ type is just
+     like the github type with the prefix ‘"emacsmirror"’ automatically
+     supplied.
+
+‘:build’
+
+     Your build recipe, a list.  A build command C whose 'car' is a
+     symbol (see 'symbolp') will be replaced by (eval C).
 
      Then, each element of the recipe will be interpreted as a command:
 
@@ -993,161 +988,174 @@ provided by `el-get' recipes locally.
      argument to the call.  No whitespace parsing is done.
 
      Otherwise, if it is a list, any list sub-elements will be
-     recursively "flattened" (see `el-get-flatten').  The resulting
+     recursively "flattened" (see ‘el-get-flatten’).  The resulting
      strings will be interpreted as individual shell arguments,
      appropriately quoted.
 
-`:build/system-type'
+‘:build/system-type’
      Your specific build recipe for a given SYSTEM-TYPE gets there and
-     looks like `:build'.
+     looks like ‘:build’.  Note that if this property is ‘nil’, el-get
+     will fallback to the plain ‘:build’ value.  Use ‘(progn nil)’ for a
+     nop build step.
 
-`:load-path'
+‘:load-path’
      A directory or a list of directories you want El-Get to add to your
-     LOAD-PATH. Those directories are relative to where the package
+     LOAD-PATH.  Those directories are relative to where the package
      gets installed.
 
-`:compile'
+‘:compile’
      Allow to restrict what to byte-compile: by default, El-Get will
-     compile all elisp files in the `:load-path' directories, unless a
-     `:build' command exists for the package source. Given a `:compile'
+     compile all elisp files in the ‘:load-path’ directories, unless a
+     ‘:build’ command exists for the package source.  Given a ‘:compile’
      property, El-Get will only byte-compile those given files,
-     directories or filename-regexpes in the property value. This
-     property can be a `listp' or a `stringp' if you want to compile
+     directories or filename-regexpes in the property value.  This
+     property can be a ‘listp’ or a ‘stringp’ if you want to compile
      only one of those.
 
-`:info'
+‘:info’
      This string allows you to setup a directory where to find a
-     `package.info' file, or a `path/to/whatever.info' file. It will
-     even run `ginstall-info' for you to create the `dir' entry so that
-     `C-h i' will be able to list the newly installed documentation.
-     Note that you might need to kill (`C-x k' ) your info buffer then
-     `C-h i' again to be able to see the new menu entry.
+     ‘package.info’ file, or a ‘path/to/whatever.info’ file.  It will
+     even run ‘ginstall-info’ for you to create the ‘dir’ entry so that
+     ‘C-h i’ will be able to list the newly installed documentation.
+     Note that you might need to kill (‘C-x k’ ) your info buffer then
+     ‘C-h i’ again to be able to see the new menu entry.
 
-`:load'
+‘:load’
      List of files to load, or a single file to load after having
-     installed the source but before `require'ing its features.
+     installed the source but before ‘require’ing its features.
 
-`:features'
-     List of features el-get will `require' for you.
+‘:features’
+     List of features el-get will ‘require’ for you.
 
-`:autoloads'
+‘:autoloads’
      Control whether El-Get should generate autoloads for this package.
-     Setting this to `nil' prevents El-Get from generating autoloads
-     for the package. Default is `t'. Setting this to a string or a
-     list of string will load the named autoload files.
+     Setting this to ‘nil’ prevents El-Get from generating autoloads for
+     the package.  Default is ‘t’.  Setting this to a string or a list
+     of string will load the named autoload files.
 
-`:library'
-     When using `:after' but not using `:features' , `:library' allows
-     to set the library against which to register the `:after' function
-     against `eval-after-load'.  It defaults to either `:pkgname' or
-     `:package' , in this order.  See also `el-get-eval-after-load' .
+‘:library’
+     When using ‘:after’ but not using ‘:features’ , ‘:library’ allows
+     to set the library against which to register the ‘:after’ function
+     against ‘eval-after-load’.  It defaults to either ‘:pkgname’ or
+     ‘:package’ , in this order.  See also ‘el-get-eval-after-load’ .
 
-`:options'
+‘:options’
      Currently used by http-tar and cvs support.  When using http-tar,
-     it allows you to give the tar options you want to use. Typically
-     would be `"xzf"' , but you might want to choose `"xjf"' for
-     handling `.tar.bz' files e.g.
+     it allows you to give the tar options you want to use.  Typically
+     would be ‘"xzf"’ , but you might want to choose ‘"xjf"’ for
+     handling ‘.tar.bz’ files e.g.
 
-     When using CVS, when it's set to `"login"', El-Get will first
-     issue a `cvs login' against the server, asking you interactively
-     (in the minibuffer) any password you might to enter, and only then
-     it will run the `cvs checkout' command.
+     When using CVS, when it's set to ‘"login"’, El-Get will first issue
+     a ‘cvs login’ against the server, asking you interactively (in the
+     minibuffer) any password you might to enter, and only then it will
+     run the ‘cvs checkout’ command.
 
-`:module'
+‘:module’
      Currently only used by the cvs support, allow you to configure the
      module you want to checkout in the given URL.
 
-`:repo'
-     Only used by the elpa support, a cons cell with the form `(NAME .
-     URL)' , as in PACKAGE-ARCHIVES .  If the package source only
+‘:repo’
+     Only used by the elpa support, a cons cell with the form ‘(NAME .
+     URL)’ , as in PACKAGE-ARCHIVES .  If the package source only
      specifies a URL, the URL will be used for NAME as well.
 
-`:prepare'
+‘:prepare’
      This should be a lisp form to evaluate after both the
      INFO-DIRECTORY-LIST and the LOAD-PATH variables have been taken
      care of, but before loading the package or any further action from
-     `el-get-init' .  It will be run with DEFAULT-DIRECTORY set to the
+     ‘el-get-init’ .  It will be run with DEFAULT-DIRECTORY set to the
      package directory.
 
-`:before'
-     This exactly like `:prepare' property, but is reserved for user
+‘:before’
+     This exactly like ‘:prepare’ property, but is reserved for user
      customizations in EL-GET-SOURCES .  Recipe files should not use
      this property.  It will be run just after :prepare.
 
-`:post-init'
+‘:post-init’
      This should be a lisp form to evaluate after loading the package.
      Intended for use from recipes.  This function is registered for
-     `eval-after-load' against the recipe library by `el-get-init' once
-     the `:load' and `:features' have been setup.  Like `:prepare' , it
+     ‘eval-after-load’ against the recipe library by ‘el-get-init’ once
+     the ‘:load’ and ‘:features’ have been setup.  Like ‘:prepare’ , it
      will be run with DEFAULT-DIRECTORY set to the package directory.
 
-`:after'
-     This exactly like the `:post-init' property, but is reserved for
-     user customizations in EL-GET-SOURCES.  Recipe files should not
-     use this property.  It will be run just after `:post-init' and
-     after any per-package user-init-file (see
-     EL-GET-USER-PACKAGE-DIRECTORY).
+‘:after’
+     This exactly like the ‘:post-init’ property, but is reserved for
+     user customizations in EL-GET-SOURCES.  Recipe files should not use
+     this property.  It will be run just after ‘:post-init’ and after
+     any per-package user-init-file (see EL-GET-USER-PACKAGE-DIRECTORY).
 
-`:lazy'
-     Default to `nil' .  Allows to override EL-GET-IS-LAZY per package.
+‘:lazy’
+     Default to ‘nil’ .  Allows to override EL-GET-IS-LAZY per package.
 
-`:localname'
-     Currently only used by both `http' and `ftp' supports, allows to
+‘:localname’
+     Currently only used by both 'http' and 'ftp' supports, allows to
      specify the target name of the downloaded file.
 
      This option is useful if the package should be retrieved using a
      presentation interface (such as as web SCM tool).
 
-     For example, destination should be set to `package.el' if the
+     For example, destination should be set to ‘package.el’ if the
      package url has the following scheme:
 
      "http://www.example.com/show-as-text?file=path/package.el"
 
-`:website'
+‘:website’
      The website of the project.
 
-`:description'
+‘:description’
      A short description of the project.
 
-`:checksum'
-     Some methods in El-Get download files that are not so trusted
-     (e.g. anyone is allowed to modify emacswiki anytime).  For these
-     cases you can set up a checksum value for a package, so you will
-     notice if El-Get tries to install a version that you haven't seen
-     before.  The installation will simply fail and you will see the
-     good and bad checksum values in `*Messages*'.  To get the checksum
-     value for a package initially, install the package while
-     EL-GET-VERBOSE is on.
+‘:checksum’
+     Some methods in El-Get download files that are not so trusted (e.g.
+     anyone is allowed to modify emacswiki anytime).  For these cases
+     you can set up a checksum value for a package, so you will notice
+     if El-Get tries to install a version that you haven't seen before.
+     The installation will simply fail and you will see the good and bad
+     checksum values in ‘*Messages*’.  To get the checksum value for a
+     package initially, install the package while EL-GET-VERBOSE is on.
 
      Checksum calculation is currently supported by these methods with
      the following meaning:
 
-     http, ftp and emacswiki with the SHA1 of the downloaded file
+     ‘http’, ‘ftp’ and ‘emacswiki’ with the SHA1 of the downloaded file.
 
-     git in which it is an alias for `:checkout' (see below)
+     ‘git’ and ‘hg’ in which it is an alias for ‘:checkout’ (see below).
 
-`:checkout'
-     A git refspec (branch, tag, commit hash) that should be checked out
-     after cloning the git repository. If provided, this overrides any
-     value for the `:branch' property. Unlike the `:branch' property,
-     this can be any valid argument to git checkout, including a tag
-     name or a commit hash. The intended use of this property is to
-     "lock" a repository at a particular revision, regardless of what
-     happens to the repo upstream.
+     In the ‘git’ and ‘hg’ recipe types, note that while ‘:checkout’
+     will accept other things like branches, tags, and so
+     forth,‘:checksum’ must only be given a commit hash.  This will
+     effectively lock the repository at a particular revision.  Note
+     also that ‘:checksum’ must be set to the full hash, not just the
+     first 6 or 8 characters (this restriction may be removed in the
+     future).
 
-     Currently this property only has meaning for git type recipes.
-     Other VCS-based methods may implement support in the future.
+‘:checkout’
 
-`:shallow'
-     If set to t in a git recipe, `git-clone' will be run with `--depth
-     1' , which will create a so-called shallow clone by not
-     downloading all the history of the repository. The default is
-     controlled by the variable EL-GET-GIT-SHALLOW-CLONE, which is
-     `nil' by default.
+     For ‘git’ or ‘hg’ recipes, a branch name, tag, or other valid
+     argument to ‘git checkout’/‘hg update’.  If provided, this
+     overrides any value for the ‘:branch’ property.  Unlike the
+     ‘:branch’ property, this can be any valid argument to ‘checkout’,
+     including a tag name or a commit hash.
 
-`:submodule'
-     If set to `nil' in a git recipe, submodules will not be updated.
+     When given a commit hash or tag, this will lock the repo at that
+     specific revision.  When given a branch name, this will always
+     update the repo to the latest version of that branch, regardless of
+     any changes made locally (in contrast to simply using the ‘:branch’
+     property, which will cause el-get-to try to merge your local
+     changes).
 
+     Currently this property only has meaning for ‘git’ and ‘hg’ type
+     recipes.  Other VCS-based methods may implement support in the
+     future.
+
+‘:shallow’
+     If set to t in a git recipe, ‘git-clone’ will be run with ‘--depth
+     1’ , which will create a so-called shallow clone by not downloading
+     all the history of the repository.  The default is controlled by
+     the variable EL-GET-GIT-SHALLOW-CLONE, which is ‘nil’ by default.
+
+‘:submodule’
+     If set to ‘nil’ in a git recipe, submodules will not be updated.
 
 
 File: el-get.info,  Node: Dependencies,  Next: Byte Compilation,  Prev: Recipe format,  Up: Authoring Recipes
@@ -1155,9 +1163,9 @@ File: el-get.info,  Node: Dependencies,  Next: Byte Compilation,  Prev: Recipe f
 9.2 Dependencies
 ================
 
-When a recipe provides a `:depends' property, El-Get makes sure that
-the given list of packages is installed and initialized before the
-package for the current recipe is installed and initialized.
+When a recipe provides a ‘:depends’ property, El-Get makes sure that the
+given list of packages is installed and initialized before the package
+for the current recipe is installed and initialized.
 
 
 File: el-get.info,  Node: Byte Compilation,  Next: Autoloads,  Prev: Dependencies,  Up: Authoring Recipes
@@ -1165,12 +1173,12 @@ File: el-get.info,  Node: Byte Compilation,  Next: Autoloads,  Prev: Dependencie
 9.3 Byte Compilation
 ====================
 
-By default, El-Get will recursively byte-compile the directory where
-the package is installed, that is each and any file called
-`something.el'. Some packages include non Emacs Lisp directories, and
-sometime test files that are not meant to pass byte compilation without
-errors or warnings. It is possible to setup your recipe to either only
-target some files of the package, or to bypass byte compiling entirely.
+By default, El-Get will recursively byte-compile the directory where the
+package is installed, that is each and any file called ‘something.el’.
+Some packages include non Emacs Lisp directories, and sometime test
+files that are not meant to pass byte compilation without errors or
+warnings.  It is possible to setup your recipe to either only target
+some files of the package, or to bypass byte compiling entirely.
 
 
 File: el-get.info,  Node: Autoloads,  Next: Build,  Prev: Byte Compilation,  Up: Authoring Recipes
@@ -1178,11 +1186,11 @@ File: el-get.info,  Node: Autoloads,  Next: Build,  Prev: Byte Compilation,  Up:
 9.4 Autoloads
 =============
 
-Think about providing `autoloads' for your recipe if some are
-available. You can provide them yourself too, for packages that should
-have support for autoloads but ship without them.
+Think about providing ‘autoloads’ for your recipe if some are available.
+You can provide them yourself too, for packages that should have support
+for autoloads but ship without them.
 
-   The `:prepare' property of a recipe is the right place where to put
+   The ‘:prepare’ property of a recipe is the right place where to put
 added autoloads, as shown in this example:
 
      (:name undo-tree
@@ -1195,9 +1203,9 @@ added autoloads, as shown in this example:
                        (autoload 'global-undo-tree-mode "undo-tree.el"
                          "Global undo tree mode" t)))
 
-   The `:prepare' property of a recipe is considered the same as the
-`:before' one, just evaluated after it. `:prepare' is meant for recipe
-authors whereas `:before' is meant for user customisations. See *Note
+   The ‘:prepare’ property of a recipe is considered the same as the
+‘:before’ one, just evaluated after it.  ‘:prepare’ is meant for recipe
+authors whereas ‘:before’ is meant for user customisations.  See *Note
 Before and After properties::.
 
 
@@ -1206,16 +1214,16 @@ File: el-get.info,  Node: Build,  Next: Recipe checker,  Prev: Autoloads,  Up: A
 9.5 Build
 =========
 
-The `:build' property of the recipe allows for OS integration at build
-time. Build happens after the package has been fetched, and allows to
-run commands such as `make'.
+The ‘:build’ property of the recipe allows for OS integration at build
+time.  Build happens after the package has been fetched, and allows to
+run commands such as ‘make’.
 
-   The variable `el-get-emacs' contains the complete path where to find
+   The variable ‘el-get-emacs’ contains the complete path where to find
 the current Emacs executable you're running, as that's something build
 commands often need.
 
    As shell interpolation can get hairy, El-Get offers you to setup your
-build commands as Emacs Lisp list. See the magit recipe for an example:
+build commands as Emacs Lisp list.  See the magit recipe for an example:
 
      (:name magit
             :website "https://github.com/magit/magit#readme"
@@ -1234,7 +1242,7 @@ File: el-get.info,  Node: Recipe checker,  Prev: Build,  Up: Authoring Recipes
 ==================
 
 There are two ways to run recipe checker.  One is to run it as an Emacs
-command. Run `el-get-check-recipe' in the buffer opening the recipe to
+command.  Run ‘el-get-check-recipe’ in the buffer opening the recipe to
 be checked.  You can also use a script to run the checker.  This is
 convenient if you want to check multiple recipes at once.
 
@@ -1244,48 +1252,53 @@ convenient if you want to check multiple recipes at once.
 
      emacs -batch -Q -l test/check-recipe.el  PATH/TO/RECIPE.rcp ...
 
-   You can also test the recipe with `test/test-recipe.sh'.  This will
+   You can also test the recipe with ‘test/test-recipe.sh’.  This will
 actually install the package in a test environment.  An interactive
-version `test/test-recipe-interactive.sh' is also available.
+version ‘test/test-recipe-interactive.sh’ is also available.
 
      test/test-recipe.sh PATH/TO/RECIPE.rcp
 
 
 
 Tag Table:
-Node: Top769
-Node: Introduction1234
-Node: Acknowledgments2534
-Node: Glossary4116
-Ref: Glossary - Init5212
-Ref: Glossary - Install5514
-Ref: Glossary - Recipe6607
-Ref: Glossary - Status7031
-Ref: Glossary - Update7289
-Node: Installing7527
-Node: Install the developer version8433
-Node: Skip Emacswiki recipes when installing9174
-Node: Shallow clone when installing10047
-Node: Usage10603
-Node: Setup12892
-Node: Basic Setup13316
-Node: The el-get function14627
-Node: Distributed Setup15903
-Node: The el-get-bundle macro18813
-Node: Setup Customization24759
-Node: User Init26177
-Node: Before and After properties26864
-Node: Initialization files28372
-Node: Recipes29025
-Node: Organizing recipes29500
-Node: Getting more recipes31131
-Node: Overriding package files31829
-Node: Authoring Recipes32212
-Node: Recipe format32827
-Node: Dependencies42616
-Node: Byte Compilation42962
-Node: Autoloads43528
-Node: Build44654
-Node: Recipe checker45626
+Node: Top743
+Node: Introduction1209
+Node: Acknowledgments2540
+Node: Glossary4125
+Ref: Glossary - Init5257
+Ref: Glossary - Install5563
+Ref: Glossary - Recipe6759
+Ref: Glossary - Status7185
+Ref: Glossary - Update7464
+Node: Installing7710
+Node: Install the developer version8629
+Node: Skip Emacswiki recipes when installing9386
+Node: Shallow clone when installing10260
+Node: Usage10828
+Node: Setup13186
+Node: Basic Setup13615
+Node: The el-get function14977
+Node: Distributed Setup16305
+Node: The el-get-bundle macro19312
+Node: Setup Customization25377
+Node: User Init26854
+Node: Before and After properties27555
+Node: Initialization files29123
+Node: Recipes29788
+Node: Organizing recipes30264
+Node: Getting more recipes32007
+Node: Overriding package files32864
+Node: Authoring Recipes33253
+Node: Recipe format33870
+Node: Dependencies44773
+Node: Byte Compilation45123
+Node: Autoloads45694
+Node: Build46846
+Node: Recipe checker47832
 
 End Tag Table
+
+
+Local Variables:
+coding: utf-8
+End:
