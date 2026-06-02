@@ -39,7 +39,8 @@
 
 (defcustom el-get-recipe-path-elpa
   (expand-file-name "el-get/recipes/elpa/" el-get-dir)
-  "Define where to keep a local copy of elpa recipes."
+  "Define where to keep a local copy of elpa recipes.
+This is the default target of `el-get-elpa-build-local-recipes'."
   :group 'el-get
   :type 'directory)
 

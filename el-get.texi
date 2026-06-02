@@ -901,7 +901,9 @@ code. See @xref{User Init}.
 
 The command @code{el-get-elpa-build-local-recipes} downloads the list
 of Emacs Lisp Packages from the ELPA archives you have setup, and make
-them automatically available for El-Get.
+them automatically available for El-Get (they are written into
+@file{~/.emacs.d/el-get/el-get/recipes/elpa} by default, this is
+controlled by the variable @code{el-get-rcipe-path-elpa}).
 
 @node Overriding package files
 @section Overriding package files
