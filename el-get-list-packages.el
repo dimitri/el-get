@@ -277,9 +277,7 @@ in el-get package menu."
   (setq mode-name "Package-Menu")
   (setq buffer-read-only t)
   (setq truncate-lines t)
-  (if (fboundp 'run-mode-hooks)
-      (run-mode-hooks 'el-get-package-menu-mode-hook)
-    (run-hooks 'el-get-package-menu-mode-hook)))
+  (run-mode-hooks 'el-get-package-menu-mode-hook))
 
 (defun el-get-print-package (package-name status &optional type desc)
   (let ((face
@@ -347,9 +345,8 @@ in el-get package menu."
 (defun el-get-package-menu-sort-by-column (&optional e)
   "Sort the package menu by the last column clicked on."
   (interactive (list last-input-event))
-  ;; On Emacs 24.3 and earlier, `mouse-select-window' is not defined
-  ;; on tty only builds.
-  (if (and e (fboundp 'mouse-select-window)) (mouse-select-window e))
+  (when e
+    (mouse-select-window e))
   (let* ((pos (event-start e))
          (obj (posn-object pos))
          (col (if obj
