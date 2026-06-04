@@ -51,7 +51,7 @@
            (status
             (apply #'call-process
                    `(,git nil (,buf t) t "--no-pager" "clone" "-v"
-                     ,@(when (boundp 'el-get-install-shallow-clone)
+                     ,@(unless (boundp 'el-get-install-no-shallow-clone)
                          '("--depth" "1"))
                      ,url ,package))))
 
