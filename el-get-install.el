@@ -51,7 +51,7 @@
            (status
             (apply #'call-process
                    `(,git nil (,buf t) t "--no-pager" "clone" "-v"
-                     ,@(when (boundp 'el-get-install-shallow-clone)
+                     ,@(unless (boundp 'el-get-install-no-shallow-clone)
                          '("--depth" "1"))
                      ,url ,package))))
 
@@ -87,7 +87,7 @@
       (let ((el-get-default-process-sync t) ; force sync operations for installer
             (el-get-verbose t))             ; let's see it all
         (el-get-post-install "el-get"))
-      (unless (boundp 'el-get-install-skip-emacswiki-recipes)
+      (when (boundp 'el-get-install-emacswiki-recipes)
         (condition-case err
             (el-get-emacswiki-build-local-recipes)
           (error (display-warning 'el-get (error-message-string err)))))

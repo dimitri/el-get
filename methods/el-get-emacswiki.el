@@ -65,6 +65,9 @@ filename.el ;;; filename.el --- description"
 ;;;
 (defun el-get-emacswiki-retrieve-package-list ()
   "return a list of (URL PACKAGE DESCRIPTION) from emacswiki"
+  ;; Set this cookie because we promise to be good and download
+  ;; only the one page we need, not the entire wiki.
+  (url-cookie-store "botcheck" "1" nil "www.emacswiki.org" "/")
   (with-current-buffer
       (url-retrieve-synchronously el-get-emacswiki-elisp-file-list-url)
     ;; skip HTTP headers
