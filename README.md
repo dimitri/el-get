@@ -196,10 +196,11 @@ Many `init-` packages are already available in El-Get.
 
 # Usage
 
-El-Get requires very little interaction with your init file when managing
-packages.  **Basic Usage** explains how to manage your packages without ever
-having to touch your init file again (meaning, *once El-Get is
-installed*).
+El-Get requires very little interaction with your init file when
+managing packages.  **Basic Usage** explains how to manage your
+packages without ever having to touch your init file again (meaning,
+*once El-Get is installed*).  See the *Info* manual section **Setup**,
+for more elaborate configuration ideas.
 
 ## Basic Usage
 
@@ -274,6 +275,11 @@ installed*).
    Will prompt for the name of a package, with completion, then `find-file`
    its `recipe` file.  If the recipe does not exist, it will create a new
    recipe file with the appropriate name.
+
+### Writing new recipes
+
+See the docstring of `el-get-sources` for support properties, and the
+**Authoring Recipes** section of the manual for more details.
 
 # Troubleshooting
 
