@@ -358,18 +358,23 @@ Add PACKAGE's directory (or `:load-path' if specified) to the
 `Info-directory-list', and `require' its `:features'.  Will be
 called by `el-get' (usually at startup) for each installed package."
   (declare (advertised-calling-convention (package) "Feb 2015"))
-    (let ((psym (el-get-as-symbol package)))
-      (when (and (not (eq psym 'el-get)) ; el-get recipe handles reloading
-                 (memq psym (bound-and-true-p package-activated-list))
-                 (not (memq psym el-get-activated-list))
-                 (package-installed-p psym)
-                 (not (eq 'elpa (el-get-package-method package))))
-        (lwarn 'el-get :warning
-               "The package `%s' has already been loaded by
+  (let ((psym (el-get-as-symbol package)))
+    (when (and (not (eq psym 'el-get)) ; el-get recipe handles reloading
+               (memq psym (bound-and-true-p package-activated-list))
+               (not (memq psym el-get-activated-list))
+               (package-installed-p psym)
+               (not (eq 'elpa (el-get-package-method package))))
+      (lwarn '(el-get double-activation) :warning
+             "The package `%s' has already been loaded by
 package.el, attempting to load el-get version instead. To avoid
-this warning either uninstall one of the el-get or package.el
-version of %s, or call `el-get' before `package-initialize' to
-prevent package.el from loading it."  package package)))
+double-activation, do one of:
+- Call `el-get' before `package-initialize'%s
+  to el-get version only.
+- Set package to `:type elpa' in `el-get-sources'
+  to get package.el version only.
+" package (if (boundp 'early-init-file)
+              (concat " (in " early-init-file ")")
+            ""))))
   (when el-get-auto-update-cached-recipes
     (el-get-merge-properties-into-status package 'init))
   (condition-case err

@@ -144,7 +144,10 @@ packages will be installed.
 Calling the `el-get` function is covered in details in the full *Info*
 manual.
 
-Here is the basic setup to add to your `user-init-file` (`.emacs`):
+Here is the basic setup to add to your `user-init-file` (`.emacs`), or
+`early-init-file` on Emacs 27+ to avoid double-activation with
+`package.el` installed packages (see also **Co-existing with
+package.el** in the *Info* manual):
 
 ```lisp
 (add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-directory))

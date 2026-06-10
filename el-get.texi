@@ -377,6 +377,7 @@ setup.
 
 @menu
 * Basic Setup::
+* Co-existing with package.el::
 * The el-get function::
 * Distributed Setup::
 * The el-get-bundle macro::
@@ -415,6 +416,30 @@ This usage is pretty simple to setup and use, but fails to cater with
 more complex setups involving multiple deployments (home and work
 laptop would be a classic example). El-Get fully supports that
 distributed setup, though, and this chapter explain how.
+
+@node Co-existing with package.el
+@section Co-existing with package.el
+
+Note that to let El-Get take over packages that @file{package.el} may
+otherwise install, the above set up should be put in
+@file{early-init.el}.  Otherwise, @code{package-initialize} can run
+first and activate the @file{package.el} version of some package.
+
+This most often happens with dependency packages that both El-Get and
+@file{package.el} reference.
+
+If El-Get notices that @file{package.el} already loaded a package also
+installed through El-Get, it will issue a warning about
+double-activation.
+
+Having El-Get activate in @file{early-init.el}, before any call to
+@code{package-initialize} will allow it to tell @file{package.el} that
+the package is activated, preventing double activation.
+
+You may also tell El-Get to rely on @file{package.el}'s version of any
+package instead, by setting it to @code{:type elpa} in
+@code{el-get-sources}.  @xref{Distributed Setup} for an example of
+doing this with the @code{lisppaste} and @code{asciidoc} packages.
 
 @node The el-get function
 @section The el-get function
