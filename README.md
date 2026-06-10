@@ -61,7 +61,7 @@ ELPA.
 # Installation
 
 El-Get is easy to install.  The only requirements to do so successfully are
-Emacs (24.3 and above), `git` and a connection to the internet that allows you to `git clone`
+Emacs (24.5 and above), `git` and a connection to the internet that allows you to `git clone`
 repositories.
 
 If you do not already have `git` on your system, you can install it through

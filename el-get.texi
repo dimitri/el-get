@@ -235,7 +235,7 @@ block (just after the last closing paren) and you type @kbd{C-j}.
 
 @menu
 * Install the developer version::
-* Skip Emacswiki recipes when installing::
+* Also build Emacswiki recipes when installing::
 * Shallow clone when installing::
 @end menu
 
@@ -258,39 +258,44 @@ variable into existence:
      (eval-print-last-sexp))))
 @end example
 
-@node Skip Emacswiki recipes when installing
-@section Skip Emacswiki recipes when installing
+@node Also build Emacswiki recipes when installing
+@section Also build Emacswiki recipes when installing
 
-The installer will fetch from emacswiki all the recipe available there
-and install a local copy of those in your system automatically. Should
-you want to disable that feature, the following snippet is showing how
-to:
+The installer won't make emacswiki recipes available by default.
+Should you want to enable that feature, you must let-bind
+@code{el-get-install-emacswiki-recipes}, as in the following
+snippet:
 
 @example
 ;; So the idea is that you copy/paste this code into your *scratch* buffer,
-;; hit C-j, and you have a working el-get (without emacswiki automatic
+;; hit C-j, and you have a working el-get (with emacswiki automatic
 ;; recipes).
 (url-retrieve
  "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
  (lambda (s)
-   (let (el-get-install-skip-emacswiki-recipes)
+   (let (el-get-install-emacswiki-recipes)
      (goto-char (point-max))
      (eval-print-last-sexp))))
 @end example
+
+You can also build the emacswiki recipes after install, if you didn't
+do this @xref{Getting more recipes}.
 
 @node Shallow clone when installing
 @section Shallow clone when installing
 
 @code{--depth 1}
 
-Should you want to run @code{git-clone} with @code{--depth 1} when
-installing El-Get itself, the following snippet is showing how to:
+The default installer for El-Get itself, uses a shallow clone.  Should
+you want to run a full @code{git-clone} without @code{--depth 1}, you
+must let-bind @code{el-get-install-no-shallow-clone}, as in the
+following snippet:
 
 @example
 (url-retrieve
  "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
  (lambda (s)
-   (let (el-get-install-shallow-clone)
+   (let (el-get-install-no-shallow-clone)
      (goto-char (point-max))
      (eval-print-last-sexp))))
 @end example
