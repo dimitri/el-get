@@ -1,5 +1,8 @@
 (:name go-def
        :description "Required for go-mode godef functions"
-       :type go
-       :pkgname "github.com/rogpeppe/godef"
-       :post-init (add-to-list 'exec-path (concat default-directory "bin")))
+       :type github
+       :pkgname "rogpeppe/godef"
+       :load-path (()) ; The .el file comes from go-mode.
+       :depends (go-mode)
+       :build (("go" "build" "-o" "bin/godef" "."))
+       :post-init (setq godef-command (concat default-directory "bin/godef")))

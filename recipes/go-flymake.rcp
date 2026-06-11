@@ -1,9 +1,10 @@
 (:name go-flymake
        :description "Flymake for the Go programming language"
-       :type go
-       :pkgname "github.com/dougm/goflymake"
-       :depends (go-mode)
-       :load-path "src/github.com/dougm/goflymake"
+       :type github
+       :pkgname "dougm/goflymake"
+       :depends (go-mode flymake)
+       :build (("go" "build" "-o" "goflymake" "."))
+       :compile (".")
        :post-init (progn
-                    (add-to-list 'exec-path (concat default-directory "bin"))
+                    (add-to-list 'exec-path default-directory)
                     (eval-after-load 'go-mode '(require 'go-flymake))))

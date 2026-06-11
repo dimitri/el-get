@@ -169,6 +169,10 @@ object or a file path."
                    (eq type 'git) (string-match "//github.com/" url))
           (el-get-check-warning :warning
             "Use `:type github' for github type recipe"))
+        ;; Is go type used?
+        (when (eq type 'go)
+          (el-get-check-warning :warning
+            "Do not use `:type go', it will fail with modern (1.16+) go tools"))
         ;; Warn when `:autoloads nil' is specified.
         (when (and (not (memq 'autoloads el-get-check-suppressed-warnings))
                    (null autoloads) (plist-member recipe :autoloads))
