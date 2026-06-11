@@ -144,6 +144,49 @@ Following variables are bound to temporal values:
      (package-read-all-archive-contents)
      (el-get 'sync (mapcar 'el-get-source-name el-get-sources)))))
 
+(ert-deftest el-get-elpa-repo-prio ()
+  "Test :repo priority with ELPA type.  See #2832."
+  (el-get-with-temp-home
+   (require 'package-x)                 ; create local package archive
+   (let* ((package-archive-priorities
+           '(("test-repoA" . 15)
+             ("test-repoB" . 0)
+             ("test-repoC" . 10)))
+          (upload-base-A (expand-file-name "pkg-repoA" user-emacs-directory))
+          (upload-base-B (expand-file-name "pkg-repoB" user-emacs-directory))
+          (upload-base-C (expand-file-name "pkg-repoC" user-emacs-directory))
+          (package-archive-contents nil)
+          (package-archives `(("test-repoA" . ,upload-base-A)
+                              ("test-repoB" . ,upload-base-B)
+                              ("test-repoC" . ,upload-base-C)))
+          (package-check-signature nil)
+          (el-get-sources
+           `((:name package :post-init nil) ; avoid adding other repos
+             (:name el-get-test-package :type elpa)
+             (:name el-get-test-package2 :type elpa
+                    :repo ("test-repoB" . ,upload-base-B)))))
+     (dolist (package-archive-upload-base (list upload-base-A upload-base-B upload-base-C))
+       (make-directory package-archive-upload-base t)
+       (package-upload-file (expand-file-name "pkgs/el-get-test-package.el"
+                                              el-get-test-files-dir))
+       (package-upload-file (expand-file-name "pkgs/el-get-test-package2.el"
+                                              el-get-test-files-dir)))
+     (package-read-all-archive-contents)
+     (cl-letf* (((symbol-function 'package-download-transaction)
+                 (lambda (packages)
+                   (dolist (pkg packages)
+                     (should (equal
+                              (package-desc-archive pkg)
+                              (pcase (package-desc-name pkg)
+                                ('el-get-test-package "test-repoA")
+                                ('el-get-test-package2 "test-repoB")
+                                (_ (error "Unexpected package installed"))))))))
+                ((symbol-function 'el-get-elpa-symlink-package)
+                 #'ignore)
+                ((symbol-function 'el-get-post-install)
+                 #'ignore))
+       (el-get 'sync '(el-get-test-package el-get-test-package2))))))
+
 (ert-deftest el-get-update-load-path ()
   "Check the `load-path' is updated."
   (el-get-with-temp-home

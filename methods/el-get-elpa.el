@@ -31,17 +31,23 @@
 
 ;;; package.el helper functions
 
-(defun el-get-elpa-package-id (pkg)
+(defun el-get-elpa-package-id (pkg &optional repo)
   "A compat utility function."
-  ;; As of 24.4+ we have a list of package descs, take the first one.
-  (car (cdr (assq pkg package-archive-contents))))
+  ;; As of 24.4+ we have a list of package descs.
+  (let ((package-descs (cdr (assq pkg package-archive-contents))))
+    (if repo ;; Find the one with matching repo.
+        (cl-find (car repo) package-descs
+                 :key #'package-desc-archive :test #'string=)
+      ;; Or just the first one if no repo given.
+      (car package-descs))))
 
-(defun el-get-elpa-install-package (pkg have-deps-p)
+(defun el-get-elpa-install-package (pkg have-deps-p &optional repo)
   "A wrapper for package.el installion.
 
-Installs the 1st available version. If HAVE-DEPS-P skip
-package.el's dependency computations."
-  (let ((to-install (el-get-elpa-package-id pkg)))
+Installs the 1st available version, unless REPO is specified in
+which case take the version from the corresponding package repo.
+If HAVE-DEPS-P skip package.el's dependency computations."
+  (let ((to-install (el-get-elpa-package-id pkg repo)))
     (if have-deps-p
         (package-download-transaction (list to-install))
       (package-install to-install))))
@@ -116,17 +122,14 @@ the recipe, then return nil."
          (elpa-dir (el-get-elpa-package-directory package))
          (elpa-repo (el-get-elpa-package-repo package))
          ;; Indicates new archive requiring to download its archive-contents
-         (elpa-new-repo (when (and elpa-repo)
-                          (unless (rassoc (cdr-safe elpa-repo)
-                                          (bound-and-true-p package-archives))
-                            elpa-repo)))
-         ;; Set `package-archive-base' to elpa-repo for old package.el
-         (package-archive-base (or (cdr-safe elpa-repo)
-                                   (bound-and-true-p package-archive-base)))
-         ;; Prepend elpa-repo to `package-archives' for new package.el
+         (elpa-new-repo
+          (when (and (consp elpa-repo)
+                     (not (rassoc (cdr elpa-repo)
+                                  (bound-and-true-p package-archives))))
+            elpa-repo))
+         ;; Prepend elpa-repo to `package-archives'
          (package-archives (append (when elpa-repo (list elpa-repo))
                                    package-archives)))
-    (ignore package-archive-base)  ; Bound for old package.el compatibility
 
     (unless (and elpa-dir (file-directory-p elpa-dir))
       ;; package-install does these only for interactive calls
@@ -151,7 +154,8 @@ the recipe, then return nil."
       ;; package-install generates autoloads, byte compiles
       (let ((emacs-lisp-mode-hook nil)
             (prog-mode-hook nil))
-        (el-get-elpa-install-package (el-get-as-symbol package) have-deps-p)))
+        (el-get-elpa-install-package (el-get-as-symbol package) have-deps-p
+                                     elpa-repo)))
     ;; we symlink even when the package already is installed because it's
     ;; not an error to have installed ELPA packages before using el-get, and
     ;; that will register them
