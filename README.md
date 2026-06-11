@@ -61,7 +61,7 @@ ELPA.
 # Installation
 
 El-Get is easy to install.  The only requirements to do so successfully are
-Emacs (24.3 and above), `git` and a connection to the internet that allows you to `git clone`
+Emacs (24.5 and above), `git` and a connection to the internet that allows you to `git clone`
 repositories.
 
 If you do not already have `git` on your system, you can install it through
@@ -144,7 +144,10 @@ packages will be installed.
 Calling the `el-get` function is covered in details in the full *Info*
 manual.
 
-Here is the basic setup to add to your `user-init-file` (`.emacs`):
+Here is the basic setup to add to your `user-init-file` (`.emacs`), or
+`early-init-file` on Emacs 27+ to avoid double-activation with
+`package.el` installed packages (see also **Co-existing with
+package.el** in the *Info* manual):
 
 ```lisp
 (add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-directory))
@@ -193,12 +196,11 @@ Many `init-` packages are already available in El-Get.
 
 # Usage
 
-El-Get requires very little interaction with your init file when managing
-packages.  **Basic Usage** explains how to manage your packages without ever
-having to touch your init file again (meaning, *once El-Get is
-installed*).  **Advanced Usage with Local Recipes** explains how to write
-your init file with explicitly specifying packages to install (when sharing
-the same setup between several machines for example).
+El-Get requires very little interaction with your init file when
+managing packages.  **Basic Usage** explains how to manage your
+packages without ever having to touch your init file again (meaning,
+*once El-Get is installed*).  See the *Info* manual section **Setup**,
+for more elaborate configuration ideas.
 
 ## Basic Usage
 
@@ -274,75 +276,10 @@ the same setup between several machines for example).
    its `recipe` file.  If the recipe does not exist, it will create a new
    recipe file with the appropriate name.
 
-## Advanced Usage with Local Recipes
+### Writing new recipes
 
-Placing `el-get-bundle` macro calls instead of `(el-get 'sync)` in your init
-file to explicitly specify which packages should be installed.  The macro
-accepts either a simple package name from defined recipes, a package name
-with a local recipe definition, a package with initialization code, or
-everything together.
-
-Note that if you leave in the `(el-get 'sync)` call (which you need
-to, unless you've also made sure to explicitly call `el-get-bundle`
-for all dependency packages), it *must* go after any recipe defining
-`el-get-bundle` calls, otherwise el-get won't know the recipe when it
-tries to initialize the package.
-
-```lisp
-;; Basic setup
-
-(add-to-list 'load-path (expand-file-name "el-get/el-get" user-emacs-directory))
-
-(unless (require 'el-get nil 'noerror)
-  (with-current-buffer
-      (url-retrieve-synchronously
-       "https://raw.githubusercontent.com/dimitri/el-get/master/el-get-install.el")
-    (goto-char (point-max))
-    (eval-print-last-sexp)))
-
-(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
-
-;; Simple package names
-(el-get-bundle yasnippet)
-(el-get-bundle color-moccur)
-
-;; Locally defined recipe
-(el-get-bundle yaicomplete
-  :url "https://github.com/tarao/elisp.git"
-  :features yaicomplete)
-
-;; With initialization code
-(el-get-bundle zenburn-theme
-  :url "https://raw.githubusercontent.com/bbatsov/zenburn-emacs/master/zenburn-theme.el"
-  (load-theme 'zenburn t))
-
-;; End of recipes, call `el-get' to make sure all packages (including
-;; dependencies) are setup.
-(el-get 'sync)
-```
-
-If a package with a local recipe definition has a recipe file, the
-definition overrides that in the recipe file.
-
-There is some syntactic sugar to specify a package name and a recipe source
-together.
-
-```lisp
-(el-get-bundle tarao/tab-group-el)
-;; equivalent to
-;; (el-get-bundle tab-group-el :type github :pkgname "tarao/tab-group-el")
-
-(el-get-bundle gist:4468816:pit
-;; equivalent to
-;; (el-get-bundle pit :type git :url "http://gist.github.com/4468816.git")
-
-(el-get-bundle elpa:undo-tree)
-;; equivalent to
-;; (el-get-bundle undo-tree :type elpa)
-```
-
-Please refer to the *Info* documentation provided with El-Get for the
-complete syntax of `el-get-bundle` and recipe definitions.
+See the docstring of `el-get-sources` for support properties, and the
+**Authoring Recipes** section of the manual for more details.
 
 # Troubleshooting
 

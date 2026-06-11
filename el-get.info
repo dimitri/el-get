@@ -228,11 +228,11 @@ block (just after the last closing paren) and you type ‘C-j’.
 * Menu:
 
 * Install the developer version::
-* Skip Emacswiki recipes when installing::
+* Also build Emacswiki recipes when installing::
 * Shallow clone when installing::
 
 
-File: el-get.info,  Node: Install the developer version,  Next: Skip Emacswiki recipes when installing,  Up: Installing
+File: el-get.info,  Node: Install the developer version,  Next: Also build Emacswiki recipes when installing,  Up: Installing
 
 4.1 Developer version
 =====================
@@ -251,41 +251,44 @@ branch, summon the ‘el-get-master-branch’ variable into existence:
           (eval-print-last-sexp))))
 
 
-File: el-get.info,  Node: Skip Emacswiki recipes when installing,  Next: Shallow clone when installing,  Prev: Install the developer version,  Up: Installing
+File: el-get.info,  Node: Also build Emacswiki recipes when installing,  Next: Shallow clone when installing,  Prev: Install the developer version,  Up: Installing
 
-4.2 Skip Emacswiki recipes when installing
-==========================================
+4.2 Also build Emacswiki recipes when installing
+================================================
 
-The installer will fetch from emacswiki all the recipe available there
-and install a local copy of those in your system automatically.  Should
-you want to disable that feature, the following snippet is showing how
-to:
+The installer won't make emacswiki recipes available by default.  Should
+you want to enable that feature, you must let-bind
+‘el-get-install-emacswiki-recipes’, as in the following snippet:
 
      ;; So the idea is that you copy/paste this code into your *scratch* buffer,
-     ;; hit C-j, and you have a working el-get (without emacswiki automatic
+     ;; hit C-j, and you have a working el-get (with emacswiki automatic
      ;; recipes).
      (url-retrieve
       "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
       (lambda (s)
-        (let (el-get-install-skip-emacswiki-recipes)
+        (let (el-get-install-emacswiki-recipes)
           (goto-char (point-max))
           (eval-print-last-sexp))))
 
+   You can also build the emacswiki recipes after install, if you didn't
+do this *Note Getting more recipes::.
+
 
-File: el-get.info,  Node: Shallow clone when installing,  Prev: Skip Emacswiki recipes when installing,  Up: Installing
+File: el-get.info,  Node: Shallow clone when installing,  Prev: Also build Emacswiki recipes when installing,  Up: Installing
 
 4.3 Shallow clone when installing
 =================================
 
 ‘--depth 1’
 
-   Should you want to run ‘git-clone’ with ‘--depth 1’ when installing
-El-Get itself, the following snippet is showing how to:
+   The default installer for El-Get itself, uses a shallow clone.
+Should you want to run a full ‘git-clone’ without ‘--depth 1’, you must
+let-bind ‘el-get-install-no-shallow-clone’, as in the following snippet:
 
      (url-retrieve
       "https://raw.github.com/dimitri/el-get/master/el-get-install.el"
       (lambda (s)
-        (let (el-get-install-shallow-clone)
+        (let (el-get-install-no-shallow-clone)
           (goto-char (point-max))
           (eval-print-last-sexp))))
 
@@ -369,13 +372,14 @@ el-get-install’ and friends, then how to get a more involved setup.
 * Menu:
 
 * Basic Setup::
+* Co-existing with package.el::
 * The el-get function::
 * Distributed Setup::
 * The el-get-bundle macro::
 * Setup Customization::
 
 
-File: el-get.info,  Node: Basic Setup,  Next: The el-get function,  Up: Setup
+File: el-get.info,  Node: Basic Setup,  Next: Co-existing with package.el,  Up: Setup
 
 6.1 Basic Setup
 ===============
@@ -408,9 +412,36 @@ would be a classic example).  El-Get fully supports that distributed
 setup, though, and this chapter explain how.
 
 
-File: el-get.info,  Node: The el-get function,  Next: Distributed Setup,  Prev: Basic Setup,  Up: Setup
+File: el-get.info,  Node: Co-existing with package.el,  Next: The el-get function,  Prev: Basic Setup,  Up: Setup
 
-6.2 The el-get function
+6.2 Co-existing with package.el
+===============================
+
+Note that to let El-Get take over packages that ‘package.el’ may
+otherwise install, the above set up should be put in ‘early-init.el’.
+Otherwise, ‘package-initialize’ can run first and activate the
+‘package.el’ version of some package.
+
+   This most often happens with dependency packages that both El-Get and
+‘package.el’ reference.
+
+   If El-Get notices that ‘package.el’ already loaded a package also
+installed through El-Get, it will issue a warning about
+double-activation.
+
+   Having El-Get activate in ‘early-init.el’, before any call to
+‘package-initialize’ will allow it to tell ‘package.el’ that the package
+is activated, preventing double activation.
+
+   You may also tell El-Get to rely on ‘package.el’'s version of any
+package instead, by setting it to ‘:type elpa’ in ‘el-get-sources’.
+*Note Distributed Setup:: for an example of doing this with the
+‘lisppaste’ and ‘asciidoc’ packages.
+
+
+File: el-get.info,  Node: The el-get function,  Next: Distributed Setup,  Prev: Co-existing with package.el,  Up: Setup
+
+6.3 The el-get function
 =======================
 
 Ensure that packages have been downloaded once and init them as needed.
@@ -442,7 +473,7 @@ installed packages is considered.
 
 File: el-get.info,  Node: Distributed Setup,  Next: The el-get-bundle macro,  Prev: The el-get function,  Up: Setup
 
-6.3 Distributed Setup
+6.4 Distributed Setup
 =====================
 
 When you are sharing your emacs setup between several machines (work and
@@ -523,7 +554,7 @@ specified packages is installed.
 
 File: el-get.info,  Node: The el-get-bundle macro,  Next: Setup Customization,  Prev: Distributed Setup,  Up: Setup
 
-6.4 The el-get-bundle macro
+6.5 The el-get-bundle macro
 ===========================
 
 The macro ‘el-get-bundle’ is a syntactic sugar which allows you to tell
@@ -533,7 +564,7 @@ initialization code for the package.  It is called in a form
 package name, PROPERTIES specifies a local recipe definition and CODE
 specifies initialization code.
 
-6.4.1 Just install some package
+6.5.1 Just install some package
 -------------------------------
 
 To install a package whose source is already defined in a recipe file,
@@ -545,7 +576,7 @@ use ‘el-get-bundle’ macro with the package name.
 
      (el-get 'sync 'color-moccur)
 
-6.4.2 Install some package with requiring it
+6.5.2 Install some package with requiring it
 --------------------------------------------
 
 If you also want to ‘require’ the package, use ‘el-get-bundle!’ macro.
@@ -563,7 +594,7 @@ package name (the recipe name), use ‘FEATURE in PACKAGE’ form.
      (el-get-bundle github:tarao/elisp
        :features (yaicomplete mode-line-color))
 
-6.4.3 Install some package and configure it
+6.5.3 Install some package and configure it
 -------------------------------------------
 
 You can write initalization code after the package name.
@@ -608,7 +639,7 @@ compilation.
          (define-key anything-map (kbd "M-n") #'anything-next-source)
          (define-key anything-map (kbd "M-p") #'anything-previous-source)))
 
-6.4.4 Pass options to package source definitions
+6.5.4 Pass options to package source definitions
 ------------------------------------------------
 
 If you want to override a package source definition in a recipe file or
@@ -642,7 +673,7 @@ from ‘:url’.
    For further information on available properties for a recipe source,
 *Note Recipe format::.
 
-6.4.5 Syntax sugars for package source definitions
+6.5.5 Syntax sugars for package source definitions
 --------------------------------------------------
 
 There are some ways to specify package source options by package name
@@ -669,7 +700,7 @@ modifiers.  With these modifiers, you can omit ‘:type’ property.
      ;; equivalent to
      ;; (el-get-bundle undo-tree :type elpa)
 
-6.4.6 Customization
+6.5.6 Customization
 -------------------
 
 ‘el-get-bundle-init-dir’
@@ -684,7 +715,7 @@ modifiers.  With these modifiers, you can omit ‘:type’ property.
 
 File: el-get.info,  Node: Setup Customization,  Prev: The el-get-bundle macro,  Up: Setup
 
-6.5 Setup Customization
+6.6 Setup Customization
 =======================
 
 Even though the defaults that are provided by El-Get provide all that
@@ -1271,30 +1302,31 @@ Ref: Glossary - Recipe6759
 Ref: Glossary - Status7185
 Ref: Glossary - Update7464
 Node: Installing7710
-Node: Install the developer version8629
-Node: Skip Emacswiki recipes when installing9386
-Node: Shallow clone when installing10260
-Node: Usage10828
-Node: Setup13186
-Node: Basic Setup13615
-Node: The el-get function14977
-Node: Distributed Setup16305
-Node: The el-get-bundle macro19312
-Node: Setup Customization25377
-Node: User Init26854
-Node: Before and After properties27555
-Node: Initialization files29123
-Node: Recipes29788
-Node: Organizing recipes30264
-Node: Getting more recipes32007
-Node: Overriding package files32864
-Node: Authoring Recipes33253
-Node: Recipe format33870
-Node: Dependencies44773
-Node: Byte Compilation45123
-Node: Autoloads45694
-Node: Build46846
-Node: Recipe checker47832
+Node: Install the developer version8635
+Node: Also build Emacswiki recipes when installing9398
+Node: Shallow clone when installing10369
+Node: Usage11034
+Node: Setup13392
+Node: Basic Setup13853
+Node: Co-existing with package.el15223
+Node: The el-get function16363
+Node: Distributed Setup17707
+Node: The el-get-bundle macro20714
+Node: Setup Customization26779
+Node: User Init28256
+Node: Before and After properties28957
+Node: Initialization files30525
+Node: Recipes31190
+Node: Organizing recipes31666
+Node: Getting more recipes33409
+Node: Overriding package files34266
+Node: Authoring Recipes34655
+Node: Recipe format35272
+Node: Dependencies46175
+Node: Byte Compilation46525
+Node: Autoloads47096
+Node: Build48248
+Node: Recipe checker49234
 
 End Tag Table
 
