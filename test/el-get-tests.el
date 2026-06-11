@@ -132,6 +132,7 @@ Following variables are bound to temporal values:
    (let* ((pkg 'el-get-test-package)
           (package-archive-upload-base (expand-file-name "pkg-repo" user-emacs-directory))
           (package-archives nil)
+          (package-archive-contents nil)
           (el-get-sources
            `((:name package :post-init nil) ; avoid adding other repos
              (:name el-get-test-package
@@ -140,6 +141,7 @@ Following variables are bound to temporal values:
      (make-directory package-archive-upload-base t)
      (package-upload-file (expand-file-name "pkgs/el-get-test-package.el"
                                             el-get-test-files-dir))
+     (package-read-all-archive-contents)
      (el-get 'sync (mapcar 'el-get-source-name el-get-sources)))))
 
 (ert-deftest el-get-update-load-path ()
@@ -172,7 +174,7 @@ Following variables are bound to temporal values:
 (ert-deftest el-get-update-rcp-file-load-path ()
   "Check the `load-path' is updated."
   (el-get-with-temp-home
-   (let* ((rcpdir (expand-file-name "~/.emacs.d/el-get-user-recipes/"))
+   (let* ((rcpdir (expand-file-name "el-get-user-recipes" user-emacs-directory))
           (el-get-recipe-path (cons rcpdir el-get-recipe-path))
           (recipe-a (list :name 'a :type 'test :compile nil
                           :non-updatable 1
@@ -214,6 +216,7 @@ Following variables are bound to temporal values:
    (let* ((pkg 'el-get-test-package)
           (package-archive-upload-base (expand-file-name "pkg-repo" user-emacs-directory))
           (package-archives nil)
+          (package-archive-contents nil)
           (el-get-sources
            `((:name package :post-init nil) ; avoid adding other repos
              (:name el-get-test-package
@@ -223,6 +226,7 @@ Following variables are bound to temporal values:
      (make-directory package-archive-upload-base t)
      (package-upload-file (expand-file-name "pkgs/el-get-test-package.el"
                                             el-get-test-files-dir))
+     (package-read-all-archive-contents)
      (should-not (featurep pkg))
      (el-get 'sync (mapcar 'el-get-source-name el-get-sources))
      (should (featurep pkg)))))
@@ -251,6 +255,7 @@ John.Doe-123_@example.com"))
    (require 'package-x)                 ; create local package archive
    (let* ((el-get-allow-insecure nil)
           (pkg 'el-get-test-package)
+          (package-archive-contents nil)
           (package-archive-upload-base (expand-file-name "pkg-repo" user-emacs-directory))
           (package-archives `(("test-repo" . ,package-archive-upload-base)))
           (el-get-sources
@@ -259,6 +264,7 @@ John.Doe-123_@example.com"))
      (make-directory package-archive-upload-base t)
      (package-upload-file (expand-file-name "pkgs/el-get-test-package.el"
                                             el-get-test-files-dir))
+     (package-read-all-archive-contents)
      (el-get 'sync 'el-get-test-package))))
 
 (defconst secure-urls '("https://example.com"
