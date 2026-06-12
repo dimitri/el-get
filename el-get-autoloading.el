@@ -170,7 +170,9 @@ with the named PACKAGE"
           (while (search-forward generate-autoload-section-header nil t)
             (when (member (nth 2 (autoload-read-section-header)) load-names)
               ;; We found a matching section, remove it.
-              (autoload-remove-section (match-beginning 0))))))
+              (autoload-remove-section (match-beginning 0))))
+          ;; Save modifications.
+          (save-buffer)))
       (el-get-update-autoloads package)
       (let ((visiting (find-buffer-visiting el-get-autoload-file)))
         (when visiting
