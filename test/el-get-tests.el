@@ -148,7 +148,9 @@ Following variables are bound to temporal values:
   "Test :repo priority with ELPA type.  See #2832."
   (el-get-with-temp-home
    (require 'package-x)                 ; create local package archive
-   (let* ((package-archive-priorities
+   (let* ((package-implements-priorities
+           (boundp 'package-archive-priorities))
+          (package-archive-priorities
            '(("test-repoA" . 15)
              ("test-repoB" . 0)
              ("test-repoC" . 10)))
@@ -178,7 +180,14 @@ Following variables are bound to temporal values:
                      (should (equal
                               (package-desc-archive pkg)
                               (cl-case (package-desc-name pkg)
-                                (el-get-test-package "test-repoA")
+                                (el-get-test-package
+                                 ;; On Emacs 24.5, we just get
+                                 ;; whatever's first, no priorities.
+                                 (if package-implements-priorities
+                                     "test-repoA"
+                                   ;; So essentially skip the check in
+                                   ;; that case.
+                                   (package-desc-archive pkg)))
                                 (el-get-test-package2 "test-repoB")
                                 (t (error "Unexpected package installed"))))))))
                 ((symbol-function 'el-get-elpa-symlink-package)
