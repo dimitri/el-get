@@ -11,9 +11,9 @@
 
 It is tested by installing, updating, removing, and then
 installing again."
-  ;; RECIPE-FILE is &optional only to allow easier batch calling.
+  ;; RECIPE-FILE is &optional only to allow easier cmd line calling.
   (declare (advertised-calling-convention (recipe-file) "Always"))
-  (when noninteractive
+  (unless recipe-file
     (setq recipe-file (pop command-line-args-left)))
   (cl-assert (file-exists-p recipe-file) nil
              "No recipe file: %s" recipe-file)
