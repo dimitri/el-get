@@ -1,0 +1,5 @@
+(:name markdown-to-org
+       :description "Convert Markdown text to Org-mode format."
+       :website "https://github.com/modeverv/markdown-to-org"
+       :type github
+       :pkgname "modeverv/markdown-to-org")

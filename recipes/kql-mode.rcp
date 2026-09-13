@@ -1,0 +1,3 @@
+(:name kql-mode
+       :description "A Major mode for syntax highlighting of KQL code/files."
+       :type emacsmirror)
