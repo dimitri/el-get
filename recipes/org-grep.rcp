@@ -1,5 +1,6 @@
 (:name org-grep
        :description "Kind of M-x rgrep adapted for Org mode"
-       :website "https://github.com/emacsorphanage/org-grep"
-       :type github
-       :pkgname "emacsorphanage/org-grep")
+       :website "https://git.sr.ht/~minshall/org-grep/"
+       :type elpa
+       :repo ("melpa" . "https://melpa.org/packages/")
+       :minimum-emacs-version (26 1))
